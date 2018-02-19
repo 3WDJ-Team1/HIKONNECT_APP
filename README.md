@@ -1,1 +1,1 @@
-# group-hiking
+# HIKONNECT
