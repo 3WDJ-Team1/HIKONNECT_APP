@@ -1,18 +1,49 @@
 package kr.ac.yjc.wdj.myapplication;
 
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+
+    /**
+     * @class       GetHikingPathTask
+     */
+    private class GetHikingPathTask extends AsyncTask<URL, Integer, PolylineOptions> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected PolylineOptions doInBackground(URL... urls) {
+            PolylineOptions polylineOptions = new PolylineOptions().geodesic(true).color(Color.RED);
+            List<LatLng>    pathPoints      = new ArrayList<>();
+
+            return polylineOptions;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(PolylineOptions polylineOptions) {
+            super.onPostExecute(polylineOptions);
+            mMap.addPolyline(polylineOptions);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,5 +73,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        try {
+            URL routeOfHiking = new URL("http://hikonnect.ga:3000/paths/115000801");
+            new GetHikingPathTask().execute(routeOfHiking);
+            mMap.addPolyline(new PolylineOptions().geodesic(true)
+                    .add(new LatLng(-33.866, 151.195))  // Sydney
+                    .add(new LatLng(-18.142, 178.431))  // Fiji
+                    .add(new LatLng(21.291, -157.821))  // Hawaii
+                    .add(new LatLng(37.423, -122.091))
+                    .color(Color.RED)// Mountain View
+            );
+        } catch (MalformedURLException mue) {
+            mue.printStackTrace();
+        }
     }
 }
