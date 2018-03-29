@@ -1,72 +1,39 @@
 package kr.ac.yjc.wdj.myapplication;
 
-import android.graphics.Color;
-import android.os.AsyncTask;
+/**
+ * @file        kr.ac.yjc.wdj.myapplication.MapsActivity.java
+ * @author      Sungeun Kang (kasueu0814@gmail.com), Beomsu Kwon (rnjs9957@gmail.com)
+ * @since       2018-03-26
+ * @brief       The Activity used while hiking
+ * @see         kr.ac.yjc.wdj.myapplication.models.HikingPlan
+ */
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
+import kr.ac.yjc.wdj.myapplication.models.Conf;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
-
-    /**
-     * @class       GetHikingPathTask
-     */
-    private class GetHikingPathTask extends AsyncTask<URL, Integer, PolylineOptions> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-        @Override
-        protected PolylineOptions doInBackground(URL... urls) {
-            PolylineOptions polylineOptions = new PolylineOptions().geodesic(true).color(Color.RED);
-            List<LatLng>    pathPoints      = new ArrayList<>();
-
-            return polylineOptions;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(PolylineOptions polylineOptions) {
-            super.onPostExecute(polylineOptions);
-            mMap.addPolyline(polylineOptions);
-        }
-    }
+    private GoogleMap mMap;     // for storing GoogleMap object
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-
     /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * @param googleMap     The object of GoogleMap which is ready.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        // init this.mMap
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -74,18 +41,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        try {
-            URL routeOfHiking = new URL("http://hikonnect.ga:3000/paths/115000801");
-            new GetHikingPathTask().execute(routeOfHiking);
-            mMap.addPolyline(new PolylineOptions().geodesic(true)
-                    .add(new LatLng(-33.866, 151.195))  // Sydney
-                    .add(new LatLng(-18.142, 178.431))  // Fiji
-                    .add(new LatLng(21.291, -157.821))  // Hawaii
-                    .add(new LatLng(37.423, -122.091))
-                    .color(Color.RED)// Mountain View
-            );
-        } catch (MalformedURLException mue) {
-            mue.printStackTrace();
-        }
+        String url = Conf.HTTP_ADDR + "/paths/438001301/1";
+
+        HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(url, null, mMap);
+        networkTask.execute();
     }
 }
