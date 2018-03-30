@@ -70,7 +70,8 @@ public class HikingPlan {
         }
 
         /**
-         * @brief       draw polyline on google map
+         * draw polyline on google map
+         * @param str   result of doInBackground
          */
         private void setPolyLineOnGoogleMap(String str) {
             // create PolyLineOptions Object

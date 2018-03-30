@@ -17,7 +17,7 @@ import kr.ac.yjc.wdj.myapplication.models.Conf;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;     // for storing GoogleMap object
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
