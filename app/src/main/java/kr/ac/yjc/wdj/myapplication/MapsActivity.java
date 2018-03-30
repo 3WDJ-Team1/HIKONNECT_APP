@@ -119,6 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             altitude = location.getAltitude();   //고도
             accuracy = location.getAccuracy();    //정확도
             provider = location.getProvider();   //위치제공자
+
             tv.setText("위치정보 : " + provider + "\n위도 : " + longitude + "\n경도 : " + latitude
                     + "\n고도 : " + altitude + "\n정확도 : "  + accuracy);
 
