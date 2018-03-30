@@ -30,9 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import kr.ac.yjc.wdj.myapplication.HttpRequestConnection;
-
 public class HikingPlan {
 
     public HttpRequestConnection httpReqConn = null;

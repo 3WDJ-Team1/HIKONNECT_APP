@@ -46,7 +46,7 @@ public class WifiP2pController {
 
             @Override
             public void onFailure(int i) {
-                Log.d(TAG, "Peers Connection Failure");
+                Log.d(TAG, "Peers Connection Failure" + i);
             }
         });
     }

@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class WifiDirectBroadCastReceiver extends BroadcastReceiver {
 
@@ -21,6 +25,8 @@ public class WifiDirectBroadCastReceiver extends BroadcastReceiver {
     private Channel mChannel;
 
     private Activity mActivity;
+
+    private ArrayList<WifiP2pDevice> devices;
 
     public WifiDirectBroadCastReceiver(WifiP2pManager manager, Channel channel, Activity activity) {
         super();
@@ -53,13 +59,13 @@ public class WifiDirectBroadCastReceiver extends BroadcastReceiver {
             Log.d(TAG, "onReceive: WIFI_P2P_PEERS_CHANGED");
 
             if (mManager != null) {
-                Log.d(TAG, "mManager is not null");
                 mManager.requestPeers(mChannel, new PeerListListener() {
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
-                        Log.d(TAG, "onPeersAvailable: " + wifiP2pDeviceList);
 
-//                        mController.connectPeer(mChannel, ));
+                        // 연결 가능한 디바이스들의 목록
+                        devices = new ArrayList<>(wifiP2pDeviceList.getDeviceList());
+                        Log.d(TAG, "Devices: " + devices);
                     }
                 });
             }
