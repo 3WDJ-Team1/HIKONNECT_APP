@@ -17,6 +17,10 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
+import kr.ac.yjc.wdj.myapplication.models.Conf;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
