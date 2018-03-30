@@ -110,5 +110,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //창을 띄우는 함수
         ad.show();
     }
-
 }
