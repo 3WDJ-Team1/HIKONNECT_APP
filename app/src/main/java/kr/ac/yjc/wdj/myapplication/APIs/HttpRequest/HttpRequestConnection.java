@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.myapplication.APIs.HttpRequest;
 
 import android.content.ContentValues;
 
@@ -25,10 +25,11 @@ public class HttpRequestConnection {
         // URL 뒤에 붙여서 보낼 파라미터.
         StringBuffer sbParams = new StringBuffer();
 
+
         /**
          * 1. StringBuffer에 파라미터 연결
          */
-        // 보낼 데이터가 없으면 파라미터를 버린다.
+        /*// 보낼 데이터가 없으면 파라미터를 버린다.
         if (_params == null)
             sbParams.append("");
         // 보낼 데이터가 있으면 파라미터를 채운다.
@@ -54,7 +55,8 @@ public class HttpRequestConnection {
                     if (_params.size() >= 2)
                         isAnd = true;
             }
-        }
+        }*/
+
 
         /**
          * 2. HttpURLConnection을 통해 web의 데이터를 가져온다.
