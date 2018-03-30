@@ -1,5 +1,13 @@
 package kr.ac.yjc.wdj.myapplication;
 
+/**
+ * @file        kr.ac.yjc.wdj.myapplication.MapsActivity.java
+ * @author      Sungeun Kang (kasueu0814@gmail.com), Beomsu Kwon (rnjs9957@gmail.com)
+ * @since       2018-03-26
+ * @brief       The Activity used while hiking
+ * @see         kr.ac.yjc.wdj.myapplication.models.HikingPlan
+ */
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -23,11 +31,15 @@ import java.util.Map;
 
 import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiDirectBroadCastReceiver;
 import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiP2pController;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
+import kr.ac.yjc.wdj.myapplication.models.Conf;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private final String TAG = "MapsActivity";
 
-    private GoogleMap mMap;
+    private GoogleMap mMap;     // for storing GoogleMap object
 
     private UiSettings mUiSettings;
 
@@ -52,6 +64,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         // 퍼미션 관리자 생성
         pManager        = new PermissionManager(this);
@@ -118,17 +133,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * @param googleMap     The object of GoogleMap which is ready.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        // init this.mMap
         mMap = googleMap;
 
         mUiSettings = mMap.getUiSettings();
@@ -147,5 +156,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        String url = Conf.HTTP_ADDR + "/paths/438001301/1";
+
+        HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(url, null, mMap);
+        networkTask.execute();
     }
 }
