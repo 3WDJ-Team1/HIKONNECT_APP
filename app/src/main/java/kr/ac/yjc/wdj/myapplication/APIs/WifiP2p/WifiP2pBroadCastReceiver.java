@@ -13,9 +13,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class WifiDirectBroadCastReceiver extends BroadcastReceiver {
+public class WifiP2pBroadCastReceiver extends BroadcastReceiver {
 
-    static private String TAG = "WifiDirectBroadCastReceiver";
+    static private String TAG = "WifiP2pBroadCastReceiver";
 
     private WifiP2pManager mManager;
 
@@ -27,7 +27,7 @@ public class WifiDirectBroadCastReceiver extends BroadcastReceiver {
 
     private ArrayList<WifiP2pDevice> devices;
 
-    public WifiDirectBroadCastReceiver(WifiP2pManager manager, Channel channel, Activity activity) {
+    public WifiP2pBroadCastReceiver(WifiP2pManager manager, Channel channel, Activity activity) {
         super();
 
         this.mManager = manager;

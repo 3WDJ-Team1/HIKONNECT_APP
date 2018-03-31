@@ -29,7 +29,7 @@ public class HttpRequestConnection {
         /**
          * 1. StringBuffer에 파라미터 연결
          */
-        /*// 보낼 데이터가 없으면 파라미터를 버린다.
+        // 보낼 데이터가 없으면 파라미터를 버린다.
         if (_params == null)
             sbParams.append("");
         // 보낼 데이터가 있으면 파라미터를 채운다.
@@ -46,7 +46,7 @@ public class HttpRequestConnection {
 
                 // 파라미터가 두개 이상일때, 파라미터 사이에 &를 붙인다.
                 if (isAnd)
-                    sbParams.append("&");
+                    sbParams.append("/");
 
                 sbParams.append(key).append("=").append(value);
 
@@ -55,7 +55,7 @@ public class HttpRequestConnection {
                     if (_params.size() >= 2)
                         isAnd = true;
             }
-        }*/
+        }
 
 
         /**

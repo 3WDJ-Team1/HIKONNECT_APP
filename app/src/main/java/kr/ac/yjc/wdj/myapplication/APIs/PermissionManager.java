@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.myapplication.APIs;
 
 import android.Manifest;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +21,7 @@ public class PermissionManager {
         Manifest.permission.ACCESS_COARSE_LOCATION,
     };
 
-    PermissionManager(FragmentActivity activity) {
+    public PermissionManager(FragmentActivity activity) {
         this.mActivity = activity;
 
     }
