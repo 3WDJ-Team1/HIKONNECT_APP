@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\Public\HIKONNECT_APP\HIKONNECT.iml" filepath="C:\Users\Public\HIKONNECT_APP\HIKONNECT.iml" />
-      <module fileurl="file://$PROJECT_DIR$/HIKONNECT_APP.iml" filepath="$PROJECT_DIR$/HIKONNECT_APP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gpsmap2.iml" filepath="$PROJECT_DIR$/gpsmap2.iml" />
     </modules>
   </component>
 </project>
