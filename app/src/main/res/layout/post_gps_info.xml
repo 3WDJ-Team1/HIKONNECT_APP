@@ -9,10 +9,15 @@
         android:text="여기 드감"
         android:id="@+id/intent_value" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/txtMsg"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="전송"
         android:id="@+id/post"/>
-
 </LinearLayout>

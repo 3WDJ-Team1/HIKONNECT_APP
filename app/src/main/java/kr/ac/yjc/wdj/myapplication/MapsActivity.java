@@ -1,5 +1,6 @@
 package kr.ac.yjc.wdj.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -23,6 +24,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Map;
+
+import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
+import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -31,29 +36,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView tv;
     ToggleButton tb;
     Button info_intent;
-    double latitude;    //위도
-    double longitude;   //경도
-    double altitude;    //고도
-    float accuracy;     //정확도
-    String provider;    //위치제공자
+    double lng,lat;
     ArrayList<Double> post_gps;
+    PermissionManager pManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // 퍼미션 관리자 생성
+        pManager        = new PermissionManager(this);
+        // 퍼미션 검사 수행
+        Map<String, Integer> checkResult = pManager.checkPermissions();
+        // 퍼미션 권한 요청
+        pManager.requestPermissions();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         // Get GPS Information
-        tv = (TextView)findViewById(R.id.textView2);
+        tv = findViewById(R.id.textView2);
         tv.setText("미수신중");
 
-        tb = (ToggleButton)findViewById(R.id.toggle1);
-        info_intent = (Button)findViewById(R.id.info_intent);
-        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        tb = findViewById(R.id.toggle1);
+        info_intent = findViewById(R.id.info_intent);
+        final LocationService ls = new LocationService(getApplicationContext());
 
         tb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,17 +72,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 try{
                     if(tb.isChecked()){
                         tv.setText("수신중..");
-                        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, // 등록할 위치제공자
-                                100, // 통지사이의 최소 시간간격 (miliSecond)
-                                1, // 통지사이의 최소 변경거리 (m)
-                                mLocationListener);
-                        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 위치제공자
-                                100, // 통지사이의 최소 시간간격 (miliSecond)
-                                1, // 통지사이의 최소 변경거리 (m)
-                                mLocationListener);
+                        Log.v("돼라","ㅁㄴㅇㅁㄴㅇㅁㄴㅇ");
+                        ls.getMyLocation(new LocationListener() {
+                            @Override
+                            public void onLocationChanged(Location location) {
+                                Log.d("Location test",location.toString());
+                                tv.setText("위도 : " + location.getLatitude() + "\n경도 : " + location.getLongitude());
+                            }
+
+                            @Override
+                            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                            }
+
+                            @Override
+                            public void onProviderEnabled(String s) {
+
+                            }
+
+                            @Override
+                            public void onProviderDisabled(String s) {
+                                Log.v("GPS Check","false");
+                            }
+                        });
                     }else{
                         tv.setText("미수신중");
-                        lm.removeUpdates(mLocationListener);
                     }
                 }catch(SecurityException ex){
                 }
@@ -110,43 +135,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-
-    private final LocationListener mLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            Log.d("test", "onLocationChanged, location:" + location);
-            longitude = location.getLongitude(); //경도
-            latitude = location.getLatitude();   //위도
-            altitude = location.getAltitude();   //고도
-            accuracy = location.getAccuracy();    //정확도
-            provider = location.getProvider();   //위치제공자
-
-            tv.setText("위치정보 : " + provider + "\n위도 : " + longitude + "\n경도 : " + latitude
-                    + "\n고도 : " + altitude + "\n정확도 : "  + accuracy);
-
-            LatLng now = new LatLng(latitude, longitude);
-            mMap.addMarker(new MarkerOptions().position(now).title("Now GPS"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(now));
-
-            post_gps = new ArrayList<Double>();
-
-            post_gps.add(latitude);
-            post_gps.add(longitude);
-        }
-        public void onProviderDisabled(String provider) {
-            // Disabled시
-            Log.d("test", "onProviderDisabled, provider:" + provider);
-        }
-
-        public void onProviderEnabled(String provider) {
-            // Enabled시
-            Log.d("test", "onProviderEnabled, provider:" + provider);
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            // 변경시
-            Log.d("test", "onStatusChanged, provider:" + provider + ", status:" + status + " ,Bundle:" + extras);
-        }
-    };
-    // End Get GPS Information
-
 }
