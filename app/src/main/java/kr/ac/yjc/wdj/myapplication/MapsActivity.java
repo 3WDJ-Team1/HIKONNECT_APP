@@ -1,17 +1,28 @@
 package kr.ac.yjc.wdj.myapplication;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,13 +32,22 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    final int REQ_CODE_SELECT_IMAGE=100;
 
+
+
+
+    Button buttons;
+    LinearLayout linearLayout;
     TextView tv;
     ToggleButton tb;
     Button info_intent;
@@ -50,6 +70,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get GPS Information
         tv = (TextView)findViewById(R.id.textView2);
         tv.setText("미수신중");
+        linearLayout = (LinearLayout)findViewById(R.id.imagelayout);
+        buttons = (Button)findViewById(R.id.okuru);
+        buttons.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                linearLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
+
+
 
         tb = (ToggleButton)findViewById(R.id.toggle1);
         info_intent = (Button)findViewById(R.id.info_intent);
@@ -81,15 +113,77 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         info_intent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+                AlertDialog.Builder ad = new AlertDialog.Builder(MapsActivity.this);
+
+                final EditText name = new EditText(MapsActivity.this);
+                final ImageView imageView = new ImageView(MapsActivity.this);
+                ad.setView(imageView);
+                linearLayout.setVisibility(View.INVISIBLE);
+
+
+
+
+                ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                ad.setNeutralButton("사진 등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                        intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                ad.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                ad.show();
+                /*try {
                     Intent intent = new Intent(getApplicationContext(),PostGPSInfo.class);
                     intent.putExtra("get_gps",post_gps);
                     startActivity(intent);
                 }catch (SecurityException ex) {
-                }
+                }*/
             }
         });
     }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Toast.makeText(getBaseContext(), "resultCode : "+resultCode,Toast.LENGTH_SHORT).show();
+        if(requestCode == REQ_CODE_SELECT_IMAGE)
+        {
+            if(resultCode== Activity.RESULT_OK)
+            {
+                try {
+                    //Uri에서 이미지 이름을 얻어온다.
+                    //String name_Str = getImageNameToUri(data.getData());
+                    //이미지 데이터를 비트맵으로 받아온다.
+                    Bitmap image_bitmap 	= MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    ImageView image = (ImageView)findViewById(R.id.imageView1);
+                    //배치해놓은 ImageView에 set
+                    image.setImageBitmap(image_bitmap);
+
+                }
+                catch (FileNotFoundException e) { 		e.printStackTrace(); 			}
+                catch (IOException e)                 {		e.printStackTrace(); 			}
+                catch (Exception e)		         {             e.printStackTrace();			}
+            }
+        }
+    }
+
+
+
 
 
     /**
