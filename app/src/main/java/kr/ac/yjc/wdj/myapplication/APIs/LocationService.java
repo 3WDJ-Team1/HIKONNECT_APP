@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import kr.ac.yjc.wdj.myapplication.models.Conf;
+import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
+
 /**
  * Created by Kwon on 3/26/2018.
  */
 
-public class LocationService implements LocationListener{
+public class LocationService{
 
     private final String TAG = "LocationService";
 
@@ -33,7 +36,7 @@ public class LocationService implements LocationListener{
         this.context = context;
     }
 
-    public void getLocation() {
+    public void getMyLocation(LocationListener locationListener) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -48,32 +51,39 @@ public class LocationService implements LocationListener{
                 LocationManager.GPS_PROVIDER,
                 MIN_TIME_BW_UPDATES,
                 MIN_DISTANCE_CHANGE_FOR_UPDATE,
-                this
+                locationListener
         );
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if (location != null) {
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
+    public void sendMyLocation() {
 
-            Log.d(TAG, "lat: " + lat + "lng: " + lng);
-        }
-    }
+        getMyLocation(new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if (location != null) {
+                    double lat = location.getLatitude();
+                    double lng = location.getLongitude();
 
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
+                    String url = Conf.HTTP_ADDR +
+                    HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask()
+                }
+            }
 
-    }
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
 
-    @Override
-    public void onProviderEnabled(String s) {
+            }
 
-    }
+            @Override
+            public void onProviderEnabled(String s) {
 
-    @Override
-    public void onProviderDisabled(String s) {
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
 
     }
 }

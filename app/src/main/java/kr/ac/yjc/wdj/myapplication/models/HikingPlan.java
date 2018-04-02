@@ -22,57 +22,29 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.NetworkTask;
 
 public class HikingPlan {
 
-    public HttpRequestConnection httpReqConn = null;
+    private static final String TAG = "HikingPlan";
+    public static class NNetworkTask extends NetworkTask {
 
-    public HikingPlan() {
-        this.httpReqConn = new HttpRequestConnection();
-    }
+        private String url = Conf.HTTP_ADDR + "/paths/438001301/0";
+        private GoogleMap map;
 
-    public static class NetworkTask extends AsyncTask<Void, Void, String> {
-        private final String TAG = "NetworkTask";
-
-        private String          url;
-        private ContentValues   values;
-        private GoogleMap       map;
-
-        public NetworkTask(String url, ContentValues values) {
-            this.url    = url;
-            this.values = values;
-        }
-        public NetworkTask(String url, ContentValues values, GoogleMap map) {
-            this.url    = url;
-            this.values = values;
-            this.map    = map;
+        public NNetworkTask(String url, ContentValues values, GoogleMap map) {
+            super(url, values);
+            this.map = map;
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-
-            String result; // 요청 결과를 저장할 변수.
-            HttpRequestConnection httpRequestConnection = new HttpRequestConnection();
-            result = httpRequestConnection.request(url, values);
-
-            return result;
+        protected String doInBackground(Void... voids) {
+            return HttpRequestConnection.getRequest(url);
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            Log.d(TAG, s);
-            if (map != null) {
-                setPolyLineOnGoogleMap(s);
-            }
+        protected void onPostExecute(String resData) {
+            setPolyLineOnGoogleMap(resData);
         }
 
         /**

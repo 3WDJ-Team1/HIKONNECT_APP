@@ -30,4 +30,9 @@ public class HikingMemberListActivity extends Activity {
         adapter.addMembers(ContextCompat.getDrawable(this, R.drawable.common_google_signin_btn_icon_light_focused), "KSE", 0.15, 0.26, true);
         adapter.addMembers(ContextCompat.getDrawable(this, R.drawable.common_google_signin_btn_icon_light_focused), "KSE", 0.15, 0.26, true);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

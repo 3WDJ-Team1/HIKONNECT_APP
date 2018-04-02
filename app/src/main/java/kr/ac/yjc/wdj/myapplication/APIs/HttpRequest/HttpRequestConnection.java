@@ -1,14 +1,21 @@
 package kr.ac.yjc.wdj.myapplication.APIs.HttpRequest;
 
 import android.content.ContentValues;
+import android.net.UrlQuerySanitizer;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Map;
 
@@ -18,45 +25,85 @@ import java.util.Map;
 
 public class HttpRequestConnection {
 
-    public String request(String _url, ContentValues _params) {
+    public static String postRequest(String _url, ContentValues _params) {
+
+        URL urlConn = null;
+        HttpURLConnection httpConn = null;
+        BufferedReader reader = null;
+
+        try{
+            urlConn = new URL(_url);
+
+            //HttpURLConnection 참조 변수.
+            httpConn = (HttpURLConnection)urlConn.openConnection();
+
+            // req 바디에 붙여 보낼 파라미터
+            JSONObject json = new JSONObject();
+
+            if (_params != null) {
+                String key;
+                String value;
+
+                for(Map.Entry<String, Object> parameter : _params.valueSet()) {
+                    key     = parameter.getKey();
+                    value   = parameter.getValue().toString();
+
+                    json.accumulate(key, value);
+                }
+            }
+
+            httpConn.setRequestMethod("POST");
+            httpConn.setRequestProperty("Accept", "application/json");
+            httpConn.setRequestProperty("Content-type", "application/json");
+
+            httpConn.setDoOutput(true);
+            httpConn.setDoInput(true);
+
+            httpConn.connect();
+
+            OutputStream os = httpConn.getOutputStream();
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
+
+            writer.write(json.toString());
+            writer.flush();
+            writer.close();
+
+            InputStream is = httpConn.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(is));
+
+            StringBuffer buffer = new StringBuffer();
+            String line = "";
+
+            while((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+
+            return buffer.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if(httpConn != null)
+                httpConn.disconnect();
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static String getRequest(String _url) {
 
         // HttpURLConnection 참조 변수.
         HttpURLConnection urlConn = null;
         // URL 뒤에 붙여서 보낼 파라미터.
         StringBuffer sbParams = new StringBuffer();
-
-
-        /**
-         * 1. StringBuffer에 파라미터 연결
-         */
-        // 보낼 데이터가 없으면 파라미터를 버린다.
-        if (_params == null)
-            sbParams.append("");
-        // 보낼 데이터가 있으면 파라미터를 채운다.
-        else {
-            // 파라미터가 2개 이상이면 파라미터 연결에 &가 필요하므로 스위칭할 변수 생성.
-            boolean isAnd = false;
-            // 파라미터 키와 값.
-            String key;
-            String value;
-
-            for(Map.Entry<String, Object> parameter : _params.valueSet()) {
-                key     = parameter.getKey();
-                value   = parameter.getValue().toString();
-
-                // 파라미터가 두개 이상일때, 파라미터 사이에 &를 붙인다.
-                if (isAnd)
-                    sbParams.append("/");
-
-                sbParams.append(key).append("=").append(value);
-
-                // 파라미터가 2개 이상이면 isAnd를 true로 바꾸고 다음 루프부터 &를 붙인다.
-                if (isAnd)
-                    if (_params.size() >= 2)
-                        isAnd = true;
-            }
-        }
-
 
         /**
          * 2. HttpURLConnection을 통해 web의 데이터를 가져온다.
@@ -68,17 +115,10 @@ public class HttpRequestConnection {
             // [2-1] urlConn 설정
             urlConn.setRequestMethod("GET"); // URL 요청에 대한 메소드 설정
             urlConn.setDoInput(true);
-//            urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
-//            urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;cahrset=UTF-8");
+            urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
 
             // [2-2] parameter 전달 및 데이터 읽어오기.
             String strParams = sbParams.toString(); // sbParams에 정리한 파라미터들을 스트링으로 저장 예) id=id1&pw=123;
-
-            // POST 전송 시 파라미터를 url에 합침.
-//            OutputStream os = urlConn.getOutputStream();
-//            os.write(strParams.getBytes("UTF-8")); // 출력 스트림에 출력.
-//            os.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행
-//            os.close(); // 출력 스트림을 닫고 모든 시스템 자원을 해제.
 
             // [2-3] 연결 요청 확인
             // 실패 시 null을 리턴하고 메서드를 종료.

@@ -23,6 +23,8 @@ import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
 import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiP2pBroadCastReceiver;
 import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
 import kr.ac.yjc.wdj.myapplication.models.Conf;
+
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -97,7 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         lService = new LocationService(this);
 
         // 데이터 서버에서 등산 경로를 받아오는 구문
-        // HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(DATA_SERVER_URL, null);
+        // HikingPlan.HikingPlanNetworkTask networkTask = new HikingPlan.HikingPlanNetworkTask(DATA_SERVER_URL, null);
         // networkTask.execute();
     }
 
@@ -127,6 +129,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // 와이파이 다이렉트 연결을 위해 연결 가능한 디바이스들을 검색.
         mWDController.discoverPeers(mChannel);
+
+        lService.sendMyLocation();
     }
 
     @Override
@@ -164,7 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         String url = Conf.HTTP_ADDR + "/paths/438001301/1";
 
-        HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(url, null, mMap);
+        HikingPlan.NNetworkTask networkTask = new HikingPlan.NNetworkTask(url, null, mMap);
         networkTask.execute();
     }
 }
