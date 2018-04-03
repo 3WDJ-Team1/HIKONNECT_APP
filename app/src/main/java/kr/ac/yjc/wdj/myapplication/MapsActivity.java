@@ -80,6 +80,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 lng = location.getLongitude();
                                 lat = location.getLatitude();
                                 tv.setText("위도 : " + lat + "\n경도 : " + lng);
+                                LatLng nl = new LatLng(lat, lng);
+                                mMap.addMarker(new MarkerOptions().position(nl).title("Now Locate"));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
+                                mMap.setMaxZoomPreference(mMap.getMaxZoomLevel());
                             }
 
                             @Override
