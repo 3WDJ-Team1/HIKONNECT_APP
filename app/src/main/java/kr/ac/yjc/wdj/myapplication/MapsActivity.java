@@ -17,8 +17,10 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
+
+import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
+import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
+import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiP2pBroadCastReceiver;
 import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
 import kr.ac.yjc.wdj.myapplication.models.Conf;
 import android.widget.Toast;
@@ -33,12 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Map;
 
-import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiDirectBroadCastReceiver;
 import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiP2pController;
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
-import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
-import kr.ac.yjc.wdj.myapplication.models.Conf;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private final String TAG = "MapsActivity";
@@ -60,6 +57,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // 권한 설정을 위한 변수
     private PermissionManager pManager;
+
+    private LocationService lService;
 
     private static final String DATA_SERVER_URL = "http://hikonnect.ga:3000/paths/438001301/1";
 
@@ -85,15 +84,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mChannel        = mManager.initialize(this, getMainLooper(), null);
 
         // 와이파이 다이렉트를 위한 IntentFilter 초기화
-        mIntentFilter = new IntentFilter();
+        mIntentFilter   = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         // 와이파이 다이렉트 Broadcast Receiver 등록.
-        mReceiver       = new WifiDirectBroadCastReceiver(mManager, mChannel, this);
+        mReceiver       = new WifiP2pBroadCastReceiver(mManager, mChannel, this);
 
+        // GPS 위치 관리자 등록.
+        lService = new LocationService(this);
 
         // 데이터 서버에서 등산 경로를 받아오는 구문
         // HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(DATA_SERVER_URL, null);

@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.APIs.Transfer;
+package kr.ac.yjc.wdj.myapplication.APIs.FileTransfer;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,19 +6,18 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class FileServerAsyncTask extends AsyncTask {
+public class FTServerAsyncTask extends AsyncTask {
 
-    private final String TAG = "FileServerAsyncTask";
+    private final String TAG = "FTServerAsyncTask";
 
     private Context context;
 
-    public FileServerAsyncTask(Context context) {
+    public FTServerAsyncTask(Context context) {
         this.context = context;
     }
 

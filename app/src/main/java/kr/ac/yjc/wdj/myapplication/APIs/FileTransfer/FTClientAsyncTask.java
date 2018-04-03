@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.APIs.Transfer;
+package kr.ac.yjc.wdj.myapplication.APIs.FileTransfer;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,9 +13,9 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class FileClientAsyncTask extends AsyncTask {
+public class FTClientAsyncTask extends AsyncTask {
 
-    private final String TAG = "FileClientAsyncTask";
+    private final String TAG = "FTClientAsyncTask";
 
     private Context context;
 
@@ -29,7 +29,7 @@ public class FileClientAsyncTask extends AsyncTask {
 
     private byte buf[];
 
-    public FileClientAsyncTask(Context context, String host, int port, int len) {
+    public FTClientAsyncTask(Context context, String host, int port, int len) {
         this.context    = context;
         this.host       = host;
         this.port       = port;
