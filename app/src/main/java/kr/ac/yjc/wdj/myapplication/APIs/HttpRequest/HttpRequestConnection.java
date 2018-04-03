@@ -20,12 +20,11 @@ import java.util.Map;
 public class HttpRequestConnection {
 
     public String request(String _url, ContentValues _params) {
-
+        String a = _params.toString();
         // HttpURLConnection 참조 변수.
         HttpURLConnection urlConn = null;
         // URL 뒤에 붙여서 보낼 파라미터.
         StringBuffer sbParams = new StringBuffer();
-
 
         /**
          * 1. StringBuffer에 파라미터 연결
@@ -38,7 +37,7 @@ public class HttpRequestConnection {
             // 보낼 데이터가 있으면 파라미터를 채운다.
         else {
             // 파라미터가 2개 이상이면 파라미터 연결에 &가 필요하므로 스위칭할 변수 생성.
-            Log.v("보낼 데이터",_params.toString());
+            Log.v("보낼 데이터", String.valueOf(_params));
             boolean isAnd = false;
             // 파라미터 키와 값.
             String key;
@@ -68,28 +67,21 @@ public class HttpRequestConnection {
         try{
             URL url = new URL(_url);
             urlConn = (HttpURLConnection) url.openConnection();
-            Log.v("URL","연결댐");
 
             // [2-1] urlConn 설정
-            urlConn.setRequestMethod("GET"); // URL 요청에 대한 메소드 설정
+            urlConn.setRequestMethod("POST"); // URL 요청에 대한 메소드 설정
             urlConn.setDoInput(true);
-            Log.v("urlConn","됐다!");
-//            urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
-//            urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;cahrset=UTF-8");
+            urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
+            urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;cahrset=UTF-8");
 
             // [2-2] parameter 전달 및 데이터 읽어오기.
             String strParams = sbParams.toString(); // sbParams에 정리한 파라미터들을 스트링으로 저장 예) id=id1&pw=123;
-            Log.v("데이터","읽어옴");
 
             // POST 전송 시 파라미터를 url에 합침.
-/*            OutputStream os = urlConn.getOutputStream();
-            Log.v("OutputStream"," 객체 생성");
+            OutputStream os = urlConn.getOutputStream();
             os.write(strParams.getBytes("UTF-8")); // 출력 스트림에 출력.
-            Log.v("OutputStream"," 출력");
             os.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행
-            Log.v("OutputStream"," flush");
             os.close(); // 출력 스트림을 닫고 모든 시스템 자원을 해제.
-            Log.v("OutputStream"," close");*/
 
             // [2-3] 연결 요청 확인
             // 실패 시 null을 리턴하고 메서드를 종료.
@@ -99,7 +91,6 @@ public class HttpRequestConnection {
             // [2-4] 읽어온 결과물 리턴
             // 요청한 URL의 출력물을 BufferReader로 받는다
             BufferedReader reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), "UTF-8"));
-            Log.v("읽어온 결과물 : ",reader.toString());
 
             // 출력물의 라인과 그 합에 대한 변수
             String line;

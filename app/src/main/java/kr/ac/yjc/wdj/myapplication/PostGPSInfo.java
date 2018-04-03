@@ -37,7 +37,6 @@ public class PostGPSInfo extends Activity{
     HttpRequestConnection hrc = new HttpRequestConnection();
     String result;
     Handler handler;
-    ContentValues contentValues = new ContentValues();
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -49,7 +48,10 @@ public class PostGPSInfo extends Activity{
         textView = findViewById(R.id.intent_value);
         Intent intent = getIntent();
         final ArrayList<Double> post_gps = (ArrayList<Double>) intent.getSerializableExtra("get_gps");
-        contentValues.put("post_gps", String.valueOf(post_gps));
+
+        final ContentValues contentValues = new ContentValues();
+        contentValues.put("lat", post_gps.get(0));
+        contentValues.put("lng", post_gps.get(1));
 
         // Save GPS Information
         double latitude = post_gps.get(0);
@@ -63,8 +65,7 @@ public class PostGPSInfo extends Activity{
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        result = hrc.request("http://172.26.2.141/dfdf.php", contentValues);
-                        Log.v("값 : " , hrc.request("http://172.26.2.141/dfdf.php", contentValues));
+                        result = hrc.request("http://192.168.0.7/test.php", contentValues);
                         Message msg = handler.obtainMessage();
                         handler.sendMessage(msg);
                     }
