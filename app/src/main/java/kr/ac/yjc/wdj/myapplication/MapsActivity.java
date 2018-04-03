@@ -37,7 +37,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ToggleButton tb;
     Button info_intent;
     double lng,lat;
-    ArrayList<Double> post_gps;
+    ArrayList<Double> post_gps = new ArrayList<>();
     PermissionManager pManager;
 
 
@@ -77,7 +77,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onLocationChanged(Location location) {
                                 Log.d("Location test",location.toString());
-                                tv.setText("위도 : " + location.getLatitude() + "\n경도 : " + location.getLongitude());
+                                lng = location.getLongitude();
+                                lat = location.getLatitude();
+                                tv.setText("위도 : " + lat + "\n경도 : " + lng);
                             }
 
                             @Override
@@ -97,6 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         });
                     }else{
                         tv.setText("미수신중");
+                        ls.remove();
                     }
                 }catch(SecurityException ex){
                 }
@@ -107,10 +110,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 try {
+                    post_gps.add(lng);
+                    post_gps.add(lat);
                     Intent intent = new Intent(getApplicationContext(),PostGPSInfo.class);
                     intent.putExtra("get_gps",post_gps);
                     startActivity(intent);
                 }catch (SecurityException ex) {
+                    ex.printStackTrace();
                 }
             }
         });

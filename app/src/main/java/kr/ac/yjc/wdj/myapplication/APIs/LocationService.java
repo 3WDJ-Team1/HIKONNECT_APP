@@ -35,6 +35,33 @@ public class LocationService{
 
     private String provider;
 
+    // LocationListener
+    private final LocationListener ls = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location != null) {
+                Log.v("test","onLocationChanged : " + location);
+/*                    String url = Conf.HTTP_ADDR +
+                            HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask();*/
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
+
     public LocationService(Context context) {
         // 위치 관리자 객체를 가져온다.
         this.lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -77,32 +104,11 @@ public class LocationService{
     }
 
     public void sendMyLocation() {
+        getMyLocation(ls);
+    }
 
-        getMyLocation(new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    Log.v("test","onLocationChanged : " + location);
-/*                    String url = Conf.HTTP_ADDR +
-                            HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask();*/
-                }
-            }
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        });
-
+    public void remove() {
+        lm.removeUpdates(ls);
     }
 }
