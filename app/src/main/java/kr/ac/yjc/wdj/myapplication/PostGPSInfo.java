@@ -3,27 +3,15 @@ package kr.ac.yjc.wdj.myapplication;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 
@@ -65,7 +53,7 @@ public class PostGPSInfo extends Activity{
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        result = hrc.request("http://172.26.1.143/dfdf.php", contentValues);
+                        result = hrc.request("http://192.168.0.7/test.php", contentValues);
                         Message msg = handler.obtainMessage();
                         handler.sendMessage(msg);
                     }

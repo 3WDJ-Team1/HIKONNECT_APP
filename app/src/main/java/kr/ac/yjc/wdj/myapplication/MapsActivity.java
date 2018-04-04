@@ -2,12 +2,15 @@ package kr.ac.yjc.wdj.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<Double> post_gps = new ArrayList<>();
     PermissionManager pManager;
     String network;
+    AlertDialog.Builder builder;
 
 
     @Override
@@ -100,8 +104,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
 
                             @Override
+                            // GPS OFF
                             public void onProviderDisabled(String s) {
                                 Log.v("GPS Check","false");
+                                showAlertDialog();
+                                Log.v("show 실행","ㅎㅎ");
                             }
                         });
                     }else{
@@ -147,5 +154,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    public void showAlertDialog() {
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("GPS ON");
+        builder.setMessage("GPS가 켜져있지 않습니다.");
+        builder.create();
+        builder.setPositiveButton("설정",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Settings();
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        startActivityForResult(intent,1);
+                        onRestart();
+                        tv.setText("미수신중");
+                        tb.setChecked(false);
+                    }
+                });
+        builder.setNegativeButton("취소",null);
+        builder.show();
+
+        Log.v("GPS on","나머지 설정");
     }
 }

@@ -77,14 +77,16 @@ public class LocationService{
             return;
         }
 
-        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true) {
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == false) {
+            Log.v("넷워크 켜짐", "ㅎㅎ");
             provider = LocationManager.NETWORK_PROVIDER;
         }
-        if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
+        else if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
+            Log.v("쥐퓌에스 켜짐", "ㅎㅎ");
             provider = LocationManager.GPS_PROVIDER;
         }
         else {
-            Log.v("둘다 없음", "없어ㅏㅠㅠ");
+            Log.v("둘다 없음", "없어ㅠㅠ");
             provider = LocationManager.GPS_PROVIDER;
         }
 
