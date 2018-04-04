@@ -39,6 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double lng,lat;
     ArrayList<Double> post_gps = new ArrayList<>();
     PermissionManager pManager;
+    String network;
 
 
     @Override
@@ -79,7 +80,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 Log.d("Location test",location.toString());
                                 lng = location.getLongitude();
                                 lat = location.getLatitude();
-                                tv.setText("위도 : " + lat + "\n경도 : " + lng);
+                                network = location.getProvider();
+                                tv.setText("위도 : " + lat + "\n경도 : " + lng + "\n네트워크 종류 : " + network);
+
                                 LatLng nl = new LatLng(lat, lng);
                                 mMap.addMarker(new MarkerOptions().position(nl).title("Now Locate"));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));

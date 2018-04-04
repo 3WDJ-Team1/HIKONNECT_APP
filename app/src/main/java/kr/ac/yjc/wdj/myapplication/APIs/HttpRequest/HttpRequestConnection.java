@@ -20,7 +20,6 @@ import java.util.Map;
 public class HttpRequestConnection {
 
     public String request(String _url, ContentValues _params) {
-        String a = _params.toString();
         // HttpURLConnection 참조 변수.
         HttpURLConnection urlConn = null;
         // URL 뒤에 붙여서 보낼 파라미터.
@@ -37,7 +36,6 @@ public class HttpRequestConnection {
             // 보낼 데이터가 있으면 파라미터를 채운다.
         else {
             // 파라미터가 2개 이상이면 파라미터 연결에 &가 필요하므로 스위칭할 변수 생성.
-            Log.v("보낼 데이터", String.valueOf(_params));
             boolean isAnd = false;
             // 파라미터 키와 값.
             String key;
@@ -49,12 +47,12 @@ public class HttpRequestConnection {
 
                 // 파라미터가 두개 이상일때, 파라미터 사이에 &를 붙인다.
                 if (isAnd)
-                    sbParams.append("/");
+                    sbParams.append("&");
 
                 sbParams.append(key).append("=").append(value);
-
+                Log.v("sbParams",sbParams.toString());
                 // 파라미터가 2개 이상이면 isAnd를 true로 바꾸고 다음 루프부터 &를 붙인다.
-                if (isAnd)
+                if (isAnd == false)
                     if (_params.size() >= 2)
                         isAnd = true;
             }
@@ -76,7 +74,7 @@ public class HttpRequestConnection {
 
             // [2-2] parameter 전달 및 데이터 읽어오기.
             String strParams = sbParams.toString(); // sbParams에 정리한 파라미터들을 스트링으로 저장 예) id=id1&pw=123;
-
+            Log.v("strParams", strParams);
             // POST 전송 시 파라미터를 url에 합침.
             OutputStream os = urlConn.getOutputStream();
             os.write(strParams.getBytes("UTF-8")); // 출력 스트림에 출력.

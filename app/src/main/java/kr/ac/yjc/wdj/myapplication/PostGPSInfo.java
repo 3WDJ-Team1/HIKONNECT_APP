@@ -65,7 +65,7 @@ public class PostGPSInfo extends Activity{
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        result = hrc.request("http://192.168.0.7/test.php", contentValues);
+                        result = hrc.request("http://172.26.1.143/dfdf.php", contentValues);
                         Message msg = handler.obtainMessage();
                         handler.sendMessage(msg);
                     }

@@ -9,10 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.security.Provider;
 
 /*import kr.ac.yjc.wdj.myapplication.models.Conf;
 import kr.ac.yjc.wdj.myapplication.models.HikingPlan;*/
@@ -82,11 +78,9 @@ public class LocationService{
         }
 
         if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true) {
-            Log.v("GPS 없음", "없어ㅏ ㅠㅠ");
             provider = LocationManager.NETWORK_PROVIDER;
         }
-        else if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
-            Log.v("네트워크 없음","없어ㅏ ㅠㅠ");
+        if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
             provider = LocationManager.GPS_PROVIDER;
         }
         else {
