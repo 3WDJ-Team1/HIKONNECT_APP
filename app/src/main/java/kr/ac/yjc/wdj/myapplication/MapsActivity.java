@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -36,6 +37,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
+    LinearLayout linearLayout;
     TextView tv;
     ToggleButton tb;
     Button info_intent;
@@ -69,6 +71,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         tb = findViewById(R.id.toggle1);
         info_intent = findViewById(R.id.info_intent);
+        linearLayout = findViewById(R.id.imagelayout);
+
         final LocationService ls = new LocationService(getApplicationContext());
 
         tb.setOnClickListener(new View.OnClickListener() {
@@ -123,15 +127,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         info_intent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    post_gps.add(lng);
-                    post_gps.add(lat);
-                    Intent intent = new Intent(getApplicationContext(),PostGPSInfo.class);
-                    intent.putExtra("get_gps",post_gps);
-                    startActivity(intent);
-                }catch (SecurityException ex) {
-                    ex.printStackTrace();
-                }
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
+                alertDialog.setNeutralButton("사진찍기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                alertDialog.setPositiveButton("사진등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                    }
+                });
+                alertDialog.setNeutralButton("전송", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            post_gps.add(lng);
+                            post_gps.add(lat);
+                            Intent intent = new Intent(getApplicationContext(),PostGPSInfo.class);
+                            intent.putExtra("get_gps",post_gps);
+                            startActivity(intent);
+                        }catch (SecurityException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+                });
+                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
             }
         });
     }
