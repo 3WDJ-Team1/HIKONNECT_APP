@@ -57,18 +57,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM = 1;
 
 
-    ImageView imageView;
-    EditText editText;
-    Button okuru;
-    LinearLayout linearLayout;
-    TextView tv;
-    ToggleButton tb;
-    Button info_intent;
-    double lng,lat;
-    ArrayList<Double> post_gps = new ArrayList<>();
-    PermissionManager pManager;
-    String network;
-    AlertDialog.Builder builder;
+    private ImageView imageView;
+    private EditText editText;
+    private Button okuru;
+    private LinearLayout linearLayout;
+    private TextView tv;
+    private ToggleButton tb;
+    private Button info_intent;
+    private double lng,lat;
+    private ArrayList<Double> post_gps = new ArrayList<>();
+    private PermissionManager pManager;
+    private String network;
+    private AlertDialog.Builder builder;
 
 
     @Override
