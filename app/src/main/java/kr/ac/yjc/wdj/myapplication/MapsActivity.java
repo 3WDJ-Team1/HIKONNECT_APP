@@ -69,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private PermissionManager pManager;
     private String network;
     private AlertDialog.Builder builder;
+    private Button cancel;
 
 
     @Override
@@ -91,6 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get GPS Information
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.edittext);
+        cancel = findViewById(R.id.cancel);
         okuru = findViewById(R.id.okuru);
         tv = findViewById(R.id.textView2);
         tv.setText("미수신중");
@@ -100,6 +102,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         linearLayout = findViewById(R.id.imagelayout);
 
         final LocationService ls = new LocationService(getApplicationContext());
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editText.setText("");
+                imageView.setImageResource(R.color.colorPrimary);
+                linearLayout.setVisibility(View.INVISIBLE);
+            }
+        });
 
         okuru.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,18 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
 
 
-                alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(Intent.ACTION_PICK);
-                        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-                        startActivityForResult(intent, PICK_FROM_ALBUM);
-                        linearLayout.setVisibility(View.VISIBLE);
-
-
-                    }
-                });
-                alertDialog.setNeutralButton("사진 찍기", new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton("사진 찍기", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final PermissionListener permissionListener = new PermissionListener() {
@@ -206,13 +206,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .check();
 
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            if (takePictureIntent.resolveActivity(getPackageManager()) != null)
-                            {
-                                startActivityForResult(takePictureIntent, PICK_FROM_CAMERA);
-                            }
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null)
+                        {
+                            startActivityForResult(takePictureIntent, PICK_FROM_CAMERA);
+                        }
                     }
                 });
-                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+
+                alertDialog.setNeutralButton("사진 등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                        startActivityForResult(intent, PICK_FROM_ALBUM);
+                        linearLayout.setVisibility(View.VISIBLE);
+
+
+                    }
+                });
+
+                alertDialog.setPositiveButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
