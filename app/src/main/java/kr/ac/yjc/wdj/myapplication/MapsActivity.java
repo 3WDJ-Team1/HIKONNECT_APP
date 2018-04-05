@@ -1,15 +1,18 @@
 package kr.ac.yjc.wdj.myapplication;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -24,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,6 +36,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -182,17 +188,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 alertDialog.setNeutralButton("사진 찍기", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        final PermissionListener permissionListener = new PermissionListener() {
+                            @Override
+                            public void onPermissionGranted() {
+                                Toast.makeText(MapsActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                            }
 
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
-                        try {
-                            intent.putExtra("return-data", true);
-                            startActivityForResult(Intent.createChooser(intent,
-                                    "Complete action using"), PICK_FROM_CAMERA);
-                        } catch (ActivityNotFoundException e) {
-                            // Do nothing for now
-                        }
+                            @Override
+                            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                                Toast.makeText(MapsActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        };
+                        TedPermission.with(MapsActivity.this)
+                                .setPermissionListener(permissionListener)
+                                .setDeniedMessage("permission denied")
+                                .setPermissions(Manifest.permission.CAMERA)
+                                .check();
+
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takePictureIntent.resolveActivity(getPackageManager()) != null)
+                            {
+                                startActivityForResult(takePictureIntent, PICK_FROM_CAMERA);
+                            }
                     }
                 });
                 alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -236,17 +253,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     imageView.setImageBitmap(image_bitmap);
 
                 } catch (FileNotFoundException e) {
-
                     // TODO Auto-generated catch block
-
                     e.printStackTrace();
 
                 } catch (IOException e) {
-
                     // TODO Auto-generated catch block
-
                     e.printStackTrace();
-
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -256,30 +268,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             case PICK_FROM_CAMERA:
             {
-                try {
-                    //Uri에서 이미지 이름을 얻어온다.
-                    //String name_Str = getImageNameToUri(data.getData());
-                    //이미지 데이터를 비트맵으로 받아온다.
-                    Bitmap image_bitmap 	= MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-                    //배치해놓은 ImageView에 set
-                    imageView.setImageBitmap(image_bitmap);
-
-                } catch (FileNotFoundException e) {
-
-                    // TODO Auto-generated catch block
-
-                    e.printStackTrace();
-
-                } catch (IOException e) {
-
-                    // TODO Auto-generated catch block
-
-                    e.printStackTrace();
-
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                imageView.setImageBitmap(imageBitmap);
+                linearLayout.setVisibility(View.VISIBLE);
                 break;
             }
             }

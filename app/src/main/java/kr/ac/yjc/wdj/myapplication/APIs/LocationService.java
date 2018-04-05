@@ -77,7 +77,7 @@ public class LocationService{
             return;
         }
 
-        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == false) {
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true) {
             Log.v("넷워크 켜짐", "ㅎㅎ");
             provider = LocationManager.NETWORK_PROVIDER;
         }
