@@ -1,18 +1,15 @@
 package kr.ac.yjc.wdj.myapplication;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -27,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,11 +32,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -57,19 +52,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM = 1;
 
 
-    private ImageView imageView;
-    private EditText editText;
-    private Button okuru;
-    private LinearLayout linearLayout;
-    private TextView tv;
-    private ToggleButton tb;
-    private Button info_intent;
-    private double lng,lat;
-    private ArrayList<Double> post_gps = new ArrayList<>();
-    private PermissionManager pManager;
-    private String network;
-    private AlertDialog.Builder builder;
-    private Button cancel;
+    ImageView imageView;
+    EditText editText;
+    Button okuru;
+    LinearLayout linearLayout;
+    TextView tv;
+    ToggleButton tb;
+    Button info_intent;
+    double lng,lat;
+    ArrayList<Double> post_gps = new ArrayList<>();
+    PermissionManager pManager;
+    String network;
+    AlertDialog.Builder builder;
+    Bitmap image_bitmap;
 
 
     @Override
@@ -92,7 +87,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get GPS Information
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.edittext);
-        cancel = findViewById(R.id.cancel);
         okuru = findViewById(R.id.okuru);
         tv = findViewById(R.id.textView2);
         tv.setText("미수신중");
@@ -102,15 +96,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         linearLayout = findViewById(R.id.imagelayout);
 
         final LocationService ls = new LocationService(getApplicationContext());
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editText.setText("");
-                imageView.setImageResource(R.color.colorPrimary);
-                linearLayout.setVisibility(View.INVISIBLE);
-            }
-        });
 
         okuru.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +152,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             public void onProviderDisabled(String s) {
                                 Log.v("GPS Check","false");
                                 showAlertDialog();
-                                Log.v("show 실행","ㅎㅎ");
                             }
                         });
                     }else{
@@ -185,47 +169,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
 
 
-                alertDialog.setNegativeButton("사진 찍기", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        final PermissionListener permissionListener = new PermissionListener() {
-                            @Override
-                            public void onPermissionGranted() {
-                                Toast.makeText(MapsActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                                Toast.makeText(MapsActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        };
-                        TedPermission.with(MapsActivity.this)
-                                .setPermissionListener(permissionListener)
-                                .setDeniedMessage("permission denied")
-                                .setPermissions(Manifest.permission.CAMERA)
-                                .check();
-
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if (takePictureIntent.resolveActivity(getPackageManager()) != null)
-                        {
-                            startActivityForResult(takePictureIntent, PICK_FROM_CAMERA);
-                        }
-                    }
-                });
-
-                alertDialog.setNeutralButton("사진 등록", new DialogInterface.OnClickListener() {
+                alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(Intent.ACTION_PICK);
                         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
                         startActivityForResult(intent, PICK_FROM_ALBUM);
                         linearLayout.setVisibility(View.VISIBLE);
-
-
                     }
                 });
+                alertDialog.setNeutralButton("사진 찍기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                alertDialog.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
+                        try {
+                            intent.putExtra("return-data", true);
+                            startActivityForResult(Intent.createChooser(intent,
+                                    "Complete action using"), PICK_FROM_CAMERA);
+                        } catch (ActivityNotFoundException e) {
+                            // Do nothing for now
+                        }
+                    }
+                });
+                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -236,16 +205,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -261,17 +220,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //Uri에서 이미지 이름을 얻어온다.
                     //String name_Str = getImageNameToUri(data.getData());
                     //이미지 데이터를 비트맵으로 받아온다.
-                    Bitmap image_bitmap 	= MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
+                    Log.v("이미지",imageView.toString());
 
                 } catch (FileNotFoundException e) {
+
                     // TODO Auto-generated catch block
+
                     e.printStackTrace();
 
                 } catch (IOException e) {
+
                     // TODO Auto-generated catch block
+
                     e.printStackTrace();
+
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -281,10 +246,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             case PICK_FROM_CAMERA:
             {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                imageView.setImageBitmap(imageBitmap);
-                linearLayout.setVisibility(View.VISIBLE);
+                try {
+                    //Uri에서 이미지 이름을 얻어온다.
+                    //String name_Str = getImageNameToUri(data.getData());
+                    //이미지 데이터를 비트맵으로 받아온다.
+                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    //배치해놓은 ImageView에 set
+                    imageView.setImageBitmap(image_bitmap);
+                    saveBitmaptoJpeg(image_bitmap,"Location_Memo","");
+                } catch (FileNotFoundException e) {
+
+                    // TODO Auto-generated catch block
+
+                    e.printStackTrace();
+
+                } catch (IOException e) {
+
+                    // TODO Auto-generated catch block
+
+                    e.printStackTrace();
+
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
                 break;
             }
             }
@@ -322,5 +307,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.show();
 
         Log.v("GPS on","나머지 설정");
+    }
+
+    // Bitmap Image change to Jpeg Image
+    public static void saveBitmaptoJpeg(Bitmap bitmap,String folder, String name){
+        String ex_storage =Environment.getExternalStorageDirectory().getAbsolutePath();
+        // Get Absolute Path in External Sdcard
+        String foler_name = "/"+folder+"/";
+        String file_name = name+".jpg";
+        String string_path = ex_storage+foler_name;
+
+        File file_path;
+        try{
+            file_path = new File(string_path);
+            if(!file_path.isDirectory()){
+                file_path.mkdirs();
+            }
+            FileOutputStream out = new FileOutputStream(string_path+file_name);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+
+        }catch(FileNotFoundException exception){
+            Log.e("FileNotFoundException", exception.getMessage());
+        }catch(IOException exception){
+            Log.e("IOException", exception.getMessage());
+        }
     }
 }
