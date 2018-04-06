@@ -44,7 +44,7 @@
             android:id="@+id/lm_reg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_bookmark_black_24dp" />
+             />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,7 +60,7 @@
             android:layout_height="200dp"
             android:id="@+id/imageView1"/>
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:id="@+id/content"/>
         <LinearLayout
@@ -68,12 +68,12 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:text="전송"
                 android:id="@+id/post_btn"/>
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:text="취소"
                 android:id="@+id/cancel"/>
