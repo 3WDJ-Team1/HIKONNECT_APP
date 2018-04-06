@@ -70,16 +70,20 @@ public class HttpRequestConnection {
             urlConn.setRequestMethod("POST"); // URL 요청에 대한 메소드 설정
             urlConn.setDoInput(true);
             urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
-            urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;cahrset=UTF-8");
+            urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;charset=UTF-8");
 
             // [2-2] parameter 전달 및 데이터 읽어오기.
             String strParams = sbParams.toString(); // sbParams에 정리한 파라미터들을 스트링으로 저장 예) id=id1&pw=123;
             Log.v("strParams", strParams);
             // POST 전송 시 파라미터를 url에 합침.
             OutputStream os = urlConn.getOutputStream();
+            Log.v("OS","생성");
             os.write(strParams.getBytes("UTF-8")); // 출력 스트림에 출력.
+            Log.v("os","작성");
             os.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행
+            Log.v("os","플러시");
             os.close(); // 출력 스트림을 닫고 모든 시스템 자원을 해제.
+            Log.v("os","클로즈");
 
             // [2-3] 연결 요청 확인
             // 실패 시 null을 리턴하고 메서드를 종료.
@@ -97,8 +101,9 @@ public class HttpRequestConnection {
             // 라인을 받아와 합친다.
             while ((line = reader.readLine()) != null) {
                 page += line;
-            }
 
+            }
+            Log.v("받은거",page);
             return page;
 
         } catch (MalformedURLException e) { // for URL
