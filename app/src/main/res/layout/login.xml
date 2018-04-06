@@ -13,6 +13,11 @@
         android:layout_height="wrap_content"
         android:hint="password"
         android:id="@+id/pwtext"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv"
+        android:text="돼라~"/>
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/login"
         android:layout_width="match_parent"
