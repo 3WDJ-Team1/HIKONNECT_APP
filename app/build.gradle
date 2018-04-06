@@ -27,4 +27,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'gun0912.ted:tedpermission:2.1.1'
     compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
 }

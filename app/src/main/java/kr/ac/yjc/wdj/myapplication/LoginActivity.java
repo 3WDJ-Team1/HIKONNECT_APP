@@ -8,13 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.dd.processbutton.ProcessButton;
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.google.android.gms.tasks.OnCompleteListener;
 
 /**
  * Created by jungyu on 2018-04-05.
  */
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity  {
     EditText id;
     EditText pw;
     ButtonRectangle login;
