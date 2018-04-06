@@ -91,7 +91,7 @@ public class HikingMemberListAdapter extends BaseAdapter {
     }
 
     /**
-     * @param makeChecked
+     * @param makeChecked   체크 값 true/false
      */
     public void checkAll(Boolean makeChecked) {
         for (HikingMemberListBean member : hikingMemberList) {
@@ -100,7 +100,7 @@ public class HikingMemberListAdapter extends BaseAdapter {
     }
 
     /**
-     * @param memberName
+     * @param memberName    멤버 이름을 받아와 해당 멤버 검색
      */
     public void searchMember(String memberName) {
         ArrayList<HikingMemberListBean> tmpMemberList = new ArrayList<>();
@@ -111,6 +111,7 @@ public class HikingMemberListAdapter extends BaseAdapter {
         hikingMemberList = tmpMemberList;
     }
 
+    // 멤버 리스트 초기화
     public void initMemberList() {
 
     }
