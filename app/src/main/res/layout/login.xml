@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv"
-        android:text="돼라~"/>
+        android:text="돼라dd~"/>
     <com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/login"
         android:layout_width="match_parent"
