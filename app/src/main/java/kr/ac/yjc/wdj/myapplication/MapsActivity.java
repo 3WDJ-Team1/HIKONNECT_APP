@@ -2,15 +2,19 @@ package kr.ac.yjc.wdj.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
@@ -33,14 +37,17 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
 
+import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
 import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
 
@@ -53,19 +60,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     ImageView imageView;
-    EditText editText;
-    Button okuru;
+    EditText content;
+    Button lm_reg,post_btn;
     LinearLayout linearLayout;
     TextView tv;
     ToggleButton tb;
-    Button info_intent;
     double lng,lat;
-    ArrayList<Double> post_gps = new ArrayList<>();
+    Intent intent;
+    ContentValues contentValues = new ContentValues();
     PermissionManager pManager;
     String network;
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
-
+    HttpRequestConnection hrc = new HttpRequestConnection();
+    String result,image_path = "";
+    Handler handler;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,31 +96,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get GPS Information
         imageView = findViewById(R.id.imageView1);
-        editText = findViewById(R.id.edittext);
-        okuru = findViewById(R.id.okuru);
+        content = findViewById(R.id.content);
+        post_btn = findViewById(R.id.post_btn);
         tv = findViewById(R.id.textView2);
         tv.setText("미수신중");
 
         tb = findViewById(R.id.toggle1);
-        info_intent = findViewById(R.id.info_intent);
+        lm_reg = findViewById(R.id.lm_reg);
         linearLayout = findViewById(R.id.imagelayout);
 
         final LocationService ls = new LocationService(getApplicationContext());
 
-        okuru.setOnClickListener(new View.OnClickListener() {
+        post_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    post_gps.add(lng);
-                    post_gps.add(lat);
-                    Intent intent = new Intent(getApplicationContext(),PostGPSInfo.class);
-                    intent.putExtra("get_gps",post_gps);
-                    startActivity(intent);
+                    contentValues.put("lat",lat);
+                    contentValues.put("lng",lng);
+                    contentValues.put("image_path",image_path);
+                    contentValues.put("content",content.getText().toString());
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            result = hrc.request("http://172.26.2.249:8000/api/test", contentValues);
+                            Message msg = handler.obtainMessage();
+                            handler.sendMessage(msg);
+                        }
+                    }).start();
+                    handler = new Handler() {
+                        public void handleMessage(Message msg) {
+                            tv.setText(result);
+                        }
+                    };
                 }catch (SecurityException ex) {
                     ex.printStackTrace();
                 }
                 linearLayout.setVisibility(View.INVISIBLE);
-                editText.setText("");
+                content.setText("");
                 imageView.setImageResource(R.color.colorPrimary);
             }
         });
@@ -121,7 +143,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 try{
                     if(tb.isChecked()){
                         tv.setText("수신중..");
-                        Log.v("돼라","ㅁㄴㅇㅁㄴㅇㅁㄴㅇ");
                         ls.getMyLocation(new LocationListener() {
                             @Override
                             public void onLocationChanged(Location location) {
@@ -163,16 +184,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        info_intent.setOnClickListener(new View.OnClickListener() {
+        lm_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
-
-
                 alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent = new Intent(Intent.ACTION_PICK);
                         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
                         startActivityForResult(intent, PICK_FROM_ALBUM);
                         linearLayout.setVisibility(View.VISIBLE);
@@ -182,7 +201,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT,
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
                         try {
@@ -217,13 +236,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_ALBUM:
             {
                 try {
-                    //Uri에서 이미지 이름을 얻어온다.
-                    //String name_Str = getImageNameToUri(data.getData());
+                    //Get Image_path
+                    uri = data.getData();
+                    image_path = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
-                    Log.v("이미지",imageView.toString());
 
                 } catch (FileNotFoundException e) {
 
@@ -247,13 +266,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_CAMERA:
             {
                 try {
-                    //Uri에서 이미지 이름을 얻어온다.
-                    //String name_Str = getImageNameToUri(data.getData());
+                    //Get Image_path
+                    uri = data.getData();
+                    image_path = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
-                    saveBitmaptoJpeg(image_bitmap,"Location_Memo","");
+
                 } catch (FileNotFoundException e) {
 
                     // TODO Auto-generated catch block
@@ -285,6 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
+    // Set GPS if GPS off
     public void showAlertDialog() {
         builder = new AlertDialog.Builder(this);
         builder.setTitle("GPS ON");
@@ -309,29 +330,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.v("GPS on","나머지 설정");
     }
 
-    // Bitmap Image change to Jpeg Image
-    public static void saveBitmaptoJpeg(Bitmap bitmap,String folder, String name){
-        String ex_storage =Environment.getExternalStorageDirectory().getAbsolutePath();
-        // Get Absolute Path in External Sdcard
-        String foler_name = "/"+folder+"/";
-        String file_name = name+".jpg";
-        String string_path = ex_storage+foler_name;
-
-        File file_path;
-        try{
-            file_path = new File(string_path);
-            if(!file_path.isDirectory()){
-                file_path.mkdirs();
-            }
-            FileOutputStream out = new FileOutputStream(string_path+file_name);
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.close();
-
-        }catch(FileNotFoundException exception){
-            Log.e("FileNotFoundException", exception.getMessage());
-        }catch(IOException exception){
-            Log.e("IOException", exception.getMessage());
+    //Get Image's RealPath
+    private String getRealPathFromURI(Uri contentUri) {
+        int column_index=0;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if(cursor.moveToFirst()){
+            column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         }
+
+        return cursor.getString(column_index);
     }
 }
