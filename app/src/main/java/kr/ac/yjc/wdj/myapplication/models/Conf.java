@@ -9,5 +9,5 @@ package kr.ac.yjc.wdj.myapplication.models;
  */
 
 public class Conf {
-    public static final String  HTTP_ADDR   = "http://hikonnect.ga:3000";
+    public static final String  HTTP_ADDR   = "http://hikonnect.ga";
 }

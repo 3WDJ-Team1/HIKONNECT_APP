@@ -18,17 +18,17 @@ import java.util.Map;
 
 public class HttpRequestConnection {
 
-    public String request(String _url, ContentValues _params) {
+    public static String request(String _url, ContentValues _params) {
 
         // HttpURLConnection 참조 변수.
-        HttpURLConnection urlConn = null;
+        HttpURLConnection   urlConn     = null;
         // URL 뒤에 붙여서 보낼 파라미터.
-        StringBuffer sbParams = new StringBuffer();
+        StringBuffer        sbParams    = new StringBuffer();
 
 
         /**
          * 1. StringBuffer에 파라미터 연결
-         */
+         *//*
         // 보낼 데이터가 없으면 파라미터를 버린다.
         if (_params == null)
             sbParams.append("");
@@ -55,7 +55,7 @@ public class HttpRequestConnection {
                     if (_params.size() >= 2)
                         isAnd = true;
             }
-        }
+        }*/
 
 
         /**
