@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class LoginActivity extends Activity  {
                         switch (result) {
                             case "true":
                                 Intent intent = new Intent(LoginActivity.this,MapsActivity.class);
+                                intent.putExtra("id",id.getText().toString());
                                 startActivity(intent);
                                 break;
                             case "false":

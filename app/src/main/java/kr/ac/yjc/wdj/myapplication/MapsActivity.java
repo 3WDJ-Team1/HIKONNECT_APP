@@ -1,22 +1,19 @@
 package kr.ac.yjc.wdj.myapplication;
 
-import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,14 +30,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Map;
+import android.os.Handler;
+import android.os.Message;
 
+import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
 import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
 
@@ -52,21 +49,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM = 1;
 
 
+    EditText content,editText;
+    Button lm_reg,post_btn,okuru,cancel;
     ImageView imageView;
-    EditText editText;
-    Button okuru;
-    Button cancel;
     LinearLayout linearLayout;
     TextView tv;
     ToggleButton tb;
-    Button info_intent;
     double lng,lat;
-    ArrayList<Double> post_gps = new ArrayList<>();
     PermissionManager pManager;
-    String network;
+    ContentValues contentValues = new ContentValues();
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
-
+    HttpRequestConnection hrc = new HttpRequestConnection();
+    String result,image_path,network,user_id = "";
+    Handler handler;
+    Uri uri;
 
     @Override
     public void onBackPressed() {
@@ -99,14 +96,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         okuru = findViewById(R.id.post_btn);
         cancel = findViewById(R.id.cancel);
         tv = findViewById(R.id.textView2);
+        content = findViewById(R.id.content);
+        post_btn = findViewById(R.id.post_btn);
         tv.setText("미수신중");
 
         tb = findViewById(R.id.toggle1);
-        info_intent = findViewById(R.id.lm_reg);
         linearLayout = findViewById(R.id.imagelayout);
+        lm_reg = findViewById(R.id.lm_reg);
+        Intent intent = getIntent();
+        user_id = intent.getExtras().getString("id");
 
         final LocationService ls = new LocationService(getApplicationContext());
-
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,20 +116,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 linearLayout.setVisibility(View.INVISIBLE);
             }
         });
-        okuru.setOnClickListener(new View.OnClickListener() {
+        post_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    post_gps.add(lng);
-                    post_gps.add(lat);
-                    Intent intent = new Intent(getApplicationContext(),PostGPSInfo.class);
-                    intent.putExtra("get_gps",post_gps);
-                    startActivity(intent);
+                    contentValues.put("user_id",user_id);
+                    contentValues.put("lat",lat);
+                    contentValues.put("lng",lng);
+                    contentValues.put("image_path",image_path);
+                    contentValues.put("content",content.getText().toString());
+                    new Thread(new Runnable() {
+                @Override
+                    public void run() {
+                        result = hrc.request("http://172.26.2.249:8000/api/test", contentValues);
+                        Message msg = handler.obtainMessage();
+                        handler.sendMessage(msg);
+                        }
+                    }).start();
+                    handler = new Handler() {
+                        public void handleMessage(Message msg) {
+                        tv.setText(result);
+                        }
+                    };
                 }catch (SecurityException ex) {
                     ex.printStackTrace();
                 }
                 linearLayout.setVisibility(View.INVISIBLE);
                 editText.setText("");
+                content.setText("");
                 imageView.setImageResource(R.color.colorPrimary);
             }
         });
@@ -182,11 +196,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        info_intent.setOnClickListener(new View.OnClickListener() {
+        lm_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
-
 
                 alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
                     @Override
@@ -237,8 +250,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_ALBUM:
             {
                 try {
-                    //Uri에서 이미지 이름을 얻어온다.
-                    //String name_Str = getImageNameToUri(data.getData());
+                    //Get Image_path
+                    uri = data.getData();
+                    image_path = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
@@ -267,13 +281,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_CAMERA:
             {
                 try {
-                    //Uri에서 이미지 이름을 얻어온다.
-                    //String name_Str = getImageNameToUri(data.getData());
+                    //Get Image_path
+                    uri = data.getData();
+                    image_path = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
-                    saveBitmaptoJpeg(image_bitmap,"Location_Memo","");
                     linearLayout.setVisibility(View.VISIBLE);
                 } catch (FileNotFoundException e) {
 
@@ -330,30 +344,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Log.v("GPS on","나머지 설정");
     }
-
-    // Bitmap Image change to Jpeg Image
-    public static void saveBitmaptoJpeg(Bitmap bitmap,String folder, String name){
-        String ex_storage =Environment.getExternalStorageDirectory().getAbsolutePath();
-        // Get Absolute Path in External Sdcard
-        String foler_name = "/"+folder+"/";
-        String file_name = name+".jpg";
-        String string_path = ex_storage+foler_name;
-
-        File file_path;
-        try{
-            file_path = new File(string_path);
-            if(!file_path.isDirectory()){
-                file_path.mkdirs();
-            }
-            FileOutputStream out = new FileOutputStream(string_path+file_name);
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.close();
-
-        }catch(FileNotFoundException exception){
-            Log.e("FileNotFoundException", exception.getMessage());
-        }catch(IOException exception){
-            Log.e("IOException", exception.getMessage());
+    //Get Image's RealPath
+    private String getRealPathFromURI(Uri contentUri) {
+        int column_index=0;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if(cursor.moveToFirst()){
+            column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         }
+            return cursor.getString(column_index);
     }
 }
