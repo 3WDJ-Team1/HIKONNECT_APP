@@ -6,10 +6,14 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class edit_view extends Fragment {
+    EditText editText0;
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.edit_view, container, false);
+        View view = inflater.inflate(R.layout.edit_view, container, false);
+        editText0 = (EditText)view.findViewById(R.id.editText0);
+        return view;
     }
 }
