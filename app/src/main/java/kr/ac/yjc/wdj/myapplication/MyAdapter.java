@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.myapplication;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,10 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private List<ListViewItem> listItems;
-    private Context context;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<ListViewItem> listItems, Context context) {
+    public MyAdapter(List<ListViewItem> listItems) {
         this.listItems = listItems;
-        this.context = context;
     }
 
     // Create new views (invoked by the layout manager)

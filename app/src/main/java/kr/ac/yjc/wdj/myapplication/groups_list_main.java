@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.app.LauncherActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +40,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
+
 public class groups_list_main extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String     URL_DATA = "https://simplifiedcoding.net/demos/marvel/";
     private RecyclerView            recyclerView;
@@ -48,6 +52,9 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
     private Spinner                 spinner;
     private DatePicker              datePicker;
     private Button                  button;
+    Handler                         handler;
+    String result;
+    HttpRequestConnection   req = new HttpRequestConnection();
 
     int cusor = 1;
     @Override
@@ -110,10 +117,46 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
                 listItems = new ArrayList<>();
+                this.loadRecyclerViewData();
 
-                loadRecyclerViewData();
 
 
+
+    }
+    public void loadRecyclerViewData() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading data...");
+        progressDialog.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                result = req.request("http://172.25.1.167:8000/group/0/10", null);
+                Log.v("df",result);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        }).start();
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    progressDialog.dismiss();
+                    JSONObject jsonObject = new JSONObject(result);
+                    JSONArray array = jsonObject.getJSONArray("groupInformations");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject o = array.getJSONObject(i);
+                        ListViewItem item = new ListViewItem(
+                                o.getString("title")
+                        );
+                        listItems.add(item);
+                    }
+
+                    list_adapter = new MyAdapter(listItems);
+                    recyclerView.setAdapter(list_adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -123,7 +166,7 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
 
     }
 
-    private void loadRecyclerViewData() {
+    private void dodo() {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading data...");
         progressDialog.show();
@@ -146,7 +189,7 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
                                 listItems.add(item);
                             }
 
-                            list_adapter = new MyAdapter(listItems, getApplicationContext());
+                            //list_adapter = new MyAdapter(listItems, getApplicationContext());
                             recyclerView.setAdapter(list_adapter);
 
                         } catch (JSONException e)   {
@@ -164,6 +207,7 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
