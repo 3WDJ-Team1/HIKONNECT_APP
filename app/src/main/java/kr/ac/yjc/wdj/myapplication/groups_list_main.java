@@ -3,9 +3,13 @@ package kr.ac.yjc.wdj.myapplication;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.LauncherActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,12 +24,31 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class groups_list_main extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    LinearLayout        list;
-    LinearLayout        container;
-    Spinner             spinner;
-    DatePicker          datePicker;
-    Button              button;
+    private static final String     URL_DATA = "https://simplifiedcoding.net/demos/marvel/";
+    private RecyclerView            recyclerView;
+    private RecyclerView.Adapter    list_adapter;
+    private List<ListViewItem>      listItems;
+    private LinearLayout            list;
+    private LinearLayout            container;
+    private Spinner                 spinner;
+    private DatePicker              datePicker;
+    private Button                  button;
+
     int cusor = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +62,17 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
         container       = (LinearLayout) findViewById(R.id.container);
         button          = (Button) findViewById(R.id.set);
 
+
+        ////////////////////////////////////////////검색창 프래그먼트 생성/////////////////////////////////////////////
+
+
         FragmentManager fragmentManager=getFragmentManager();
         FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
         edit_view fragment = new edit_view();
+
+        // 실행 시 띄워 줄 프래그먼트 적용
         fragmentTransaction.add(R.id.container, fragment).commit();
+
 
         ////////////////////////////////////////////////////스피너////////////////////////////////////////////////////
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -52,13 +82,13 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        adapter.notifyDataSetChanged();
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
+        // 스피너 array 클릭시 이벤트 발생
         spinner.setOnItemSelectedListener(this);
 
-
+        // 컨테이너 클릭시 TextView 일 시 캘린더 호출
         container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,10 +99,21 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
         });
 
 
-        ////////////////////////////////////////////////////그룹 리스트////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////그룹 리스트//////////////////////////////////////////////////
+
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 inflater.inflate(R.layout.groups_list, list, true);
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        ////////////////////////////////////////////////////RecylerView 채우기//////////////////////////////////////////
+                recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                listItems = new ArrayList<>();
+
+                loadRecyclerViewData();
+
+
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -82,9 +123,49 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
 
     }
 
+    private void loadRecyclerViewData() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading data...");
+        progressDialog.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                URL_DATA,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressDialog.dismiss();
+                        try {
+//                            JSONObject jsonObject = new JSONObject(response);
+//                            JSONArray array = jsonObject.getJSONArray("groupInformations");
+                            JSONArray array = new JSONArray(response);
+                            for(int i = 0; i < array.length(); i++) {
+                                JSONObject o = array.getJSONObject(i);
+                                ListViewItem item = new ListViewItem(
+                                        o.getString("name")
+                                );
+                                listItems.add(item);
+                            }
+
+                            list_adapter = new MyAdapter(listItems, getApplicationContext());
+                            recyclerView.setAdapter(list_adapter);
+
+                        } catch (JSONException e)   {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                    }
+                });
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Toast.makeText(groups_list_main.this, "ddd", Toast.LENGTH_SHORT).show();
     }
 
     public void calendar(int i)  {
