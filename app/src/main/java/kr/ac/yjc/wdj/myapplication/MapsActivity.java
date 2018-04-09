@@ -38,6 +38,10 @@ import java.util.Map;
 import android.os.Handler;
 import android.os.Message;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
 import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
@@ -62,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String result,image_path,network,user_id = "";
+    String result,image_path,network,user_id,nickname,hiking_group = "";
     Handler handler;
     Uri uri;
 
@@ -126,18 +130,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     contentValues.put("image_path",image_path);
                     contentValues.put("content",content.getText().toString());
                     new Thread(new Runnable() {
-                @Override
-                    public void run() {
-                        result = hrc.request("http://172.26.2.249:8000/api/test", contentValues);
-                        Message msg = handler.obtainMessage();
-                        handler.sendMessage(msg);
+                        @Override
+                        public void run() {
+                            result = hrc.request("http://172.26.2.249:8000/api/test", contentValues);
+                            Message msg = handler.obtainMessage();
+                            handler.sendMessage(msg);
                         }
                     }).start();
                     handler = new Handler() {
                         public void handleMessage(Message msg) {
-                        tv.setText(result);
-                        LatLng nl = new LatLng(lat, lng);
-                        mMap.addMarker(new MarkerOptions().position(nl).title("하하하하하").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            tv.setText(result);
+                            LatLng nl = new LatLng(lat, lng);
+                            mMap.addMarker(new MarkerOptions().position(nl).title("하하하하하").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
                     };
                 }catch (SecurityException ex) {

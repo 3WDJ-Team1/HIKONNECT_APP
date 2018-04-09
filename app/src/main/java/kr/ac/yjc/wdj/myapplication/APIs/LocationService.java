@@ -13,7 +13,7 @@ import android.util.Log;
 /*import kr.ac.yjc.wdj.myapplication.models.Conf;
 import kr.ac.yjc.wdj.myapplication.models.HikingPlan;*/
 
-/**
+/**`
  * Created by Kwon on 3/26/2018.
  */
 
