@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -69,6 +71,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String result,image_path,network,user_id,nickname,hiking_group = "";
     Handler handler;
     Uri uri;
+    FloatingActionMenu floatingActionMenu;
+    FloatingActionButton fab1;
+    FloatingActionButton fab2;
 
     @Override
     public void onBackPressed() {
@@ -103,6 +108,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         content = findViewById(R.id.content);
         post_btn = findViewById(R.id.post_btn);
         tv.setText("미수신중");
+        floatingActionMenu = findViewById(R.id.fabmenu);
+        fab1 = findViewById(R.id.fab1);
+        fab2 = findViewById(R.id.fab2);
 
         tb = findViewById(R.id.toggle1);
         linearLayout = findViewById(R.id.imagelayout);
@@ -111,6 +119,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         user_id = intent.getExtras().getString("id");
 
         final LocationService ls = new LocationService(getApplicationContext());
+
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,7 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        lm_reg.setOnClickListener(new View.OnClickListener() {
+        fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);

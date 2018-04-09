@@ -28,4 +28,5 @@ dependencies {
     compile 'gun0912.ted:tedpermission:2.1.1'
     compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
+    compile 'com.github.clans:fab:1.6.4'
 }
