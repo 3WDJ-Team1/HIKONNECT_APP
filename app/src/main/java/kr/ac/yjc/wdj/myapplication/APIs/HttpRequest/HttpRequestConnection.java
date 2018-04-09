@@ -87,8 +87,10 @@ public class HttpRequestConnection {
 
             // [2-3] 연결 요청 확인
             // 실패 시 null을 리턴하고 메서드를 종료.
-            if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK)
+            if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                Log.v("실패", "했다");
                 return null;
+            }
 
             // [2-4] 읽어온 결과물 리턴
             // 요청한 URL의 출력물을 BufferReader로 받는다

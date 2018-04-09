@@ -27,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -50,7 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     EditText content,editText;
-    Button lm_reg,post_btn,okuru,cancel;
+    Button lm_reg,post_btn,cancel;
     ImageView imageView;
     LinearLayout linearLayout;
     TextView tv;
@@ -93,7 +94,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get GPS Information
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.content);
-        okuru = findViewById(R.id.post_btn);
         cancel = findViewById(R.id.cancel);
         tv = findViewById(R.id.textView2);
         content = findViewById(R.id.content);
@@ -136,6 +136,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     handler = new Handler() {
                         public void handleMessage(Message msg) {
                         tv.setText(result);
+                        LatLng nl = new LatLng(lat, lng);
+                        mMap.addMarker(new MarkerOptions().position(nl).title("하하하하하").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
                     };
                 }catch (SecurityException ex) {
@@ -165,9 +167,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 tv.setText("위도 : " + lat + "\n경도 : " + lng + "\n네트워크 종류 : " + network);
 
                                 LatLng nl = new LatLng(lat, lng);
-                                mMap.addMarker(new MarkerOptions().position(nl).title("Now Locate"));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 13));
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 15));
                             }
 
                             @Override
@@ -258,19 +259,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
                     Log.v("이미지",imageView.toString());
-
                 } catch (FileNotFoundException e) {
-
                     // TODO Auto-generated catch block
-
                     e.printStackTrace();
-
                 } catch (IOException e) {
-
                     // TODO Auto-generated catch block
-
                     e.printStackTrace();
-
                 } catch (Exception e)
                 {
                     e.printStackTrace();
@@ -290,17 +284,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     imageView.setImageBitmap(image_bitmap);
                     linearLayout.setVisibility(View.VISIBLE);
                 } catch (FileNotFoundException e) {
-
                     // TODO Auto-generated catch block
-
                     e.printStackTrace();
-
                 } catch (IOException e) {
-
                     // TODO Auto-generated catch block
-
                     e.printStackTrace();
-
                 } catch (Exception e)
                 {
                     e.printStackTrace();
