@@ -60,6 +60,7 @@ public class LoginActivity extends Activity  {
                                 Intent intent = new Intent(LoginActivity.this,MapsActivity.class);
                                 intent.putExtra("id",id.getText().toString());
                                 startActivity(intent);
+                                finish();
                                 break;
                             case "false":
                                 tv.setText("존재하지 않는 아이디이거나 비밀번호가 다릅니다.d");

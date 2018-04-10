@@ -55,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
 
-
+    BackPressClosHandler backPressClosHandler;
     EditText content,editText;
     Button lm_reg,post_btn,cancel;
     ImageView imageView;
@@ -74,13 +74,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
+    EditText title;
 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        imageView.setImageResource(R.color.colorPrimary);
-        editText.setText("");
-        linearLayout.setVisibility(View.INVISIBLE);
+        if (linearLayout.getVisibility() == View.VISIBLE) {
+            imageView.setImageResource(R.color.colorPrimary);
+            editText.setText("");
+            linearLayout.setVisibility(View.INVISIBLE);
+        }
+        else {
+            backPressClosHandler.onBackPressed();
+        }
     }
 
     @Override
@@ -101,6 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         // Get GPS Information
+        backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.content);
         cancel = findViewById(R.id.cancel);
@@ -111,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floatingActionMenu = findViewById(R.id.fabmenu);
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);
-
+        title = findViewById(R.id.title);
         tb = findViewById(R.id.toggle1);
         linearLayout = findViewById(R.id.imagelayout);
         lm_reg = findViewById(R.id.lm_reg);
@@ -123,7 +130,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                floatingActionMenu.close(true);
+                AlertDialog.Builder ad = new AlertDialog.Builder(MapsActivity.this);
 
+                ad.setPositiveButton("글쓰기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        imageView.setVisibility(View.INVISIBLE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+                ad.setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+            ad.show();
             }
         });
 
@@ -219,6 +242,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                floatingActionMenu.close(true);
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
 
                 alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
