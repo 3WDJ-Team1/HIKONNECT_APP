@@ -185,6 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     hiking_group            = jsonObject.getString("hiking_group");
                                     title_st                = jsonObject.getString("title");
                                     content_st              = jsonObject.getString("content");
+                                    nickname                = jsonObject.getString("nickname");
                                 }
                             }catch (Exception e) {
                                 e.printStackTrace();
