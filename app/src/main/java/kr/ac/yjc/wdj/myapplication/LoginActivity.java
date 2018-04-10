@@ -16,6 +16,10 @@ import com.dd.processbutton.ProcessButton;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.android.gms.tasks.OnCompleteListener;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 
 /**
@@ -30,6 +34,7 @@ public class LoginActivity extends Activity  {
     HttpRequestConnection hrc = new HttpRequestConnection();
     String result;
     Handler handler;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +53,7 @@ public class LoginActivity extends Activity  {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.1.240:8000/api/login_app", contentValues);
+                            result = hrc.request("http://172.26.1.31:8000/api/login_app", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -63,7 +68,7 @@ public class LoginActivity extends Activity  {
                                 finish();
                                 break;
                             case "false":
-                                tv.setText("존재하지 않는 아이디이거나 비밀번호가 다릅니다.d");
+                                tv.setText("존재하지 않는 아이디이거나 비밀번호가 다릅니다.");
                         }
                         }
                     };
@@ -73,7 +78,4 @@ public class LoginActivity extends Activity  {
             }
         });
     }
-
-
-
 }
