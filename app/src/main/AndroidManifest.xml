@@ -32,18 +32,13 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity android:name=".wireless.Wireless_main">
+            android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- <service -->
-        <!-- android:name=".notification.NotificationService" -->
-        <!-- android:enabled="true" /> -->
 
 
         <!-- <receiver android:name=".notification.NotificationService" /> -->

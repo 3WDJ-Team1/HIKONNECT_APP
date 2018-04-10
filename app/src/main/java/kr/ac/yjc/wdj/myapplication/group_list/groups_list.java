@@ -1,7 +1,9 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.myapplication.group_list;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import kr.ac.yjc.wdj.myapplication.R;
 
 public class groups_list extends AppCompatActivity {
 
