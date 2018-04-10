@@ -214,6 +214,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 LatLng nl = new LatLng(now_lat, now_lng);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
+                                mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
 
                                 // Get All Location Memo
