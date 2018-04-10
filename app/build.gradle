@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "kr.ac.yjc.wdj.myapplication"
-        minSdkVersion 21
+        applicationId "kr.ac.yjc.wdj.hikonnect"
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -19,16 +19,18 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.7.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compile 'com.flipboard:bottomsheet-core:1.5.3'
-    compile 'com.flipboard:bottomsheet-commons:1.5.3' // optional
+    implementation 'com.flipboard:bottomsheet-core:1.5.3'
+    implementation 'com.flipboard:bottomsheet-commons:1.5.3' // optional
 
 //    // Material Edit Text
 //    compile 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -39,7 +41,7 @@ dependencies {
 //    // Meterial Tab
 //    compile 'it.neokree:MaterialTabs:0.11'
     // Swipe Menu ListView
-    compile 'com.baoyz.swipemenulistview:library:1.3.0'
+    implementation 'com.baoyz.swipemenulistview:library:1.3.0'
 }
 
 

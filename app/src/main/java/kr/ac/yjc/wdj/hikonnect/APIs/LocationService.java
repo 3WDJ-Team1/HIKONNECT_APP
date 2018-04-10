@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.APIs;
+package kr.ac.yjc.wdj.hikonnect.APIs;
 
 import android.Manifest;
 import android.content.Context;
@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import kr.ac.yjc.wdj.myapplication.models.Conf;
-import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
+import kr.ac.yjc.wdj.hikonnect.models.Conf;
+import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;
 
 /**
  * Created by Kwon on 3/26/2018.
@@ -64,8 +64,8 @@ public class LocationService{
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
 
-                    String url = Conf.HTTP_ADDR +
-                    HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask()
+//                    String url = Conf.HTTP_ADDR +
+//                    HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask()
                 }
             }
 

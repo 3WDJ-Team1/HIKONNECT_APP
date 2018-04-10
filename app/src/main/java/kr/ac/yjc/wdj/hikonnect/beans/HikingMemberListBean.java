@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.beans;
+package kr.ac.yjc.wdj.hikonnect.beans;
 
 import android.graphics.drawable.Drawable;
 

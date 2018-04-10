@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.models;
+package kr.ac.yjc.wdj.hikonnect.models;
 
 /**
  * @file        kr.ac.yjc.wdj.myapplication.models.HikingPlan
@@ -11,7 +11,6 @@ package kr.ac.yjc.wdj.myapplication.models;
 import android.content.ContentValues;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -21,19 +20,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
-import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.NetworkTask;
+import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 public class HikingPlan {
 
     private static final String TAG = "HikingPlan";
-    public static class NNetworkTask extends NetworkTask {
+
+    public static class NetworkTask extends AsyncTask<Void, Void, String> {
 
         private String url = Conf.HTTP_ADDR + "/paths/438001301/0";
+
+        private ContentValues values;
+
         private GoogleMap map;
 
-        public NNetworkTask(String url, ContentValues values, GoogleMap map) {
-            super(url, values);
+        public NetworkTask(String url, ContentValues values, GoogleMap map) {
+            this.url = url;
+            this.values = values;
             this.map = map;
         }
 

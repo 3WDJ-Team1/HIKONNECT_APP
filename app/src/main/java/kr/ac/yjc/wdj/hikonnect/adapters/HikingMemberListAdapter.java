@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.adapters;
+package kr.ac.yjc.wdj.hikonnect.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import kr.ac.yjc.wdj.myapplication.R;
-import kr.ac.yjc.wdj.myapplication.beans.HikingMemberListBean;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean;
 
 /**
  * Created by 강성은 on 2018-03-30.

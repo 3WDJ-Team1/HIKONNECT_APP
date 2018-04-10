@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.models;
+package kr.ac.yjc.wdj.hikonnect.models;
 
 /**
  * @file        kr.ac.yjc.wdj.myapplication.models.Conf

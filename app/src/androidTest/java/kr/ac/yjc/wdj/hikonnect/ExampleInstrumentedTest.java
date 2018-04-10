@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

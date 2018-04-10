@@ -8,6 +8,50 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:417810190752:android:65f7532c1fb49d2e",
+        "android_client_info": {
+          "package_name": "kr.ac.yjc.wdj.hikonnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417810190752-h1lpo27vlndiqtv6evoggebq6r3803i7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.ac.yjc.wdj.hikonnect",
+            "certificate_hash": "eb72e50af07616eea977c76e150be72c0f33cf9a"
+          }
+        },
+        {
+          "client_id": "417810190752-45p72honjaa7vbbfg5rb2iksf8e4bf78.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVoKMxoWZUIZ352HcqobAtQCT6pQavNdg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417810190752-45p72honjaa7vbbfg5rb2iksf8e4bf78.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:417810190752:android:d3058299d86de568",
         "android_client_info": {
           "package_name": "kr.ac.yjc.wdj.myapplication"

@@ -1,7 +1,8 @@
-package kr.ac.yjc.wdj.myapplication.APIs.HttpRequest;
+package kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest;
 
 import android.content.ContentValues;
 import android.net.UrlQuerySanitizer;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,12 +28,11 @@ public class HttpRequestConnection {
 
     public static String postRequest(String _url, ContentValues _params) {
 
-        URL urlConn = null;
         HttpURLConnection httpConn = null;
         BufferedReader reader = null;
 
         try{
-            urlConn = new URL(_url);
+            URL urlConn = new URL(_url);
 
             //HttpURLConnection 참조 변수.
             httpConn = (HttpURLConnection)urlConn.openConnection();
@@ -52,17 +52,19 @@ public class HttpRequestConnection {
                 }
             }
 
-            httpConn.setRequestMethod("POST");
+            httpConn.setDefaultUseCaches(false);
             httpConn.setRequestProperty("Accept", "application/json");
             httpConn.setRequestProperty("Content-type", "application/json");
+            httpConn.setRequestMethod("POST");
 
             httpConn.setDoOutput(true);
             httpConn.setDoInput(true);
 
-            httpConn.connect();
+            httpConn.setChunkedStreamingMode(0);
+
+//            httpConn.connect();
 
             OutputStream os = httpConn.getOutputStream();
-
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
 
             writer.write(json.toString());
@@ -139,7 +141,6 @@ public class HttpRequestConnection {
             }
 
             return page;
-
         } catch (MalformedURLException e) { // for URL
             e.printStackTrace();
         } catch (IOException e) { // for openConnection()

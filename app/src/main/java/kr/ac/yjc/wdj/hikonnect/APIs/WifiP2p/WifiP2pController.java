@@ -1,7 +1,9 @@
-package kr.ac.yjc.wdj.myapplication.APIs.WifiP2p;
+package kr.ac.yjc.wdj.hikonnect.APIs.WifiP2p;
 
+import android.companion.WifiDeviceFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;

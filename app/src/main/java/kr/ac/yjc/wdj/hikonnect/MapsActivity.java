@@ -1,28 +1,33 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 /**
  * @file        kr.ac.yjc.wdj.myapplication.MapsActivity.java
  * @author      Sungeun Kang (kasueu0814@gmail.com), Beomsu Kwon (rnjs9957@gmail.com)
  * @since       2018-03-26
  * @brief       The Activity used while hiking
- * @see         kr.ac.yjc.wdj.myapplication.models.HikingPlan
+ * @see         kr.ac.yjc.wdj.hikonnect.models.HikingPlan
  */
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
-import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
-import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiP2pBroadCastReceiver;
-import kr.ac.yjc.wdj.myapplication.models.HikingPlan;
-import kr.ac.yjc.wdj.myapplication.models.Conf;
+import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
+import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.APIs.WifiP2p.WifiP2pBroadCastReceiver;
+import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;
+import kr.ac.yjc.wdj.hikonnect.models.Conf;
 
 import android.util.Log;
 import android.widget.Toast;
@@ -35,9 +40,10 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import kr.ac.yjc.wdj.myapplication.APIs.WifiP2p.WifiP2pController;
+import kr.ac.yjc.wdj.hikonnect.APIs.WifiP2p.WifiP2pController;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private final String TAG = "MapsActivity";
@@ -97,15 +103,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // GPS 위치 관리자 등록.
         lService = new LocationService(this);
-
-        // 데이터 서버에서 등산 경로를 받아오는 구문
-        // HikingPlan.HikingPlanNetworkTask networkTask = new HikingPlan.HikingPlanNetworkTask(DATA_SERVER_URL, null);
-        // networkTask.execute();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PermissionManager.PERMISSIONS_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -168,7 +169,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         String url = Conf.HTTP_ADDR + "/paths/438001301/1";
 
-        HikingPlan.NNetworkTask networkTask = new HikingPlan.NNetworkTask(url, null, mMap);
+        HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(url, null, mMap);
         networkTask.execute();
+
+        AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+//                String url = "http://hikonnect.ga/api";
+                String url = "http://10.0.2.2:8000/api/hi";
+                Log.d("POST", HttpRequestConnection.postRequest(url, null));
+                return null;
+            }
+        };
+        task.execute();
     }
 }

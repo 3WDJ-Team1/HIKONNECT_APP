@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.models;
+package kr.ac.yjc.wdj.hikonnect.models;
 
 /**
  * Created by Kwon on 2/19/2018.

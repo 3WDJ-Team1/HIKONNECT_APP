@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.APIs.WifiP2p;
+package kr.ac.yjc.wdj.hikonnect.APIs.WifiP2p;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -15,17 +15,17 @@ import java.util.ArrayList;
 
 public class WifiP2pBroadCastReceiver extends BroadcastReceiver {
 
-    static private String TAG = "WifiP2pBroadCastReceiver";
+    static protected String TAG = "WifiP2pBroadCastReceiver";
 
-    private WifiP2pManager mManager;
+    protected WifiP2pManager mManager;
 
-    private WifiP2pController mController;
+    protected WifiP2pController mController;
 
-    private Channel mChannel;
+    protected Channel mChannel;
 
-    private Activity mActivity;
+    protected Activity mActivity;
 
-    private ArrayList<WifiP2pDevice> devices;
+    protected ArrayList<WifiP2pDevice> devices;
 
     public WifiP2pBroadCastReceiver(WifiP2pManager manager, Channel channel, Activity activity) {
         super();

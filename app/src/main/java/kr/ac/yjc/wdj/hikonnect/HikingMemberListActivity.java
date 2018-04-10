@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
 
-import kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter;
+import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
 
 /**
  * Created by 강성은 on 2018-03-30.

@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.APIs.FileTransfer;
+package kr.ac.yjc.wdj.hikonnect.APIs.FileTransfer;
 
 import android.content.Context;
 import android.os.AsyncTask;
