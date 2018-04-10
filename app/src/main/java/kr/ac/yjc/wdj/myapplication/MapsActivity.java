@@ -56,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM = 1;
 
     BackPressClosHandler backPressClosHandler;
-    EditText content,editText;
+    EditText content,editText,title;
     Button lm_reg,post_btn,cancel;
     ImageView imageView;
     LinearLayout linearLayout;
@@ -68,13 +68,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String result,image_path,network,user_id,nickname,hiking_group = "";
+    String result,image_path,network,user_id,nickname,hiking_group,title_st,content_st = "";
     Handler handler;
     Uri uri;
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
-    EditText title;
 
     @Override
     public void onBackPressed() {
@@ -165,19 +164,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     contentValues.put("user_id",user_id);
                     contentValues.put("lat",lat);
                     contentValues.put("lng",lng);
-                    contentValues.put("image_path",image_path);
+                    contentValues.put("title",title.getText().toString());
                     contentValues.put("content",content.getText().toString());
+                    contentValues.put("image_path",image_path);
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.2.249:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.1.240:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
                     }).start();
                     handler = new Handler() {
                         public void handleMessage(Message msg) {
-                            tv.setText(result);
+                            try{
+                                JSONArray jsonArray = new JSONArray(result);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject   = jsonArray.getJSONObject(i);
+                                    hiking_group            = jsonObject.getString("hiking_group");
+                                    title_st                = jsonObject.getString("title");
+                                    content_st              = jsonObject.getString("content");
+                                }
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            tv.setText(hiking_group);
                             LatLng nl = new LatLng(lat, lng);
                             mMap.addMarker(new MarkerOptions().position(nl).title("하하하하하").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
@@ -198,7 +210,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 try{
                     if(tb.isChecked()){
                         tv.setText("수신중..");
-                        Log.v("돼라","ㅁㄴㅇㅁㄴㅇㅁㄴㅇ");
                         ls.getMyLocation(new LocationListener() {
                             @Override
                             public void onLocationChanged(Location location) {

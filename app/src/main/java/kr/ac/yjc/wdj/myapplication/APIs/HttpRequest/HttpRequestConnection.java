@@ -50,7 +50,7 @@ public class HttpRequestConnection {
                     sbParams.append("&");
 
                 sbParams.append(key).append("=").append(value);
-                Log.v("sbParams",sbParams.toString());
+                Log.i("sbParams",sbParams.toString());
                 // 파라미터가 2개 이상이면 isAnd를 true로 바꾸고 다음 루프부터 &를 붙인다.
                 if (isAnd == false)
                     if (_params.size() >= 2)
@@ -74,7 +74,7 @@ public class HttpRequestConnection {
 
             // [2-2] parameter 전달 및 데이터 읽어오기.
             String strParams = sbParams.toString(); // sbParams에 정리한 파라미터들을 스트링으로 저장 예) id=id1&pw=123;
-            Log.v("strParams", strParams);
+            Log.i("strParams", strParams);
             // POST 전송 시 파라미터를 url에 합침.
             OutputStream os = urlConn.getOutputStream();
             os.write(strParams.getBytes("UTF-8")); // 출력 스트림에 출력.
@@ -99,7 +99,7 @@ public class HttpRequestConnection {
             while ((line = reader.readLine()) != null) {
                 page += line;
             }
-            Log.v("받은거",page);
+            Log.i("받은거",page);
             return page;
 
         } catch (MalformedURLException e) { // for URL
