@@ -8,7 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -33,13 +33,21 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".groups_list_main">
+        <activity android:name=".wireless.Wireless_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- <service -->
+        <!-- android:name=".notification.NotificationService" -->
+        <!-- android:enabled="true" /> -->
+
+
+        <!-- <receiver android:name=".notification.NotificationService" /> -->
+        <activity android:name=".group_list.groups_list_main"></activity>
     </application>
 
 </manifest>

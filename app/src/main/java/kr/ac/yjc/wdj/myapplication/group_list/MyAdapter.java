@@ -1,14 +1,17 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.myapplication.group_list;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
+
+import kr.ac.yjc.wdj.myapplication.R;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
@@ -32,8 +35,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ListViewItem listItem = listItems.get(position);
+        final ListViewItem listItem = listItems.get(position);
         holder.textViewHead.setText(listItem.getHead());
+
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.v("df", listItem.getHead());
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -50,9 +60,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView textViewHead;
+        public LinearLayout linearLayout;
+        public Button joinButton;
         public ViewHolder(View itemView) {
             super(itemView);
             textViewHead = (TextView)itemView.findViewById(R.id.textViewHead);
+            linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
+            joinButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.v("df", "1111111111111111111111111111");
+                }
+            });
         }
     }
 

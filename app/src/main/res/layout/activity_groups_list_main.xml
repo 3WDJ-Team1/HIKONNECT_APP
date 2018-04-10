@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".groups_list_main">
+    tools:context=".group_list.groups_list_main">
 
     <Spinner
         android:id="@+id/planets_spinner"

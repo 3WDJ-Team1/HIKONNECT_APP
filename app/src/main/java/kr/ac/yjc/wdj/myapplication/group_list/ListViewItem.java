@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.myapplication.group_list;
 
 public class ListViewItem {
 
