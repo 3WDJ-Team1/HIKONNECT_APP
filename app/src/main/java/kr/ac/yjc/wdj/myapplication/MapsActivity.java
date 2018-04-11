@@ -177,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.1.31:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.3.117:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -240,6 +240,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.i("lat", title_st);
                                                 content_st  = jsonObject.getString("content");
                                                 Log.i("lat", content_st);
+                                                image_path  = jsonObject.getString("image_path");
                                                 LatLng nl   = new LatLng(lat, lng);
                                                 mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                                 tv.setText(network + "로 접속됨");
