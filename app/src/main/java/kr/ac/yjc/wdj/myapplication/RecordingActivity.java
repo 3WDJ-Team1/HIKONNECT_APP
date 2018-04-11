@@ -125,7 +125,7 @@ public class RecordingActivity extends Activity {
     }
 
     private void playAudio(String url) throws Exception{
-        killMediaPlayer();
+        releaseMediaPlayer();
 
         player = new MediaPlayer();
         player.setDataSource(url);
@@ -135,10 +135,10 @@ public class RecordingActivity extends Activity {
 
     protected void onDestroy() {
         super.onDestroy();
-        killMediaPlayer();
+        releaseMediaPlayer();
     }
 
-    private void killMediaPlayer() {
+    private void releaseMediaPlayer() {
         if (player != null) {
             try {
                 player.release();
