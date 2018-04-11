@@ -38,15 +38,8 @@
             android:id="@+id/toggle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="위치정보 수신시작"
+            android:textOff="위치정보 수신시작 "
             android:textOn ="위치정보 수신종료"/>
-
-        <Button
-            android:id="@+id/lm_reg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="위치메모 작성하기"
-             />
 
     <LinearLayout
         android:layout_width="match_parent"

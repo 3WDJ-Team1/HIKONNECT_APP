@@ -74,7 +74,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
-    FloatingActionButton gpsb;
 
     @Override
     public void onBackPressed() {
@@ -108,7 +107,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get GPS Information
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
-        gpsb = findViewById(R.id.gpsbutton);
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.content);
         cancel = findViewById(R.id.cancel);
@@ -173,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.25.1.142:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.1.240:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
