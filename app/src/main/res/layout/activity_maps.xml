@@ -88,11 +88,26 @@
     </LinearLayout>
 
     </LinearLayout>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/gpsbutton"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_gps_fixed_black_36dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="8dp"
+            fab:menu_fab_size="normal"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorPrimary"
+            fab:fab_colorRipple="@color/colorPrimary"
+            />
+
+
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/fabmenu"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
+            android:layout_marginBottom="70dp"
             fab:menu_icon="@drawable/ic_bookmark_black_24dp"
             fab:menu_fab_size="normal"
             fab:menu_colorNormal="@color/colorPrimary"
