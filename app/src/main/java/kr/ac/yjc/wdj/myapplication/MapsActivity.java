@@ -74,6 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
+    FloatingActionButton gpsbutton;
 
     @Override
     public void onBackPressed() {
@@ -115,12 +116,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         post_btn = findViewById(R.id.post_btn);
         tv.setText("미수신중");
         floatingActionMenu = findViewById(R.id.fabmenu);
+        gpsbutton = findViewById(R.id.gpsbutton);
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);
         title = findViewById(R.id.title);
         tb = findViewById(R.id.toggle1);
         linearLayout = findViewById(R.id.imagelayout);
-        lm_reg = findViewById(R.id.lm_reg);
         Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
 
@@ -171,7 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.1.240:8000/api/test", contentValues);
+                            result = hrc.request("http://172.25.1.142:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -204,7 +205,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        tb.setOnClickListener(new View.OnClickListener() {
+        gpsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try{

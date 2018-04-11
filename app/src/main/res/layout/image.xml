@@ -56,11 +56,6 @@
                 android:textSize="15sp"/>
 
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-        </LinearLayout>
         <Button
             android:layout_width="285dp"
             android:layout_height="50dp"
