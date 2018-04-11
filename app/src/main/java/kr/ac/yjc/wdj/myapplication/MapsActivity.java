@@ -63,7 +63,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ImageView imageView;
     LinearLayout linearLayout;
     TextView tv;
-    ToggleButton tb;
     double now_lat, now_lng, lat, lng;
     PermissionManager pManager;
     ContentValues contentValues = new ContentValues();
@@ -76,6 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
+    FloatingActionButton gpsbutton;
 
     @Override
     public void onBackPressed() {
@@ -108,6 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get GPS Information
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
+        gpsbutton = findViewById(R.id.gpsbutton);
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.content);
         cancel = findViewById(R.id.cancel);
@@ -119,7 +120,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);
         title = findViewById(R.id.title);
-        tb = findViewById(R.id.toggle1);
         linearLayout = findViewById(R.id.imagelayout);
         Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
@@ -199,11 +199,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        tb.setOnClickListener(new View.OnClickListener() {
+        gpsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    if (tb.isChecked()) {
                         tv.setText("수신중..");
                         ls.getMyLocation(new LocationListener() {
                             @Override
@@ -222,7 +221,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://172.26.1.31:8000/api/getlm",contentValues);
+                                        result = hrc.request("http://172.25.1.142:8000/api/getlm",contentValues);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }
@@ -269,10 +268,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 showAlertDialog();
                             }
                         });
-                    } else {
-                        tv.setText("미수신중");
-                        ls.remove();
-                    }
+
                 } catch (SecurityException ex) {
                 }
             }
@@ -401,7 +397,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         startActivityForResult(intent, 1);
                         onRestart();
                         tv.setText("미수신중");
-                        tb.setChecked(false);
                     }
                 });
         builder.setNegativeButton("취소", null);
