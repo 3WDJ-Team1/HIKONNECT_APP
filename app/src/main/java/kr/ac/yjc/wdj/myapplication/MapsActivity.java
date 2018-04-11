@@ -114,7 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         tv = findViewById(R.id.textView2);
         content = findViewById(R.id.content);
         post_btn = findViewById(R.id.post_btn);
-        tv.setText("미수신중");
+        tv.setText("미수신중 ");
         floatingActionMenu = findViewById(R.id.fabmenu);
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);

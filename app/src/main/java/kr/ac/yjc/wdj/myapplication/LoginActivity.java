@@ -68,7 +68,7 @@ public class LoginActivity extends Activity  {
                                 finish();
                                 break;
                             case "false":
-                                tv.setText("존재하지 않는 아이디이거나 비밀번호가 다릅니다.");
+                                tv.setText("존재하지 않는 아이디이거나 비밀번호가 다릅니다. ");
                         }
                         }
                     };
