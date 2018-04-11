@@ -59,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     BackPressClosHandler backPressClosHandler;
     EditText content, editText, title;
-    Button lm_reg, post_btn, cancel;
+    Button post_btn, cancel;
     ImageView imageView;
     LinearLayout linearLayout;
     TextView tv;
@@ -222,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://172.26.1.31:8000/api/getlm",contentValues);
+                                        result = hrc.request("http://172.26.3.117:8000/api/getlm",contentValues);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }
