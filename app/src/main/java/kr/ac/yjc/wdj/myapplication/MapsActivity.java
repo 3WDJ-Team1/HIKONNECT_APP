@@ -389,7 +389,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public boolean onMarkerClick(Marker marker) {
                 Intent intent = new Intent(MapsActivity.this,Locationmemo.class);
                 intent.putExtra("title",marker.getTitle());
-
+                intent.putExtra("position",marker.getPosition().toString());
                 intent.putExtra("content",marker.getSnippet());
                 startActivity(intent);
                 return false;

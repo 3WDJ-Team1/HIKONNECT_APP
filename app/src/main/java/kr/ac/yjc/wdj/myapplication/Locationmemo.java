@@ -26,7 +26,7 @@ public class Locationmemo extends Activity {
 
         Intent intent = getIntent();
         title.setText(intent.getStringExtra("title"));
-        content.setText(intent.getStringExtra("content"));
+        content.setText(intent.getStringExtra("content")+intent.getStringExtra("position"));
 
 
     }
