@@ -35,6 +35,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import android.os.Handler;
@@ -56,25 +58,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM = 1;
 
     BackPressClosHandler backPressClosHandler;
-    EditText content,editText,title;
-    Button lm_reg,post_btn,cancel;
+    EditText content, editText, title;
+    Button lm_reg, post_btn, cancel;
     ImageView imageView;
     LinearLayout linearLayout;
     TextView tv;
     ToggleButton tb;
-    double lng,lat;
+    double now_lat, now_lng, lat, lng;
     PermissionManager pManager;
     ContentValues contentValues = new ContentValues();
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String result,image_path,network,user_id,nickname,hiking_group,title_st,content_st = "";
+    String result, image_path, network, user_id, nickname, hiking_group, title_st, content_st = "";
     Handler handler;
     Uri uri;
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
-    FloatingActionButton gpsbutton;
 
     @Override
     public void onBackPressed() {
@@ -83,8 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             imageView.setImageResource(R.color.colorPrimary);
             editText.setText("");
             linearLayout.setVisibility(View.INVISIBLE);
-        }
-        else {
+        } else {
             backPressClosHandler.onBackPressed();
         }
     }
@@ -95,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         // 퍼미션 관리자 생성
-        pManager        = new PermissionManager(this);
+        pManager = new PermissionManager(this);
         // 퍼미션 검사 수행
         Map<String, Integer> checkResult = pManager.checkPermissions();
         // 퍼미션 권한 요청
@@ -116,7 +116,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         post_btn = findViewById(R.id.post_btn);
         tv.setText("미수신중");
         floatingActionMenu = findViewById(R.id.fabmenu);
-        gpsbutton = findViewById(R.id.gpsbutton);
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);
         title = findViewById(R.id.title);
@@ -124,6 +123,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         linearLayout = findViewById(R.id.imagelayout);
         Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
+
+        // Set Created_at, Updated_at
+        final SimpleDateFormat[] sdfNow = {new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")};
+        final String time = sdfNow[0].format(new Date(System.currentTimeMillis()));
 
         final LocationService ls = new LocationService(getApplicationContext());
 
@@ -146,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-            ad.show();
+                ad.show();
             }
         });
 
@@ -162,40 +165,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 try {
-                    contentValues.put("user_id",user_id);
-                    contentValues.put("lat",lat);
-                    contentValues.put("lng",lng);
-                    contentValues.put("title",title.getText().toString());
-                    contentValues.put("content",content.getText().toString());
-                    contentValues.put("image_path",image_path);
+                    contentValues.put("user_id", user_id);
+                    contentValues.put("lat", now_lat);
+                    contentValues.put("lng", now_lng);
+                    contentValues.put("title", title.getText().toString());
+                    contentValues.put("content", content.getText().toString());
+                    contentValues.put("image_path", image_path);
+                    contentValues.put("created_at", time);
+                    contentValues.put("updated_at", time);
 
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.25.1.142:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.1.31:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
                     }).start();
                     handler = new Handler() {
                         public void handleMessage(Message msg) {
-                            try{
-                                JSONArray jsonArray = new JSONArray(result);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject   = jsonArray.getJSONObject(i);
-                                    hiking_group            = jsonObject.getString("hiking_group");
-                                    title_st                = jsonObject.getString("title");
-                                    content_st              = jsonObject.getString("content");
-                                }
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            tv.setText(hiking_group);
-                            LatLng nl = new LatLng(lat, lng);
+                            tv.setText(result);
+                            LatLng nl = new LatLng(now_lat, now_lng);
                             mMap.addMarker(new MarkerOptions().position(nl).title("하하하하하").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
                     };
-                }catch (SecurityException ex) {
+                } catch (SecurityException ex) {
                     ex.printStackTrace();
                 }
                 linearLayout.setVisibility(View.INVISIBLE);
@@ -205,24 +199,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        gpsbutton.setOnClickListener(new View.OnClickListener() {
+        tb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    if(tb.isChecked()){
+                try {
+                    if (tb.isChecked()) {
                         tv.setText("수신중..");
                         ls.getMyLocation(new LocationListener() {
                             @Override
                             public void onLocationChanged(Location location) {
-                                Log.d("Location test",location.toString());
-                                lng = location.getLongitude();
-                                lat = location.getLatitude();
+                                now_lng = location.getLongitude();
+                                now_lat = location.getLatitude();
                                 network = location.getProvider();
-                                tv.setText("위도 : " + lat + "\n경도 : " + lng + "\n네트워크 종류 : " + network);
 
-                                LatLng nl = new LatLng(lat, lng);
+                                LatLng nl = new LatLng(now_lat, now_lng);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 15));
+                                mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
+
+                                // Get All Location Memo
+                                contentValues.put("id", user_id);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        result = hrc.request("http://172.26.1.31:8000/api/getlm",contentValues);
+                                        Message msg = handler.obtainMessage();
+                                        handler.sendMessage(msg);
+                                    }
+                                }).start();
+                                handler = new Handler() {
+                                    public void handleMessage(Message msg) {
+                                        try {
+                                            JSONArray jsonArray = new JSONArray(result);
+                                            for(int i = 0; i < jsonArray.length(); i++) {
+                                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                                lat         = jsonObject.getDouble("latitude");
+                                                Log.i("lat", String.valueOf(lat));
+                                                lng         = jsonObject.getDouble("longitude");
+                                                Log.i("lat", String.valueOf(lng));
+                                                title_st    = jsonObject.getString("title");
+                                                Log.i("lat", title_st);
+                                                content_st  = jsonObject.getString("content");
+                                                Log.i("lat", content_st);
+                                                LatLng nl   = new LatLng(lat, lng);
+                                                mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                tv.setText(network + "로 접속됨");
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                };
                             }
 
                             @Override
@@ -238,15 +265,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             // GPS OFF
                             public void onProviderDisabled(String s) {
-                                Log.v("GPS Check","false");
+                                Log.v("GPS Check", "false");
                                 showAlertDialog();
                             }
                         });
-                    }else{
+                    } else {
                         tv.setText("미수신중");
                         ls.remove();
                     }
-                }catch(SecurityException ex){
+                } catch (SecurityException ex) {
                 }
             }
         });
@@ -297,14 +324,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if(resultCode != RESULT_OK)
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK)
             return;
 
-        switch(requestCode)
-        {
-            case PICK_FROM_ALBUM:
-            {
+        switch (requestCode) {
+            case PICK_FROM_ALBUM: {
                 try {
                     //Get Image_path
                     uri = data.getData();
@@ -313,22 +338,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
-                    Log.v("이미지",imageView.toString());
+                    Log.v("이미지", imageView.toString());
                 } catch (FileNotFoundException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
             }
 
-            case PICK_FROM_CAMERA:
-            {
+            case PICK_FROM_CAMERA: {
                 try {
                     //Get Image_path
                     uri = data.getData();
@@ -344,15 +367,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
             }
-            }
-
         }
+
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -376,25 +398,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new Settings();
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         intent.addCategory(Intent.CATEGORY_DEFAULT);
-                        startActivityForResult(intent,1);
+                        startActivityForResult(intent, 1);
                         onRestart();
                         tv.setText("미수신중");
                         tb.setChecked(false);
                     }
                 });
-        builder.setNegativeButton("취소",null);
+        builder.setNegativeButton("취소", null);
         builder.show();
 
-        Log.v("GPS on","나머지 설정");
+        Log.v("GPS on", "나머지 설정");
     }
+
     //Get Image's RealPath
     private String getRealPathFromURI(Uri contentUri) {
-        int column_index=0;
+        int column_index = 0;
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         }
-            return cursor.getString(column_index);
+        return cursor.getString(column_index);
     }
 }
