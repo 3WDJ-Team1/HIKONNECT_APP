@@ -9,7 +9,6 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -22,12 +21,8 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
 
@@ -48,29 +43,6 @@ public class WifiP2pTestingActivity extends AppCompatActivity{
     private BroadcastReceiver wReceiver;
 
     private WifiP2pDeviceList deviceList;
-
-    private class FileTransfer extends AsyncTask<Void, Void, String> {
-
-        private ServerSocket servSocket;
-
-        private Socket socket;
-
-        public FileTransfer() {
-            try{
-                servSocket = new ServerSocket(8888);
-
-                socket = new Socket();
-
-            } catch (IOException e) {
-                Log.e("FileTransfer", e.getStackTrace().toString());
-            }
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            return null;
-        }
-    }
 
     private class WifiDirectBroadcastReceiver extends BroadcastReceiver{
 
@@ -181,27 +153,30 @@ public class WifiP2pTestingActivity extends AppCompatActivity{
         ArrayList<WifiP2pDevice> devices = new ArrayList<>(deviceList.getDeviceList());
 
         config.deviceAddress    = devices.get(0).deviceAddress;
+
         config.wps.setup        = WpsInfo.PBC;
 
         wifiP2pManager.connect(wifiP2pChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Connected!!");
+                Toast.makeText(WifiP2pTestingActivity.this, "Connected!!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int i) {
                 Log.d(TAG, "Connect Failed");
+                Toast.makeText(WifiP2pTestingActivity.this, "Connection Failed...", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void onClickedWipeTextViewBtn(View view) {
-        textView.setText("");
-    }
-
     public void onClickedSendDataBtn(View view) {
 
+    }
+
+    public void onClickedWipeTextViewBtn(View view) {
+        textView.setText("");
     }
 
     @Override
