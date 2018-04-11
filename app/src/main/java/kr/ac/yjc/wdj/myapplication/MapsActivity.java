@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -31,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.FileNotFoundException;
@@ -240,6 +243,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 Log.i("lat", title_st);
                                                 content_st  = jsonObject.getString("content");
                                                 Log.i("lat", content_st);
+                                                image_path = jsonObject.getString("image_path");
                                                 LatLng nl   = new LatLng(lat, lng);
                                                 mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                                 tv.setText(network + "로 접속됨");
@@ -380,6 +384,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Intent intent = new Intent(MapsActivity.this,Locationmemo.class);
+                intent.putExtra("title",marker.getTitle());
+
+                intent.putExtra("content",marker.getSnippet());
+                startActivity(intent);
+                return false;
+            }
+        });
     }
 
     public void showAlertDialog() {

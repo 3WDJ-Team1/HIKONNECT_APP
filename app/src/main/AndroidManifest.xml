@@ -39,7 +39,7 @@
             android:label="@string/title_activity_maps">
 
         </activity>
-        <activity android:name=".PostGPSInfo"></activity>
+        <activity android:name=".Locationmemo"></activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
