@@ -36,8 +36,6 @@ public class RecordingActivity extends Activity implements View.OnClickListener{
     private DataOutputStream    recOutputStream;
     private Socket              RecordSocket;
     private InetAddress         serverAddr;
-    private String              deviceAddress;
-    private String              groupAddress;
     private byte[]              buf;
 
     Button          recordBtn;
