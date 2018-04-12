@@ -1,9 +1,10 @@
 package kr.ac.yjc.wdj.myapplication.beans;
 
 /**
+ * The bean class to store group notice
  * @author Sungeun Kang (kasueu0814@gmail.com)
  * @since  2018-04-06
- * The bean class to store group notice
+ * @see     kr.ac.yjc.wdj.myapplication.beans.Bean
  */
 public class GroupNotice extends Bean{
     private String  uuid;       // notice uuid

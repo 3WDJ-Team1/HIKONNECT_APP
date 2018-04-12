@@ -3,11 +3,10 @@ package kr.ac.yjc.wdj.myapplication.beans;
 import android.graphics.drawable.Drawable;
 
 /**
- * @file        kr.ac.yjc.wdj.myapplication.HikingMemberListBean.java
- * @author      Sungeun Kang (kasueu0814@gmail.com)
- * @since       2018-03-30
- * @brief       등산 중인 멤버 데이터를 담아 둘 클래스
- * @see         kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter
+ * 등산 중인 멤버 데이터를 담아 둘 클래스
+ * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @since   018-03-30
+ * @see     kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter
  */
 
 public class HikingMemberListBean {

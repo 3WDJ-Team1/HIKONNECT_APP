@@ -25,11 +25,34 @@
         android:id="@+id/memberName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="start"
+        android:layout_marginStart="75dp"
+        android:layout_gravity="center_vertical"
         android:text="memberName"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="20dp"/>
+
+    <Button
+        android:id="@+id/btnReject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="거절"
+        android:layout_gravity="end|center_vertical"
+        android:textSize="12dp"
+        android:padding="0dp"
+        android:backgroundTint="@color/red_500"/>
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="수락"
+        android:layout_gravity="end|center_vertical"
+        android:textSize="12dp"
+        android:backgroundTint="@color/light_green_500"
+        android:layout_marginEnd="80dp"
+        android:padding="0dp"/>
 
 
 </FrameLayout>

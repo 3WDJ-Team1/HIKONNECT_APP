@@ -1,13 +1,11 @@
 package kr.ac.yjc.wdj.myapplication.groupdetail;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,26 +39,36 @@ import kr.ac.yjc.wdj.myapplication.models.Conf;
 import java.util.ArrayList;
 
 /**
- * Created by GIGAMOLE on 28.03.2016.
+ * 그룹 상세보기 페이지 - 탭 / 페이지 로 구성 --> 나뉠 가능성 있음
+ * @author  Sungeun Kang(kasueu0814@gmail.com)
+ * @since   2018-04-06
  */
 public class TabsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    // 멤버 변수
-    private ViewPager                           viewPager;
-    private NavigationTabBar                    navigationTabBar;
-    private ArrayList<NavigationTabBar.Model>   models;
-    private String[]                            colors;
-    private CoordinatorLayout                   coordinatorLayout;
-    private FloatingActionButton                btnEnterGroup;
-    private ArrayList<Bean>                     dataListNotice, dataListPlan, dataListMember;
-    private Boolean                             isScrolling;
-    private int                                 currentItems, totalItems, scrollOutItems;
-    private static RecyclerView                 rvNotice, rvPlan, rvMember;
-    private static RecycleAdapterForGDetail     adapterNotice, adapterPlan, adapterMember;
-    private static LinearLayoutManager          linearLayoutManager;
-    private int                                 firstIndex;
-    private final int                           REQ_LENGTH = 10;
-    private static final int                    PAGE_COUNT = 3;
+    // UI 변수
+    private ViewPager               viewPager;          // 전체 페이지
+    private NavigationTabBar        navigationTabBar;   // 네비게이션 탭 바
+    private FloatingActionButton    btnEnterGroup;      // 그룹 참가 버튼
+
+    // UI 내부 데이터 연결 객체
+    private ArrayList<NavigationTabBar.Model>   models;             // 네비게이션 탭 안의 메뉴 구성을 위한 모델
+    private static RecycleAdapterForGDetail     adapterNotice,      // rvNotice에 값을 연결할 어댑터
+                                                adapterMember;      // rvMember에 값을 연결할 어댑터
+    private ArrayList<Bean>                     dataListNotice,     // notice URL 요청으로 받아온 값을 담아둘 곳
+                                                dataListMember;     // member URL 요청으로 받아온 값을 담아둘 곳
+
+    // 데이터 담아둘 변수
+    private String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
+    private int                 firstIndex;         // 요청 공지사항 데이터 시작 인덱스
+    private int                 firstIndexForMem;   // 요청 그룹 멤버 데이터 시작 인덱스
+    private final int           REQ_LENGTH = 10;    // 한 번의 요청에 불러올 데이터 수
+    private static final int    PAGE_COUNT = 3;     // 총 페이지의 수
+    private static boolean      isJoined;           // 사용자가 해당 그룹에 참여하고 있는 지 여부
+    private static String       groupId;            // 해당 그룹의 id
+
+    // 무한 스크롤
+    private boolean     isScrolling;                                // 현재 스크롤 되고 있는지 확인
+    private int         currentItems, totalItems, scrollOutItems;   // 현재 스크롤 위치 파악하기 위한 변수
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -71,20 +79,83 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
         navigationTabBar    = (NavigationTabBar) findViewById(R.id.ntb_horizontal);
         models              = new ArrayList<>();
         colors              = getResources().getStringArray(R.array.default_preview);
-        coordinatorLayout   = (CoordinatorLayout) findViewById(R.id.parent);
         btnEnterGroup       = (FloatingActionButton) findViewById(R.id.btnEnterGroup);
         isScrolling         = false;
         dataListNotice      = new ArrayList<>();
-        dataListPlan        = new ArrayList<>();
         dataListMember      = new ArrayList<>();
         firstIndex          = 0;
-        linearLayoutManager = new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
+        firstIndexForMem    = 0;
 
+        adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
+        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember);
+
+        this.groupId        = "16f78874-b51c-3ad0-9b91-5d35f22a412b";
+        // 이 사람이 그룹에 있으면 그룹 참가 버튼 -> 그룹 탈퇴 버튼
+//        initVarisJoined("", "");
+        // 플로팅 버튼 누르면 그룹 참가
+//        setListenerToFloatingButton();
+        // 페이지 불러오기
         initUI();
+
+        datafetchForNotice(groupId, firstIndex, REQ_LENGTH);
+        datafetchForMember(groupId, firstIndexForMem, REQ_LENGTH);
     }
 
+
+    /**
+     * 사용자가 현재 그룹에 참가하고 있는 지 여부를 isJoined 에 넣음
+     * @param groupId   그룹 아이디
+     * @param userId    해당 사용자의 아이디
+     */
+    private void initVarisJoined(String groupId, String userId) {
+        isJoined = false;
+        new AsyncTask<String, Integer, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                String response = HttpRequestConnection.request("url", null);
+                return response;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                TabsActivity.isJoined = true;
+            }
+        }.execute(groupId, userId);
+    }
+
+    /**
+     * 플로팅 버튼에 리스너 달기
+     */
+    private void setListenerToFloatingButton () {
+        btnEnterGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AsyncTask<Void, Integer, String>() {
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        return HttpRequestConnection.request("url", null);
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        super.onPostExecute(s);
+                    }
+                }.execute();
+            }
+        });
+    }
+
+    /**
+     * 전체적인 UI 초기화 작업 --> 페이지 초기화 등
+     */
     private void initUI() {
+        // 페이지에 어댑터 장착
         viewPager.setAdapter(new PagerAdapter() {
+            /**
+             * 페이지 수 설정
+             * @return
+             */
             @Override
             public int getCount() {
                 return TabsActivity.PAGE_COUNT;
@@ -100,25 +171,29 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
                 ((ViewPager) container).removeView((View) object);
             }
 
+            /**
+             * 페이지 내부 설정
+             * @param container
+             * @param position
+             * @return
+             */
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
-                View view  = null;
+                View view  = null; // 페이지에 넣을 View
 
                 switch (position) {
                     // 그룹 공지사항 페이지
                     case 0:
                         // group_detail_notice의 view 객체를 받아옴
                         view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_notice, null, false);
-
                         // 해당 view의 RecyclerView 찾아옴
-                        rvNotice = (RecyclerView)view.findViewById(R.id.groupNoticeList);
+                        RecyclerView rvNotice = (RecyclerView) view.findViewById(R.id.groupNoticeList);
+                        rvNotice.setAdapter(adapterNotice);
+
                         // 사이즈 고정
                         rvNotice.setHasFixedSize(true);
                         // 레이아웃 매니저 설정
-                        rvNotice.setLayoutManager(TabsActivity.linearLayoutManager);
-
-                        // 데이터 값 받아오기
-                        datafetchForNotice(firstIndex, REQ_LENGTH);
+                        rvNotice.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
                         // 스크롤 리스너 : 무한 스크롤
                         rvNotice.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -133,28 +208,28 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                                 super.onScrolled(recyclerView, dx, dy);
-                                currentItems    = linearLayoutManager.getChildCount();
-                                totalItems      = linearLayoutManager.getItemCount();
-                                scrollOutItems  = linearLayoutManager.findFirstVisibleItemPosition();
+                                currentItems    = recyclerView.getLayoutManager().getChildCount();
+                                totalItems      = recyclerView.getLayoutManager().getItemCount();
+                                scrollOutItems  = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+
 
                                 if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
                                     isScrolling = false;
-                                    firstIndex += REQ_LENGTH;
                                     // data fetch
-                                    datafetchForNotice(firstIndex, REQ_LENGTH);
+                                    datafetchForNotice(TabsActivity.groupId, firstIndex, REQ_LENGTH);
                                 }
                             }
                         });
-
                         // 총 컨테이너 페이저에 삽입
                         container.addView(view);
                         break;
                     // 그룹 일정 페이지
                     case 1:
-//                        view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_plan, null, false);
                         view = new GMapFragment().onCreateView(getLayoutInflater(), container, null);
                         android.app.FragmentManager fragmentManager = getFragmentManager();
                         MapFragment mapFragment = (MapFragment)fragmentManager.findFragmentById(R.id.groupPlanMap);
+
+                        ConstraintLayout layout = (ConstraintLayout) view.findViewById(R.id.groupPlanLayout);
 
                         mapFragment.getMapAsync(new OnMapReadyCallback() {
                             @Override
@@ -169,6 +244,7 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
                                 googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+                                googleMap.getUiSettings().setScrollGesturesEnabled(false);
                             }
                         });
 
@@ -177,15 +253,41 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
                     // 그룹 멤버 리스트
                     case 2:
-//                        view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_members, null, false);
-//
-//                        recyclerView = (RecyclerView) view.findViewById(R.id.groupMemberList);
-//                        recyclerView.setHasFixedSize(true);
-//                        recyclerView.setLayoutManager(linearLayoutManager);
-//
-//                        datafetchForMember("388c7730-afc5-3bdf-b839-332a589763a1");
-//
-//                        container.addView(view);
+                        view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_members, null, false);
+                        RecyclerView rvMember = (RecyclerView) view.findViewById(R.id.groupMemberList);
+
+                        rvMember.setAdapter(adapterMember);
+
+                        rvMember.setHasFixedSize(true);
+                        rvMember.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
+
+                        // 스크롤 리스너 : 무한 스크롤
+                        rvMember.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                                super.onScrollStateChanged(recyclerView, newState);
+                                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                    isScrolling = true;
+                                }
+                            }
+
+                            @Override
+                            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                super.onScrolled(recyclerView, dx, dy);
+                                currentItems    = recyclerView.getLayoutManager().getChildCount();
+                                totalItems      = recyclerView.getLayoutManager().getItemCount();
+                                scrollOutItems  = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+
+                                if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
+                                    isScrolling = false;
+
+                                    // data fetch
+                                    datafetchForMember(TabsActivity.groupId, firstIndexForMem, REQ_LENGTH);
+                                }
+                            }
+                        });
+
+                        container.addView(view);
                         break;
                 }
                 return view;
@@ -246,6 +348,7 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
         );
     }
 
+    // 맵 로딩 시 초기화
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng SEOUL = new LatLng(37.56, 126.97);
@@ -261,13 +364,13 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // get data from server for notice list
-    private void datafetchForNotice(final int startIndex, final int length) {
+    private void datafetchForNotice(final String groupId, final int startIndex, final int length) {
         // 비동기
         new AsyncTask<Void, Integer, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 // http 리퀘스트
-                String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/notice/" + startIndex + "/" + length, null);
+                String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/notice/" + groupId + "/" + startIndex + "/" + length, null);
                 return result;
             }
 
@@ -294,13 +397,10 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
                         // dataList에 삽입
                         dataListNotice.add(groupNotice);
                     }
-                    // 처음 실행 시에는 어댑터 생성
-                    if (firstIndex == 0) {
-                        TabsActivity.adapterNotice = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
-                        TabsActivity.rvNotice.setAdapter(TabsActivity.adapterNotice);
-                    } else { // 아니라면 기존 어댑터에 변경사항 수용
-                        TabsActivity.adapterNotice.notifyDataSetChanged();
-                    }
+
+                    adapterNotice.notifyDataSetChanged();
+                    Log.d("adapters", adapterNotice.getItemCount() + "");
+                    firstIndex += REQ_LENGTH;
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
@@ -309,65 +409,45 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // 멤버 리스트 받아오기
-//    private void datafetchForMember(final String groupId) {
-//        // 비동기 통신
-//        new AsyncTask<Void, Integer, String>() {
-//            // 백그라운드 작업
-//            @Override
-//            protected String doInBackground(Void... params) {
-//                String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/groupMembers/" + groupId, null);
-//                return result;
-//            }
-//
-//            // 작업 완료 시
-//            @Override
-//            protected void onPostExecute(String s) {
-//                super.onPostExecute(s);
-//                try {
-//                    JSONArray jsonArray = new JSONArray(s);
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        TabsActivity.tmpJsonObj = jsonArray.getJSONObject(i);
-//
-//                        // 비동기 통신
-//                        new AsyncTask<Integer, Integer, String>(){
-//                            @Override
-//                            protected String doInBackground(Integer... params) {
-//                                String resultUserInfo = "";
-//                                try {
-//                                    resultUserInfo = HttpRequestConnection.request(Conf.HTTP_ADDR + "/" + TabsActivity.tmpJsonObj.getString("uuid"), null);
-//                                } catch (JSONException e) {
-//                                    e.printStackTrace();
-//                                }
-//                                return resultUserInfo;
-//                            }
-//
-//                            @Override
-//                            protected void onPostExecute(String s) {
-//                                super.onPostExecute(s);
-//                                try {
-//                                    Log.d("sibal", s);
-//                                    JSONObject groupUser = new JSONArray(s).getJSONObject(0);
-//                                    GroupUserInfoBean user = new GroupUserInfoBean(
-//                                            groupUser.getString("uuid"),
-//                                            groupUser.getString("name"),
-//                                            groupUser.getString("profilePic"),
-//                                            groupUser.getString("phone"),
-//                                            groupUser.getInt("gender")
-//                                    );
-//                                    dataList.add(user);
-//                                } catch (JSONException je) {
-//                                    je.printStackTrace();
-//                                }
-//                            }
-//                        }.execute(i);
-//                    }
-//                    TabsActivity.adapter = new RecycleAdapterForGDetail(R.layout.member_list, dataList);
-//                    TabsActivity.recyclerView.setAdapter(adapter);
-//
-//                } catch (JSONException je) {
-//                    je.printStackTrace();
-//                }
-//            }
-//        }.execute();
-//    }
+    private void datafetchForMember(final String groupId, final int startIndex, final int length) {
+        // 비동기
+        new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                // http 리퀘스트
+                String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/groupMembers/" + groupId + "/" + startIndex + "/" + length, null);
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                try {
+                    // json 파싱
+                    JSONArray jsonArray = new JSONArray(s);
+                    GroupUserInfoBean userInfoBean = null;
+                    // 결과 배열 값을
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        // 객체로 분해 해 Bean 객체에 삽입
+                        userInfoBean = new GroupUserInfoBean(
+                                jsonObject.getString("nickname"),
+                                jsonObject.getString("image_path"),
+                                jsonObject.getString("phone"),
+                                jsonObject.getInt("gender"),
+                                jsonObject.getInt("age_group"),
+                                jsonObject.getInt("scope")
+                        );
+                        // dataList에 삽입
+                        dataListMember.add(userInfoBean);
+                    }
+                    adapterMember.notifyDataSetChanged();
+                    Log.d("adapters", adapterMember.getItemCount() + "");
+                    firstIndexForMem += REQ_LENGTH;
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
+            }
+        }.execute();
+    }
 }

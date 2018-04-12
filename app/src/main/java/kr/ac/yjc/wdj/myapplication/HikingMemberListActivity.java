@@ -18,11 +18,10 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter;
 
 /**
- * @file        kr.ac.yjc.wdj.myapplication.HikingMemberListActivity.java
- * @author      Sungeun Kang (kasueu0814@gmail.com)
- * @since       2018-03-30
- * @brief       The Activity used while hiking (show members who is now hiking)
- * @see         kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter
+ * The Activity used while hiking (show members who is now hiking)
+ * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @since   2018-03-30
+ * @see     kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter
  */
 
 public class HikingMemberListActivity extends Activity {

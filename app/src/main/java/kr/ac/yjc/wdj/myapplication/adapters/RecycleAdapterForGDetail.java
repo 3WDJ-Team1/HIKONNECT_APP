@@ -1,6 +1,9 @@
 package kr.ac.yjc.wdj.myapplication.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,11 +27,10 @@ import kr.ac.yjc.wdj.myapplication.models.Conf;
 
 
 /**
- * @author Sungeun Kang (kasueu0814@gmail.com)
- * @since  2018-04-06.
  * RecycleAdapter for group detail page
+ * @author Sungeun Kang (kasueu0814@gmail.com)
+ * @since  2018-04-06
  */
-
 public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int             listLayout;
     private ArrayList<Bean> dataList;
@@ -82,6 +87,38 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         } else if (viewHolder instanceof ViewHolderPlan) {
 
         } else if (viewHolder instanceof ViewHolderMember) {
+            final ViewHolderMember tmpViewHolder = (ViewHolderMember) viewHolder;
+            final int index = i;
+            new AsyncTask<Void, Integer, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(Void... params) {
+                    Bitmap bitmap = null;
+
+                    try {
+                        URL url = new URL(((GroupUserInfoBean) dataList.get(index)).getImagePath());
+
+                        // 웹에서 이미지 가져와서
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+
+                        InputStream is = connection.getInputStream();
+                        // 비트맵으로 변환
+                        bitmap = BitmapFactory.decodeStream(is);
+
+                    } catch (MalformedURLException me) {
+                        me.printStackTrace();
+                    } catch (IOException ie) {
+                        ie.printStackTrace();
+                    }
+                    return bitmap;
+                }
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    super.onPostExecute(bitmap);
+                    tmpViewHolder.profilePic.setImageBitmap(bitmap);
+                }
+            }.execute();
             ((ViewHolderMember) viewHolder).userName.setText(((GroupUserInfoBean) dataList.get(i)).getNickname());
         }
     }
@@ -125,14 +162,12 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     public class ViewHolderMember extends RecyclerView.ViewHolder {
         public ImageView    profilePic;     // user's profile picture
         public TextView     userName;       // user's name
-        public TextView     userGrade;      // user's grade
 
         // init member variable
         public ViewHolderMember (View itemView) {
             super(itemView);
             profilePic  = (ImageView) itemView.findViewById(R.id.profilePic);
             userName    = (TextView) itemView.findViewById(R.id.memberName);
-            userGrade   = (TextView) itemView.findViewById(R.id.memberGrade);
         }
     }
 }

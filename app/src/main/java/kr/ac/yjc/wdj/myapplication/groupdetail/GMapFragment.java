@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 import kr.ac.yjc.wdj.myapplication.R;
 
 /**
- * Created by 강성은 on 2018-04-07.
+ * class to get MapFragmentView (which one is used in group detail page)
+ * @author Sungeun Kang (kasueu0814@gmail.com)
+ * @since  2018-04-07
  */
-
 public class GMapFragment extends Fragment {
     @Nullable
     @Override
