@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -30,7 +29,7 @@ public class RecordingActivity extends Activity implements View.OnClickListener{
     private static final int    REQUEST_RECORD_AUDIO_PERMISSION     = 200;
     private static final String PATH                                = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String TAG                                 = "RecordingActivity";
-    private static final String filename                            = PATH+"/recorded.mp4";
+    private static final String filename                            = PATH + "/recorded.mp4";
     private static final String serverIP                            = "http://hikonnect.ga";
     private static final int    serverPort                          = 9206;
     private DataInputStream     recInputStream;
