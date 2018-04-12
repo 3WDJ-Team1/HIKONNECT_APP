@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.Locale;
 
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
-import kr.ac.yjc.wdj.myapplication.wireless.Wireless_main;
+//import kr.ac.yjc.wdj.myapplication.wireless.Wireless_main;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 

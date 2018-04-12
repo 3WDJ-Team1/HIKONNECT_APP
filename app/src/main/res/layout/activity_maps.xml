@@ -42,7 +42,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="92dp"
         android:clickable="true"
-        android:src="@drawable/ic_mic_black_24dp"
         app:backgroundTint="@android:color/background_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
