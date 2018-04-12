@@ -14,10 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
 
@@ -30,12 +31,15 @@ public class RecordingActivity extends Activity implements View.OnClickListener{
     private static final String PATH                                = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String TAG                                 = "RecordingActivity";
     private static final String filename                            = PATH+"/recorded.mp4";
+    private static final String serverIP                            = "http://hikonnect.ga";
+    private static final int    serverPort                          = 9206;
+    private DataInputStream     recInputStream;
+    private DataOutputStream    recOutputStream;
     private Socket              RecordSocket;
-    private String              host;
-    private int                 port;
-    private int                 SOCKET_TIMEOUT;
-    private BufferedReader      messageReader;
     private InetAddress         serverAddr;
+    private String              deviceAddress;
+    private String              groupAddress;
+    private byte[]              buf;
 
     Button          recordBtn;
     Button          recordStopBtn;
@@ -128,6 +132,7 @@ public class RecordingActivity extends Activity implements View.OnClickListener{
         recorder = null;
 
         Toast.makeText(this, "stop Record", Toast.LENGTH_LONG).show();
+        recordSocket();
     }
 
     public void playRec() {
@@ -161,28 +166,26 @@ public class RecordingActivity extends Activity implements View.OnClickListener{
         player = null;
     }
 
-    public void recordSocket(WifiP2pInfo wifiP2pInfo, String deviceAddress) {
-        host                =   wifiP2pInfo.groupOwnerAddress.getHostAddress();
-        port                =   8888;
-        SOCKET_TIMEOUT      =   5000;
+    public void recordSocket() {
+        try {
+            serverAddr          =   InetAddress.getByName(serverIP);
+            RecordSocket        =   new Socket(serverAddr, serverPort);
+            try {
+                recInputStream  =   new DataInputStream(new FileInputStream(new File(filename)));
+                recOutputStream =   new DataOutputStream(RecordSocket.getOutputStream());
 
-        RecordSocket        =   new Socket();
-
-//        try {
-//            RecordSocket.bind(null);
-//            RecordSocket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
-//
-//            messageReader       =   new BufferedReader(new InputStreamReader(RecordSocket.getInputStream()));
-//        } catch (Exception e) {
-//            Log.e(TAG, "Socket Connection Failed");
-//        } finally {
-//            if (RecordSocket != null) {
-//                try {
-//                    RecordSocket.close();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
+                buf             =   new byte[1024];
+                while (recInputStream.read(buf) > 0) {
+                    recOutputStream.write(buf);
+                    recOutputStream.flush();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                RecordSocket.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
