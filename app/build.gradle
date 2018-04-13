@@ -46,11 +46,12 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
+
+
     compile 'gun0912.ted:tedpermission:2.1.1'
     compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
     compile 'com.github.clans:fab:1.6.4'
-}
 
 //    // Material Edit Text
 //    compile 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -61,8 +62,8 @@ dependencies {
 //    // Meterial Tab
 //    compile 'it.neokree:MaterialTabs:0.11'
     // Swipe Menu ListView
-    implementation 'com.baoyz.swipemenulistview:library:1.3.0'
-    implementation 'com.android.support:design:26.1.0'
+//    implementation 'com.baoyz.swipemenulistview:library:1.3.0'
+//    implementation 'com.android.support:design:26.1.0'
 }
 
 

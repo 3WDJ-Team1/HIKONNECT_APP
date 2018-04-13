@@ -14,20 +14,15 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.apis.wifi_p2p.WifiP2pBroadCastReceiver;
-import kr.ac.yjc.wdj.hikonnect.activities.LocationService;
-import kr.ac.yjc.wdj.hikonnect.activities.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
-import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;
-import kr.ac.yjc.wdj.hikonnect.models.Conf;
+import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
+import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.apis.wifi_p2p.WIfiDirectBroadCastReceiver;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -91,7 +86,7 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         // 와이파이 다이렉트 Broadcast Receiver 등록.
-        mReceiver       = new WifiP2pBroadCastReceiver(mManager, mChannel, this);
+        mReceiver       = new WIfiDirectBroadCastReceiver(mManager, mChannel, this);
 
         // GPS 위치 관리자 등록.
         lService = new LocationService(this);

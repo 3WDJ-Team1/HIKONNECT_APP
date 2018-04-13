@@ -49,13 +49,13 @@
         </activity>
 
         <!-- Firebase 푸시 알림 서비스 -->
-        <service android:name=".apis.firebase.TokenManager">
+        <service android:name=".apis.fcm_manager.TokenManager">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".apis.firebase.MessageHandler">
+            android:name=".apis.fcm_manager.MessageHandler">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

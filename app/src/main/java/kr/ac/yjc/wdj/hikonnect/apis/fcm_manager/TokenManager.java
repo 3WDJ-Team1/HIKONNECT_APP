@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.apis.firebase;
+package kr.ac.yjc.wdj.hikonnect.apis.fcm_manager;
 
 import android.util.Log;
 

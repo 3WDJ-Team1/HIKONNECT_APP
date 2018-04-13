@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
 
 public class WifiP2pTestingActivity extends AppCompatActivity{
 

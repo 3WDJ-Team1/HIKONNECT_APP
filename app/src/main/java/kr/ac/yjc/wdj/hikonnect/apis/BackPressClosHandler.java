@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect.apis;
 
 import android.app.Activity;
 import android.widget.Toast;

@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.activities;
+package kr.ac.yjc.wdj.hikonnect.apis;
 
 import android.Manifest;
 import android.content.Context;
@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import kr.ac.yjc.wdj.hikonnect.models.Conf;
-import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;
+/*import kr.ac.yjc.wdj.myapplication.models.Conf;
+import kr.ac.yjc.wdj.myapplication.models.HikingPlan;*/
 
-/**
+/**`
  * Created by Kwon on 3/26/2018.
  */
 
@@ -29,6 +29,35 @@ public class LocationService{
 
     private Context context;
 
+    private String provider;
+
+    // LocationListener
+    private final LocationListener ls = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location != null) {
+                Log.v("test","onLocationChanged : " + location);
+/*                    String url = Conf.HTTP_ADDR +
+                            HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask();*/
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
+
     public LocationService(Context context) {
         // 위치 관리자 객체를 가져온다.
         this.lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -42,13 +71,28 @@ public class LocationService{
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true) {
+            Log.v("넷워크 켜짐", "ㅎㅎ");
+            provider = LocationManager.NETWORK_PROVIDER;
+        }
+        else if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
+            Log.v("쥐퓌에스 켜짐", "ㅎㅎ");
+            provider = LocationManager.GPS_PROVIDER;
+        }
+        else {
+            Log.v("둘다 없음", "없어ㅠㅠ");
+            provider = LocationManager.GPS_PROVIDER;
+        }
+
+
         this.lm.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
+                provider,
                 MIN_TIME_BW_UPDATES,
                 MIN_DISTANCE_CHANGE_FOR_UPDATE,
                 locationListener
@@ -56,34 +100,11 @@ public class LocationService{
     }
 
     public void sendMyLocation() {
+        getMyLocation(ls);
+    }
 
-        getMyLocation(new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    double lat = location.getLatitude();
-                    double lng = location.getLongitude();
 
-//                    String url = Conf.HTTP_ADDR +
-//                    HikingPlan.NNetworkTask = new HikingPlan.NNetworkTask()
-                }
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-
-            }
-        });
-
+    public void remove() {
+        lm.removeUpdates(ls);
     }
 }
