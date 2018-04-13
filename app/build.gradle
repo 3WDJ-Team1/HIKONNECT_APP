@@ -38,6 +38,20 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
+    implementation 'com.flipboard:bottomsheet-core:1.5.3'
+    implementation 'com.flipboard:bottomsheet-commons:1.5.3' // optional
+
+    // Socket.io Library
+    implementation ('io.socket:socket.io-client:1.0.0') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
+    compile 'gun0912.ted:tedpermission:2.1.1'
+    compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
+    compile 'com.github.clans:fab:1.6.4'
+}
+
 //    // Material Edit Text
 //    compile 'com.rengwuxian.materialedittext:library:2.1.4'
 //    // Materialish Progress
