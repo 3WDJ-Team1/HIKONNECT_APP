@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest;
+package kr.ac.yjc.wdj.hikonnect.apis.http_request;
 
 import android.content.ContentValues;
 import android.net.UrlQuerySanitizer;

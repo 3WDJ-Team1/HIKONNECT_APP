@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@+id/spinner2"
-        app:layout_constraintBottom_toTopOf="@id/discoverPeersBtn"
+        app:layout_constraintBottom_toTopOf="@+id/discoverPeersBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="@color/black"
-                app:layout_constraintBottom_toTopOf="@id/discoverPeersBtn"
+                app:layout_constraintBottom_toTopOf="@+id/discoverPeersBtn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

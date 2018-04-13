@@ -1,14 +1,11 @@
-package kr.ac.yjc.wdj.hikonnect.APIs.Firebase;
+package kr.ac.yjc.wdj.hikonnect.apis.firebase;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.IBinder;
-import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,11 +14,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.WifiP2pTestingActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.WifiP2pTestingActivity;
 
 public class MessageHandler extends FirebaseMessagingService{
 
-    private final String TAG = "MessageHandler";
+    private static final String TAG = "MessageHandler";
 
     private AppCompatActivity activity;
 

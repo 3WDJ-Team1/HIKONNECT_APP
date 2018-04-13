@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.APIs;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.Manifest;
 import android.content.Context;

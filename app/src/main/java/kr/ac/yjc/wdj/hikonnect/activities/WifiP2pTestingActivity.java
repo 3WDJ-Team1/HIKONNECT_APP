@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,7 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.R;
 
 public class WifiP2pTestingActivity extends AppCompatActivity{
 

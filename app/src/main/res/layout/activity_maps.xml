@@ -1,17 +1,46 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
-    <fragment
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="kr.ac.yjc.wdj.hikonnect.MapsActivity" />
+        tools:context=".activities.MapsActivity2" />
+
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GPS에 수신된 현재위치"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="결과창"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <ToggleButton
+        android:id="@+id/toggle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="위치정보수신시작"
+        android:textOn ="위치정보수신종료"/>
+
+        <Button
+        android:id="@+id/info_intent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전송" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

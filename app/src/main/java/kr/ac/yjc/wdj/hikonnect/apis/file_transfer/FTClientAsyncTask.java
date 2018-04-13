@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.APIs.FileTransfer;
+package kr.ac.yjc.wdj.hikonnect.apis.file_transfer;
 
 import android.content.ContentResolver;
 import android.content.Context;

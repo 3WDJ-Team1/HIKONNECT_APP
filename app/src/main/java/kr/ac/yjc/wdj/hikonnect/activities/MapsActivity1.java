@@ -1,7 +1,7 @@
-package kr.ac.yjc.wdj.hikonnect;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 /**
- * @file        kr.ac.yjc.wdj.myapplication.MapsActivity.java
+ * @file        kr.ac.yjc.wdj.hikonnect.activities.MapsActivity1.java
  * @author      Sungeun Kang (kasueu0814@gmail.com), Beomsu Kwon (rnjs9957@gmail.com)
  * @since       2018-03-26
  * @brief       The Activity used while hiking
@@ -9,12 +9,9 @@ package kr.ac.yjc.wdj.hikonnect;
  */
 
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.AsyncTask;
@@ -22,10 +19,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
-import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
-import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.APIs.WifiP2p.WifiP2pBroadCastReceiver;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.apis.wifi_p2p.WifiP2pBroadCastReceiver;
+import kr.ac.yjc.wdj.hikonnect.activities.LocationService;
+import kr.ac.yjc.wdj.hikonnect.activities.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;
 import kr.ac.yjc.wdj.hikonnect.models.Conf;
 
@@ -40,13 +38,10 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.WifiP2p.WifiP2pController;
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private final String TAG = "MapsActivity";
+public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallback {
+    private final String TAG = "MapsActivity1";
 
     private GoogleMap mMap;
 
@@ -54,8 +49,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // 와이 파이 다이렉트를 위한 변수
     private WifiP2pManager mManager;
-
-    private WifiP2pController mWDController;
 
     private Channel mChannel;
 
@@ -88,7 +81,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // 와이파이 다이렉트 사용을 위한 변수들.
         mManager        = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mWDController   = new WifiP2pController(mManager);
         mChannel        = mManager.initialize(this, getMainLooper(), null);
 
         // 와이파이 다이렉트를 위한 IntentFilter 초기화
@@ -129,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         registerReceiver(mReceiver, mIntentFilter);
 
         // 와이파이 다이렉트 연결을 위해 연결 가능한 디바이스들을 검색.
-        mWDController.discoverPeers(mChannel);
+//        mWDController.discoverPeers(mChannel);
 
         lService.sendMyLocation();
     }
@@ -167,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        String url = Conf.HTTP_ADDR + "/paths/438001301/1";
+        /* String url = Conf.HTTP_ADDR + "/paths/438001301/1";
 
         HikingPlan.NetworkTask networkTask = new HikingPlan.NetworkTask(url, null, mMap);
         networkTask.execute();
@@ -175,12 +167,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
-//                String url = "http://hikonnect.ga/api";
+                String url = "http://hikonnect.ga/api";
                 String url = "http://10.0.2.2:8000/api/hi";
                 Log.d("POST", HttpRequestConnection.postRequest(url, null));
                 return null;
             }
         };
-        task.execute();
+        task.execute(); */
     }
 }
