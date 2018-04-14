@@ -43,7 +43,6 @@ public class RecordingActivity extends Activity implements View.OnTouchListener{
     private static final String URL                                 = "http://hikonnect.ga/api/group/request";
     private String json;
     private String body;
-    private String device;
 
     private DataInputStream     recInputStream;
     private DataOutputStream    recOutputStream;
