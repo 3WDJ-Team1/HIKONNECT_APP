@@ -23,6 +23,8 @@ import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
 import kr.ac.yjc.wdj.hikonnect.apis.wifi_p2p.WIfiDirectBroadCastReceiver;
 
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallback {
@@ -57,7 +60,6 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
     private LocationService lService;
 
     private static final String DATA_SERVER_URL = "http://hikonnect.ga:3000/paths/438001301/1";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +115,11 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
 
+        Toast.makeText(this, "Maps Activity 1", Toast.LENGTH_SHORT).show();
         registerReceiver(mReceiver, mIntentFilter);
 
         // 와이파이 다이렉트 연결을 위해 연결 가능한 디바이스들을 검색.
-//        mWDController.discoverPeers(mChannel);
+        // mWDController.discoverPeers(mChannel);
 
         lService.sendMyLocation();
     }
@@ -138,7 +141,6 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         mUiSettings = mMap.getUiSettings();
-
 
         mUiSettings.setZoomControlsEnabled(true);
         mUiSettings.setCompassEnabled(true);

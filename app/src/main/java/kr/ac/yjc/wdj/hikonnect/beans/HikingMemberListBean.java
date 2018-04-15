@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
  * 등산 중인 멤버 데이터를 담아 둘 클래스
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   018-03-30
- * @see     kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter
+ * @see     kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter
  */
 
 public class HikingMemberListBean {

@@ -17,12 +17,20 @@
         android:hint="@string/password_hint"
         android:id="@+id/pw_text"
         android:inputType="textPassword"/>
-    <com.gc.materialdesign.views.ButtonRectangle
+    <Button
+    android:id="@+id/login"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#1E88E5"
+    android:text="@string/loginBtn"/>
+
+    <!--<com.gc.materialdesign.views.ButtonRectangle
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1E88E5"
-        android:text="@string/loginBtn"/>
+        android:text="@string/loginBtn"/>-->
+
     <com.wang.avi.AVLoadingIndicatorView
         android:id="@+id/login_progress_bar"
         android:layout_width="wrap_content"

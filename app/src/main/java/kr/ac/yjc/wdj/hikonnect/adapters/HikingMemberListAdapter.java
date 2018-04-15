@@ -20,7 +20,7 @@ import kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean;
  * 등산 중인 멤버 리스트 안에 들어갈 어댑터
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-03-30
- * @see     kr.ac.yjc.wdj.myapplication.beans.HikingMemberListBean
+ * @see     kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean
  */
 public class HikingMemberListAdapter extends BaseAdapter {
     // 각 멤버의 정보들을 모아 저장하는  ArrayList

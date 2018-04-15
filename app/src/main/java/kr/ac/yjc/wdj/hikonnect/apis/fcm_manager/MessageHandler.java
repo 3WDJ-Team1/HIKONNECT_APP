@@ -14,7 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.activities.WifiP2pTestingActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.wifi_p2p_test.WifiP2pTestingActivity;
 
 public class MessageHandler extends FirebaseMessagingService{
 

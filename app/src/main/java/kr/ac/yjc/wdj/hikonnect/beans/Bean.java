@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.beans;
+package kr.ac.yjc.wdj.hikonnect.beans;
 
 /**
  * @author  Sungeun Kang (kasueu0814@gmail.com)

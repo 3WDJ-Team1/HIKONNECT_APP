@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.groupdetail;
+package kr.ac.yjc.wdj.hikonnect.activities.groupDetail;
 
 import android.app.Fragment;
 import android.os.Bundle;

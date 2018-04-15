@@ -22,7 +22,7 @@ import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
  * The Activity used while hiking (show members who is now hiking)
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-03-30
- * @see     kr.ac.yjc.wdj.myapplication.adapters.HikingMemberListAdapter
+ * @see     kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter
  */
 
 public class HikingMemberListActivity extends Activity {
@@ -73,10 +73,10 @@ public class HikingMemberListActivity extends Activity {
         // 스와이프 방향 설정
         memberListView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
 
-        // 어댑터에 데이터 삽입
+/*        // 어댑터에 데이터 삽입
         adapter.addMembers(ContextCompat.getDrawable(this, R.drawable.common_google_signin_btn_icon_light_focused), "권범수", 0.15, 0.26, false);
         adapter.addMembers(ContextCompat.getDrawable(this, R.drawable.common_google_signin_btn_icon_light_focused), "새개끼", 0.15, 0.26, true);
-        adapter.addMembers(ContextCompat.getDrawable(this, R.drawable.common_google_signin_btn_icon_light_focused), "발시놈", 0.15, 0.26, true);
+        adapter.addMembers(ContextCompat.getDrawable(this, R.drawable.common_google_signin_btn_icon_light_focused), "발시놈", 0.15, 0.26, true);*/
 
         // 전체 선택 버튼 클릭 시
         btnSelectAll.setOnClickListener(new View.OnClickListener() {

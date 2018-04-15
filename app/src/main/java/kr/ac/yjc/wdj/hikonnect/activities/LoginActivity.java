@@ -9,11 +9,12 @@ import android.os.RecoverySystem;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.ButtonRectangle;
+//import com.gc.materialdesign.views.ButtonRectangle;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.io.IOException;
@@ -21,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -41,9 +41,9 @@ import okio.BufferedSource;
 public class LoginActivity extends Activity  {
     EditText id,pw;
     AVLoadingIndicatorView loginProgressBar;
-    ButtonRectangle login;
+    Button login;
     ContentValues contentValues = new ContentValues();
-    HttpRequestConnection hrc = new HttpRequestConnection();
+//    HttpRequestConnection hrc = new HttpRequestConnection();
     String result;
     Handler handler;
 

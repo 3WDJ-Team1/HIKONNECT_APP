@@ -43,4 +43,6 @@
         android:layout_height="wrap_content"
         android:text="전송" />
     </LinearLayout>
+    <include
+        layout="@layout/activity_wifi_p2p_testing" />
 </RelativeLayout>

@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-/*import kr.ac.yjc.wdj.myapplication.models.Conf;
-import kr.ac.yjc.wdj.myapplication.models.HikingPlan;*/
+/*import kr.ac.yjc.wdj.hikonnect.models.Conf;
+import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;*/
 
 /**`
  * Created by Kwon on 3/26/2018.

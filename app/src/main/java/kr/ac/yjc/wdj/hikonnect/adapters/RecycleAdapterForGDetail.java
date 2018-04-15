@@ -1,11 +1,9 @@
-package kr.ac.yjc.wdj.myapplication.adapters;
+package kr.ac.yjc.wdj.hikonnect.adapters;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +17,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import kr.ac.yjc.wdj.myapplication.R;
-import kr.ac.yjc.wdj.myapplication.beans.Bean;
-import kr.ac.yjc.wdj.myapplication.beans.GroupNotice;
-import kr.ac.yjc.wdj.myapplication.beans.GroupUserInfoBean;
-import kr.ac.yjc.wdj.myapplication.models.Conf;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.beans.Bean;
+import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
+import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
 
 
 /**

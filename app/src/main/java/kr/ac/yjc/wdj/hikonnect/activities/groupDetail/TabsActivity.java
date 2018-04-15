@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.groupdetail;
+package kr.ac.yjc.wdj.hikonnect.activities.groupDetail;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -28,14 +28,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import devlight.io.library.ntb.NavigationTabBar;
-import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.myapplication.adapters.RecycleAdapterForGDetail;
-import kr.ac.yjc.wdj.myapplication.beans.Bean;
-import kr.ac.yjc.wdj.myapplication.beans.GroupNotice;
-import kr.ac.yjc.wdj.myapplication.beans.GroupUserInfoBean;
+import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
+import kr.ac.yjc.wdj.hikonnect.beans.Bean;
+import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
+import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
 import kr.ac.yjc.wdj.hikonnect.models.Conf;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -107,13 +114,18 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param groupId   그룹 아이디
      * @param userId    해당 사용자의 아이디
      */
-    private void initVarisJoined(String groupId, String userId) {
+    private void initVarisJoined(String groupId, String userId) throws IOException, JSONException {
         isJoined = false;
+
         new AsyncTask<String, Integer, String>() {
+
             @Override
             protected String doInBackground(String... params) {
-                String response = HttpRequestConnection.request("url", null);
+                /*todo 1234
+//                String response = HttpRequestConnection.request("url", null);
                 return response;
+                */
+                return "1234";
             }
 
             @Override
@@ -134,7 +146,9 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
                 new AsyncTask<Void, Integer, String>() {
                     @Override
                     protected String doInBackground(Void... params) {
-                        return HttpRequestConnection.request("url", null);
+                        /*todo 1234
+                        return HttpRequestConnection.request("url", null);*/
+                        return "1234";
                     }
 
                     @Override
@@ -370,8 +384,10 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             protected String doInBackground(Void... params) {
                 // http 리퀘스트
-                String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/notice/" + groupId + "/" + startIndex + "/" + length, null);
-                return result;
+                /*todo 1234*/
+//                String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/notice/" + groupId + "/" + startIndex + "/" + length, null);
+//                return result;
+                return "1234";
             }
 
             @Override
@@ -415,8 +431,10 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             protected String doInBackground(Void... params) {
                 // http 리퀘스트
+                /*todo 1234
                 String result = HttpRequestConnection.request(Conf.HTTP_ADDR + "/groupMembers/" + groupId + "/" + startIndex + "/" + length, null);
-                return result;
+                return result;*/
+                return "!234";
             }
 
             @Override

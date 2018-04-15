@@ -1,10 +1,12 @@
-package kr.ac.yjc.wdj.myapplication.beans;
+package kr.ac.yjc.wdj.hikonnect.beans;
+
+import kr.ac.yjc.wdj.hikonnect.beans.Bean;
 
 /**
  * store group user's information
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-06
- * @see     kr.ac.yjc.wdj.myapplication.beans.Bean
+ * @see     Bean
  */
 public class GroupUserInfoBean extends Bean {
     private String  userUuid;       // user's uuid

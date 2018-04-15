@@ -27,34 +27,21 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".HikingMemberListActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".groupdetail.TabsActivity">
+        <!-- Activities -->
+        <activity android:name=".activities.MapsActivity1"
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".activities.HikingMemberListActivity" />
+        <activity android:name=".activities.groupDetail.TabsActivity" />
+        <activity android:name=".activities.LoginActivity"/>
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.MapsActivity1"
-            android:label="@string/title_activity_maps"/>
-        <activity android:name=".activities.HikingMemberListActivity"/>
-        <activity android:name=".activities.WifiP2pTestingActivity">
-        </activity>
-
-        <!-- Firebase 푸시 알림 서비스 -->
+        <activity android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity" />
+        <!--Activities End-->
+        <!-- Services -->
         <service android:name=".apis.fcm_manager.TokenManager">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -66,6 +53,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        <!--Services End-->
     </application>
 
 </manifest>

@@ -1,7 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.models;
 
 /**
- * @file        kr.ac.yjc.wdj.myapplication.models.HikingPlan
+ * @file        kr.ac.yjc.wdj.hikonnect.models.HikingPlan
  * @author      Beomsu Kwon (rnjs9957@gmail.com), Sungeun Kang (kasueu0814@gmail.com)
  * @since       2018-03-26
  * @brief       (add plz)
@@ -20,7 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
+//import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 
 public class HikingPlan {
 
@@ -42,7 +42,11 @@ public class HikingPlan {
 
         @Override
         protected String doInBackground(Void... voids) {
+        /*
+            todo 1234
             return HttpRequestConnection.getRequest(url);
+        */
+        return "1234";
         }
 
         @Override
