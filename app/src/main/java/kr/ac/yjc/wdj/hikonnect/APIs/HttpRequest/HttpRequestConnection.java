@@ -1,11 +1,10 @@
-package kr.ac.yjc.wdj.myapplication.APIs.HttpRequest;
+package kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest;
 
 import android.content.ContentValues;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -24,6 +23,7 @@ public class HttpRequestConnection {
         HttpURLConnection urlConn = null;
         // URL 뒤에 붙여서 보낼 파라미터.
         StringBuffer sbParams = new StringBuffer();
+        Log.i("파라미터", _params.toString());
 
         /**
          * 1. StringBuffer에 파라미터 연결
@@ -67,6 +67,7 @@ public class HttpRequestConnection {
 
             // [2-1] urlConn 설정
             urlConn.setRequestMethod("POST"); // URL 요청에 대한 메소드 설정
+            Log.i("url", "연결");
             urlConn.setDoInput(true);
             urlConn.setRequestProperty("Accept-Charset", "UTF-8"); // Accept-Charset 설정.
             urlConn.setRequestProperty("Context_Type", "application/x-www-form-urlencoded;charset=UTF-8");
@@ -76,9 +77,13 @@ public class HttpRequestConnection {
             Log.i("strParams", strParams);
             // POST 전송 시 파라미터를 url에 합침.
             OutputStream os = urlConn.getOutputStream();
+            Log.i("아웃풋 스트림", "생성함");
             os.write(strParams.getBytes("UTF-8")); // 출력 스트림에 출력.
+            Log.i("아웃풋 스트림", "라이트");
             os.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행
+            Log.i("아웃풋 스트림", "플러시");
             os.close(); // 출력 스트림을 닫고 모든 시스템 자원을 해제.
+            Log.i("아웃풋 스트림", "클로즈");
 
             // [2-3] 연결 요청 확인
             // 실패 시 null을 리턴하고 메서드를 종료.
@@ -89,6 +94,7 @@ public class HttpRequestConnection {
             // [2-4] 읽어온 결과물 리턴
             // 요청한 URL의 출력물을 BufferReader로 받는다
             BufferedReader reader = new BufferedReader(new InputStreamReader(urlConn.getInputStream(), "UTF-8"));
+            Log.i("버퍼리더", "읽음");
 
             // 출력물의 라인과 그 합에 대한 변수
             String line;

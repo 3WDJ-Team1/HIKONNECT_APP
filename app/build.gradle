@@ -25,6 +25,9 @@ android {
                 compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
                 compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
                 compile 'com.github.clans:fab:1.6.4'
+                compile 'com.google.firebase:firebase-messaging:11.8.0'
+                compile 'com.google.firebase:firebase-core:11.8.0'
+                compile 'com.squareup.okhttp3:okhttp:3.7.0'
             }
         }
     }

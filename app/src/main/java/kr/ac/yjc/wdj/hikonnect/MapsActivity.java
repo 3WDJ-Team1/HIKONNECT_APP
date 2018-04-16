@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -33,12 +32,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Map;
 import android.os.Handler;
 import android.os.Message;
@@ -47,9 +47,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
-import kr.ac.yjc.wdj.myapplication.APIs.LocationService;
-import kr.ac.yjc.wdj.myapplication.APIs.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
+import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -95,11 +102,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+/*        // Firebase 푸시 메시지
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        FirebaseInstanceId.getInstance().getToken();*/
+
         // 퍼미션 관리자 생성
         pManager = new PermissionManager(this);
         // 퍼미션 검사 수행
         Map<String, Integer> checkResult = pManager.checkPermissions();
         // 퍼미션 권한 요청
+
         pManager.requestPermissions();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -178,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.1.80:8000/api/test", contentValues);
+                            result = hrc.request("http://hikonnect.ga/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -203,6 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gpsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 try {
                         tv.setText("수신중..");
                         ls.getMyLocation(new LocationListener() {
@@ -213,6 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 network = location.getProvider();
 
                                 LatLng nl = new LatLng(now_lat, now_lng);
+                                mMap.clear();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
                                 mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
@@ -236,7 +251,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://172.26.1.80:8000/api/getlm",contentValues);
+                                        result = hrc.request("http://hikonnect.ga/api/getlm",contentValues);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }
@@ -248,27 +263,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             for(int i = 0; i < jsonArray.length(); i++) {
                                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                                 lat         = jsonObject.getDouble("latitude");
-                                                Log.i("lat", String.valueOf(lat));
                                                 lng         = jsonObject.getDouble("longitude");
-                                                Log.i("lat", String.valueOf(lng));
                                                 title_st    = jsonObject.getString("title");
-                                                Log.i("lat", title_st);
                                                 content_st  = jsonObject.getString("content");
-                                                Log.i("lat", content_st);
                                                 LatLng nl   = new LatLng(lat, lng);
                                                 mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                                 tv.setText(network + "로 접속됨");
-                                                /*if (now_lat == lat && now_lng == lng) {
-                                                    new AlertDialog.Builder()
-                                                            .setTitle(title_st)
-                                                            .setMessage(content_st)
-                                                            .setNeutralButton("닫기", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                                                                }
-                                                            }).show();
-                                                }*/
+                                                // Send PushMessage
+                                                requestPost("http://hikonnect.ga/api/send", "위치메모가 있습니다.", "내용 확인 바랍니다.");
                                             }
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -440,5 +443,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         }
         return cursor.getString(column_index);
+    }
+
+    // OkHttp Post
+    OkHttpClient client = new OkHttpClient();
+    public void requestPost(String url, String header, String body){
+
+        //Request Body에 서버에 보낼 데이터 작성
+        RequestBody requestBody = new FormBody.Builder().add("header", header).add("body", body).build();
+
+        //작성한 Request Body와 데이터를 보낼 url을 Request에 붙임
+        Request request = new Request.Builder().url(url).post(requestBody).build();
+
+        //request를 Client에 세팅하고 Server로 부터 온 Response를 처리할 Callback 작성
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("error", "Connect Server Error is " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("aaaa", "Response Body is " + response.body().string());
+            }
+        });
     }
 }

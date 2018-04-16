@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -12,22 +12,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.dd.processbutton.ProcessButton;
 import com.gc.materialdesign.views.ButtonRectangle;
-import com.google.android.gms.tasks.OnCompleteListener;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-
-import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 /**
  * Created by jungyu on 2018-04-05.
  */
 
 public class LoginActivity extends Activity  {
-    String url = "http://172.26.1.80:8000/api/";
     EditText id,pw;
     TextView tv;
     ButtonRectangle login;
@@ -48,16 +41,14 @@ public class LoginActivity extends Activity  {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tv.setText("로그인 중...");
                 try {
                     contentValues.put("id",id.getText().toString());
                     contentValues.put("pw",pw.getText().toString());
-                    Log.i("넣엇다","요");
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.i("넣엇다","쓰레드 시작");
-                            result = hrc.request("http://172.26.1.80:8000/api/login_app", contentValues);
-                            Log.i("넣엇다","불러오고");
+                            result = hrc.request("http://hikonnect.ga/api/login_app", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }

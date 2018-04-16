@@ -1,12 +1,10 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by jungyu on 2018-04-11.

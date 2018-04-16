@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.ac.yjc.wdj.myapplication">
+    package="kr.ac.yjc.wdj.hikonnect">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -35,18 +35,30 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name="kr.ac.yjc.wdj.hikonnect.MapsActivity"
             android:label="@string/title_activity_maps">
 
         </activity>
-        <activity android:name=".Locationmemo"></activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name="kr.ac.yjc.wdj.hikonnect.Locationmemo"></activity>
+        <activity android:name="kr.ac.yjc.wdj.hikonnect.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Services -->
+        <service android:name=".APIs.fcm_manager.TokenManager">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".APIs.fcm_manager.MessageHandler">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <!--Services End-->
     </application>
-
 </manifest>

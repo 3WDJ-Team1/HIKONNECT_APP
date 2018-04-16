@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication.APIs;
+package kr.ac.yjc.wdj.hikonnect.APIs;
 
 import android.Manifest;
 import android.support.v4.app.ActivityCompat;
