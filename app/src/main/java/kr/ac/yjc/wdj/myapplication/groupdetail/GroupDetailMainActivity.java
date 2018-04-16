@@ -1,24 +1,27 @@
 package kr.ac.yjc.wdj.myapplication.groupdetail;
 
-/*
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-*/
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-/*
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Toast;
 
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -30,34 +33,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.myapplication.R;
 import kr.ac.yjc.wdj.myapplication.adapters.RecycleAdapterForGDetail;
 import kr.ac.yjc.wdj.myapplication.beans.Bean;
 import kr.ac.yjc.wdj.myapplication.beans.GroupNotice;
 import kr.ac.yjc.wdj.myapplication.beans.GroupUserInfoBean;
+import kr.ac.yjc.wdj.myapplication.groupdetail.fragment.FragmentPlan;
+import kr.ac.yjc.wdj.myapplication.groupdetail.fragment.RecyclerViewFragment;
+import kr.ac.yjc.wdj.myapplication.groupdetail.fragment.RecyclerViewMember;
+import kr.ac.yjc.wdj.myapplication.groupdetail.fragment.RecyclerViewNotice;
 import kr.ac.yjc.wdj.myapplication.models.Conf;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
-import java.util.ArrayList;
-*/
+public class GroupDetailMainActivity extends DrawerActivity{
 
-/**
- * 그룹 상세보기 페이지 - 탭 / 페이지 로 구성 --> 나뉠 가능성 있음
- * @author  Sungeun Kang(kasueu0814@gmail.com)
- * @since   2018-04-06
- */
-public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallback */ {
-/*
-    // UI 변수
-    private ViewPager               viewPager;          // 전체 페이지
-    private NavigationTabBar        navigationTabBar;   // 네비게이션 탭 바
-    private FloatingActionButton    btnEnterGroup;      // 그룹 참가 버튼
+    @BindView(R.id.materialViewPager)
+    MaterialViewPager mViewPager;
+    @BindView(R.id.btnEnterGroup)
+    FloatingActionButton btnEnterGroup;
 
     // UI 내부 데이터 연결 객체
-    private ArrayList<NavigationTabBar.Model>   models;             // 네비게이션 탭 안의 메뉴 구성을 위한 모델
-    private static RecycleAdapterForGDetail     adapterNotice,      // rvNotice에 값을 연결할 어댑터
+    public static RecycleAdapterForGDetail      adapterNotice,      // rvNotice에 값을 연결할 어댑터
                                                 adapterMember;      // rvMember에 값을 연결할 어댑터
-    private ArrayList<Bean>                     dataListNotice,     // notice URL 요청으로 받아온 값을 담아둘 곳
+    private static ArrayList<Bean>              dataListNotice,     // notice URL 요청으로 받아온 값을 담아둘 곳
                                                 dataListMember;     // member URL 요청으로 받아온 값을 담아둘 곳
 
     // 데이터 담아둘 변수
@@ -65,7 +73,7 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
     private int                 firstIndex;         // 요청 공지사항 데이터 시작 인덱스
     private int                 firstIndexForMem;   // 요청 그룹 멤버 데이터 시작 인덱스
     private final int           REQ_LENGTH = 10;    // 한 번의 요청에 불러올 데이터 수
-    private static final int    PAGE_COUNT = 3;     // 총 페이지의 수
+    private static final int    PAGE_COUNT = 2;     // 총 페이지의 수
     private static boolean      isJoined;           // 사용자가 해당 그룹에 참여하고 있는 지 여부
     private static String       groupId;            // 해당 그룹의 id
 
@@ -73,16 +81,22 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
     private boolean     isScrolling;                                // 현재 스크롤 되고 있는지 확인
     private int         currentItems, totalItems, scrollOutItems;   // 현재 스크롤 위치 파악하기 위한 변수
 
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.group_detail_home);
+    // MediaType
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private OkHttpClient client;
 
-        viewPager           = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
-        navigationTabBar    = (NavigationTabBar) findViewById(R.id.ntb_horizontal);
-        models              = new ArrayList<>();
-        colors              = getResources().getStringArray(R.array.default_preview);
-        btnEnterGroup       = (FloatingActionButton) findViewById(R.id.btnEnterGroup);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.group_detail_main);
+        setTitle("");
+        ButterKnife.bind(this);
+
+        final Toolbar toolbar = mViewPager.getToolbar();
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+
         isScrolling         = false;
         dataListNotice      = new ArrayList<>();
         dataListMember      = new ArrayList<>();
@@ -92,7 +106,9 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
         adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
         adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember);
 
-        this.groupId        = "16f78874-b51c-3ad0-9b91-5d35f22a412b";
+        groupId             = "16f78874-b51c-3ad0-9b91-5d35f22a412b";
+
+        client              = new OkHttpClient();
         // 이 사람이 그룹에 있으면 그룹 참가 버튼 -> 그룹 탈퇴 버튼
 //        initVarisJoined("", "");
         // 플로팅 버튼 누르면 그룹 참가
@@ -102,14 +118,14 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
 
         datafetchForNotice(groupId, firstIndex, REQ_LENGTH);
         datafetchForMember(groupId, firstIndexForMem, REQ_LENGTH);
+
     }
 
-
-    *//**
+    /**
      * 사용자가 현재 그룹에 참가하고 있는 지 여부를 isJoined 에 넣음
      * @param groupId   그룹 아이디
      * @param userId    해당 사용자의 아이디
-     *//*
+     */
     private void initVarisJoined(String groupId, String userId) {
         isJoined = false;
         new AsyncTask<String, Integer, String>() {
@@ -122,82 +138,39 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                TabsActivity.isJoined = true;
+                GroupDetailMainActivity.isJoined = true;
             }
         }.execute(groupId, userId);
     }
 
-    *//**
+    String post(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+    /**
      * 플로팅 버튼에 리스너 달기
-     *//*
+     */
     private void setListenerToFloatingButton () {
         btnEnterGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AsyncTask<Void, Integer, String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        return HttpRequestConnection.request("url", null);
-                    }
-
-                    @Override
-                    protected void onPostExecute(String s) {
-                        super.onPostExecute(s);
-                    }
-                }.execute();
+//                post(Conf.HTTP_ADDR + "/entryGroup", "{'groupId':" + "'" + groupId + "', 'userId': '}");
             }
         });
     }
 
-    *//**
+    /**
      * 전체적인 UI 초기화 작업 --> 페이지 초기화 등
-     *//*
+     */
     private void initUI() {
-        // 페이지에 어댑터 장착
-        viewPager.setAdapter(new PagerAdapter() {
-            *//**
-             * 페이지 수 설정
-             * @return
-             *//*
-            @Override
-            public int getCount() {
-                return TabsActivity.PAGE_COUNT;
-            }
 
-            @Override
-            public boolean isViewFromObject(final View view, final Object object) {
-                return view.equals(object);
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                ((ViewPager) container).removeView((View) object);
-            }
-
-            *//**
-             * 페이지 내부 설정
-             * @param container
-             * @param position
-             * @return
-             *//*
-            @Override
-            public Object instantiateItem(final ViewGroup container, final int position) {
-                View view  = null; // 페이지에 넣을 View
-
-                switch (position) {
-                    // 그룹 공지사항 페이지
-                    case 0:
-                        // group_detail_notice의 view 객체를 받아옴
-                        view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_notice, null, false);
-                        // 해당 view의 RecyclerView 찾아옴
-                        RecyclerView rvNotice = (RecyclerView) view.findViewById(R.id.groupNoticeList);
-                        rvNotice.setAdapter(adapterNotice);
-
-                        // 사이즈 고정
-                        rvNotice.setHasFixedSize(true);
-                        // 레이아웃 매니저 설정
-                        rvNotice.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
-
+        mViewPager.getViewPager().setAdapter(/*
                         // 스크롤 리스너 : 무한 스크롤
                         rvNotice.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
@@ -219,18 +192,16 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
                                 if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
                                     isScrolling = false;
                                     // data fetch
-                                    datafetchForNotice(TabsActivity.groupId, firstIndex, REQ_LENGTH);
+                                    datafetchForNotice(GroupDetailMainActivity.groupId, firstIndex, REQ_LENGTH);
                                 }
                             }
                         });
-                        // 총 컨테이너 페이저에 삽입
-                        container.addView(view);
-                        break;
+
                     // 그룹 일정 페이지
                     case 1:
                         view = new GMapFragment().onCreateView(getLayoutInflater(), container, null);
                         android.app.FragmentManager fragmentManager = getFragmentManager();
-                        MapFragment mapFragment = (MapFragment)fragmentManager.findFragmentById(R.id.groupPlanMap);
+                        MapFragment mapFragment = (MapFragment)f                                                                                                                                                   ragmentManager.findFragmentById(R.id.groupPlanMap);
 
                         ConstraintLayout layout = (ConstraintLayout) view.findViewById(R.id.groupPlanLayout);
 
@@ -285,7 +256,7 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
                                     isScrolling = false;
 
                                     // data fetch
-                                    datafetchForMember(TabsActivity.groupId, firstIndexForMem, REQ_LENGTH);
+                                    datafetchForMember(GroupDetailMainActivity.groupId, firstIndexForMem, REQ_LENGTH);
                                 }
                             }
                         });
@@ -296,74 +267,85 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
                 return view;
             }
 
-        });
+        });*/
 
-        // 탭에 메뉴 추가 (사진, 색상, 타이틀)
-        addModels(R.drawable.ic_notifications_white_24px, colors[0], "Notice");
-        addModels(R.drawable.ic_event_white_24px, colors[1], "Plan");
-        addModels(R.drawable.ic_group_white_24px, colors[2], "Members");
+        new FragmentPagerAdapter(getSupportFragmentManager()) {
 
-        // 탭 모델 설정
-        navigationTabBar.setModels(models);
-
-        // 뷰페이저 설정
-        navigationTabBar.setViewPager(viewPager, 2);
-
-        //IMPORTANT: ENABLE SCROLL BEHAVIOUR IN COORDINATOR LAYOUT
-        navigationTabBar.setBehaviorEnabled(true);
-
-        navigationTabBar.setOnTabBarSelectedIndexListener(new NavigationTabBar.OnTabBarSelectedIndexListener() {
             @Override
-            public void onStartTabSelected(final NavigationTabBar.Model model, final int index) {
+            public Fragment getItem(int position) {
+                switch (position % PAGE_COUNT) {
+                    case 0:
+                        return RecyclerViewNotice.newInstance();
+                   /* case 1:
+                        return FragmentPlan.newInstance();*/
+                    case 1:
+                        return RecyclerViewMember.newInstance();
+                    default:
+                        return RecyclerViewFragment.newInstance();
+                }
+            }
+
+
+            @Override
+            public int getCount() {
+                return PAGE_COUNT;
             }
 
             @Override
-            public void onEndTabSelected(final NavigationTabBar.Model model, final int index) {
-                model.hideBadge();
-            }
-        });
-        navigationTabBar.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(final int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(final int state) {
-
+            public CharSequence getPageTitle(int position) {
+                switch (position % PAGE_COUNT) {
+                    case 0:
+                        return "Notice";
+                    case 1:
+                        return "Members";
+                    case 2:
+                        return "Members";
+                }
+                return "";
             }
         });
-    }
 
-    // 탭에 모델 추가
-    private void addModels(int drawable, String color, String title) {
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getDrawable(drawable),
-                        Color.parseColor(color))
-                        .title(title)
-                        .build()
-        );
-    }
+        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.green,
+                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
+                    case 2:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.cyan,
+                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
+                    case 3:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.red,
+                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
+                }
 
-    // 맵 로딩 시 초기화
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        LatLng SEOUL = new LatLng(37.56, 126.97);
+                //execute others actions if needed (ex : modify your header logo)
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("한국의 수도");
-        googleMap.addMarker(markerOptions);
+                return null;
+            }
+        });
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
+        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
+
+        final View logo = findViewById(R.id.logo_white);
+        if (logo != null) {
+            logo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.notifyHeaderChanged();
+                    Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     // get data from server for notice list
@@ -452,5 +434,5 @@ public class TabsActivity extends FragmentActivity/* implements OnMapReadyCallba
                 }
             }
         }.execute();
-    }*/
+    }
 }

@@ -11,7 +11,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="200dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -45,7 +45,7 @@
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"
                 app:titleTextColor="@color/white"
-                app:title="그룹이름"
+                app:title="group"
                 android:titleTextAppearance="@color/white"
                 app:popupTheme="@style/AppTheme.AppBarOverlay">
             </android.support.v7.widget.Toolbar>
@@ -59,23 +59,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
-
-    <devlight.io.library.ntb.NavigationTabBar
-        android:id="@+id/ntb_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        app:ntb_bg_color="@color/black"
-        app:ntb_active_color="@color/white"
-        app:ntb_inactive_color="@color/lightGrey"
-        app:ntb_badge_size="12sp"
-        app:ntb_badge_bg_color="#ffff0000"
-        app:ntb_badge_gravity="top"
-        app:ntb_badge_position="left"
-        app:ntb_badge_title_color="#ffffffff"
-        app:ntb_badge_use_typeface="true"
-        app:ntb_badged="true"
-        app:ntb_typeface="fonts/agency.ttf"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btnEnterGroup"

@@ -88,37 +88,37 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
 
         } else if (viewHolder instanceof ViewHolderMember) {
             final ViewHolderMember tmpViewHolder = (ViewHolderMember) viewHolder;
-            final int index = i;
-            new AsyncTask<Void, Integer, Bitmap>() {
-                @Override
-                protected Bitmap doInBackground(Void... params) {
-                    Bitmap bitmap = null;
-
-                    try {
-                        URL url = new URL(((GroupUserInfoBean) dataList.get(index)).getImagePath());
-
-                        // 웹에서 이미지 가져와서
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        connection.setDoInput(true);
-                        connection.connect();
-
-                        InputStream is = connection.getInputStream();
-                        // 비트맵으로 변환
-                        bitmap = BitmapFactory.decodeStream(is);
-
-                    } catch (MalformedURLException me) {
-                        me.printStackTrace();
-                    } catch (IOException ie) {
-                        ie.printStackTrace();
-                    }
-                    return bitmap;
-                }
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    super.onPostExecute(bitmap);
-                    tmpViewHolder.profilePic.setImageBitmap(bitmap);
-                }
-            }.execute();
+//            final int index = i;
+//            new AsyncTask<Void, Integer, Bitmap>() {
+//                @Override
+//                protected Bitmap doInBackground(Void... params) {
+//                    Bitmap bitmap = null;
+//
+//                    try {
+//                        URL url = new URL(((GroupUserInfoBean) dataList.get(index)).getImagePath());
+//
+//                        // 웹에서 이미지 가져와서
+//                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                        connection.setDoInput(true);
+//                        connection.connect();
+//
+//                        InputStream is = connection.getInputStream();
+//                        // 비트맵으로 변환
+//                        bitmap = BitmapFactory.decodeStream(is);
+//
+//                    } catch (MalformedURLException me) {
+//                        me.printStackTrace();
+//                    } catch (IOException ie) {
+//                        ie.printStackTrace();
+//                    }
+//                    return bitmap;
+//                }
+//                @Override
+//                protected void onPostExecute(Bitmap bitmap) {
+//                    super.onPostExecute(bitmap);
+//                    tmpViewHolder.profilePic.setImageBitmap(bitmap);
+//                }
+//            }.execute();
             ((ViewHolderMember) viewHolder).userName.setText(((GroupUserInfoBean) dataList.get(i)).getNickname());
         }
     }
