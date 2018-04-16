@@ -178,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.3.152:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.1.80:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -187,7 +187,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void handleMessage(Message msg) {
                             tv.setText(result);
                             LatLng nl = new LatLng(now_lat, now_lng);
-                            mMap.addMarker(new MarkerOptions().position(nl).title("하하하하하").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            mMap.addMarker(new MarkerOptions().position(nl).title("title").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
                     };
                 } catch (SecurityException ex) {
@@ -221,7 +221,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     public boolean onMarkerClick(Marker marker) {
                                         Intent intent1 = new Intent(MapsActivity.this,Locationmemo.class);
                                         intent1.putExtra("title",marker.getTitle());
-                                        intent1.putExtra("content",marker.getSnippet().toString());
+                                        Log.i("title",marker.getTitle());
+                                        intent1.putExtra("content",marker.getSnippet());
+                                        Log.i("content",marker.getSnippet());
                                         startActivity(intent1);
                                         return false;
                                     }
@@ -229,10 +231,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 // Get All Location Memo
                                 contentValues.put("id", user_id);
+                                contentValues.put("lat", now_lat);
+                                contentValues.put("lng", now_lng);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://172.26.3.152:8000/api/getlm",contentValues);
+                                        result = hrc.request("http://172.26.1.80:8000/api/getlm",contentValues);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }
@@ -254,6 +258,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 LatLng nl   = new LatLng(lat, lng);
                                                 mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                                 tv.setText(network + "로 접속됨");
+                                                /*if (now_lat == lat && now_lng == lng) {
+                                                    new AlertDialog.Builder()
+                                                            .setTitle(title_st)
+                                                            .setMessage(content_st)
+                                                            .setNeutralButton("닫기", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                                }
+                                                            }).show();
+                                                }*/
                                             }
                                         } catch (JSONException e) {
                                             e.printStackTrace();

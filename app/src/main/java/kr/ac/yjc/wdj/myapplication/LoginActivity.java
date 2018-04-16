@@ -27,6 +27,7 @@ import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
  */
 
 public class LoginActivity extends Activity  {
+    String url = "http://172.26.1.80:8000/api/";
     EditText id,pw;
     TextView tv;
     ButtonRectangle login;
@@ -50,10 +51,13 @@ public class LoginActivity extends Activity  {
                 try {
                     contentValues.put("id",id.getText().toString());
                     contentValues.put("pw",pw.getText().toString());
+                    Log.i("넣엇다","요");
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.3.152:8000/api/login_app", contentValues);
+                            Log.i("넣엇다","쓰레드 시작");
+                            result = hrc.request("http://172.26.1.80:8000/api/login_app", contentValues);
+                            Log.i("넣엇다","불러오고");
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }

@@ -50,7 +50,6 @@ public class HttpRequestConnection {
                     sbParams.append("&");
 
                 sbParams.append(key).append("=").append(value);
-                Log.i("sbParams",sbParams.toString());
                 // 파라미터가 2개 이상이면 isAnd를 true로 바꾸고 다음 루프부터 &를 붙인다.
                 if (isAnd == false)
                     if (_params.size() >= 2)
@@ -98,8 +97,8 @@ public class HttpRequestConnection {
             // 라인을 받아와 합친다.
             while ((line = reader.readLine()) != null) {
                 page += line;
+                Log.i("받은거",page);
             }
-            Log.i("받은거",page);
             return page;
 
         } catch (MalformedURLException e) { // for URL
