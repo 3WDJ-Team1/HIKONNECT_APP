@@ -31,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.FileNotFoundException;
@@ -121,7 +122,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fab2 = findViewById(R.id.fab2);
         title = findViewById(R.id.title);
         linearLayout = findViewById(R.id.imagelayout);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
 
         // Set Created_at, Updated_at
@@ -177,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.3.117:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.3.152:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -215,6 +216,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
                                 mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
+                                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker) {
+                                        Intent intent1 = new Intent(MapsActivity.this,Locationmemo.class);
+                                        intent1.putExtra("title",marker.getTitle());
+                                        intent1.putExtra("content",marker.getSnippet().toString());
+                                        startActivity(intent1);
+                                        return false;
+                                    }
+                                });
 
                                 // Get All Location Memo
                                 contentValues.put("id", user_id);
@@ -305,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 });
-                alertDialog.setNegativeButton("글쓰기", new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         linearLayout.setVisibility(View.VISIBLE);
