@@ -64,13 +64,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ImageView imageView;
     LinearLayout linearLayout;
     TextView tv;
+    double rlat, rlng;
     double now_lat, now_lng, lat, lng;
     PermissionManager pManager;
     ContentValues contentValues = new ContentValues();
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String result, image_path, network, user_id, nickname, hiking_group, title_st, content_st = "";
+    String image_path = "File_path";
+    String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
     Handler handler;
     Uri uri;
     FloatingActionMenu floatingActionMenu;
@@ -178,7 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.26.3.152:8000/api/test", contentValues);
+                            result = hrc.request("http://172.25.1.9:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -221,7 +223,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     public boolean onMarkerClick(Marker marker) {
                                         Intent intent1 = new Intent(MapsActivity.this,Locationmemo.class);
                                         intent1.putExtra("title",marker.getTitle());
-                                        intent1.putExtra("content",marker.getSnippet().toString());
+                                        intent1.putExtra("content",marker.getSnippet());
+                                        rlat = marker.getPosition().latitude;
+                                        rlng = marker.getPosition().longitude;
+                                        intent1.putExtra("latitude",rlat);
+                                        intent1.putExtra("longitude",rlng);
                                         startActivity(intent1);
                                         return false;
                                     }
@@ -232,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://172.26.3.152:8000/api/getlm",contentValues);
+                                        result = hrc.request("http://172.25.1.9:8000/api/getlm",contentValues);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }

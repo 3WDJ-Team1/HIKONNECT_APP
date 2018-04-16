@@ -81,6 +81,7 @@ public class Locationmemo extends Activity {
                 }
             }
         };
+
        File imgFile = new  File("/storage/emulated/0/DCIM/Camera/20180410_035545.jpg");
       if(imgFile.exists()){
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
