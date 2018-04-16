@@ -1,11 +1,13 @@
 package kr.ac.yjc.wdj.myapplication;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +28,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
 
@@ -43,11 +48,23 @@ public class Locationmemo extends Activity {
     String result;
     ImageView image1;
     String path;
+    PermissionListener permissionlistener = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.location_memo);
 
+        permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(Locationmemo.this, "권한 허가", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(Locationmemo.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
         title = findViewById(R.id.gettitle);
         image1 = findViewById(R.id.image1);
         content = findViewById(R.id.getcontent);
@@ -75,17 +92,27 @@ public class Locationmemo extends Activity {
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         path       = jsonObject.getString("image_path");
+                        TedPermission.with(Locationmemo.this)
+                                .setPermissionListener(permissionlistener)
+                                .setRationaleMessage("사진을 보려면 권한이 필요함")
+                                .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE)
+                                .check();
+
+                        //path = path.replaceAll("\\/","/");
+
+                        File imgFile = new File(path);
+                        if(imgFile.exists()){
+                            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                            image1.setImageBitmap(myBitmap);
+                        }
+                        else
+                            image1.setImageResource(R.color.colorPrimary);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
-
-       File imgFile = new  File("/storage/emulated/0/DCIM/Camera/20180410_035545.jpg");
-      if(imgFile.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-           image1.setImageBitmap(myBitmap);
-       }
     }
 }

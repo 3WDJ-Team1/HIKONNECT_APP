@@ -216,7 +216,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 LatLng nl = new LatLng(now_lat, now_lng);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                                mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
                                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
@@ -256,7 +255,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 title_st    = jsonObject.getString("title");
                                                 Log.i("lat", title_st);
                                                 content_st  = jsonObject.getString("content");
-                                                Log.i("lat", content_st);
+                                                Log.i("@@@@@@@@@@@@", content_st);
                                                 LatLng nl   = new LatLng(lat, lng);
                                                 mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                                                 tv.setText(network + "로 접속됨");
