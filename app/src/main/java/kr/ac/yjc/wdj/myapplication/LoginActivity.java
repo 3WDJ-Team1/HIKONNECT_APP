@@ -53,7 +53,7 @@ public class LoginActivity extends Activity  {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.25.1.9:8000/api/login_app", contentValues);
+                            result = hrc.request("http://172.26.3.152:8000/api/login_app", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }

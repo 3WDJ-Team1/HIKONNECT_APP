@@ -1,6 +1,5 @@
 package kr.ac.yjc.wdj.myapplication;
 
-import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -22,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -35,8 +33,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -68,14 +64,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ImageView imageView;
     LinearLayout linearLayout;
     TextView tv;
-    double now_lat, now_lng, lat, lng , rlat, rlng;
+    double now_lat, now_lng, lat, lng;
     PermissionManager pManager;
     ContentValues contentValues = new ContentValues();
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String image_path = "default";
-    String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
+    String result, image_path, network, user_id, nickname, hiking_group, title_st, content_st = "";
     Handler handler;
     Uri uri;
     FloatingActionMenu floatingActionMenu;
@@ -183,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://172.25.1.9:8000/api/test", contentValues);
+                            result = hrc.request("http://172.26.3.152:8000/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -209,7 +204,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 try {
-
                         tv.setText("수신중..");
                         ls.getMyLocation(new LocationListener() {
                             @Override
@@ -220,19 +214,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 LatLng nl = new LatLng(now_lat, now_lng);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                                //mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
+                                mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
                                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
                                     public boolean onMarkerClick(Marker marker) {
                                         Intent intent1 = new Intent(MapsActivity.this,Locationmemo.class);
                                         intent1.putExtra("title",marker.getTitle());
-                                        intent1.putExtra("content",marker.getSnippet());
-                                        rlat = marker.getPosition().latitude;
-                                        rlng = marker.getPosition().longitude;
-                                        intent1.putExtra("latitude",rlat);
-                                        intent1.putExtra("longitude",rlng);
-
+                                        intent1.putExtra("content",marker.getSnippet().toString());
                                         startActivity(intent1);
                                         return false;
                                     }
@@ -243,7 +232,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://172.25.1.9:8000/api/getlm",contentValues);
+                                        result = hrc.request("http://172.26.3.152:8000/api/getlm",contentValues);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }
@@ -297,7 +286,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         fab1.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 floatingActionMenu.close(true);
@@ -344,7 +332,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode != RESULT_OK)
             return;
 
@@ -398,7 +385,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
