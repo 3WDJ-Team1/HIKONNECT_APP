@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
 import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -70,14 +71,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button post_btn, cancel;
     ImageView imageView;
     LinearLayout linearLayout;
+    String image_path = "File_path";
     TextView tv;
-    double now_lat, now_lng, lat, lng;
+    double now_lat, now_lng, lat, lng, rlat, rlng;
     PermissionManager pManager;
     ContentValues contentValues = new ContentValues();
     AlertDialog.Builder builder;
     Bitmap image_bitmap;
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String result, image_path, network, user_id, nickname, hiking_group, title_st, content_st = "";
+    String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
     Handler handler;
     Uri uri;
     FloatingActionMenu floatingActionMenu;
@@ -198,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }).start();
                     handler = new Handler() {
                         public void handleMessage(Message msg) {
-                            tv.setText(result);
+                            tv.setText("위치메모 등록완료");
                             LatLng nl = new LatLng(now_lat, now_lng);
                             mMap.addMarker(new MarkerOptions().position(nl).title("title").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
@@ -231,14 +233,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
                                 mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
+                                tv.setText(network + "로 접속됨");
                                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
                                     public boolean onMarkerClick(Marker marker) {
                                         Intent intent1 = new Intent(MapsActivity.this,Locationmemo.class);
                                         intent1.putExtra("title",marker.getTitle());
-                                        Log.i("title",marker.getTitle());
                                         intent1.putExtra("content",marker.getSnippet());
-                                        Log.i("content",marker.getSnippet());
+                                        rlat = marker.getPosition().latitude;
+                                        rlng = marker.getPosition().longitude;
+                                        intent1.putExtra("latitude",rlat);
+                                        intent1.putExtra("longitude",rlng);
                                         startActivity(intent1);
                                         return false;
                                     }
@@ -252,6 +257,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     @Override
                                     public void run() {
                                         result = hrc.request("http://hikonnect.ga/api/getlm",contentValues);
+                                        Log.i("result", result);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
                                     }
@@ -268,7 +274,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 content_st  = jsonObject.getString("content");
                                                 LatLng nl   = new LatLng(lat, lng);
                                                 mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                                tv.setText(network + "로 접속됨");
 
                                                 // Send PushMessage
                                                 requestPost("http://hikonnect.ga/api/send", "위치메모가 있습니다.", "내용 확인 바랍니다.");

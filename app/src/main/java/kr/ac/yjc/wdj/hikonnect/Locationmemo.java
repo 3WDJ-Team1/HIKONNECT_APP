@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.myapplication;
+package kr.ac.yjc.wdj.hikonnect;
 
 import android.Manifest;
 import android.app.Activity;
@@ -30,13 +30,14 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.util.ArrayList;
 
-import kr.ac.yjc.wdj.myapplication.APIs.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 /**
  * Created by jungyu on 2018-04-11.
  */
 
-public class Locationmemo extends Activity {
+public class                                                                                                                                                                          Locationmemo extends Activity {
 
     TextView title;
     Handler handler;
@@ -80,7 +81,7 @@ public class Locationmemo extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request("http://172.25.1.9:8000/api/position",contentValues);
+                result = hrc.request("http://hikonncet/api/position",contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
@@ -88,7 +89,7 @@ public class Locationmemo extends Activity {
         handler = new Handler() {
             public void handleMessage(Message msg) {
                 try {
-                    JSONArray jsonArray = new JSONArray(result);
+                      JSONArray jsonArray = new JSONArray(result);
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         path       = jsonObject.getString("image_path");
