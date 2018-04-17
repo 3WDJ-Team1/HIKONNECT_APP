@@ -81,7 +81,7 @@ public class                                                                    
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request("http://hikonncet/api/position",contentValues);
+                result = hrc.request("http://hikonnect.ga/api/position",contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
@@ -112,6 +112,7 @@ public class                                                                    
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                 }
             }
         };

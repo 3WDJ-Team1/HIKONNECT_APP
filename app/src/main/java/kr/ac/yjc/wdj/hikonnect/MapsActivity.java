@@ -1,5 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect;
 
+import android.*;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -34,14 +35,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Map;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
     Handler handler;
     Uri uri;
+    PermissionListener permissionlistener = null;
     FloatingActionMenu floatingActionMenu;
     FloatingActionButton fab1;
     FloatingActionButton fab2;
@@ -140,6 +146,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
 
+        permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(MapsActivity.this, "권한 허가", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(MapsActivity.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
         // Set Created_at, Updated_at
         final SimpleDateFormat[] sdfNow = {new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")};
         final String time = sdfNow[0].format(new Date(System.currentTimeMillis()));
@@ -202,7 +218,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void handleMessage(Message msg) {
                             tv.setText("위치메모 등록완료");
                             LatLng nl = new LatLng(now_lat, now_lng);
-                            mMap.addMarker(new MarkerOptions().position(nl).title("title").snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            mMap.addMarker(new MarkerOptions().position(nl).title(title.getText().toString()).snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
                     };
                 } catch (SecurityException ex) {
@@ -231,7 +247,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 LatLng nl = new LatLng(now_lat, now_lng);
                                 mMap.clear();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                                mMap.addMarker(new MarkerOptions().position(nl).title("현재 나의 위치"));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
                                 tv.setText(network + "로 접속됨");
                                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -251,8 +266,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 // Get All Location Memo
                                 contentValues.put("id", user_id);
-                                contentValues.put("lat", now_lat);
-                                contentValues.put("lng", now_lng);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -309,8 +322,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         fab1.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                TedPermission.with(MapsActivity.this)
+                        .setPermissionListener(permissionlistener)
+                        .setRationaleMessage("사진을 보려면 권한이 필요함")
+                        .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                        .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .check();
                 floatingActionMenu.close(true);
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
 
@@ -380,7 +400,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 break;
             }
-
             case PICK_FROM_CAMERA: {
                 try {
                     //Get Image_path
