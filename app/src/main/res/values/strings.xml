@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hikonnect</string>
+    <string name="app_name">HIKONNECT</string>
     <string name="title_activity_maps">Hikonnect</string>
     <string name="id_hint">아이디</string>
     <string name="password_hint">비밀번호</string>

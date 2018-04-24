@@ -35,7 +35,10 @@ import okhttp3.ResponseBody;
 import okio.BufferedSource;
 
 /**
- * Created by jungyu on 2018-04-05.
+ * @file        kr.ac.yjc.wdj.hikonnect.activities.MainActivity.java
+ * @author      Jungyu Choi (wnsrb0147@gmail.com), Sol Song (thdthf159@gmail.com)
+ * @since       2018-04-05
+ * @brief       The Activity used when a user logs in
  */
 
 public class LoginActivity extends Activity  {

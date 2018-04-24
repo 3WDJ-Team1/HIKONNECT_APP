@@ -12,7 +12,5 @@ public class PostGPSInfo extends Activity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 }
