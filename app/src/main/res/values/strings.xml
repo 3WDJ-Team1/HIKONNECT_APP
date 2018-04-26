@@ -4,4 +4,5 @@
     <string name="id_hint">아이디</string>
     <string name="password_hint">비밀번호</string>
     <string name="loginBtn">로그인</string>
+    <string name="action_settings">Settings</string>
 </resources>

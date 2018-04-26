@@ -1,40 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/id_hint"
-        android:id="@+id/id_text"
-        android:inputType="text"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password_hint"
-        android:id="@+id/pw_text"
-        android:inputType="textPassword"/>
-    <Button
-    android:id="@+id/login"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#1E88E5"
-    android:text="@string/loginBtn"/>
+    android:layout_height="match_parent"
+    >
 
-    <!--<com.gc.materialdesign.views.ButtonRectangle
-        android:id="@+id/login"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#1E88E5"
-        android:text="@string/loginBtn"/>-->
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#292929"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetStartWithNavigation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/login_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:indicatorname="BallPulseIndicator"
-        android:visibility="invisible"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/my_toolbar_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="#ffffff"
+            android:textSize="28dp"
+            android:textStyle="bold" />
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF" />
+
+        <ListView
+            android:id="@+id/drawer_menulist"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:background="#6F6F6F"/>
+    </android.support.v4.widget.DrawerLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="126dp"
+            android:text="SIGN IN"
+            android:textColor="@color/black"
+            android:textSize="45dp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/id_editText"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:hint="Enter ID*"
+            android:layout_marginTop="230dp"
+            />
+
+        <EditText
+            android:id="@+id/pw_editText"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:hint="Enter password*"
+            android:layout_below="@+id/id_editText"
+            />
+
+        <Button
+            android:id="@+id/signInBtn"
+            android:layout_width="150dp"
+            android:layout_height="55dp"
+            android:text="SIGN IN"
+            android:textAllCaps="false"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/pw_editText"
+            android:layout_toStartOf="@+id/signUpBtn" />
+
+        <Button
+            android:id="@+id/signUpBtn"
+            android:layout_width="150dp"
+            android:layout_height="55dp"
+            android:text="SIGN UP"
+            android:textAllCaps="false"
+            android:layout_alignTop="@+id/signInBtn"
+            android:layout_alignEnd="@+id/pw_editText"/>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -1,13 +1,20 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RecoverySystem;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,31 +43,47 @@ import okio.BufferedSource;
 
 /**
  * @file        kr.ac.yjc.wdj.hikonnect.activities.MainActivity.java
- * @author      Jungyu Choi (wnsrb0147@gmail.com), Sol Song (thdthf159@gmail.com)
+ * @author      Jungyu Choi (wnsrb0147@gmail.com), Areum Lee (leear5799@gmail.com)
  * @since       2018-04-05
  * @brief       The Activity used when a user logs in
  */
 
-public class LoginActivity extends Activity  {
-    EditText id,pw;
-    AVLoadingIndicatorView loginProgressBar;
-    Button login;
+public class LoginActivity extends AppCompatActivity  {
+    private EditText                id,pw;
+    //AVLoadingIndicatorView loginProgressBar;
+    private Button                  login;
     ContentValues contentValues = new ContentValues();
 //    HttpRequestConnection hrc = new HttpRequestConnection();
-    String result;
-    Handler handler;
+    private String                  result;
+    private Handler                 handler;
+    private Intent                  intent;
+    private Toolbar                 myToolbar;
+    private DrawerLayout            dlDrawer;
+    private ActionBarDrawerToggle   dtToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        loginProgressBar = findViewById(R.id.login_progress_bar);
+        myToolbar   = (Toolbar) findViewById(R.id.my_toolbar);
+        dlDrawer    = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        id = findViewById(R.id.id_text);
-        pw = findViewById(R.id.pw_text);
+        setSupportActionBar(myToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
-        login = findViewById(R.id.login);
+        dtToggle    = new ActionBarDrawerToggle(this, dlDrawer, R.string.app_name, R.string.app_name);
+        dlDrawer.addDrawerListener(dtToggle);
+
+
+        //loginProgressBar = findViewById(R.id.login_progress_bar);
+
+        id = findViewById(R.id.id_editText);
+        pw = findViewById(R.id.pw_editText);
+
+        login = findViewById(R.id.signInBtn);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,9 +115,9 @@ public class LoginActivity extends Activity  {
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            Log.d("Login activity", response.body().string());
+                            Log.d("LoginActivity", response.body().string());
 
-                            Intent intent = new Intent(LoginActivity.this, MapsActivity1.class);
+                            intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("id", id.getText().toString());
                             startActivity(intent);
 
@@ -108,5 +131,34 @@ public class LoginActivity extends Activity  {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        dtToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        dtToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (dtToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
