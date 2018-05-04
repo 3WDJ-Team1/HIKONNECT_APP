@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +41,7 @@ import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 public class                                                                                                                                                                          Locationmemo extends Activity {
 
+    String titlestring, contentstring;
     TextView title;
     Handler handler;
     TextView content;
@@ -50,6 +53,7 @@ public class                                                                    
     ImageView image1;
     String path;
     PermissionListener permissionlistener = null;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,8 +76,6 @@ public class                                                                    
         contentValues = new ContentValues();
         hrc = new HttpRequestConnection();
         Intent intent = getIntent();
-        title.setText(intent.getStringExtra("title"));
-        content.setText(intent.getStringExtra("content"));
         lat = intent.getDoubleExtra("latitude",0);
         lng = intent.getDoubleExtra("longitude",0);
         contentValues.put("lat",lat);
@@ -92,6 +94,8 @@ public class                                                                    
                       JSONArray jsonArray = new JSONArray(result);
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        titlestring     =  jsonObject.getString("title");
+                        contentstring     =  jsonObject.getString("content");
                         path       = jsonObject.getString("image_path");
                         TedPermission.with(Locationmemo.this)
                                 .setPermissionListener(permissionlistener)
@@ -101,7 +105,8 @@ public class                                                                    
                                 .check();
 
                         //path = path.replaceAll("\\/","/");
-
+                        title.setText(titlestring);
+                        content.setText(contentstring);
                         File imgFile = new File(path);
                         if(imgFile.exists()){
                             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -117,4 +122,23 @@ public class                                                                    
             }
         };
     }
+    public void mOnClose2(View v){
+        //데이터 전달하기
+        Intent intent = new Intent();
+        intent.putExtra("result", "Close Popup");
+        setResult(RESULT_OK, intent);
+
+        //액티비티(팝업) 닫기
+        finish();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //바깥레이어 클릭시 안닫히게
+        if(event.getAction()==MotionEvent.ACTION_OUTSIDE){
+            return false;
+        }
+        return true;
+    }
+
 }

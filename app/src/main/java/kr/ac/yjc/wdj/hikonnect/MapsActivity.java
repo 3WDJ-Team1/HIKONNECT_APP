@@ -1,17 +1,28 @@
 package kr.ac.yjc.wdj.hikonnect;
 
 import android.*;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -44,6 +55,9 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
@@ -66,32 +80,35 @@ import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    String PROXIMITY_ALERT = "com.example.intent.action.PROXIMITY_ALERT";
     private GoogleMap mMap;
-    private Uri mImageCaptureUri;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
+    private BackPressClosHandler backPressClosHandler;
+    private EditText content, editText, title;
+    private Button post_btn, cancel;
+    private ImageView imageView;
+    private LinearLayout linearLayout;
+    private String image_path = "File_path";
+    private TextView tv;
+    private double now_lat, now_lng, lat, lng, rlat, rlng, now_lat2, now_lng2;
+    private PermissionManager pManager;
+    private ContentValues contentValues = new ContentValues();
+    private AlertDialog.Builder builder;
+    private Bitmap image_bitmap;
+    private HttpRequestConnection hrc = new HttpRequestConnection();
+    private String positionuser, result, network, user_id, nickname, hiking_group, title_st, content_st = "";
+    private Handler handler;
+    private Uri uri;
+    private PermissionListener permissionlistener = null;
+    private FloatingActionMenu floatingActionMenu;
+    private FloatingActionButton fab1;
+    private FloatingActionButton fab2;
+    private FloatingActionButton gpsbutton;
+    LocationManager locationManager;
+    ArrayList<PendingIntent> pendingIntentArrayList = new ArrayList<PendingIntent>();
 
-    BackPressClosHandler backPressClosHandler;
-    EditText content, editText, title;
-    Button post_btn, cancel;
-    ImageView imageView;
-    LinearLayout linearLayout;
-    String image_path = "File_path";
-    TextView tv;
-    double now_lat, now_lng, lat, lng, rlat, rlng;
-    PermissionManager pManager;
-    ContentValues contentValues = new ContentValues();
-    AlertDialog.Builder builder;
-    Bitmap image_bitmap;
-    HttpRequestConnection hrc = new HttpRequestConnection();
-    String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
-    Handler handler;
-    Uri uri;
-    PermissionListener permissionlistener = null;
-    FloatingActionMenu floatingActionMenu;
-    FloatingActionButton fab1;
-    FloatingActionButton fab2;
-    FloatingActionButton gpsbutton;
+
 
     @Override
     public void onBackPressed() {
@@ -105,10 +122,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
 
 /*        // Firebase 푸시 메시지
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
@@ -159,7 +179,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set Created_at, Updated_at
         final SimpleDateFormat[] sdfNow = {new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")};
         final String time = sdfNow[0].format(new Date(System.currentTimeMillis()));
-
         final LocationService ls = new LocationService(getApplicationContext());
 
         fab2.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +237,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         public void handleMessage(Message msg) {
                             tv.setText("위치메모 등록완료");
                             LatLng nl = new LatLng(now_lat, now_lng);
-                            mMap.addMarker(new MarkerOptions().position(nl).title(title.getText().toString()).snippet(content.getText().toString()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                         }
                     };
                 } catch (SecurityException ex) {
@@ -245,31 +263,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 network = location.getProvider();
 
                                 LatLng nl = new LatLng(now_lat, now_lng);
-                                mMap.clear();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
                                 tv.setText(network + "로 접속됨");
-                                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                    @Override
-                                    public boolean onMarkerClick(Marker marker) {
-                                        Intent intent1 = new Intent(MapsActivity.this,Locationmemo.class);
-                                        intent1.putExtra("title",marker.getTitle());
-                                        intent1.putExtra("content",marker.getSnippet());
-                                        rlat = marker.getPosition().latitude;
-                                        rlng = marker.getPosition().longitude;
-                                        intent1.putExtra("latitude",rlat);
-                                        intent1.putExtra("longitude",rlng);
-                                        startActivity(intent1);
-                                        return false;
-                                    }
-                                });
 
-                                // Get All Location Memo
+
+                               /* // Get All Location Memo
                                 contentValues.put("id", user_id);
+                                Log.i("@@@@@@@@@@@@@@@@@@@@@",user_id);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result = hrc.request("http://hikonnect.ga/api/getlm",contentValues);
+                                        result = hrc.request("http://172.26.2.200:8000/api/getlm",contentValues);
                                         Log.i("result", result);
                                         Message msg = handler.obtainMessage();
                                         handler.sendMessage(msg);
@@ -286,7 +291,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 title_st    = jsonObject.getString("title");
                                                 content_st  = jsonObject.getString("content");
                                                 LatLng nl   = new LatLng(lat, lng);
-                                                mMap.addMarker(new MarkerOptions().position(nl).title(title_st).snippet(content_st).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                Marker marker = mMap.addMarker(new MarkerOptions()
+                                                        .position(nl)
+                                                        .title(title_st)
+                                                        .snippet(content_st)
+                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bookmark_black_24dp)));
+                                                marker.setTag("locationmemo");
 
                                                 // Send PushMessage
                                                 requestPost("http://hikonnect.ga/api/send", "위치메모가 있습니다.", "내용 확인 바랍니다.");
@@ -295,7 +305,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             e.printStackTrace();
                                         }
                                     }
-                                };
+                                };*/
                             }
 
                             @Override
@@ -427,13 +437,133 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
+        mMap = googleMap;
+        Timer timer = new Timer();
+        handler = new Handler();
+
+
+
+        TimerTask timerTask = new TimerTask() {
+
+            @Override
+            public void run() {
+                ConnectivityManager manager = (ConnectivityManager) MapsActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo mobile = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                NetworkInfo wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                if (wifi.isConnected() || mobile.isConnected()) {
+                    final LocationService locationService = new LocationService(getApplicationContext());
+                    locationService.getMyLocation(new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            now_lng2 = location.getLongitude();
+                            now_lat2 = location.getLatitude();
+
+
+                        }
+
+                        @Override
+                        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                        }
+
+                        @Override
+                        public void onProviderEnabled(String s) {
+
+                        }
+
+                        @Override
+                        public void onProviderDisabled(String s) {
+
+                        }
+                    });
+
+                    hrc = new HttpRequestConnection();
+                    contentValues = new ContentValues();
+                    contentValues.put("id", user_id);
+                    contentValues.put("latitude", now_lat2);
+                    contentValues.put("longitude", now_lng2);
+               /* String temp = "{\"latitude\":"+ "\"" + now_lat2 +"\"" + "," + "\"longitude\":" + "\"" + now_lng2 + "\"" + "}";
+                contentValues.put("temp", temp);*/
+
+
+                    result = hrc.request("http://hikonnect.ga:8000/api/storesend", contentValues);
+                    Message msg = handler.obtainMessage();
+                    handler.sendMessage(msg);
+                    handler = new Handler(Looper.getMainLooper()) {
+                        public void handleMessage(Message msg) {
+
+                            LatLng nl2 = new LatLng(now_lat2, now_lng2);
+                            mMap.clear();
+
+
+                            try {
+                                JSONArray jsonArray = new JSONArray(result);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    positionuser = jsonObject.getString("userid");
+                                    lat = jsonObject.getDouble("latitude");
+                                    lng = jsonObject.getDouble("longitude");
+                                    Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
+                                    //위치메모 위치 필요 userid 필요
+                                /*JSONObject jsonObject1 = new JSONObject("location");
+                                lat         = jsonObject1.getDouble("latitude");
+                                lng         = jsonObject1.getDouble("longitude");*/
+
+                                    LatLng nl = new LatLng(lat, lng);
+
+                                    if (positionuser.equals(user_id)) {
+                                        Marker marker = mMap.addMarker(new MarkerOptions()
+                                                .position(nl)
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
+                                        marker.setTag(positionuser);
+                                    } else {
+                                        Marker marker = mMap.addMarker(new MarkerOptions()
+                                                .position(nl)
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
+                                        marker.setTag(positionuser);
+                                    }
+                                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                        @Override
+                                        public boolean onMarkerClick(Marker marker) {
+                                            if (marker.getTag().toString() == "locationmemo") {
+                                                Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
+                                                rlat = marker.getPosition().latitude;
+                                                rlng = marker.getPosition().longitude;
+                                                intent1.putExtra("latitude", rlat);
+                                                intent1.putExtra("longitude", rlng);
+                                                startActivity(intent1);
+                                            } else {
+                                                Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
+                                                rlat = marker.getPosition().latitude;
+                                                rlng = marker.getPosition().longitude;
+                                                intent1.putExtra("name", marker.getTag().toString());
+                                                intent1.putExtra("latitude", rlat);
+                                                intent1.putExtra("longitude", rlng);
+                                                startActivity(intent1);
+
+                                            }
+                                            return false;
+                                        }
+                                    });
+                                }
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(nl2));
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl2, 22));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                }
+                else {
+                    Toast.makeText(MapsActivity.this,"모바일 네트워크 연결 끊김",Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        timer.schedule(timerTask,0,5000);
+        };
+
 
     public void showAlertDialog() {
         builder = new AlertDialog.Builder(this);
