@@ -42,8 +42,9 @@
             android:label="@string/title_activity_maps">
 
         </activity>
-        <activity android:name=".HikingRecord"></activity>
-        <activity android:name="kr.ac.yjc.wdj.hikonnect.Locationmemo"></activity>
+        <activity android:name=".Othersinfo"></activity>
+        <activity android:name=".HikingRecord" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name="kr.ac.yjc.wdj.hikonnect.Locationmemo" android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name="kr.ac.yjc.wdj.hikonnect.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

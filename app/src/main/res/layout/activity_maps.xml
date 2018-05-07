@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
@@ -84,6 +85,19 @@
 
         </LinearLayout>
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/user_info_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_people_black_36dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="30dp"
+            fab:menu_fab_size="normal"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorPrimary"
+            fab:fab_colorRipple="@color/colorPrimary"
+            />
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/gpsbutton"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -103,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="70dp"
-            fab:menu_icon="@drawable/ic_bookmark_black_24dp"
+            fab:menu_icon="@drawable/ic_bookmark_black_36dp"
             fab:menu_fab_size="normal"
             fab:menu_colorNormal="@color/colorPrimary"
             fab:menu_colorPressed="@color/colorPrimary"

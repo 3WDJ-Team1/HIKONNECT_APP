@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect;
 
 import android.*;
 import android.app.PendingIntent;
+import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -15,23 +16,27 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -44,6 +49,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.gun0912.tedpermission.PermissionListener;
@@ -73,6 +79,7 @@ import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -81,6 +88,7 @@ import okhttp3.Response;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     String PROXIMITY_ALERT = "com.example.intent.action.PROXIMITY_ALERT";
+    private int absolutevalue = 0;
     private GoogleMap mMap;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
@@ -102,12 +110,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Uri uri;
     private PermissionListener permissionlistener = null;
     private FloatingActionMenu floatingActionMenu;
-    private FloatingActionButton fab1;
-    private FloatingActionButton fab2;
-    private FloatingActionButton gpsbutton;
-    LocationManager locationManager;
-    ArrayList<PendingIntent> pendingIntentArrayList = new ArrayList<PendingIntent>();
-
+    private FloatingActionButton fab1,fab2,gpsbutton,user_info_button;
+    private Marker[] markers;
 
 
     @Override
@@ -149,6 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         // Get GPS Information
+        markers = new Marker[1000];
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
         gpsbutton = findViewById(R.id.gpsbutton);
         imageView = findViewById(R.id.imageView1);
@@ -161,6 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floatingActionMenu = findViewById(R.id.fabmenu);
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);
+        user_info_button = findViewById(R.id.user_info_button);
         title = findViewById(R.id.title);
         linearLayout = findViewById(R.id.imagelayout);
         final Intent intent = getIntent();
@@ -203,7 +209,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ad.show();
             }
         });
-
+        user_info_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapsActivity.this,Othersinfo.class);
+                intent.putExtra("userid",user_id);
+                startActivity(intent);
+            }
+        });
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,7 +267,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 try {
-                        tv.setText("수신중..");
                         ls.getMyLocation(new LocationListener() {
                             @Override
                             public void onLocationChanged(Location location) {
@@ -265,7 +277,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 LatLng nl = new LatLng(now_lat, now_lng);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
-                                tv.setText(network + "로 접속됨");
 
 
                                /* // Get All Location Memo
@@ -439,20 +450,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        //requestGet("http://172.25.1.11:3000/paths/488906501",null);
+
+
         Timer timer = new Timer();
         handler = new Handler();
-
-
-
         TimerTask timerTask = new TimerTask() {
 
             @Override
             public void run() {
-                ConnectivityManager manager = (ConnectivityManager) MapsActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo mobile = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-                NetworkInfo wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-                if (wifi.isConnected() || mobile.isConnected()) {
+                    requestGet("http://172.25.1.11:3000/paths/488906501",null);
                     final LocationService locationService = new LocationService(getApplicationContext());
                     locationService.getMyLocation(new LocationListener() {
                         @Override
@@ -484,18 +492,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     contentValues.put("id", user_id);
                     contentValues.put("latitude", now_lat2);
                     contentValues.put("longitude", now_lng2);
-               /* String temp = "{\"latitude\":"+ "\"" + now_lat2 +"\"" + "," + "\"longitude\":" + "\"" + now_lng2 + "\"" + "}";
-                contentValues.put("temp", temp);*/
 
 
-                    result = hrc.request("http://hikonnect.ga:8000/api/storesend", contentValues);
+                    result = hrc.request("http://172.25.1.11:8000/api/storesend", contentValues);
                     Message msg = handler.obtainMessage();
                     handler.sendMessage(msg);
                     handler = new Handler(Looper.getMainLooper()) {
                         public void handleMessage(Message msg) {
 
                             LatLng nl2 = new LatLng(now_lat2, now_lng2);
-                            mMap.clear();
+                            for(int i = 0;i < absolutevalue; i ++) {
+                                markers[i].remove();
+                            }
+                            absolutevalue = 0;
+
+                            //mMap.clear();
 
 
                             try {
@@ -506,10 +517,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     lat = jsonObject.getDouble("latitude");
                                     lng = jsonObject.getDouble("longitude");
                                     Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
-                                    //위치메모 위치 필요 userid 필요
-                                /*JSONObject jsonObject1 = new JSONObject("location");
-                                lat         = jsonObject1.getDouble("latitude");
-                                lng         = jsonObject1.getDouble("longitude");*/
 
                                     LatLng nl = new LatLng(lat, lng);
 
@@ -518,11 +525,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 .position(nl)
                                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
                                         marker.setTag(positionuser);
+                                        markers[absolutevalue] = marker;
+                                        absolutevalue++;
+
                                     } else {
                                         Marker marker = mMap.addMarker(new MarkerOptions()
                                                 .position(nl)
                                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
                                         marker.setTag(positionuser);
+                                        markers[absolutevalue] = marker;
+                                        absolutevalue++;
                                     }
                                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                         @Override
@@ -548,17 +560,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         }
                                     });
                                 }
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(nl2));
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl2, 22));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     };
-                }
-                else {
-                    Toast.makeText(MapsActivity.this,"모바일 네트워크 연결 끊김",Toast.LENGTH_SHORT).show();
-                }
             }
         };
         timer.schedule(timerTask,0,5000);
@@ -597,6 +603,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         }
         return cursor.getString(column_index);
+    }
+
+    // OkHttp Get
+    OkHttpClient client2 = new OkHttpClient();
+
+    public void requestGet(String url, String searchKey){
+
+        //URL에 포함할 Query문 작성 Name&Value
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        urlBuilder.addEncodedQueryParameter("searchKey", searchKey);
+        String requestUrl = urlBuilder.build().toString();
+
+        //Query문이 들어간 URL을 토대로 Request 생성
+        Request request = new Request.Builder().url(requestUrl).build();
+
+        //만들어진 Request를 서버로 요청할 Client 생성
+        //Callback을 통해 비동기 방식으로 통신을 하여 서버로부터 받은 응답을 어떻게 처리 할 지 정의함
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("error", "Connect Server Error is " + e.toString());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //Log.d("aaaa", "Response Body is " + response.body().string());
+                String resultr = response.body().string();
+                try {
+                    JSONObject json = new JSONObject(resultr);
+                    JSONObject path = json.getJSONObject("attributes");
+
+                    /*for(int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String att         = jsonObject.getString("geometry");
+                        JSONObject jsonObject1 = jsonObject.optJSONObject("paths");
+                        //Log.d("ASDASFASFASQWFs",jsonObject1)
+
+                        *//*for(int j = 0; j < jsonArray2.length(); j++) {
+                            JSONObject jsonObject2 = jsonArray.getJSONObject(i);
+                            String path         = jsonObject2.getString("paths");
+                            Log.d("asdasfasfasf",path);
+                         ;
+                        }*//*
+                    }*/
+                } catch (JSONException e) {
+                    Log.d("error",e.toString());
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     // OkHttp Post

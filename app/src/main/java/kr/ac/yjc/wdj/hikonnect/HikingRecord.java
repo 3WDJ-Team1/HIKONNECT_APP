@@ -30,7 +30,12 @@ import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
  */
 
 public class HikingRecord extends Activity  {
-    TextView txtText;
+    HttpRequestConnection hrc = new HttpRequestConnection();
+    String result;
+    TextView txtText,txtText2,txtText3;
+    ContentValues contentValues = new ContentValues();
+    Handler handler;
+    String distance,speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +46,42 @@ public class HikingRecord extends Activity  {
 
         //UI 객체생성
         txtText = (TextView)findViewById(R.id.txtText);
+        txtText2 = (TextView)findViewById(R.id.txtText2);
+        txtText3 = (TextView)findViewById(R.id.txtText3);
 
         //데이터 가져오기
         Intent intent = getIntent();
-        String data = intent.getStringExtra("name");
-        txtText.setText(data);
+        String user_id = intent.getStringExtra("name");
+        txtText.setText("id:"+ user_id);
+        txtText2.setText("속도");
+        txtText3.setText("거리");
+
+        contentValues.put("id", user_id);
+        Log.i("@@@@@@@@@@@@@@@@@@@@@",user_id);
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                result = hrc.request("http://hikonnect.ga:3000/",contentValues);
+                Log.i("result", result);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        }).start();
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
     //확인 버튼 클릭
