@@ -59,7 +59,7 @@ public class HikingRecord extends Activity  {
         contentValues.put("id", user_id);
         Log.i("@@@@@@@@@@@@@@@@@@@@@",user_id);
 
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
 
             @Override
             public void run() {
@@ -81,7 +81,7 @@ public class HikingRecord extends Activity  {
                     e.printStackTrace();
                 }
             }
-        };
+        };*/
     }
 
     //확인 버튼 클릭

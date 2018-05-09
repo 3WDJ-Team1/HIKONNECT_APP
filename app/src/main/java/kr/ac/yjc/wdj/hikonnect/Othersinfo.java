@@ -9,6 +9,8 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -43,40 +45,49 @@ public class Othersinfo extends Activity {
 
         editSearch = (EditText) findViewById(R.id.editSearch);
         listView = (ListView) findViewById(R.id.listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Intent intent = new Intent(Othersinfo.this,MapsActivity.class);
+//               intent.putExtra("fromother")
+            }
+        });
+
+
 
         // 리스트를 생성한다.
         list = new ArrayList<String>();
 
-        // 검색에 사용할 데이터을 미리 저장한다.
-//        Intent intent = getIntent();
-//        user_id = intent.getExtras().getString("userid");
-//        contentValues.put("userinfo",user_id);
-//        new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                result = hrc.request("http://172.25.1.11:8000",contentValues);
-//                Log.i("result", result);
-//                Message msg = handler.obtainMessage();
-//                handler.sendMessage(msg);
-//            }
-//        }).start();
-//        handler = new Handler() {
-//            public void handleMessage(Message msg) {
-//                try {
-//                    JSONArray jsonArray = new JSONArray(result);
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                        user         = jsonObject.getString("userid");
-//                        list.add(user);
-//
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        };
-        settingList();
+//         검색에 사용할 데이터을 미리 저장한다.
+        Intent intent = getIntent();
+        user_id = intent.getExtras().getString("userid");
+        contentValues.put("user_id",user_id);
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                result = hrc.request("http://172.26.2.38/api/getScheduleMember",contentValues);
+                Log.i("result", result);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        }).start();
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        user         = jsonObject.getString("userid");
+                        list.add(user);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        //settingList();
 
         // 리스트의 모든 데이터를 arraylist에 복사한다.// list 복사본을 만든다.
         arraylist = new ArrayList<String>();
@@ -141,7 +152,7 @@ public class Othersinfo extends Activity {
 
 
     // 검색에 사용될 데이터를 리스트에 추가한다.
-    private void settingList(){
+    /*private void settingList(){
         list.add("채수빈");
         list.add("박지현");
         list.add("수지");
@@ -169,5 +180,5 @@ public class Othersinfo extends Activity {
         list.add("도희");
         list.add("창모");
         list.add("허영지");
-    }
+    }*/
 }
