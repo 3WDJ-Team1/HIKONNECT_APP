@@ -88,6 +88,7 @@ import okhttp3.Response;
 
 class LatLngCrnId {
 
+
 }
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
