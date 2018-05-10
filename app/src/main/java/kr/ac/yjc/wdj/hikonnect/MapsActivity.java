@@ -1,43 +1,28 @@
 package kr.ac.yjc.wdj.hikonnect;
 
-import android.*;
-import android.app.PendingIntent;
-import android.app.SearchManager;
+
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -51,8 +36,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
@@ -76,7 +59,7 @@ import org.json.JSONObject;
 import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
 import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.Locationmemo;
+import kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie.WalkieTalkie;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -90,44 +73,66 @@ class LatLngCrnId {
 
 
 }
+
+/**
+ *
+ * @author Jungyu Choi(), Sungeun Kang (kasueu0814@gmail.com)
+ */
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    String PROXIMITY_ALERT = "com.example.intent.action.PROXIMITY_ALERT";
-    private int STATUS_HIKING = 1;
-    private ArrayList<ArrayList<LatLng>> polylinegroup = new ArrayList<ArrayList<LatLng>>();
-    private ArrayList<LatLng> polyline;
-    private int absolutevalue = 0;
-    private GoogleMap mMap;
-    private static final int PICK_FROM_CAMERA = 0;
-    private static final int PICK_FROM_ALBUM = 1;
-    private BackPressClosHandler backPressClosHandler;
-    private EditText content, editText, title;
-    private Button post_btn, cancel,status;
-    private ImageView imageView;
-    private LinearLayout linearLayout;
-    private String image_path = "File_path";
-    private TextView tv;
-    private double now_lat, now_lng, lat, lng, rlat, rlng, now_lat2, now_lng2;
-    private PermissionManager pManager;
-    private ContentValues contentValues = new ContentValues();
-    private AlertDialog.Builder builder;
-    private Bitmap image_bitmap;
-    private HttpRequestConnection hrc = new HttpRequestConnection();
-    private String positionuser, result, network, user_id, nickname, hiking_group, title_st, content_st = "";
-    private Handler handler;
-    private Uri uri;
-    private Float distance;
-    private PermissionListener permissionlistener = null;
-    private FloatingActionMenu floatingActionMenu;
-    private FloatingActionButton fab1,fab2,gpsbutton,user_info_button,myinfo_button;
-    private ArrayList<String> name  = new ArrayList<String>();
+    // UI 변수
+    private EditText                content, editText, title;
+    private Button                  post_btn, cancel,status;
+    private ImageView               imageView;
+    private LinearLayout            linearLayout;
+    private TextView                tv;
+    private FloatingActionMenu      floatingActionMenu;
+    private FloatingActionButton    fab1,fab2,gpsbutton,user_info_button,myinfo_button;
+    private FloatingActionButton    btnSendRadio;   // 무전 버튼
+
+    // GoogleMaps
+    private GoogleMap               mMap;
     private Marker[] markers;
-    private boolean tf = true;
 
+    // 데이터 관련 변수
+    private ArrayList<ArrayList<LatLng>>    polylinegroup   = new ArrayList<ArrayList<LatLng>>();
+    private ArrayList<LatLng>               polyline;
+    private int                             STATUS_HIKING   = 1;
+    private int                             absolutevalue   = 0;
+    private ArrayList<String>               name            = new ArrayList<String>();
+    private String                          image_path      = "File_path";
+    private String                          positionuser, result, network, user_id, nickname,
+                                            hiking_group, title_st, content_st = "";
+    private double                          now_lat, now_lng, lat, lng, rlat, rlng,
+                                            now_lat2, now_lng2;
+    private Float                           distance;
 
+    // 상수
+    private static final int PICK_FROM_CAMERA   = 0;
+    private static final int PICK_FROM_ALBUM    = 1;
+
+    // 핸들러
+    private BackPressClosHandler            backPressClosHandler;
+    private Handler handler;
+
+    // 퍼미션
+    private PermissionManager pManager;
+    private PermissionListener permissionlistener = null;
+
+    // 기타
+    private ContentValues           contentValues   = new ContentValues();
+    private HttpRequestConnection   hrc             = new HttpRequestConnection();
+    private AlertDialog.Builder     builder;
+    private Bitmap                  image_bitmap;
+    private Uri                     uri;
+    private boolean                 tf              = true;
+    private WalkieTalkie            walkieTalkie;   // 무전 객체
+    private boolean                 isSendingNow;   // 현재 무전을 전송중인지
+
+    // String PROXIMITY_ALERT = "com.example.intent.action.PROXIMITY_ALERT";
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        // super.onBackPressed();
         if (linearLayout.getVisibility() == View.VISIBLE) {
             imageView.setImageResource(R.color.colorPrimary);
             editText.setText("");
@@ -142,8 +147,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-
 
 /*        // Firebase 푸시 메시지
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
@@ -167,23 +170,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markers = new Marker[1000];
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
 
-        status   = findViewById(R.id.status);
-        gpsbutton = findViewById(R.id.gpsbutton);
-        imageView = findViewById(R.id.imageView1);
-        editText = findViewById(R.id.content);
-        cancel = findViewById(R.id.cancel);
-        tv = findViewById(R.id.textView2);
-        content = findViewById(R.id.content);
-        post_btn = findViewById(R.id.post_btn);
+        status      = findViewById(R.id.status);
+        gpsbutton   = findViewById(R.id.gpsbutton);
+        imageView   = findViewById(R.id.imageView1);
+        editText    = findViewById(R.id.content);
+        post_btn    = findViewById(R.id.post_btn);
+        cancel      = findViewById(R.id.cancel);
+        tv          = findViewById(R.id.textView2);
         tv.setText("미수신중");
         floatingActionMenu = findViewById(R.id.fabmenu);
         fab1 = findViewById(R.id.fab1);
         fab2 = findViewById(R.id.fab2);
-        myinfo_button = findViewById(R.id.myinfo_button);
-        user_info_button = findViewById(R.id.user_info_button);
+        myinfo_button       = findViewById(R.id.myinfo_button);
+        user_info_button    = findViewById(R.id.user_info_button);
 
-        title = findViewById(R.id.title);
-        linearLayout = findViewById(R.id.imagelayout);
+        // 무전 버튼 초기화
+        btnSendRadio        = (FloatingActionButton) findViewById(R.id.sendRecordData);
+
+        title           = findViewById(R.id.title);
+        linearLayout    = findViewById(R.id.imagelayout);
+
         final Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
 
@@ -197,11 +203,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
-        // Set Created_at, Updated_at
-        final SimpleDateFormat[] sdfNow = {new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")};
-        final String time = sdfNow[0].format(new Date(System.currentTimeMillis()));
-        final LocationService ls = new LocationService(getApplicationContext());
 
+        // Set Created_at, Updated_at
+        final SimpleDateFormat[]    sdfNow  = {new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")};
+        final String                time    = sdfNow[0].format(new Date(System.currentTimeMillis()));
+        final LocationService       ls      = new LocationService(getApplicationContext());
 
         myinfo_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,6 +431,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 alertDialog.show();
             }
         });
+
+        isSendingNow = false;
+
+        // 무전 객체 초기화
+        walkieTalkie = new WalkieTalkie();
+        // 무전 받아오기 시작
+        walkieTalkie.receiveStart();
+        // 무전 버튼에 리스너 달기
+        btnSendRadio.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+
+                if (!isSendingNow) {
+                    isSendingNow = true;
+                    walkieTalkie.sendStart();
+                }
+                return false;
+            }
+        });
+
+        btnSendRadio.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if(isSendingNow) {
+                    isSendingNow = false;
+                    walkieTalkie.sendEnd();
+                }
+            }
+        });
     }
 
     @Override
@@ -438,10 +476,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_ALBUM: {
                 try {
                     //Get Image_path
-                    uri = data.getData();
-                    image_path = getRealPathFromURI(uri);
+                    uri         = data.getData();
+                    image_path  = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
-                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    image_bitmap = MediaStore.Images.Media.getBitmap(
+                            getContentResolver(),
+                            data.getData()
+                    );
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
                     Log.v("이미지", imageView.toString());
@@ -459,18 +500,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_CAMERA: {
                 try {
                     //Get Image_path
-                    uri = data.getData();
-                    image_path = getRealPathFromURI(uri);
+                    uri         = data.getData();
+                    image_path  = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
-                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    image_bitmap = MediaStore.Images.Media.getBitmap(
+                            getContentResolver(),
+                            data.getData()
+                    );
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
                     linearLayout.setVisibility(View.VISIBLE);
                 } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -485,6 +527,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        // TODO 서버 쪽으로 바꿀 것
         requestGet("http://172.26.2.38:3000/paths/113200104",null);
         try {
             Thread.sleep(5000);
@@ -510,145 +553,139 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void run() {
 
-                    name.clear();
-                    final LocationService locationService = new LocationService(getApplicationContext());
-                    locationService.getMyLocation(new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
+                name.clear();
+                final LocationService locationService = new LocationService(getApplicationContext());
+                locationService.getMyLocation(new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
 
-                            now_lng2 = location.getLongitude();
-                            now_lat2 = location.getLatitude();
+                        now_lng2 = location.getLongitude();
+                        now_lat2 = location.getLatitude();
 
+                    }
 
+                    @Override
+                    public void onStatusChanged(String s, int i, Bundle bundle) {
 
+                    }
 
+                    @Override
+                    public void onProviderEnabled(String s) {
 
+                    }
 
+                    @Override
+                    public void onProviderDisabled(String s) {
 
+                    }
+                });
+
+                hrc = new HttpRequestConnection();
+                contentValues = new ContentValues();
+                contentValues.put("id", user_id);
+                contentValues.put("latitude", now_lat2);
+                contentValues.put("longitude", now_lng2);
+
+                //TODO 서버 쪽으로 바꾸기
+                result = hrc.request("http://172.26.2.38:8000/api/storesend", contentValues);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+                handler = new Handler(Looper.getMainLooper()) {
+                    public void handleMessage(Message msg) {
+
+                        Location locationA= new Location("point A");
+
+                    /*    if(STATUS_HIKING == 1) {
+
+                        locationA.setLatitude(polylinegroup.get(0).get(0).latitude);
+                        locationA.setLatitude(polylinegroup.get(0).get(0).longitude);
+                        }
+                        else {
+                            ArrayList<LatLng> rolypoly = new ArrayList<LatLng>();
+                            rolypoly = polylinegroup.get(polylinegroup.size()-1);
+                            locationA.setLatitude(rolypoly.get(rolypoly.size()-1).latitude);
+                            locationA.setLatitude(rolypoly.get(rolypoly.size()-1).longitude);
+                        }*/
+
+                       locationA.setLatitude(35.896844);
+                       locationA.setLongitude(128.621261);
+
+                        Location locationB= new Location("point B");
+
+                        locationB.setLatitude(now_lat2);
+                        locationB.setLongitude(now_lng2);
+
+                        distance = locationA.distanceTo(locationB);
+                        Log.d("dadadasdasdasdasd",distance.toString());
+
+                        if(distance < 100 )  {
+                            status.setVisibility(View.VISIBLE);
                         }
 
-                        @Override
-                        public void onStatusChanged(String s, int i, Bundle bundle) {
 
+                        for(int i = 0;i < absolutevalue; i ++) {
+                            markers[i].remove();
                         }
-
-                        @Override
-                        public void onProviderEnabled(String s) {
-
-                        }
-
-                        @Override
-                        public void onProviderDisabled(String s) {
-
-                        }
-                    });
-
-                    hrc = new HttpRequestConnection();
-                    contentValues = new ContentValues();
-                    contentValues.put("id", user_id);
-                    contentValues.put("latitude", now_lat2);
-                    contentValues.put("longitude", now_lng2);
+                        absolutevalue = 0;
 
 
-                    result = hrc.request("http://172.26.2.38:8000/api/storesend", contentValues);
-                    Message msg = handler.obtainMessage();
-                    handler.sendMessage(msg);
-                    handler = new Handler(Looper.getMainLooper()) {
-                        public void handleMessage(Message msg) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                positionuser = jsonObject.getString("userid");
+                                lat = jsonObject.getDouble("latitude");
+                                lng = jsonObject.getDouble("longitude");
+                                Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
 
-                            Location locationA= new Location("point A");
+                                LatLng nl = new LatLng(lat, lng);
 
-                        /*    if(STATUS_HIKING == 1) {
+                                if (positionuser.equals(user_id)) {
+                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                            .position(nl)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
+                                    marker.setTag(positionuser);
+                                    markers[absolutevalue] = marker;
+                                    absolutevalue++;
 
-                            locationA.setLatitude(polylinegroup.get(0).get(0).latitude);
-                            locationA.setLatitude(polylinegroup.get(0).get(0).longitude);
-                            }
-                            else {
-                                ArrayList<LatLng> rolypoly = new ArrayList<LatLng>();
-                                rolypoly = polylinegroup.get(polylinegroup.size()-1);
-                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).latitude);
-                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).longitude);
-                            }*/
-
-                           locationA.setLatitude(35.896844);
-                           locationA.setLongitude(128.621261);
-
-                            Location locationB= new Location("point B");
-
-                            locationB.setLatitude(now_lat2);
-                            locationB.setLongitude(now_lng2);
-
-                            distance = locationA.distanceTo(locationB);
-                            Log.d("dadadasdasdasdasd",distance.toString());
-
-                            if(distance < 100 )  {
-                                status.setVisibility(View.VISIBLE);
-                            }
-
-
-                            for(int i = 0;i < absolutevalue; i ++) {
-                                markers[i].remove();
-                            }
-                            absolutevalue = 0;
-
-
-                            try {
-                                JSONArray jsonArray = new JSONArray(result);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    positionuser = jsonObject.getString("userid");
-                                    lat = jsonObject.getDouble("latitude");
-                                    lng = jsonObject.getDouble("longitude");
-                                    Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
-
-                                    LatLng nl = new LatLng(lat, lng);
-
-                                    if (positionuser.equals(user_id)) {
-                                        Marker marker = mMap.addMarker(new MarkerOptions()
-                                                .position(nl)
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
-                                        marker.setTag(positionuser);
-                                        markers[absolutevalue] = marker;
-                                        absolutevalue++;
-
-                                    } else {
-                                        Marker marker = mMap.addMarker(new MarkerOptions()
-                                                .position(nl)
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
-                                        marker.setTag(positionuser);
-                                        markers[absolutevalue] = marker;
-                                        absolutevalue++;
-                                    }
-                                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                        @Override
-                                        public boolean onMarkerClick(Marker marker) {
-                                            if (marker.getTag().toString() == "locationmemo") {
-                                                Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
-                                                rlat = marker.getPosition().latitude;
-                                                rlng = marker.getPosition().longitude;
-                                                intent1.putExtra("latitude", rlat);
-                                                intent1.putExtra("longitude", rlng);
-                                                startActivity(intent1);
-                                            } else {
-                                                Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
-                                                rlat = marker.getPosition().latitude;
-                                                rlng = marker.getPosition().longitude;
-                                                intent1.putExtra("name", marker.getTag().toString());
-                                                intent1.putExtra("latitude", rlat);
-                                                intent1.putExtra("longitude", rlng);
-                                                startActivity(intent1);
-
-                                            }
-                                            return false;
-                                        }
-                                    });
+                                } else {
+                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                            .position(nl)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
+                                    marker.setTag(positionuser);
+                                    markers[absolutevalue] = marker;
+                                    absolutevalue++;
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker) {
+                                        if (marker.getTag().toString() == "locationmemo") {
+                                            Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
+                                            rlat = marker.getPosition().latitude;
+                                            rlng = marker.getPosition().longitude;
+                                            intent1.putExtra("latitude", rlat);
+                                            intent1.putExtra("longitude", rlng);
+                                            startActivity(intent1);
+                                        } else {
+                                            Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
+                                            rlat = marker.getPosition().latitude;
+                                            rlng = marker.getPosition().longitude;
+                                            intent1.putExtra("name", marker.getTag().toString());
+                                            intent1.putExtra("latitude", rlat);
+                                            intent1.putExtra("longitude", rlng);
+                                            startActivity(intent1);
+
+                                        }
+                                        return false;
+                                    }
+                                });
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    };
-                    tf = false;
+                    }
+                };
+                tf = false;
             }
         };
         timer.schedule(timerTask,0,5000);

@@ -90,9 +90,8 @@
                 android:layout_marginBottom="30dp"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
 
-
+            </LinearLayout>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/myinfo_button"
@@ -171,6 +170,18 @@
                 />
         </com.github.clans.fab.FloatingActionMenu>
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/sendRecordData"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@android:drawable/ic_btn_speak_now"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="16dp"
+            fab:menu_fab_size="normal"
+            fab:fab_colorNormal="@color/red_500"
+            fab:fab_colorPressed="@color/grey_300"
+            fab:fab_colorRipple="@color/white"
+            />
     </FrameLayout>
 
 
