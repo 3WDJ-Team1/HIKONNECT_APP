@@ -102,10 +102,11 @@ class LatLngCrnId {
     }
 
     public LatLngCrnId(LatLng loca, int cuid) {
-        this.currentid    = cuid;
-        this.latLng       = loca;
+        this.currentid = cuid;
+        this.latLng = loca;
     }
 }
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private int STATUS_HIKING = 1;
@@ -127,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM = 1;
     private BackPressClosHandler backPressClosHandler;
     private EditText content, editText, title;
-    private Button post_btn, cancel,status;
+    private Button post_btn, cancel, status;
     private ImageView imageView;
     private LinearLayout linearLayout;
     private String image_path = "File_path";
@@ -144,8 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Float distance;
     private PermissionListener permissionlistener = null;
     private FloatingActionMenu floatingActionMenu;
-    private FloatingActionButton fab1,fab2,gpsbutton,user_info_button,myinfo_button;
-    private ArrayList<String> name  = new ArrayList<String>();
+    private FloatingActionButton fab1, fab2, gpsbutton, user_info_button, myinfo_button;
+    private ArrayList<String> name = new ArrayList<String>();
     private Marker[] markers;
     private boolean tf = true;
 
@@ -191,9 +192,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get GPS Information
         markers = new Marker[1000];
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
-        speed[0] = new LatLng(0,0);
-        speed[1] = new LatLng(0,0);
-        status   = findViewById(R.id.status);
+        speed[0] = new LatLng(0, 0);
+        speed[1] = new LatLng(0, 0);
+        status = findViewById(R.id.status);
         gpsbutton = findViewById(R.id.gpsbutton);
         imageView = findViewById(R.id.imageView1);
         editText = findViewById(R.id.content);
@@ -218,6 +219,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onPermissionGranted() {
                 Toast.makeText(MapsActivity.this, "권한 허가", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
                 Toast.makeText(MapsActivity.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
@@ -232,12 +234,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         myinfo_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Intent intent1 = new Intent(MapsActivity.this,myinfo.class);
-               intent1.putExtra("userid",user_id);
-               intent1.putExtra("velocity",velocity);
-               intent1.putExtra("distance",hiking_distance);
-               intent1.putExtra("alldistance",all_distance);
-               startActivity(intent1);
+                Intent intent1 = new Intent(MapsActivity.this, myinfo.class);
+                intent1.putExtra("userid", user_id);
+                intent1.putExtra("velocity", velocity);
+                intent1.putExtra("distance", hiking_distance);
+                intent1.putExtra("alldistance", all_distance);
+                startActivity(intent1);
 
             }
         });
@@ -277,8 +279,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         user_info_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this,Othersinfo.class);
-                intent.putExtra("userid",user_id);
+                Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
+                intent.putExtra("userid", user_id);
                 startActivity(intent);
             }
         });
@@ -332,17 +334,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
 
                 try {
-                        ls.getMyLocation(new LocationListener() {
-                            @Override
-                            public void onLocationChanged(Location location) {
+                    ls.getMyLocation(new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
 
-                                now_lng = location.getLongitude();
-                                now_lat = location.getLatitude();
-                                network = location.getProvider();
+                            now_lng = location.getLongitude();
+                            now_lat = location.getLatitude();
+                            network = location.getProvider();
 
-                                LatLng nl = new LatLng(now_lat, now_lng);
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
+                            LatLng nl = new LatLng(now_lat, now_lng);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
 
 
                                /* // Get All Location Memo
@@ -383,25 +385,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         }
                                     }
                                 };*/
-                            }
+                        }
 
-                            @Override
-                            public void onStatusChanged(String s, int i, Bundle bundle) {
+                        @Override
+                        public void onStatusChanged(String s, int i, Bundle bundle) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onProviderEnabled(String s) {
+                        @Override
+                        public void onProviderEnabled(String s) {
 
-                            }
+                        }
 
-                            @Override
-                            // GPS OFF
-                            public void onProviderDisabled(String s) {
-                                Log.v("GPS Check", "false");
-                                showAlertDialog();
-                            }
-                        });
+                        @Override
+                        // GPS OFF
+                        public void onProviderDisabled(String s) {
+                            Log.v("GPS Check", "false");
+                            showAlertDialog();
+                        }
+                    });
 
                 } catch (SecurityException ex) {
                 }
@@ -517,18 +519,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-        requestGet("http://172.26.2.38:3000/dummy/school",null);
+        requestGet("http://172.26.2.38:3000/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for (int k = 0;k < crnidDistances.size(); k++) {
+        for (int k = 0; k < crnidDistances.size(); k++) {
             all_distance += crnidDistances.get(k).getDistance();
         }
 
         for (int a = 0; a < polylinegroup.size(); a++) {
-            for(int b = 0; b < polylinegroup.get(a).size() -1; b++) {
+            for (int b = 0; b < polylinegroup.get(a).size() - 1; b++) {
                 mMap.addPolyline(new PolylineOptions()
                         .add(polylinegroup.get(a).get(b).getLatLng(), polylinegroup.get(a).get(b + 1).getLatLng())
                         .color(Color.RED)
@@ -538,45 +540,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(polylinegroup.get(0).get(0).getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polylinegroup.get(0).get(0).getLatLng(), 23));
 
-        
+
         Timer timer = new Timer();
         handler = new Handler();
         TimerTask timerTask = new TimerTask() {
 
             @Override
             public void run() {
-                    hiking_distance = 0;
-                    name.clear();
-                    //requestGet("http://172.26.2.38:3000/paths/113200104",null);
-                    final LocationService locationService = new LocationService(getApplicationContext());
-                    locationService.getMyLocation(new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
+                hiking_distance = 0;
+                name.clear();
+                //requestGet("http://172.26.2.38:3000/paths/113200104",null);
+                final LocationService locationService = new LocationService(getApplicationContext());
+                locationService.getMyLocation(new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
 
-                            now_lng2 = location.getLongitude();
-                            now_lat2 = location.getLatitude();
-
-
-                        }
+                        now_lng2 = location.getLongitude();
+                        now_lat2 = location.getLatitude();
 
 
-                        @Override
-                        public void onStatusChanged(String s, int i, Bundle bundle) {
+                    }
 
-                        }
 
-                        @Override
-                        public void onProviderEnabled(String s) {
+                    @Override
+                    public void onStatusChanged(String s, int i, Bundle bundle) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onProviderDisabled(String s) {
+                    @Override
+                    public void onProviderEnabled(String s) {
 
-                        }
-                    });
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String s) {
+
+                    }
+                });
                 speed[0] = speed[1];
-                speed[1] = new LatLng(now_lat2,now_lng2);
+                speed[1] = new LatLng(now_lat2, now_lng2);
                 Location locations = new Location("poin1");
                 locations.setLatitude(speed[0].latitude);
                 locations.setLongitude(speed[0].longitude);
@@ -585,14 +587,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationp.setLatitude(speed[1].latitude);
                 locationp.setLongitude(speed[1].longitude);
 
-                velocity = locations.distanceTo(locationp)/10;
+                velocity = locations.distanceTo(locationp) / 10;
                 Log.d("velocity", String.valueOf(velocity));
 
                 for (int a = my_current_id - 1; a <= my_current_id + 1; a++) {
                     int start = 0;
                     if (a == -1)
                         continue;
-                    if(a < polylinegroup.size()) {
+                    if (a < polylinegroup.size()) {
                         for (int b = 0; b < polylinegroup.get(a).size(); b++) {
                             Location location1 = new Location("point1");
                             location1.setLatitude(polylinegroup.get(a).get(b).getLatLng().latitude);
@@ -609,7 +611,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 minimum = kedistance;
                                 minimum_group_poly = a;
                                 minimum_poly = b;
-                                Log.d("!@##$", String.valueOf(minimum)+minimum_group_poly+String.valueOf(minimum_poly));
+                                Log.d("!@##$", String.valueOf(minimum) + minimum_group_poly + String.valueOf(minimum_poly));
                             }
                             start++;
                         }
@@ -620,7 +622,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 my_current_id = minimum_group_poly;
                 Log.d("current", String.valueOf(my_current_id));
 
-
+                if(STATUS_HIKING == 1) {
                 Location locationnow = new Location("now");
                 locationnow.setLatitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().latitude);
                 locationnow.setLongitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().longitude);
@@ -629,33 +631,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationnow2.setLatitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().latitude);
                 locationnow2.setLongitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().longitude);
 
-                hiking_distance += locationnow.distanceTo(locationnow2);
 
-                for(int h = 0 ; h < my_current_id ; h++) {
-                    hiking_distance += crnidDistances.get(h).getDistance()*1000;
+                    hiking_distance += locationnow.distanceTo(locationnow2);
+
+                    for (int h = 0; h < my_current_id; h++) {
+                        hiking_distance += crnidDistances.get(h).getDistance() * 1000;
+                    }
+
                 }
-
-
 
                 //hiking_distance;
 
-                Log.d("@@@@@@hiking_distance:",String.valueOf(hiking_distance));
+                Log.d("@@@@@@hiking_distance:", String.valueOf(hiking_distance));
 
-                    hrc = new HttpRequestConnection();
-                    contentValues = new ContentValues();
-                    contentValues.put("distance",hiking_distance);
-                    contentValues.put("id", user_id);
-                    contentValues.put("latitude", now_lat2);
-                    contentValues.put("longitude", now_lng2);
+                hrc = new HttpRequestConnection();
+                contentValues = new ContentValues();
+                contentValues.put("distance", hiking_distance);
+                contentValues.put("id", user_id);
+                contentValues.put("latitude", now_lat2);
+                contentValues.put("longitude", now_lng2);
 
 
-                    result = hrc.request("http://172.26.2.38:8000/api/storesend", contentValues);
-                    Message msg = handler.obtainMessage();
-                    handler.sendMessage(msg);
-                    handler = new Handler(Looper.getMainLooper()) {
-                        public void handleMessage(Message msg) {
+                result = hrc.request("http://172.26.2.38:8000/api/storesend", contentValues);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+                handler = new Handler(Looper.getMainLooper()) {
+                    public void handleMessage(Message msg) {
 
-                            Location locationA= new Location("point A");
+                        Location locationA = new Location("point A");
 
                          /*  if(STATUS_HIKING == 1) {
 
@@ -671,89 +674,91 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
                             }*/
 
-                           locationA.setLatitude(35.896844);
-                           locationA.setLongitude(128.621261);
+                        locationA.setLatitude(35.896844);
+                        locationA.setLongitude(128.621261);
 
-                            Location locationB= new Location("point B");
+                        Location locationB = new Location("point B");
 
-                            locationB.setLatitude(now_lat2);
-                            locationB.setLongitude(now_lng2);
+                        locationB.setLatitude(now_lat2);
+                        locationB.setLongitude(now_lng2);
 
-                            distance = locationA.distanceTo(locationB);
-                            Log.d("dadadasdasdasdasd",distance.toString());
+                        distance = locationA.distanceTo(locationB);
+                        Log.d("dadadasdasdasdasd", distance.toString());
 
-                            if(distance < 100 )  {
-                                status.setVisibility(View.VISIBLE);
-                            }
-
-
-                            for(int i = 0;i < absolutevalue; i ++) {
-                                markers[i].remove();
-                            }
-                            absolutevalue = 0;
-
-
-                            try {
-                                JSONArray jsonArray = new JSONArray(result);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    positionuser = jsonObject.getString("userid");
-                                    lat = jsonObject.getDouble("latitude");
-                                    lng = jsonObject.getDouble("longitude");
-                                    Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
-
-                                    LatLng nl = new LatLng(lat, lng);
-
-                                    if (positionuser.equals(user_id)) {
-                                        Marker marker = mMap.addMarker(new MarkerOptions()
-                                                .position(nl)
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
-                                        marker.setTag(positionuser);
-                                        markers[absolutevalue] = marker;
-                                        absolutevalue++;
-
-                                    } else {
-                                        Marker marker = mMap.addMarker(new MarkerOptions()
-                                                .position(nl)
-                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
-                                        marker.setTag(positionuser);
-                                        markers[absolutevalue] = marker;
-                                        absolutevalue++;
-                                    }
-                                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                        @Override
-                                        public boolean onMarkerClick(Marker marker) {
-                                            if (marker.getTag().toString() == "locationmemo") {
-                                                Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
-                                                rlat = marker.getPosition().latitude;
-                                                rlng = marker.getPosition().longitude;
-                                                intent1.putExtra("latitude", rlat);
-                                                intent1.putExtra("longitude", rlng);
-                                                startActivity(intent1);
-                                            } else {
-                                                Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
-                                                rlat = marker.getPosition().latitude;
-                                                rlng = marker.getPosition().longitude;
-                                                intent1.putExtra("name", marker.getTag().toString());
-                                                intent1.putExtra("latitude", rlat);
-                                                intent1.putExtra("longitude", rlng);
-                                                startActivity(intent1);
-
-                                            }
-                                            return false;
-                                        }
-                                    });
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        if (distance < 100) {
+                            status.setVisibility(View.VISIBLE);
                         }
-                    };
-                    tf = false;
+
+
+                        for (int i = 0; i < absolutevalue; i++) {
+                            markers[i].remove();
+                        }
+                        absolutevalue = 0;
+
+
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                positionuser = jsonObject.getString("userid");
+                                lat = jsonObject.getDouble("latitude");
+                                lng = jsonObject.getDouble("longitude");
+                                Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
+
+                                LatLng nl = new LatLng(lat, lng);
+
+                                if (positionuser.equals(user_id)) {
+                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                            .position(nl)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
+                                    marker.setTag(positionuser);
+                                    markers[absolutevalue] = marker;
+                                    absolutevalue++;
+
+                                } else {
+                                    Marker marker = mMap.addMarker(new MarkerOptions()
+                                            .position(nl)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
+                                    marker.setTag(positionuser);
+                                    markers[absolutevalue] = marker;
+                                    absolutevalue++;
+                                }
+                                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker) {
+                                        if (marker.getTag().toString() == "locationmemo") {
+                                            Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
+                                            rlat = marker.getPosition().latitude;
+                                            rlng = marker.getPosition().longitude;
+                                            intent1.putExtra("latitude", rlat);
+                                            intent1.putExtra("longitude", rlng);
+                                            startActivity(intent1);
+                                        } else {
+                                            Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
+                                            rlat = marker.getPosition().latitude;
+                                            rlng = marker.getPosition().longitude;
+                                            intent1.putExtra("name", marker.getTag().toString());
+                                            intent1.putExtra("latitude", rlat);
+                                            intent1.putExtra("longitude", rlng);
+                                            startActivity(intent1);
+
+                                        }
+                                        return false;
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                tf = false;
             }
         };
-        timer.schedule(timerTask,0,10000);
-        };
+        timer.schedule(timerTask, 0, 10000);
+    }
+
+    ;
 
 
     public void showAlertDialog() {
@@ -793,7 +798,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // OkHttp Get
     OkHttpClient client2 = new OkHttpClient();
 
-    public void requestGet(String url, String searchKey){
+    public void requestGet(String url, String searchKey) {
 
         //URL에 포함할 Query문 작성 Name&Value
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
@@ -822,31 +827,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     String paths      = attributes.getString("paths");
                     Log.d("asdasdas",paths);*/
 
-                    for(int i = 0; i < jsonArray.length(); i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        JSONObject att         = jsonObject.getJSONObject("geometry");
-                        JSONObject attvl         = jsonObject.getJSONObject("attributes");
+                        JSONObject att = jsonObject.getJSONObject("geometry");
+                        JSONObject attvl = jsonObject.getJSONObject("attributes");
                         JSONArray path = att.getJSONArray("paths");
 
                         double km = attvl.getDouble("PMNTN_LT");
                         int fid = attvl.getInt("FID");
-                        CrnidDistance crnidDistance = new CrnidDistance(km,fid);
+                        CrnidDistance crnidDistance = new CrnidDistance(km, fid);
                         crnidDistances.add(crnidDistance);
                         for (int j = 0; j < path.length(); j++) {
                             polyline = new ArrayList<LatLngCrnId>();
-                           JSONArray path2 = path.getJSONArray(j);
+                            JSONArray path2 = path.getJSONArray(j);
                             for (int k = 0; k < path2.length(); k++) {
                                 JSONObject a = path2.getJSONObject(k);
                                 Double lat = a.getDouble("lat");
                                 Double lng = a.getDouble("lng");
-                                LatLngCrnId latLngCrnId = new LatLngCrnId(new LatLng(lat,lng),fid);
+                                LatLngCrnId latLngCrnId = new LatLngCrnId(new LatLng(lat, lng), fid);
                                 polyline.add(latLngCrnId);
                             }
                             polylinegroup.add(polyline);
                         }
                     }
                 } catch (JSONException e) {
-                    Log.d("error",e.toString());
+                    Log.d("error", e.toString());
                     e.printStackTrace();
                 }
             }
@@ -855,7 +860,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // OkHttp Post
     OkHttpClient client = new OkHttpClient();
-    public void requestPost(String url, String header, String body){
+
+    public void requestPost(String url, String header, String body) {
 
         //Request Body에 서버에 보낼 데이터 작성
         RequestBody requestBody = new FormBody.Builder().add("header", header).add("body", body).build();
