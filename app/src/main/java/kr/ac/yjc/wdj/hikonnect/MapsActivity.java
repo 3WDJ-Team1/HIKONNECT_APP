@@ -1,43 +1,27 @@
 package kr.ac.yjc.wdj.hikonnect;
 
-import android.*;
-import android.app.PendingIntent;
-import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -51,8 +35,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
@@ -76,7 +58,6 @@ import org.json.JSONObject;
 import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
 import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -86,16 +67,60 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+//길이와 현재 fid를 담는 클래스입니다.
+class CrnidDistance {
+    private double distance;
+    private int currentid;
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public int getCurrentid() {
+        return currentid;
+    }
+
+    public CrnidDistance(double km, int cuid) {
+        this.distance = km;
+        this.currentid = cuid;
+    }
+
+}
+
+//현재 위치와 fid를 담는 클래스입니다.
 class LatLngCrnId {
 
+    private LatLng latLng;
+    private int currentid;
 
+    public LatLng getLatLng() {
+        return latLng;
+    }
+
+    public int getCurrentid() {
+        return currentid;
+    }
+
+    public LatLngCrnId(LatLng loca, int cuid) {
+        this.currentid    = cuid;
+        this.latLng       = loca;
+    }
 }
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    String PROXIMITY_ALERT = "com.example.intent.action.PROXIMITY_ALERT";
     private int STATUS_HIKING = 1;
-    private ArrayList<ArrayList<LatLng>> polylinegroup = new ArrayList<ArrayList<LatLng>>();
-    private ArrayList<LatLng> polyline;
+    private ArrayList<ArrayList<LatLngCrnId>> polylinegroup = new ArrayList<ArrayList<LatLngCrnId>>();
+    private ArrayList<CrnidDistance> crnidDistances = new ArrayList<CrnidDistance>();
+    private ArrayList<LatLngCrnId> polyline;
+
+    private LatLng[] speed = new LatLng[2];
+    private double velocity = 0;
+    private double all_distance = 0;
+    private double hiking_distance = 0;
+    private double minimum = 0;
+    private int minimum_group_poly;
+    private int minimum_poly;
+    private int my_current_id = 0;
     private int absolutevalue = 0;
     private GoogleMap mMap;
     private static final int PICK_FROM_CAMERA = 0;
@@ -166,7 +191,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get GPS Information
         markers = new Marker[1000];
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
-
+        speed[0] = new LatLng(0,0);
+        speed[1] = new LatLng(0,0);
         status   = findViewById(R.id.status);
         gpsbutton = findViewById(R.id.gpsbutton);
         imageView = findViewById(R.id.imageView1);
@@ -206,11 +232,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         myinfo_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (STATUS_HIKING == 1) {
-                    status.setVisibility(View.INVISIBLE);
-                    status.setText("등산완료");
-                    STATUS_HIKING = 0;
-                }
+               Intent intent1 = new Intent(MapsActivity.this,myinfo.class);
+               intent1.putExtra("userid",user_id);
+               intent1.putExtra("velocity",velocity);
+               intent1.putExtra("distance",hiking_distance);
+               intent1.putExtra("alldistance",all_distance);
+               startActivity(intent1);
 
             }
         });
@@ -218,7 +245,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (STATUS_HIKING == 1) {
+                    status.setVisibility(View.INVISIBLE);
+                    status.setText("등산완료");
+                    STATUS_HIKING = 0;
+                }
             }
         });
         fab2.setOnClickListener(new View.OnClickListener() {
@@ -484,23 +515,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+
         mMap = googleMap;
-        requestGet("http://172.26.2.38:3000/paths/113200104",null);
+        requestGet("http://172.26.2.38:3000/dummy/school",null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        for (int k = 0;k < crnidDistances.size(); k++) {
+            all_distance += crnidDistances.get(k).getDistance();
+        }
+
         for (int a = 0; a < polylinegroup.size(); a++) {
             for(int b = 0; b < polylinegroup.get(a).size() -1; b++) {
                 mMap.addPolyline(new PolylineOptions()
-                        .add(polylinegroup.get(a).get(b), polylinegroup.get(a).get(b + 1))
+                        .add(polylinegroup.get(a).get(b).getLatLng(), polylinegroup.get(a).get(b + 1).getLatLng())
                         .color(Color.RED)
                         .width(10));
             }
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(polylinegroup.get(0).get(0)));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polylinegroup.get(0).get(0), 23));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(polylinegroup.get(0).get(0).getLatLng()));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polylinegroup.get(0).get(0).getLatLng(), 23));
 
         
         Timer timer = new Timer();
@@ -509,8 +545,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void run() {
-
+                    hiking_distance = 0;
                     name.clear();
+                    //requestGet("http://172.26.2.38:3000/paths/113200104",null);
                     final LocationService locationService = new LocationService(getApplicationContext());
                     locationService.getMyLocation(new LocationListener() {
                         @Override
@@ -520,12 +557,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             now_lat2 = location.getLatitude();
 
 
-
-
-
-
-
                         }
+
 
                         @Override
                         public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -542,9 +575,75 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         }
                     });
+                speed[0] = speed[1];
+                speed[1] = new LatLng(now_lat2,now_lng2);
+                Location locations = new Location("poin1");
+                locations.setLatitude(speed[0].latitude);
+                locations.setLongitude(speed[0].longitude);
+
+                Location locationp = new Location("poin2");
+                locationp.setLatitude(speed[1].latitude);
+                locationp.setLongitude(speed[1].longitude);
+
+                velocity = locations.distanceTo(locationp)/10;
+                Log.d("velocity", String.valueOf(velocity));
+
+                for (int a = my_current_id - 1; a <= my_current_id + 1; a++) {
+                    int start = 0;
+                    if (a == -1)
+                        continue;
+                    if(a < polylinegroup.size()) {
+                        for (int b = 0; b < polylinegroup.get(a).size(); b++) {
+                            Location location1 = new Location("point1");
+                            location1.setLatitude(polylinegroup.get(a).get(b).getLatLng().latitude);
+                            location1.setLongitude(polylinegroup.get(a).get(b).getLatLng().longitude);
+
+                            Location location2 = new Location("point2");
+                            location2.setLatitude(now_lat2);
+                            location2.setLongitude(now_lng2);
+
+                            double kedistance = location1.distanceTo(location2);
+                            if (start == 0)
+                                minimum = kedistance;
+                            else if (minimum > kedistance) {
+                                minimum = kedistance;
+                                minimum_group_poly = a;
+                                minimum_poly = b;
+                                Log.d("!@##$", String.valueOf(minimum)+minimum_group_poly+String.valueOf(minimum_poly));
+                            }
+                            start++;
+                        }
+                    }
+                }
+
+
+                my_current_id = minimum_group_poly;
+                Log.d("current", String.valueOf(my_current_id));
+
+
+                Location locationnow = new Location("now");
+                locationnow.setLatitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().latitude);
+                locationnow.setLongitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().longitude);
+
+                Location locationnow2 = new Location("now2");
+                locationnow2.setLatitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().latitude);
+                locationnow2.setLongitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().longitude);
+
+                hiking_distance += locationnow.distanceTo(locationnow2);
+
+                for(int h = 0 ; h < my_current_id ; h++) {
+                    hiking_distance += crnidDistances.get(h).getDistance()*1000;
+                }
+
+
+
+                //hiking_distance;
+
+                Log.d("@@@@@@hiking_distance:",String.valueOf(hiking_distance));
 
                     hrc = new HttpRequestConnection();
                     contentValues = new ContentValues();
+                    contentValues.put("distance",hiking_distance);
                     contentValues.put("id", user_id);
                     contentValues.put("latitude", now_lat2);
                     contentValues.put("longitude", now_lng2);
@@ -558,16 +657,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             Location locationA= new Location("point A");
 
-                        /*    if(STATUS_HIKING == 1) {
+                         /*  if(STATUS_HIKING == 1) {
 
-                            locationA.setLatitude(polylinegroup.get(0).get(0).latitude);
-                            locationA.setLatitude(polylinegroup.get(0).get(0).longitude);
+                            LatLngCrnId latLngCrnId2 = polylinegroup.get(0).get(0);
+
+                            locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
+                            locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().longitude);
                             }
                             else {
-                                ArrayList<LatLng> rolypoly = new ArrayList<LatLng>();
+                                ArrayList<LatLngCrnId> rolypoly = new ArrayList<LatLngCrnId>();
                                 rolypoly = polylinegroup.get(polylinegroup.size()-1);
-                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).latitude);
-                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).longitude);
+                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
+                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
                             }*/
 
                            locationA.setLatitude(35.896844);
@@ -651,7 +752,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     tf = false;
             }
         };
-        timer.schedule(timerTask,0,5000);
+        timer.schedule(timerTask,0,10000);
         };
 
 
@@ -724,15 +825,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         JSONObject att         = jsonObject.getJSONObject("geometry");
+                        JSONObject attvl         = jsonObject.getJSONObject("attributes");
                         JSONArray path = att.getJSONArray("paths");
+
+                        double km = attvl.getDouble("PMNTN_LT");
+                        int fid = attvl.getInt("FID");
+                        CrnidDistance crnidDistance = new CrnidDistance(km,fid);
+                        crnidDistances.add(crnidDistance);
                         for (int j = 0; j < path.length(); j++) {
-                            polyline = new ArrayList<LatLng>();
+                            polyline = new ArrayList<LatLngCrnId>();
                            JSONArray path2 = path.getJSONArray(j);
                             for (int k = 0; k < path2.length(); k++) {
                                 JSONObject a = path2.getJSONObject(k);
                                 Double lat = a.getDouble("lat");
                                 Double lng = a.getDouble("lng");
-                                polyline.add(new LatLng(lat,lng));
+                                LatLngCrnId latLngCrnId = new LatLngCrnId(new LatLng(lat,lng),fid);
+                                polyline.add(latLngCrnId);
                             }
                             polylinegroup.add(polyline);
                         }
