@@ -1,10 +1,12 @@
 package kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.Socket;
 
+import kr.ac.yjc.wdj.hikonnect.MapsActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
