@@ -109,26 +109,30 @@ class LatLngCrnId {
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private int STATUS_HIKING = 1;
-    private ArrayList<ArrayList<LatLngCrnId>> polylinegroup = new ArrayList<ArrayList<LatLngCrnId>>();
-    private ArrayList<CrnidDistance> crnidDistances = new ArrayList<CrnidDistance>();
-    private ArrayList<LatLngCrnId> polyline;
+    private int                                 STATUS_HIKING = 1;
+    private ArrayList<ArrayList<LatLngCrnId>>   polylinegroup = new ArrayList<ArrayList<LatLngCrnId>>();
+    private ArrayList<CrnidDistance>            crnidDistances = new ArrayList<CrnidDistance>();
+    private ArrayList<LatLngCrnId>              polyline;
 
-    private LatLng[] speed = new LatLng[2];
-    private double velocity = 0;
-    private double all_distance = 0;
-    private double hiking_distance = 0;
-    private double minimum = 0;
-    private int minimum_group_poly;
-    private int minimum_poly;
-    private int my_current_id = 0;
-    private int absolutevalue = 0;
-    private GoogleMap mMap;
-    private static final int PICK_FROM_CAMERA = 0;
-    private static final int PICK_FROM_ALBUM = 1;
-    private BackPressClosHandler backPressClosHandler;
-    private EditText content, editText, title;
-    private Button post_btn, cancel, status;
+    private LatLng[]                            speed = new LatLng[2];
+    private double                              velocity = 0;
+    private double                              all_distance = 0;
+    private double                              hiking_distance = 0;
+    private double                              minimum = 0;
+    private int                                 minimum_group_poly;
+    private int                                 minimum_poly;
+    private int                                 my_current_id = 0;
+    private int                                 absolutevalue = 0;
+    private GoogleMap                           mMap;
+    private static final int                    PICK_FROM_CAMERA = 0;
+    private static final int                    PICK_FROM_ALBUM = 1;
+    private BackPressClosHandler                backPressClosHandler;
+    private EditText                            content,
+                                                editText,
+                                                title;
+    private Button                              post_btn,
+                                                cancel,
+                                                status;
     private ImageView imageView;
     private LinearLayout linearLayout;
     private String image_path = "File_path";
@@ -308,7 +312,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://hikonnect.ga/api/test", contentValues);
+                            result = hrc.request(getString(R.string.laravel_local_server_ip) + "/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -519,7 +523,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-        requestGet("http://172.26.2.38:3000/dummy/school", null);
+        requestGet(getString(R.string.node_local_server_ip) + "/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -652,7 +656,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 contentValues.put("longitude", now_lng2);
 
 
-                result = hrc.request("http://172.26.2.38:8000/api/storesend", contentValues);
+                result = hrc.request(getString(R.string.laravel_local_server_ip) + "/api/storesend", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 handler = new Handler(Looper.getMainLooper()) {
