@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie.RecordPlayer;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.beans.Record;
+import kr.ac.yjc.wdj.hikonnect.apis.walkietalkie.RecordPlayer;
 
 /**
  * 녹음 리스트 어댑터

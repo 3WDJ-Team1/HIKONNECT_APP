@@ -3,7 +3,6 @@ package kr.ac.yjc.wdj.hikonnect;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -25,8 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Time;
-
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 /**
  * Created by jungyu on 2018-04-25.
