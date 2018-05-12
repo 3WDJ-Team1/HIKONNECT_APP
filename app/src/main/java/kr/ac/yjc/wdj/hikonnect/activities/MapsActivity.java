@@ -581,8 +581,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onLocationChanged(Location location) {
                         now_lng2 = location.getLongitude();
                         now_lat2 = location.getLatitude();
-                        speed[0] = speed[1];
-                        speed[1] = new LatLng(now_lat2, now_lng2);
                     }
 
 
@@ -601,7 +599,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-
+                speed[0] = speed[1];
+                speed[1] = new LatLng(now_lat2, now_lng2);
                 Location locations = new Location("poin1");
                 locations.setLatitude(speed[0].latitude);
                 locations.setLongitude(speed[0].longitude);
@@ -704,7 +703,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         locationB.setLatitude(now_lat2);
                         locationB.setLongitude(now_lng2);
 
-                        distance = locationA.distanceTo(locationB);
+                        Location locationstart = new Location("point start");
+
+                        locationstart.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
+                        locationstart.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
+
+                        distance = locationstart.distanceTo(locationB);
                         Log.d("dadadasdasdasdasd", distance.toString());
 
 
