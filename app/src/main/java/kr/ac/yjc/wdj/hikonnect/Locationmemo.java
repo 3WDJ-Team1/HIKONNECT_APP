@@ -39,19 +39,16 @@ import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
  * Created by jungyu on 2018-04-11.
  */
 
-public class                                                                                                                                                                          Locationmemo extends Activity {
+public class  Locationmemo extends Activity {
 
-    String titlestring, contentstring;
-    TextView title;
+    int location_num;
+    String titlestring, contentstring,path,writer,result;
     Handler handler;
-    TextView content;
-    Double lat,lng;
+    TextView content,title,writertv;
     Bitmap bitmap;
     ContentValues contentValues;
     HttpRequestConnection hrc;
-    String result;
     ImageView image1;
-    String path;
     PermissionListener permissionlistener = null;
 
 
@@ -73,17 +70,19 @@ public class                                                                    
         title = findViewById(R.id.gettitle);
         image1 = findViewById(R.id.image1);
         content = findViewById(R.id.getcontent);
+        writertv = findViewById(R.id.idtext);
+
         contentValues = new ContentValues();
         hrc = new HttpRequestConnection();
+
         Intent intent = getIntent();
-        lat = intent.getDoubleExtra("latitude",0);
-        lng = intent.getDoubleExtra("longitude",0);
-        contentValues.put("lat",lat);
-        contentValues.put("lng",lng);
+        location_num= intent.getIntExtra("location_no",0);
+
+        contentValues.put("location_no",location_num);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request("http://hikonnect.ga/api/position",contentValues);
+                result = hrc.request("http://172.26.2.233:8000/api/getLocationMemoDetail",contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
@@ -96,7 +95,8 @@ public class                                                                    
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         titlestring     =  jsonObject.getString("title");
                         contentstring     =  jsonObject.getString("content");
-                        path       = jsonObject.getString("image_path");
+                        //path       = jsonObject.getString("image_path");
+                        writer      = jsonObject.getString("writer");
                         TedPermission.with(Locationmemo.this)
                                 .setPermissionListener(permissionlistener)
                                 .setRationaleMessage("사진을 보려면 권한이 필요함")
@@ -107,13 +107,7 @@ public class                                                                    
                         //path = path.replaceAll("\\/","/");
                         title.setText(titlestring);
                         content.setText(contentstring);
-                        File imgFile = new File(path);
-                        if(imgFile.exists()){
-                            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                            image1.setImageBitmap(myBitmap);
-                        }
-                        else
-                            image1.setImageResource(R.color.colorPrimary);
+                        writertv.setText(writer);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

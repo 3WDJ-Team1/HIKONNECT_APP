@@ -58,7 +58,6 @@ import org.json.JSONObject;
 import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
 import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie.WalkieTalkie;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -108,83 +107,57 @@ class LatLngCrnId {
     }
 }
 
-/**
- *
- * @author Jungyu Choi(), Sungeun Kang (kasueu0814@gmail.com)
- */
+//메인 클래스 입니다.
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private String          laravel_local_ip,
-                            node_local_ip;
+    private String url = "http://172.26.2.233:8000";
+    private int STATUS_HIKING = 1;
+    private ArrayList<ArrayList<LatLngCrnId>> polylinegroup = new ArrayList<ArrayList<LatLngCrnId>>();
+    private ArrayList<CrnidDistance> crnidDistances = new ArrayList<CrnidDistance>();
+    private ArrayList<LatLngCrnId> polyline;
 
-    // UI 변수
-    private EditText                content, editText, title;
-    private Button                  post_btn, cancel,status;
-    private ImageView               imageView;
-    private LinearLayout            linearLayout;
-    private TextView                tv;
-    private FloatingActionMenu      floatingActionMenu;
-    private FloatingActionButton    fab1,fab2,gpsbutton,user_info_button,myinfo_button;
-    private FloatingActionButton    btnSendRadio;       // 무전 버튼
-    private Button                  btnToRecordList;    // 녹음 리스트 액티비티로 전환하는 버튼
-
-    // GoogleMaps
-    private GoogleMap                           mMap;
-    private ArrayList<ArrayList<LatLngCrnId>>   polylinegroup   = new ArrayList<>();
-    private ArrayList<CrnidDistance>            crnidDistances  = new ArrayList<>();
-    private ArrayList<LatLngCrnId>              polyline;
-    private Marker[]                            markers;
-
-    // 데이터 관련 변수
-    private int                 STATUS_HIKING   = 1;
-    private int                 absolutevalue   = 0;
-    private ArrayList<String>   name            = new ArrayList<String>();
-    private String              image_path      = "File_path";
-    // <-- 속도 관련 데이터
-    private double              all_distance    = 0;
-    private double              hiking_distance = 0;
-    private LatLng[]            speed           = new LatLng[2];
-    // -->
-    private int                 my_current_id   = 0;
-    private String              positionuser, result, network, user_id, nickname,
-                                hiking_group, title_st, content_st = "";
-    private double              now_lat, now_lng, lat, lng, rlat, rlng,
-                                now_lat2, now_lng2;
-    private Float               distance;
-
-
-    // 구글맵 관련 데이터
-    private double  velocity    = 0;
-    private double  minimum     = 0;
-    private int     minimum_group_poly;
-    private int     minimum_poly;
-
-    // 상수
-    private static final int PICK_FROM_CAMERA   = 0;
-    private static final int PICK_FROM_ALBUM    = 1;
-
-    // 핸들러
-    private BackPressClosHandler    backPressClosHandler;
-    private Handler                 handler;
-
-    // 퍼미션
-    private PermissionManager       pManager;
-    private PermissionListener      permissionlistener = null;
-
-    // 기타
-    private ContentValues           contentValues   = new ContentValues();
-    private HttpRequestConnection   hrc             = new HttpRequestConnection();
-    private AlertDialog.Builder     builder;
-    private Bitmap                  image_bitmap;
-    private Uri                     uri;
-    private boolean                 tf              = true;
-    private WalkieTalkie            walkieTalkie;   // 무전 객체
-    private boolean                 isSendingNow;   // 현재 무전을 전송중인지
+    private LatLng[] speed = new LatLng[2];
+    private double velocity = 0;
+    private double all_distance = 0;
+    private double hiking_distance = 0;
+    private double minimum = 0;
+    private int minimum_group_poly;
+    private int minimum_poly;
+    private int location_no;
+    private int my_current_id = 0;
+    private int absolutevalue = 0;
+    private GoogleMap mMap;
+    private static final int PICK_FROM_CAMERA = 0;
+    private static final int PICK_FROM_ALBUM = 1;
+    private BackPressClosHandler backPressClosHandler;
+    private EditText content, editText, title;
+    private Button post_btn, cancel, status;
+    private ImageView imageView;
+    private LinearLayout linearLayout;
+    private String image_path = "File_path";
+    private TextView tv;
+    private double now_lat, now_lng, lat, lng, rlat, rlng, now_lat2, now_lng2;
+    private PermissionManager pManager;
+    private ContentValues contentValues = new ContentValues();
+    private AlertDialog.Builder builder;
+    private Bitmap image_bitmap;
+    private HttpRequestConnection hrc = new HttpRequestConnection();
+    private String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
+    private Handler handler;
+    private Uri uri;
+    private Float distance;
+    private PermissionListener permissionlistener = null;
+    private FloatingActionMenu floatingActionMenu;
+    private FloatingActionButton fab1, fab2, gpsbutton, user_info_button, myinfo_button;
+    private int My_member_num , positionuser;
+    private ArrayList<String> name = new ArrayList<String>();
+    private Marker[] markers;
+    private boolean tf = true;
 
 
     @Override
     public void onBackPressed() {
-        // super.onBackPressed();
+        //super.onBackPressed();
         if (linearLayout.getVisibility() == View.VISIBLE) {
             imageView.setImageResource(R.color.colorPrimary);
             editText.setText("");
@@ -200,13 +173,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        laravel_local_ip    = getString(R.string.laravel_local_server_ip);
-        node_local_ip       = getString(R.string.node_local_server_ip);
 
-/*        // Firebase 푸시 메시지
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        FirebaseInstanceId.getInstance().getToken();*/
+
+
 
         // 퍼미션 관리자 생성
         pManager = new PermissionManager(this);
@@ -222,39 +191,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         // Get GPS Information
-        markers                 = new Marker[1000];
-        backPressClosHandler    = new BackPressClosHandler(MapsActivity.this);
 
-        // UI init
-        status              = findViewById(R.id.status);
-        gpsbutton           = findViewById(R.id.gpsbutton);
-        imageView           = findViewById(R.id.imageView1);
-        editText            = findViewById(R.id.content);
-        post_btn            = findViewById(R.id.post_btn);
-        cancel              = findViewById(R.id.cancel);
-        tv                  = findViewById(R.id.textView2);
+        //마커
+        markers = new Marker[1000];
+        backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
+        speed[0] = new LatLng(0, 0);
+        speed[1] = new LatLng(0, 0);
+        status = findViewById(R.id.status);
+        gpsbutton = findViewById(R.id.gpsbutton);
+        imageView = findViewById(R.id.imageView1);
+        editText = findViewById(R.id.content);
+        cancel = findViewById(R.id.cancel);
+        tv = findViewById(R.id.textView2);
+        content = findViewById(R.id.content);
+        post_btn = findViewById(R.id.post_btn);
         tv.setText("미수신중");
-        status              = findViewById(R.id.status);
-        content             = findViewById(R.id.content);
-        fab1                = findViewById(R.id.fab1);
-        fab2                = findViewById(R.id.fab2);
-        floatingActionMenu  = findViewById(R.id.fabmenu);
-        myinfo_button       = findViewById(R.id.myinfo_button);
-        user_info_button    = findViewById(R.id.user_info_button);
-        title               = findViewById(R.id.title);
-        linearLayout        = findViewById(R.id.imagelayout);
-        // 무전 버튼 초기화
-        btnSendRadio        = (FloatingActionButton) findViewById(R.id.sendRecordData);
-        // 녹음 리스트 이동 버튼 초기화
-        btnToRecordList     = (Button) findViewById(R.id.showRecordList);
+        floatingActionMenu = findViewById(R.id.fabmenu);
+        fab1 = findViewById(R.id.fab1);
+        fab2 = findViewById(R.id.fab2);
+        myinfo_button = findViewById(R.id.myinfo_button);
+        user_info_button = findViewById(R.id.user_info_button);
 
-        // data init
-        speed[0]    = new LatLng(0,0);
-        speed[1]    = new LatLng(0,0);
-
-
+        title = findViewById(R.id.title);
+        linearLayout = findViewById(R.id.imagelayout);
         final Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
+
+        contentValues.put("user_id",user_id);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                result = hrc.request(url+"/api/getMemberNoByUserId",contentValues);
+                Log.i("result", result);
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        }).start();
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        My_member_num = jsonObject.getInt("member_no");
+                        Log.d("member_no", String.valueOf(My_member_num));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
 
         permissionlistener = new PermissionListener() {
             @Override
@@ -267,20 +253,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
-
         // Set Created_at, Updated_at
-        final SimpleDateFormat[]    sdfNow  = { new SimpleDateFormat("yyyy/MM/dd HH:mm:ss") };
-        final String                time    = sdfNow[0].format(new Date(System.currentTimeMillis()));
-        final LocationService       ls      = new LocationService(getApplicationContext());
+        final SimpleDateFormat[] sdfNow = {new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")};
+        final String time = sdfNow[0].format(new Date(System.currentTimeMillis()));
+        final LocationService ls = new LocationService(getApplicationContext());
+
 
         myinfo_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent1 = new Intent(MapsActivity.this, myinfo.class);
-                intent1.putExtra("userid", user_id);
-                intent1.putExtra("velocity", velocity);
-                intent1.putExtra("distance", hiking_distance);
-                intent1.putExtra("alldistance", all_distance);
+                Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
+                intent1.putExtra("member_no", My_member_num);
                 startActivity(intent1);
 
             }
@@ -296,7 +279,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -319,16 +301,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ad.show();
             }
         });
-
         user_info_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
-                intent.putExtra("userid", user_id);
+                intent.putExtra("my_num", My_member_num);
                 startActivity(intent);
             }
         });
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -337,24 +317,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 linearLayout.setVisibility(View.INVISIBLE);
             }
         });
-
         post_btn.setOnClickListener(new View.OnClickListener() {
+            ContentValues contentValues2 = new ContentValues();
             @Override
             public void onClick(View view) {
                 try {
-                    contentValues.put("user_id", user_id);
-                    contentValues.put("lat", now_lat);
-                    contentValues.put("lng", now_lng);
-                    contentValues.put("title", title.getText().toString());
-                    contentValues.put("content", content.getText().toString());
-                    contentValues.put("image_path", image_path);
-                    contentValues.put("created_at", time);
-                    contentValues.put("updated_at", time);
+
+                    contentValues2.put("member_no", My_member_num);
+                    contentValues2.put("lat", now_lat2);
+                    contentValues2.put("lng", now_lng2);
+                    contentValues2.put("title", title.getText().toString());
+                    contentValues2.put("content", content.getText().toString());
+                    contentValues2.put("image_path", image_path);
+
+
 
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request(laravel_local_ip + "/api/test", contentValues);
+                            result = hrc.request(url+"/api/storeLocationMemo", contentValues2);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -362,7 +343,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     handler = new Handler() {
                         public void handleMessage(Message msg) {
                             tv.setText("위치메모 등록완료");
-                            LatLng nl = new LatLng(now_lat, now_lng);
+
                         }
                     };
                 } catch (SecurityException ex) {
@@ -391,46 +372,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             LatLng nl = new LatLng(now_lat, now_lng);
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
-
-
-                               /* // Get All Location Memo
-                                contentValues.put("id", user_id);
-                                Log.i("@@@@@@@@@@@@@@@@@@@@@",user_id);
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        result = hrc.request("http://172.26.2.200:8000/api/getlm",contentValues);
-                                        Log.i("result", result);
-                                        Message msg = handler.obtainMessage();
-                                        handler.sendMessage(msg);
-                                    }
-                                }).start();
-                                handler = new Handler() {
-                                    public void handleMessage(Message msg) {
-                                        try {
-                                            JSONArray jsonArray = new JSONArray(result);
-                                            for(int i = 0; i < jsonArray.length(); i++) {
-                                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                                lat         = jsonObject.getDouble("latitude");
-                                                lng         = jsonObject.getDouble("longitude");
-                                                title_st    = jsonObject.getString("title");
-                                                content_st  = jsonObject.getString("content");
-                                                LatLng nl   = new LatLng(lat, lng);
-                                                Marker marker = mMap.addMarker(new MarkerOptions()
-                                                        .position(nl)
-                                                        .title(title_st)
-                                                        .snippet(content_st)
-                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bookmark_black_24dp)));
-                                                marker.setTag("locationmemo");
-
-                                                // Send PushMessage
-                                                requestPost("http://hikonnect.ga/api/send", "위치메모가 있습니다.", "내용 확인 바랍니다.");
-                                            }
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                };*/
                         }
 
                         @Override
@@ -467,7 +408,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                         .check();
                 floatingActionMenu.close(true);
-
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
 
                 alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
@@ -479,7 +419,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         linearLayout.setVisibility(View.VISIBLE);
                     }
                 });
-
                 alertDialog.setNeutralButton("사진 찍기", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -496,7 +435,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 });
-
                 alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -504,51 +442,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         imageView.setVisibility(View.INVISIBLE);
                     }
                 });
-
                 alertDialog.show();
-            }
-        });
-
-        isSendingNow = false;
-
-        // 무전 객체 초기화
-        walkieTalkie = new WalkieTalkie();
-        // 무전 받아오기 시작
-        walkieTalkie.receiveStart();
-        // 무전 버튼에 리스너 달기
-        btnSendRadio.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-
-                if (!isSendingNow) {
-                    isSendingNow = true;
-                    walkieTalkie.sendStart();
-                    Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            }
-        });
-
-        btnSendRadio.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                if(isSendingNow) {
-                    isSendingNow = false;
-                    walkieTalkie.sendEnd();
-                    Toast.makeText(getBaseContext(), "무전 종료합니다", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // 녹음 리스트 액티비티로 이동할 리스너 붙이기
-        btnToRecordList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
-                startActivity(recordIntent);
             }
         });
     }
@@ -564,13 +458,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_ALBUM: {
                 try {
                     //Get Image_path
-                    uri         = data.getData();
-                    image_path  = getRealPathFromURI(uri);
+                    uri = data.getData();
+                    image_path = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
-                    image_bitmap = MediaStore.Images.Media.getBitmap(
-                            getContentResolver(),
-                            data.getData()
-                    );
+                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
                     Log.v("이미지", imageView.toString());
@@ -588,19 +479,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PICK_FROM_CAMERA: {
                 try {
                     //Get Image_path
-                    uri         = data.getData();
-                    image_path  = getRealPathFromURI(uri);
+                    uri = data.getData();
+                    image_path = getRealPathFromURI(uri);
                     //이미지 데이터를 비트맵으로 받아온다.
-                    image_bitmap = MediaStore.Images.Media.getBitmap(
-                            getContentResolver(),
-                            data.getData()
-                    );
+                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                     //배치해놓은 ImageView에 set
                     imageView.setImageBitmap(image_bitmap);
                     linearLayout.setVisibility(View.VISIBLE);
                 } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IOException e) {
+                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -616,7 +506,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-        requestGet(node_local_ip + "/dummy/school", null);
+        requestGet("http://172.26.2.233:3000/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -634,15 +524,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .width(10));
             }
         }
-        //error
-        Log.d("TEST", polylinegroup.size() + "");
         mMap.moveCamera(CameraUpdateFactory.newLatLng(polylinegroup.get(0).get(0).getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polylinegroup.get(0).get(0).getLatLng(), 23));
 
 
-        Timer       timer       = new Timer();
-        handler                 = new Handler();
-        TimerTask   timerTask   = new TimerTask() {
+        Timer timer = new Timer();
+        handler = new Handler();
+        TimerTask timerTask = new TimerTask() {
 
             @Override
             public void run() {
@@ -656,6 +544,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         now_lng2 = location.getLongitude();
                         now_lat2 = location.getLatitude();
+
 
                     }
 
@@ -675,7 +564,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-
                 speed[0] = speed[1];
                 speed[1] = new LatLng(now_lat2, now_lng2);
                 Location locations = new Location("poin1");
@@ -717,10 +605,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
 
+
                 my_current_id = minimum_group_poly;
                 Log.d("current", String.valueOf(my_current_id));
+                Log.d("status", String.valueOf(STATUS_HIKING));
 
-                if (STATUS_HIKING == 1) {
+                if(STATUS_HIKING == 1) {
                     Location locationnow = new Location("now");
                     locationnow.setLatitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().latitude);
                     locationnow.setLongitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().longitude);
@@ -742,36 +632,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Log.d("@@@@@@hiking_distance:", String.valueOf(hiking_distance));
 
-                hrc             = new HttpRequestConnection();
-                contentValues   = new ContentValues();
-                contentValues.put("id", user_id);
+                hrc = new HttpRequestConnection();
+                contentValues = new ContentValues();
+
+                contentValues.put("distance", hiking_distance);
+                contentValues.put("member_no", My_member_num);
                 contentValues.put("latitude", now_lat2);
                 contentValues.put("longitude", now_lng2);
+                contentValues.put("velocity",velocity);
 
 
-                //TODO 서버 쪽으로 바꾸기
-                result = hrc.request(laravel_local_ip + "/api/storesend", contentValues);
+                result = hrc.request(url+"/api/storesend", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 handler = new Handler(Looper.getMainLooper()) {
                     public void handleMessage(Message msg) {
 
-                        Location locationA= new Location("point A");
+                        Location locationA = new Location("point A");
 
-                        /*  if(STATUS_HIKING == 1) {
-                            LatLngCrnId latLngCrnId2 = polylinegroup.get(0).get(0);
+                        if(STATUS_HIKING == 1) {
+
+
+
                             locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
-                            locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().longitude);
-                            }
-                            else {
-                                ArrayList<LatLngCrnId> rolypoly = new ArrayList<LatLngCrnId>();
-                                rolypoly = polylinegroup.get(polylinegroup.size()-1);
-                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
-                                locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
-                            }*/
-
-                        locationA.setLatitude(35.896844);
-                        locationA.setLongitude(128.621261);
+                            locationA.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
+                        }
+                        else {
+                            ArrayList<LatLngCrnId> rolypoly = new ArrayList<LatLngCrnId>();
+                            rolypoly = polylinegroup.get(polylinegroup.size()-1);
+                            locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
+                            locationA.setLongitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
+                        }
 
                         Location locationB = new Location("point B");
 
@@ -780,6 +671,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         distance = locationA.distanceTo(locationB);
                         Log.d("dadadasdasdasdasd", distance.toString());
+
 
                         if (distance < 100) {
                             status.setVisibility(View.VISIBLE);
@@ -793,21 +685,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                         try {
-                            JSONArray jsonArray = new JSONArray(result);
+                            JSONObject first = new JSONObject(result);
+                            JSONArray jsonArray       = first.getJSONArray("members");
+                            JSONArray jsonArray2      = first.getJSONArray("location_memos");
+                            Log.d("test", String.valueOf(jsonArray ));
+
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                positionuser = jsonObject.getString("userid");
+
+
+                                positionuser = jsonObject.getInt("member_no");
                                 lat = jsonObject.getDouble("latitude");
                                 lng = jsonObject.getDouble("longitude");
-                                Log.i("!@$#@!%$!@%$!@%!#%!", positionuser);
+
 
                                 LatLng nl = new LatLng(lat, lng);
 
-                                if (positionuser.equals(user_id)) {
+                                if (positionuser == My_member_num) {
                                     Marker marker = mMap.addMarker(new MarkerOptions()
                                             .position(nl)
                                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.me1)));
                                     marker.setTag(positionuser);
+                                    marker.setSnippet("people");
                                     markers[absolutevalue] = marker;
                                     absolutevalue++;
 
@@ -816,32 +715,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             .position(nl)
                                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_walk_black_24dp)));
                                     marker.setTag(positionuser);
+                                    marker.setSnippet("people");
                                     markers[absolutevalue] = marker;
                                     absolutevalue++;
                                 }
+                            }
+
+                            for (int j = 0; j < jsonArray2.length(); j++) {
+
+                                JSONObject jsonObject = jsonArray2.getJSONObject(j);
+
+                                location_no  = jsonObject.getInt("no");
+                                double lat_location = jsonObject.getDouble("latitude");
+                                double lng_location = jsonObject.getDouble("longitude");
+
+                                LatLng nl2 = new LatLng(lat_location, lng_location);
+
+
+                                Marker marker = mMap.addMarker(new MarkerOptions()
+                                        .position(nl2)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bookmark_black_24dp)));
+                                marker.setTag(location_no);
+                                marker.setSnippet("locationmemo");
+
+
                                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
                                     public boolean onMarkerClick(Marker marker) {
-                                        if (marker.getTag().toString() == "locationmemo") {
+                                        if (marker.getSnippet().equals("people")) {
+                                            Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
+                                            Log.d("member_nonono", marker.getTag().toString());
+                                            rlat = marker.getPosition().latitude;
+                                            rlng = marker.getPosition().longitude;
+                                            intent1.putExtra("member_no", (Integer) marker.getTag());
+                                            intent1.putExtra("latitude", rlat);
+                                            intent1.putExtra("longitude", rlng);
+                                            startActivity(intent1);
+                                        }
+                                        else if (marker.getSnippet().equals("locationmemo")) {
                                             Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
                                             rlat = marker.getPosition().latitude;
                                             rlng = marker.getPosition().longitude;
+                                            intent1.putExtra("location_no", location_no);
                                             intent1.putExtra("latitude", rlat);
                                             intent1.putExtra("longitude", rlng);
                                             startActivity(intent1);
-                                        } else {
-                                            Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
-                                            rlat = marker.getPosition().latitude;
-                                            rlng = marker.getPosition().longitude;
-                                            intent1.putExtra("name", marker.getTag().toString());
-                                            intent1.putExtra("latitude", rlat);
-                                            intent1.putExtra("longitude", rlng);
-                                            startActivity(intent1);
-
                                         }
+
                                         return false;
                                     }
                                 });
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

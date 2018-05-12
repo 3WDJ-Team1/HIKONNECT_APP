@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HIKONNECT.iml" filepath="$PROJECT_DIR$/HIKONNECT.iml" />
+      <module fileurl="file://C:\Users\jungyu\AndroidStudioProjects\HIKONNECT_APP1\HIKONNECT_APP.iml" filepath="C:\Users\jungyu\AndroidStudioProjects\HIKONNECT_APP1\HIKONNECT_APP.iml" />
+      <module fileurl="file://C:\Users\jungyu\AndroidStudioProjects\gpsmap2\HIKONNECT_APP.iml" filepath="C:\Users\jungyu\AndroidStudioProjects\gpsmap2\HIKONNECT_APP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HIKONNECT_APP1.iml" filepath="$PROJECT_DIR$/HIKONNECT_APP1.iml" />
+      <module fileurl="file://C:\Users\Public\HIKONNECT_APP\HIKONNECT_APP1.iml" filepath="C:\Users\Public\HIKONNECT_APP\HIKONNECT_APP1.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Public\HIKONNECT_APP\gpsmap2.iml" filepath="C:\Users\Public\HIKONNECT_APP\gpsmap2.iml" />
+      <module fileurl="file://C:\Users\jungyu\AndroidStudioProjects\HIKONNECT_APP1\gpsmap2.iml" filepath="C:\Users\jungyu\AndroidStudioProjects\HIKONNECT_APP1\gpsmap2.iml" />
     </modules>
   </component>
 </project>

@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,14 +29,18 @@ import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
  */
 
 public class Othersinfo extends Activity {
+    private String nickname,hiking_group;
+    private Double distancee,velocity;
     private List<String> list;          // 데이터를 넣은 리스트변수
     private ListView listView;          // 검색을 보여줄 리스트변수
     private EditText editSearch;        // 검색어를 입력할 Input 창
     private SearchAdapter adapter;      // 리스트뷰에 연결할 아답터
     private ArrayList<String> arraylist;
+    private int member_num;
     Handler handler;
     ContentValues contentValues = new ContentValues();
-    String result,user,user_id;
+    String result,user;
+    int my_num;
     HttpRequestConnection hrc = new HttpRequestConnection();
 
     @Override
@@ -60,27 +65,29 @@ public class Othersinfo extends Activity {
 
 //         검색에 사용할 데이터을 미리 저장한다.
         Intent intent = getIntent();
-        user_id = intent.getExtras().getString("userid");
-        contentValues.put("user_id",user_id);
+        my_num = intent.getIntExtra("my_num",0);
+        contentValues.put("member_no",my_num);
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                result = hrc.request("http://172.26.2.38/api/getScheduleMember",contentValues);
+                result = hrc.request("http://172.26.2.233:8000/api/getScheduleMembers",contentValues);
                 Log.i("result", result);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
         }).start();
-        handler = new Handler() {
+        handler = new Handler(Looper.getMainLooper()) {
             public void handleMessage(Message msg) {
                 try {
                     JSONArray jsonArray = new JSONArray(result);
+
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        user         = jsonObject.getString("userid");
-                        list.add(user);
+                        nickname = jsonObject.getString("nickname");
+                        member_num = jsonObject.getInt("member_no");
 
+                        list.add(nickname);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
