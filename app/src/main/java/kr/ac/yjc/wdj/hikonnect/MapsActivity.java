@@ -119,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // UI 변수
     private EditText                content, editText, title;
-    private Button                  post_btn, cancel,status;
+    private Button                  post_btn, cancel, status;
     private ImageView               imageView;
     private LinearLayout            linearLayout;
     private TextView                tv;
@@ -293,6 +293,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     status.setVisibility(View.INVISIBLE);
                     status.setText("등산완료");
                     STATUS_HIKING = 0;
+                } else {
+                    // 2018-05-13 수정된 부분 ~~
+                    // --------------------------------------------------------------------
+                    STATUS_HIKING = 1;
+                    Intent afterHikingIntent = new Intent(getBaseContext(), AfterHikingActivity.class);
+                    // TODO : putExtra 로 데이터 입력 
+                    startActivity(afterHikingIntent);
+                    // ---------------------------------------------------------------------
                 }
             }
         });
