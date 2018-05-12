@@ -75,7 +75,7 @@ public class  Locationmemo extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request("http://172.26.2.233:8000/api/getLocationMemoDetail",contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP+"/api/getLocationMemoDetail",contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }

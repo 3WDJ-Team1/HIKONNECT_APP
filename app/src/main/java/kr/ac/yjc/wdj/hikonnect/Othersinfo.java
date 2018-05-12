@@ -71,7 +71,7 @@ public class Othersinfo extends Activity {
 
             @Override
             public void run() {
-                result = hrc.request("http://172.26.2.233:8000/api/getScheduleMembers",contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP+"/api/getScheduleMembers",contentValues);
                 Log.i("result", result);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
