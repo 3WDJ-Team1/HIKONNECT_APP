@@ -52,8 +52,10 @@
     </android.support.v4.widget.DrawerLayout>
 
     <RelativeLayout
+        android:id="@+id/login_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textView3"
@@ -82,27 +84,26 @@
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
             android:hint="Enter password*"
-            android:layout_below="@+id/id_editText"
+            android:layout_below="@id/id_editText"
             />
 
         <Button
             android:id="@+id/signInBtn"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="55dp"
+            android:layout_marginLeft="95dp"
             android:text="SIGN IN"
-            android:textAllCaps="false"
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/pw_editText"
-            android:layout_toStartOf="@+id/signUpBtn" />
+            android:layout_below="@id/pw_editText"/>
 
         <Button
-            android:id="@+id/signUpBtn"
-            android:layout_width="150dp"
+            android:id="@+id/cancelBtn"
+            android:layout_width="wrap_content"
             android:layout_height="55dp"
-            android:text="SIGN UP"
-            android:textAllCaps="false"
-            android:layout_alignTop="@+id/signInBtn"
-            android:layout_alignEnd="@+id/pw_editText"/>
+            android:text="CANCLE"
+            android:layout_toRightOf="@id/signInBtn"
+            android:layout_alignBottom="@id/signInBtn"
+            android:layout_centerVertical="true"
+            android:layout_below="@id/pw_editText"/>
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

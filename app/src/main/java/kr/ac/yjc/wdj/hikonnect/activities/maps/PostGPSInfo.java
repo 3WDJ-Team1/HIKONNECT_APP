@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.activities;
+package kr.ac.yjc.wdj.hikonnect.activities.maps;
 
 import android.app.Activity;
 import android.os.Bundle;

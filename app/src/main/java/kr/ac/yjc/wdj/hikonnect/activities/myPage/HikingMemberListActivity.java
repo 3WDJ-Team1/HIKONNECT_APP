@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.activities;
+package kr.ac.yjc.wdj.hikonnect.activities.myPage;
 
 import android.app.Activity;
 import android.os.Bundle;

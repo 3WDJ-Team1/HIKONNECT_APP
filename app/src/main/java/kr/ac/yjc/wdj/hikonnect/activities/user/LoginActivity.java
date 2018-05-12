@@ -1,65 +1,56 @@
-package kr.ac.yjc.wdj.hikonnect.activities;
+package kr.ac.yjc.wdj.hikonnect.activities.user;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.RecoverySystem;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-//import com.gc.materialdesign.views.ButtonRectangle;
-import com.wang.avi.AVLoadingIndicatorView;
+import android.widget.RelativeLayout;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
-import okio.BufferedSource;
 
 /**
  * @file        kr.ac.yjc.wdj.hikonnect.activities.MainActivity.java
- * @author      Jungyu Choi (wnsrb0147@gmail.com), Areum Lee (leear5799@gmail.com)
- * @since       2018-04-05
+ * @author      Areum Lee (leear5799@gmail.com)
+ * @since       2018-04-24
  * @brief       The Activity used when a user logs in
  */
 
-public class LoginActivity extends AppCompatActivity  {
-    private EditText                id,pw;
-    //AVLoadingIndicatorView loginProgressBar;
-    private Button                  login;
+public class LoginActivity extends AppCompatActivity {
+    ActionBarDrawerToggle       dtToggle;
+    SessionManager session;
+    RelativeLayout              rLayout;
+    DrawerLayout                dlDrawer;
+    EditText                    id, pw;
+    Toolbar                     myToolbar;
+    Button                      login, cancle;
+    String                      user;
+
     ContentValues contentValues = new ContentValues();
-//    HttpRequestConnection hrc = new HttpRequestConnection();
-    private String                  result;
-    private Handler                 handler;
-    private Intent                  intent;
-    private Toolbar                 myToolbar;
-    private DrawerLayout            dlDrawer;
-    private ActionBarDrawerToggle   dtToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,16 +65,18 @@ public class LoginActivity extends AppCompatActivity  {
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-        dtToggle    = new ActionBarDrawerToggle(this, dlDrawer, R.string.app_name, R.string.app_name);
+        dtToggle = new ActionBarDrawerToggle(this, dlDrawer, R.string.app_name, R.string.app_name);
         dlDrawer.addDrawerListener(dtToggle);
 
+        session = new SessionManager(getApplicationContext());
 
-        //loginProgressBar = findViewById(R.id.login_progress_bar);
+        id      = findViewById(R.id.id_editText);
+        pw      = findViewById(R.id.pw_editText);
 
-        id = findViewById(R.id.id_editText);
-        pw = findViewById(R.id.pw_editText);
+        login   = findViewById(R.id.signInBtn);
+        cancle  = findViewById(R.id.cancelBtn);
 
-        login = findViewById(R.id.signInBtn);
+        rLayout = (RelativeLayout) findViewById(R.id.login_layout);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,19 +87,17 @@ public class LoginActivity extends AppCompatActivity  {
 
                     OkHttpClient client = new OkHttpClient();
 
-                    URL url = new URL("http://hikonnect.ga/api/loginprocess");
+                    URL url = new URL("http://192.168.1.146:8000/api/login_app");
 
                     RequestBody body = new FormBody.Builder()
-                        .add("idv", id.getText().toString())
-                        .add("pwv", pw.getText().toString())
-                        .build();
+                            .add("id", id.getText().toString())
+                            .add("pw", pw.getText().toString())
+                            .build();
 
                     Request request = new Request.Builder()
                             .url(url)
                             .post(body)
                             .build();
-
-//                    loginProgressBar.setVisibility(View.VISIBLE);
 
                     client.newCall(request).enqueue(new Callback() {
                         @Override
@@ -115,20 +106,36 @@ public class LoginActivity extends AppCompatActivity  {
                         }
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            Log.d("LoginActivity", response.body().string());
+                            user = id.getText().toString();
 
-                            intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("id", id.getText().toString());
+                            session.createLogInSession(user);
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
 
                             finish();
                         }
                     });
-                } catch (SecurityException ex) {
-                    ex.printStackTrace();
-                } catch (MalformedURLException e) {
+
+                } catch (Exception e){
                     e.printStackTrace();
                 }
+            }
+        });
+
+        // 화면 터치 시, 키보드 자판 없어짐
+        rLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager imManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imManager.hideSoftInputFromWindow(login.getWindowToken(), 0);
+            }
+        });
+
+        cancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         });
     }

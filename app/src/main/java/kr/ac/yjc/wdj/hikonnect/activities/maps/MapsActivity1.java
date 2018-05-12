@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.activities;
+package kr.ac.yjc.wdj.hikonnect.activities.maps;
 
 /**
  * @file        kr.ac.yjc.wdj.hikonnect.activities.MapsActivity1.java

@@ -1,150 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/groupPlanLayout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:id="@+id/titleDest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="목적지"
-        android:textColor="@color/black"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/destination"/>
-
-    <TextView
-        android:id="@+id/destination"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="destination"
-        android:textColor="@color/black"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleDest"
-        app:layout_constraintBottom_toTopOf="@+id/titleCourse"/>
-
-    <TextView
-        android:id="@+id/titleCourse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="등산 경로"
-        android:textColor="@color/black"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/destination"
-        app:layout_constraintBottom_toTopOf="@+id/groupPlanMap"/>
-
-    <fragment
-        android:id="@+id/groupPlanMap"
-        class="com.google.android.gms.maps.MapFragment"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleCourse"
-        app:layout_constraintBottom_toTopOf="@+id/seTitle"/>
-
-    <TextView
-        android:id="@+id/seTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="출발지 및 도착지"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/groupPlanMap"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/sePointLayout" />
-
     <LinearLayout
-        android:id="@+id/sePointLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/seTitle"
-        app:layout_constraintBottom_toTopOf="@+id/titlePlan"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/groupPlanList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            >
-
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="출발지"
-                android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/startPoint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="TextView"
-                android:textColor="@color/black"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="도착지"
-                android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/endPoint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="TextView"
-                android:textColor="@color/black"/>
-        </LinearLayout>
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            tools:listitem="@layout/schedule_item_cardview" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/titlePlan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="등산 일정"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/sePointLayout"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/hikingPlan"/>
-
-    <TextView
-        android:id="@+id/hikingPlan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="우왕~~!! 일정이다~!!!"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/titlePlan"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>
