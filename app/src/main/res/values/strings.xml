@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">hikonnect</string>
+    <string name="app_name">Hikonnect</string>
     <string name="title_activity_maps">Map</string>
+    <string name="hikonnect_server_ip">http://hikonnect.ga</string>
+    <string name="laravel_local_server_ip">http://172.26.2.233:8000</string>
+    <string name="node_local_server_ip">http://172.26.2.233:3000</string>
 </resources>

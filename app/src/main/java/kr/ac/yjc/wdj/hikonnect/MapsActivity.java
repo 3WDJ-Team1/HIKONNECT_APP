@@ -113,6 +113,10 @@ class LatLngCrnId {
  * @author Jungyu Choi(), Sungeun Kang (kasueu0814@gmail.com)
  */
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private String          laravel_local_ip,
+                            node_local_ip;
+
     // UI 변수
     private EditText                content, editText, title;
     private Button                  post_btn, cancel,status;
@@ -195,6 +199,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        laravel_local_ip    = getString(R.string.laravel_local_server_ip);
+        node_local_ip       = getString(R.string.node_local_server_ip);
 
 /*        // Firebase 푸시 메시지
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
@@ -347,7 +354,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request("http://hikonnect.ga/api/test", contentValues);
+                            result = hrc.request(laravel_local_ip + "/api/test", contentValues);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -609,7 +616,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-        requestGet("http://172.26.2.233:3000/dummy/school", null);
+        requestGet(node_local_ip + "/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -743,7 +750,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                 //TODO 서버 쪽으로 바꾸기
-                result = hrc.request("http://172.26.2.38:8000/api/storesend", contentValues);
+                result = hrc.request(laravel_local_ip + "/api/storesend", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 handler = new Handler(Looper.getMainLooper()) {
