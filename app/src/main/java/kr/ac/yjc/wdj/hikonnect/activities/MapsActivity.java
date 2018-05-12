@@ -147,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // 데이터 관련 변수
     private int                 My_member_num,location_no;
-    private int                 STATUS_HIKING   = 1;
+    private int                 STATUS_HIKING   = 0;
     private int                 absolutevalue   = 0;
     private ArrayList<String>   name            = new ArrayList<String>();
     private String              image_path      = "File_path";
@@ -312,7 +312,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (STATUS_HIKING == 1) {
+                if (STATUS_HIKING == 0) {
+                    STATUS_HIKING = 1;
+                    status.setVisibility(View.INVISIBLE);
+                }
+                else if (STATUS_HIKING == 1) {
                     status.setVisibility(View.INVISIBLE);
                     status.setText("등산완료");
                     STATUS_HIKING = 0;
@@ -577,6 +581,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onLocationChanged(Location location) {
                         now_lng2 = location.getLongitude();
                         now_lat2 = location.getLatitude();
+                        speed[0] = speed[1];
+                        speed[1] = new LatLng(now_lat2, now_lng2);
                     }
 
 
@@ -595,8 +601,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
-                speed[0] = speed[1];
-                speed[1] = new LatLng(now_lat2, now_lng2);
+
                 Location locations = new Location("poin1");
                 locations.setLatitude(speed[0].latitude);
                 locations.setLongitude(speed[0].longitude);
@@ -641,16 +646,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("status", String.valueOf(STATUS_HIKING));
 
                 if(STATUS_HIKING == 1) {
-                    Location locationnow = new Location("now");
-                    locationnow.setLatitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().latitude);
-                    locationnow.setLongitude(polylinegroup.get(minimum_group_poly).get(0).getLatLng().longitude);
+                    for(int i = 0; i < minimum_poly; i ++) {
+                        Location locationnow = new Location("now");
+                        locationnow.setLatitude(polylinegroup.get(minimum_group_poly).get(i).getLatLng().latitude);
+                        locationnow.setLongitude(polylinegroup.get(minimum_group_poly).get(i).getLatLng().longitude);
 
-                    Location locationnow2 = new Location("now2");
-                    locationnow2.setLatitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().latitude);
-                    locationnow2.setLongitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().longitude);
+                        Location locationnow2 = new Location("now2");
+                        locationnow2.setLatitude(polylinegroup.get(minimum_group_poly).get(i+1).getLatLng().latitude);
+                        locationnow2.setLongitude(polylinegroup.get(minimum_group_poly).get(i+1).getLatLng().longitude);
 
 
-                    hiking_distance += locationnow.distanceTo(locationnow2);
+                        hiking_distance += locationnow.distanceTo(locationnow2);
+                    }
 
                     for (int h = 0; h < my_current_id; h++) {
                         hiking_distance += crnidDistances.get(h).getDistance() * 1000;
@@ -701,7 +708,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.d("dadadasdasdasdasd", distance.toString());
 
 
-                        if (distance < 100) {
+                        if (distance < 50) {
                             status.setVisibility(View.VISIBLE);
                         }
 
@@ -803,7 +810,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 tf = false;
             }
         };
-        timer.schedule(timerTask, 0, 10000);
+        timer.schedule(timerTask, 0, 500);
     }
 
     ;
