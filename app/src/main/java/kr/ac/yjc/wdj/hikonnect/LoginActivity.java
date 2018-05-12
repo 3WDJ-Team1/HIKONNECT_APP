@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -20,6 +21,8 @@ import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 public class LoginActivity extends Activity {
 
+    private String          laravel_local_ip,
+                            node_local_ip;
     EditText                id,
                             pw;
     TextView                tv;
@@ -35,6 +38,9 @@ public class LoginActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        laravel_local_ip    = getString(R.string.laravel_local_server_ip);
+        node_local_ip       = getString(R.string.node_local_server_ip);
 
         id          = (EditText) findViewById(R.id.idtext);
         pw          = (EditText) findViewById(R.id.pwtext);
@@ -56,6 +62,7 @@ public class LoginActivity extends Activity {
 
                         result = hrc.request(getString(R.string.laravel_local_server_ip)+ "/api/login_app", contentValues);
 
+                        Log.d("HIKONNECT", "SIGN IN res: " + result);
                         if (Boolean.valueOf(result)) {
                             runOnUiThread(new Runnable() {
                                 @Override
