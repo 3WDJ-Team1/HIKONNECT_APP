@@ -111,7 +111,7 @@ class LatLngCrnId {
 //메인 클래스 입니다.
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private String url = "http://172.26.2.233:8000";
+    private String url = "http://hikonnect.ga";
     /*private int STATUS_HIKING = 1;
     private ArrayList<ArrayList<LatLngCrnId>> polylinegroup = new ArrayList<ArrayList<LatLngCrnId>>();
     private ArrayList<CrnidDistance> crnidDistances = new ArrayList<CrnidDistance>();
