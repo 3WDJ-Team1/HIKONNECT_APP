@@ -58,6 +58,7 @@ import org.json.JSONObject;
 import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
 import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie.*;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -111,7 +112,7 @@ class LatLngCrnId {
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private String url = "http://172.26.2.233:8000";
-    private int STATUS_HIKING = 1;
+    /*private int STATUS_HIKING = 1;
     private ArrayList<ArrayList<LatLngCrnId>> polylinegroup = new ArrayList<ArrayList<LatLngCrnId>>();
     private ArrayList<CrnidDistance> crnidDistances = new ArrayList<CrnidDistance>();
     private ArrayList<LatLngCrnId> polyline;
@@ -119,40 +120,74 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng[] speed = new LatLng[2];
     private double velocity = 0;
     private double all_distance = 0;
-    private double hiking_distance = 0;
-    private double minimum = 0;
-    private int minimum_group_poly;
-    private int minimum_poly;
-    private int location_no;
-    private int my_current_id = 0;
-    private int absolutevalue = 0;
-    private GoogleMap mMap;
-    private static final int PICK_FROM_CAMERA = 0;
-    private static final int PICK_FROM_ALBUM = 1;
-    private BackPressClosHandler backPressClosHandler;
-    private EditText content, editText, title;
-    private Button post_btn, cancel, status;
-    private ImageView imageView;
-    private LinearLayout linearLayout;
-    private String image_path = "File_path";
-    private TextView tv;
-    private double now_lat, now_lng, lat, lng, rlat, rlng, now_lat2, now_lng2;
-    private PermissionManager pManager;
-    private ContentValues contentValues = new ContentValues();
-    private AlertDialog.Builder builder;
-    private Bitmap image_bitmap;
-    private HttpRequestConnection hrc = new HttpRequestConnection();
-    private String result, network, user_id, nickname, hiking_group, title_st, content_st = "";
-    private Handler handler;
-    private Uri uri;
-    private Float distance;
-    private PermissionListener permissionlistener = null;
-    private FloatingActionMenu floatingActionMenu;
-    private FloatingActionButton fab1, fab2, gpsbutton, user_info_button, myinfo_button;
-    private int My_member_num , positionuser;
-    private ArrayList<String> name = new ArrayList<String>();
-    private Marker[] markers;
-    private boolean tf = true;
+    private double hiking_distance = 0;*/
+    private String          laravel_local_ip, node_local_ip;
+
+    // UI 변수
+    private EditText                content, editText, title;
+    private Button                  post_btn, cancel,status;
+    private ImageView               imageView;
+    private LinearLayout            linearLayout;
+    private TextView                tv;
+    private FloatingActionMenu      floatingActionMenu;
+    private FloatingActionButton    fab1,fab2,gpsbutton,user_info_button,myinfo_button;
+    private FloatingActionButton    btnSendRadio;       // 무전 버튼
+    private Button                  btnToRecordList;    // 녹음 리스트 액티비티로 전환하는 버튼
+
+    // GoogleMaps
+    private GoogleMap                           mMap;
+    private ArrayList<ArrayList<LatLngCrnId>>   polylinegroup   = new ArrayList<>();
+    private ArrayList<CrnidDistance>            crnidDistances  = new ArrayList<>();
+    private ArrayList<LatLngCrnId>              polyline;
+    private Marker[]                            markers;
+
+    // 데이터 관련 변수
+    private int                 My_member_num,location_no;
+    private int                 STATUS_HIKING   = 1;
+    private int                 absolutevalue   = 0;
+    private ArrayList<String>   name            = new ArrayList<String>();
+    private String              image_path      = "File_path";
+    // <-- 속도 관련 데이터
+    private double              all_distance    = 0;
+    private double              hiking_distance = 0;
+    private LatLng[]            speed           = new LatLng[2];
+    // -->
+    private int                 positionuser    = 0;
+    private int                 my_current_id   = 0;
+    private String               result, network, user_id, nickname,
+            hiking_group, title_st, content_st = "";
+    private double              now_lat, now_lng, lat, lng, rlat, rlng,
+            now_lat2, now_lng2;
+    private Float               distance;
+
+
+    // 구글맵 관련 데이터
+    private double  velocity    = 0;
+    private double  minimum     = 0;
+    private int     minimum_group_poly;
+    private int     minimum_poly;
+
+    // 상수
+    private static final int PICK_FROM_CAMERA   = 0;
+    private static final int PICK_FROM_ALBUM    = 1;
+
+    // 핸들러
+    private BackPressClosHandler    backPressClosHandler;
+    private Handler                 handler;
+
+    // 퍼미션
+    private PermissionManager       pManager;
+    private PermissionListener      permissionlistener = null;
+
+    // 기타
+    private ContentValues           contentValues   = new ContentValues();
+    private HttpRequestConnection   hrc             = new HttpRequestConnection();
+    private AlertDialog.Builder     builder;
+    private Bitmap                  image_bitmap;
+    private Uri                     uri;
+    private boolean                 tf              = true;
+    private WalkieTalkie            walkieTalkie;   // 무전 객체
+    private boolean                 isSendingNow;   // 현재 무전을 전송중인지
 
 
     @Override
