@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/group_notice_button"
+        android:text="공지사항"
+        android:textSize="12dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="260dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/group_schedule_button"
+        android:text="그룹일정"
+        android:textSize="12dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="260dp"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/group_member_button"
+        android:text="그룹멤버"
+        android:textSize="12dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="260dp"/>
+
+</LinearLayout>

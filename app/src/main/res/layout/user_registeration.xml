@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#292929"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:contentInsetStartWithNavigation="0dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <TextView
+            android:id="@+id/my_toolbar_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="#ffffff"
+            android:textSize="28dp"
+            android:textStyle="bold" />
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF" />
+
+        <ListView
+            android:id="@+id/drawer_menulist"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:background="#6F6F6F" />
+    </android.support.v4.widget.DrawerLayout>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="126dp"
+                android:layout_marginTop="100dp"
+                android:text="SIGN UP"
+                android:textColor="@color/black"
+                android:textSize="45dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/id_editText"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="230dp"
+                android:hint="Enter ID*" />
+
+            <EditText
+                android:id="@+id/pw_editText"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/id_editText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:hint="Enter password*" />
+
+            <EditText
+                android:id="@+id/pw_ck_editText"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/pw_editText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:hint="Enter password again*" />
+
+            <EditText
+                android:id="@+id/nickname_editText"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/pw_ck_editText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:hint="Enter nickname*" />
+
+            <EditText
+                android:id="@+id/phoneNum_editText"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/nickname_editText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:hint="Enter phone number*" />
+
+            <!--<CheckBox
+                android:id="@+id/phone_ck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/phoneNum_editText"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="30dp"
+                android:text="public" />-->
+
+            <Spinner
+                android:id="@+id/gender_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/phoneNum_editText"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:entries="@array/gender" />
+
+           <!-- <CheckBox
+                android:id="@+id/gender_ck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gender_spinner"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="10dp"
+                android:text="public" />-->
+
+            <Spinner
+                android:id="@+id/age_group_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/gender_spinner"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:entries="@array/age_group" />
+
+           <!-- <CheckBox
+                android:id="@+id/age_ck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/age_group_spinner"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="10dp"
+                android:text="public" />-->
+<!--
+            <CheckBox
+                android:id="@+id/private_ck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="40dp"
+                android:text="Open to group only" />-->
+
+            <Button
+                android:id="@+id/signUpBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_below="@+id/age_group_spinner"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="95dp"
+                android:layout_marginTop="20dp"
+                android:text="SIGN UP" />
+
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignBaseline="@+id/signUpBtn"
+                android:layout_alignBottom="@+id/signUpBtn"
+                android:layout_alignEnd="@+id/textView3"
+                android:text="CANCLE" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>
