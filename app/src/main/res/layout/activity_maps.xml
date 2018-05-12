@@ -5,6 +5,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <Button
+            android:id="@+id/showRecordList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:text="녹음 보기" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -183,7 +189,6 @@
             fab:fab_colorRipple="@color/white"
             />
     </FrameLayout>
-
 
 
 </RelativeLayout>

@@ -121,7 +121,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView                tv;
     private FloatingActionMenu      floatingActionMenu;
     private FloatingActionButton    fab1,fab2,gpsbutton,user_info_button,myinfo_button;
-    private FloatingActionButton    btnSendRadio;   // 무전 버튼
+    private FloatingActionButton    btnSendRadio;       // 무전 버튼
+    private Button                  btnToRecordList;    // 녹음 리스트 액티비티로 전환하는 버튼
 
     // GoogleMaps
     private GoogleMap                           mMap;
@@ -237,6 +238,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         linearLayout        = findViewById(R.id.imagelayout);
         // 무전 버튼 초기화
         btnSendRadio        = (FloatingActionButton) findViewById(R.id.sendRecordData);
+        // 녹음 리스트 이동 버튼 초기화
+        btnToRecordList     = (Button) findViewById(R.id.showRecordList);
 
         // data init
         speed[0]    = new LatLng(0,0);
@@ -532,6 +535,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+
+        // 녹음 리스트 액티비티로 이동할 리스너 붙이기
+        btnToRecordList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
+                startActivity(recordIntent);
+            }
+        });
     }
 
     @Override
@@ -597,7 +609,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-        requestGet("http://172.26.2.38:3000/dummy/school", null);
+        requestGet("http://172.26.2.233:3000/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {

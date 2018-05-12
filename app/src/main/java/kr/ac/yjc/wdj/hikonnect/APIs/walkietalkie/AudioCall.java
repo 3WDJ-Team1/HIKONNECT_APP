@@ -15,9 +15,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- * Created by 강성은 on 2018-05-06.
+ * 통화 연결, 받기
+ * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @since   2018-05-06
  */
-
 public class AudioCall {
     // 상수
     private final int       SENDER_PORT     = 11111;            // 전송 시 이용할 포트 번호

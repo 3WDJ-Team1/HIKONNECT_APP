@@ -6,12 +6,14 @@ import android.media.MediaPlayer;
 import java.io.IOException;
 
 /**
- * Created by 강성은 on 2018-05-09.
+ * 녹음 파일 받아오기
+ * @author Sungeun Kang (kasueu0814@gmail.com)
+ * @since 2018-05-08
  */
-
 public class RecordPlayer {
     private         String serverURL;
-    private final   String FILE_ROUTE = "/"; // TODO 라우팅 경로 수정
+    private final   String PORT         = "8800";
+    private final   String FILE_ROUTE   = "/"; // TODO 라우팅 경로 수정
 
     /**
      * 초기화
@@ -29,7 +31,7 @@ public class RecordPlayer {
         try {
             MediaPlayer player = new MediaPlayer();
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            player.setDataSource("http://" + serverURL + FILE_ROUTE + fileName);
+            player.setDataSource("http://" + serverURL + ":" + PORT + FILE_ROUTE + fileName);
             player.prepare();
             player.start();
         } catch (IOException ie){

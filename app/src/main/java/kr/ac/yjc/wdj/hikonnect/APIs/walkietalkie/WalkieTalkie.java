@@ -1,20 +1,19 @@
 package kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.Socket;
 
-import kr.ac.yjc.wdj.hikonnect.MapsActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by 강성은 on 2018-05-10.
+ * 전체적인 무전 기능 수행
+ * @author  Sungeun Kang (kauseu0814@gmail.com)
+ * @since   2018-05-10
  */
-
 public class WalkieTalkie {
     // 변수
     private AudioCall       audioCall;
@@ -23,8 +22,8 @@ public class WalkieTalkie {
 
     // 상수
     // TODO : 상수값 변경 필요
-    public  final String  SERVER_IP   = "172.26.2.111";   // 데이터 보낼 서버 아이피
-    private final String  HTTP_PORT   = "8800";           // 서버 http 포트 번호
+    public  final String  SERVER_IP   = "172.26.1.10";      // 데이터 보낼 서버 아이피
+    private final String  HTTP_PORT   = "8800";             // 서버 http 포트 번호
     private final String  LOG_TAG     = "WalkTalk";
 
     /**

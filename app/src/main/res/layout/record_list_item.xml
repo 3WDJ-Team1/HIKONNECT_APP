@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey_200">
+KJ B
+    <LinearLayout
+        android:id="@+id/recordItems"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_margin="8dp"
+        android:padding="16dp"
+        >
+        <TextView
+            android:id="@+id/recordNo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="00"
+            android:textSize="20dp"
+            android:textColor="@color/grey_600"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:id="@+id/recordFileName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="recordFileName"
+            android:textSize="16dp"
+            android:textColor="@color/black"
+            android:gravity="center|start"
+            android:layout_weight="5"
+            />
+    </LinearLayout>
+</LinearLayout>

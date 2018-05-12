@@ -34,3 +34,6 @@ android {
         }
     }
 }
+dependencies {
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+}
