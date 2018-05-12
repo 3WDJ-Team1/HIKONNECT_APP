@@ -59,7 +59,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void run() {
 
-                        result = hrc.request(Environment.LARAVEL_LOCAL_IP + "/api/login_app", contentValues);
+                        result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/login_app", contentValues);
 
                         Log.d("HIKONNECT", "SIGN IN res: " + result);
                         if (Boolean.valueOf(result)) {

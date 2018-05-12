@@ -56,6 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import kr.ac.yjc.wdj.hikonnect.BackPressClosHandler;
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.HikingRecord;
 import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
@@ -90,7 +91,6 @@ class CrnidDistance {
         this.distance = km;
         this.currentid = cuid;
     }
-
 }
 
 //현재 위치와 fid를 담는 클래스입니다.
@@ -126,7 +126,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double velocity = 0;
     private double all_distance = 0;
     private double hiking_distance = 0;*/
-    private String          laravel_local_ip, node_local_ip;
 
     // UI 변수
     private EditText                content, editText, title;
@@ -159,8 +158,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // -->
     private int                 positionuser    = 0;
     private int                 my_current_id   = 0;
-    private String               result, network, user_id, nickname,
-            hiking_group, title_st, content_st = "";
+    private String              result,
+                                network,
+                                user_id,
+                                nickname,
+                                hiking_group,
+                                title_st,
+                                content_st = "";
     private double              now_lat, now_lng, lat, lng, rlat, rlng,
             now_lat2, now_lng2;
     private Float               distance;
@@ -213,10 +217,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-
-
-
-
         // 퍼미션 관리자 생성
         pManager = new PermissionManager(this);
         // 퍼미션 검사 수행
@@ -261,7 +261,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(url+"/api/getMemberNoByUserId",contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/getMemberNoByUserId",contentValues);
                 Log.i("result", result);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
@@ -375,7 +375,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request(url+"/api/storeLocationMemo", contentValues2);
+                            result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storeLocationMemo", contentValues2);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -399,7 +399,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gpsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 try {
                     ls.getMyLocation(new LocationListener() {
                         @Override
@@ -488,7 +487,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK)
@@ -542,10 +540,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-
         mMap = googleMap;
-        requestGet("http://172.26.2.233:3000/dummy/school", null);
+        requestGet(Environment.NODE_HIKONNECT_IP + "/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -579,11 +575,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationService.getMyLocation(new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-
                         now_lng2 = location.getLongitude();
                         now_lat2 = location.getLatitude();
-
-
                     }
 
 
@@ -677,7 +670,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 contentValues.put("velocity",velocity);
 
 
-                result = hrc.request(url+"/api/storesend", contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storesend", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 handler = new Handler(Looper.getMainLooper()) {
