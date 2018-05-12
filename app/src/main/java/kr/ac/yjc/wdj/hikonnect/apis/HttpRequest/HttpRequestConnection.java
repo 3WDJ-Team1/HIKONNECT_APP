@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest;
+package kr.ac.yjc.wdj.hikonnect.apis.HttpRequest;
 
 import android.content.ContentValues;
 import android.util.Log;

@@ -1,11 +1,14 @@
 package kr.ac.yjc.wdj.hikonnect;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class AfterHikingActivity extends AppCompatActivity {
     // UI 변수
     private TextView                    userName;           // 사용자 이름
     private RecyclerView                rvAfterHikingList;  // 등산 후 통계를 종류별로 나타낼 RecyclerView
+    private Button                      btnToOthersInfo;    // 현재 등산 중인 멤버 리스트로 이동 버튼
 
     // 데이터 변수
     private ArrayList<AfterHikingMenu>  hikingMenus;        // 메뉴 리스트
@@ -38,6 +42,7 @@ public class AfterHikingActivity extends AppCompatActivity {
         // UI 초기화
         userName            = (TextView) findViewById(R.id.userName);
         rvAfterHikingList   = (RecyclerView) findViewById(R.id.afterHikingList);
+        btnToOthersInfo     = (Button) findViewById(R.id.showMemberList);
 
         // 데이터 초기화
         hikingMenus = new ArrayList<>();
@@ -51,6 +56,15 @@ public class AfterHikingActivity extends AppCompatActivity {
         // RecyclerView에 Adapter 붙이기
         rvAfterHikingList.setAdapter(new AfterHikingListAdapter(hikingMenus, R.layout.after_hiking_list_item));
         rvAfterHikingList.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
+
+        // Button에 리스너 달기
+        btnToOthersInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), Othersinfo.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**

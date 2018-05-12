@@ -59,6 +59,7 @@
          />
 
     <Button
+        android:id="@+id/showMemberList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="현재 등산 중인 멤버 보기"
