@@ -810,7 +810,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 tf = false;
             }
         };
-        timer.schedule(timerTask, 0, 500);
+        timer.schedule(timerTask, 0, 2000);
     }
 
     ;
