@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -55,10 +55,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
-import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
-import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie.*;
+import kr.ac.yjc.wdj.hikonnect.BackPressClosHandler;
+import kr.ac.yjc.wdj.hikonnect.HikingRecord;
+import kr.ac.yjc.wdj.hikonnect.Locationmemo;
+import kr.ac.yjc.wdj.hikonnect.Othersinfo;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
+import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.apis.walkietalkie.*;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -533,7 +538,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             }
         }
-
     }
 
     @Override
@@ -561,7 +565,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(polylinegroup.get(0).get(0).getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polylinegroup.get(0).get(0).getLatLng(), 23));
-
 
         Timer timer = new Timer();
         handler = new Handler();
@@ -640,7 +643,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
 
-
                 my_current_id = minimum_group_poly;
                 Log.d("current", String.valueOf(my_current_id));
                 Log.d("status", String.valueOf(STATUS_HIKING));
@@ -660,11 +662,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for (int h = 0; h < my_current_id; h++) {
                         hiking_distance += crnidDistances.get(h).getDistance() * 1000;
                     }
-
                 }
 
                 //hiking_distance;
-
                 Log.d("@@@@@@hiking_distance:", String.valueOf(hiking_distance));
 
                 hrc = new HttpRequestConnection();
