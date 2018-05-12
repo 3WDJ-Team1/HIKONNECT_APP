@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -55,10 +55,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
-import kr.ac.yjc.wdj.hikonnect.APIs.LocationService;
-import kr.ac.yjc.wdj.hikonnect.APIs.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie.WalkieTalkie;
+import kr.ac.yjc.wdj.hikonnect.BackPressClosHandler;
+import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.HikingRecord;
+import kr.ac.yjc.wdj.hikonnect.Locationmemo;
+import kr.ac.yjc.wdj.hikonnect.Othersinfo;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
+import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
+import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.apis.walkietalkie.WalkieTalkie;
+import kr.ac.yjc.wdj.hikonnect.myinfo;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -112,21 +120,28 @@ class LatLngCrnId {
  *
  * @author Jungyu Choi(), Sungeun Kang (kasueu0814@gmail.com)
  */
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
-    private String          laravel_local_ip,
-                            node_local_ip;
+public class MapsActivity extends FragmentActivity implements
+        OnMapReadyCallback,
+        View.OnClickListener {
 
     // UI 변수
-    private EditText                content, editText, title;
-    private Button                  post_btn, cancel,status;
+    private EditText                content,
+                                    editText,
+                                    title;
+    private Button                  post_btn,
+                                    cancel,
+                                    status,
+                                    btnToRecordList;
     private ImageView               imageView;
     private LinearLayout            linearLayout;
     private TextView                tv;
     private FloatingActionMenu      floatingActionMenu;
-    private FloatingActionButton    fab1,fab2,gpsbutton,user_info_button,myinfo_button;
-    private FloatingActionButton    btnSendRadio;       // 무전 버튼
-    private Button                  btnToRecordList;    // 녹음 리스트 액티비티로 전환하는 버튼
+    private FloatingActionButton    fab1,
+                                    fab2,
+                                    gpsbutton,
+                                    user_info_button,
+                                    myinfo_button,
+                                    btnSendRadio;   // 무전 버튼
 
     // GoogleMaps
     private GoogleMap                           mMap;
@@ -153,6 +168,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Float               distance;
 
 
+    // 위치 서비스.
+    LocationService             locationService;
     // 구글맵 관련 데이터
     private double  velocity    = 0;
     private double  minimum     = 0;
@@ -164,7 +181,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PICK_FROM_ALBUM    = 1;
 
     // 핸들러
-    private BackPressClosHandler    backPressClosHandler;
+    private BackPressClosHandler backPressClosHandler;
     private Handler                 handler;
 
     // 퍼미션
@@ -200,10 +217,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        laravel_local_ip    = getString(R.string.laravel_local_server_ip);
-        node_local_ip       = getString(R.string.node_local_server_ip);
-
-/*        // Firebase 푸시 메시지
+        /*// Firebase 푸시 메시지
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         FirebaseMessaging.getInstance().subscribeToTopic("news");
         FirebaseInstanceId.getInstance().getToken();*/
@@ -253,6 +267,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         speed[1]    = new LatLng(0,0);
 
 
+        locationService = new LocationService(getApplicationContext());
+
         final Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
 
@@ -268,246 +284,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        // Set Created_at, Updated_at
-        final SimpleDateFormat[]    sdfNow  = { new SimpleDateFormat("yyyy/MM/dd HH:mm:ss") };
-        final String                time    = sdfNow[0].format(new Date(System.currentTimeMillis()));
-        final LocationService       ls      = new LocationService(getApplicationContext());
-
-        myinfo_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(MapsActivity.this, myinfo.class);
-                intent1.putExtra("userid", user_id);
-                intent1.putExtra("velocity", velocity);
-                intent1.putExtra("distance", hiking_distance);
-                intent1.putExtra("alldistance", all_distance);
-                startActivity(intent1);
-
-            }
-        });
-
-        status.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (STATUS_HIKING == 1) {
-                    status.setVisibility(View.INVISIBLE);
-                    status.setText("등산완료");
-                    STATUS_HIKING = 0;
-                }
-            }
-        });
-
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                floatingActionMenu.close(true);
-                AlertDialog.Builder ad = new AlertDialog.Builder(MapsActivity.this);
-
-                ad.setPositiveButton("글쓰기", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        imageView.setVisibility(View.INVISIBLE);
-                        linearLayout.setVisibility(View.VISIBLE);
-                    }
-                });
-                ad.setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-                ad.show();
-            }
-        });
-
-        user_info_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
-                intent.putExtra("userid", user_id);
-                startActivity(intent);
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                imageView.setImageResource(R.color.colorPrimary);
-                editText.setText("");
-                linearLayout.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        post_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    contentValues.put("user_id", user_id);
-                    contentValues.put("lat", now_lat);
-                    contentValues.put("lng", now_lng);
-                    contentValues.put("title", title.getText().toString());
-                    contentValues.put("content", content.getText().toString());
-                    contentValues.put("image_path", image_path);
-                    contentValues.put("created_at", time);
-                    contentValues.put("updated_at", time);
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            result = hrc.request(laravel_local_ip + "/api/test", contentValues);
-                            Message msg = handler.obtainMessage();
-                            handler.sendMessage(msg);
-                        }
-                    }).start();
-                    handler = new Handler() {
-                        public void handleMessage(Message msg) {
-                            tv.setText("위치메모 등록완료");
-                            LatLng nl = new LatLng(now_lat, now_lng);
-                        }
-                    };
-                } catch (SecurityException ex) {
-                    ex.printStackTrace();
-                }
-                linearLayout.setVisibility(View.INVISIBLE);
-                editText.setText("");
-                content.setText("");
-                imageView.setImageResource(R.color.colorPrimary);
-            }
-        });
-
-        gpsbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    ls.getMyLocation(new LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-
-                            now_lng = location.getLongitude();
-                            now_lat = location.getLatitude();
-                            network = location.getProvider();
-
-                            LatLng nl = new LatLng(now_lat, now_lng);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
-
-
-                               /* // Get All Location Memo
-                                contentValues.put("id", user_id);
-                                Log.i("@@@@@@@@@@@@@@@@@@@@@",user_id);
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        result = hrc.request("http://172.26.2.200:8000/api/getlm",contentValues);
-                                        Log.i("result", result);
-                                        Message msg = handler.obtainMessage();
-                                        handler.sendMessage(msg);
-                                    }
-                                }).start();
-                                handler = new Handler() {
-                                    public void handleMessage(Message msg) {
-                                        try {
-                                            JSONArray jsonArray = new JSONArray(result);
-                                            for(int i = 0; i < jsonArray.length(); i++) {
-                                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                                lat         = jsonObject.getDouble("latitude");
-                                                lng         = jsonObject.getDouble("longitude");
-                                                title_st    = jsonObject.getString("title");
-                                                content_st  = jsonObject.getString("content");
-                                                LatLng nl   = new LatLng(lat, lng);
-                                                Marker marker = mMap.addMarker(new MarkerOptions()
-                                                        .position(nl)
-                                                        .title(title_st)
-                                                        .snippet(content_st)
-                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bookmark_black_24dp)));
-                                                marker.setTag("locationmemo");
-
-                                                // Send PushMessage
-                                                requestPost("http://hikonnect.ga/api/send", "위치메모가 있습니다.", "내용 확인 바랍니다.");
-                                            }
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                };*/
-                        }
-
-                        @Override
-                        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                        }
-
-                        @Override
-                        public void onProviderEnabled(String s) {
-
-                        }
-
-                        @Override
-                        // GPS OFF
-                        public void onProviderDisabled(String s) {
-                            Log.v("GPS Check", "false");
-                            showAlertDialog();
-                        }
-                    });
-
-                } catch (SecurityException ex) {
-                }
-            }
-        });
-
-        fab1.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                TedPermission.with(MapsActivity.this)
-                        .setPermissionListener(permissionlistener)
-                        .setRationaleMessage("사진을 보려면 권한이 필요함")
-                        .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
-                        .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .check();
-                floatingActionMenu.close(true);
-
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
-
-                alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(Intent.ACTION_PICK);
-                        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-                        startActivityForResult(intent, PICK_FROM_ALBUM);
-                        linearLayout.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                alertDialog.setNeutralButton("사진 찍기", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
-                        try {
-                            intent.putExtra("return-data", true);
-                            startActivityForResult(Intent.createChooser(intent,
-                                    "Complete action using"), PICK_FROM_CAMERA);
-                        } catch (ActivityNotFoundException e) {
-                            // Do nothing for now
-                        }
-                    }
-                });
-
-                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        linearLayout.setVisibility(View.VISIBLE);
-                        imageView.setVisibility(View.INVISIBLE);
-                    }
-                });
-
-                alertDialog.show();
-            }
-        });
+        myinfo_button.setOnClickListener(this);
+        status.setOnClickListener(this);
+        fab2.setOnClickListener(this);
+        user_info_button.setOnClickListener(this);
+        cancel.setOnClickListener(this);
+        post_btn.setOnClickListener(this);
+        gpsbutton.setOnClickListener(this);
+        fab1.setOnClickListener(this);
 
         isSendingNow = false;
 
@@ -531,10 +315,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         btnSendRadio.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-
                 if(isSendingNow) {
                     isSendingNow = false;
                     walkieTalkie.sendEnd();
@@ -554,7 +336,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK)
@@ -575,10 +356,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     imageView.setImageBitmap(image_bitmap);
                     Log.v("이미지", imageView.toString());
                 } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -613,15 +392,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-
         mMap = googleMap;
-        requestGet(node_local_ip + "/dummy/school", null);
+        requestGet(Environment.NODE_LOCAL_IP + "/dummy/school", null);
+
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         for (int k = 0; k < crnidDistances.size(); k++) {
             all_distance += crnidDistances.get(k).getDistance();
         }
@@ -639,11 +418,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(polylinegroup.get(0).get(0).getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(polylinegroup.get(0).get(0).getLatLng(), 23));
 
-
         Timer       timer       = new Timer();
         handler                 = new Handler();
         TimerTask   timerTask   = new TimerTask() {
-
             @Override
             public void run() {
                 hiking_distance = 0;
@@ -653,13 +430,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationService.getMyLocation(new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-
                         now_lng2 = location.getLongitude();
                         now_lat2 = location.getLatitude();
-
                     }
-
-
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {
 
@@ -729,17 +502,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     locationnow2.setLatitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().latitude);
                     locationnow2.setLongitude(polylinegroup.get(minimum_group_poly).get(minimum_poly).getLatLng().longitude);
 
-
                     hiking_distance += locationnow.distanceTo(locationnow2);
 
                     for (int h = 0; h < my_current_id; h++) {
                         hiking_distance += crnidDistances.get(h).getDistance() * 1000;
                     }
-
                 }
 
                 //hiking_distance;
-
                 Log.d("@@@@@@hiking_distance:", String.valueOf(hiking_distance));
 
                 hrc             = new HttpRequestConnection();
@@ -748,9 +518,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 contentValues.put("latitude", now_lat2);
                 contentValues.put("longitude", now_lng2);
 
-
                 //TODO 서버 쪽으로 바꾸기
-                result = hrc.request(laravel_local_ip + "/api/storesend", contentValues);
+                result = hrc.request(Environment.LARAVEL_LOCAL_IP + "/api/storesend", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 handler = new Handler(Looper.getMainLooper()) {
@@ -822,7 +591,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
                                     public boolean onMarkerClick(Marker marker) {
-                                        if (marker.getTag().toString() == "locationmemo") {
+                                        if (marker.getTag().toString().equals("locationmemo")) {
                                             Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
                                             rlat = marker.getPosition().latitude;
                                             rlng = marker.getPosition().longitude;
@@ -853,9 +622,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         timer.schedule(timerTask, 0, 10000);
     }
-
-    ;
-
 
     public void showAlertDialog() {
         builder = new AlertDialog.Builder(this);
@@ -977,5 +743,215 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("aaaa", "Response Body is " + response.body().string());
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.post_btn:
+
+                // Set Created_at, Updated_at
+                String time = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+                        .format(new Date(System.currentTimeMillis()));
+
+                contentValues.put("user_id", user_id);
+                contentValues.put("lat", now_lat);
+                contentValues.put("lng", now_lng);
+                contentValues.put("title", title.getText().toString());
+                contentValues.put("content", content.getText().toString());
+                contentValues.put("image_path", image_path);
+                contentValues.put("created_at", time);
+                contentValues.put("updated_at", time);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        result = hrc.request(Environment.LARAVEL_LOCAL_IP + "/api/test", contentValues);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tv.setText("위치메모 등록완료");
+                                LatLng nl = new LatLng(now_lat, now_lng);
+                            }
+                        });
+                    }
+                }).start();
+                linearLayout.setVisibility(View.INVISIBLE);
+                editText.setText("");
+                content.setText("");
+                imageView.setImageResource(R.color.colorPrimary);
+                break;
+            case R.id.cancel:
+                imageView.setImageResource(R.color.colorPrimary);
+                editText.setText("");
+                linearLayout.setVisibility(View.INVISIBLE);
+                break;
+            case R.id.status:
+                if (STATUS_HIKING == 1) {
+                    status.setVisibility(View.INVISIBLE);
+                    status.setText("등산완료");
+                    STATUS_HIKING = 0;
+                }
+                break;
+            case R.id.fab1:
+                TedPermission.with(MapsActivity.this)
+                        .setPermissionListener(permissionlistener)
+                        .setRationaleMessage("사진을 보려면 권한이 필요함")
+                        .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
+                        .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .check();
+                floatingActionMenu.close(true);
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
+
+                alertDialog.setPositiveButton("사진 등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                        startActivityForResult(intent, PICK_FROM_ALBUM);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                alertDialog.setNeutralButton("사진 찍기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
+                        try {
+                            intent.putExtra("return-data", true);
+                            startActivityForResult(Intent.createChooser(intent,
+                                    "Complete action using"), PICK_FROM_CAMERA);
+                        } catch (ActivityNotFoundException e) {
+                            // Do nothing for now
+                        }
+                    }
+                });
+
+                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        linearLayout.setVisibility(View.VISIBLE);
+                        imageView.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+                alertDialog.show();
+                break;
+            case R.id.fab2:
+                floatingActionMenu.close(true);
+                AlertDialog.Builder ad = new AlertDialog.Builder(MapsActivity.this);
+
+                ad.setPositiveButton("글쓰기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        imageView.setVisibility(View.INVISIBLE);
+                        linearLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+                ad.setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                ad.show();
+                break;
+            case R.id.gpsbutton:
+                try {
+                    locationService.getMyLocation(new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+
+                            now_lng = location.getLongitude();
+                            now_lat = location.getLatitude();
+                            network = location.getProvider();
+
+                            LatLng nl = new LatLng(now_lat, now_lng);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(nl));
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nl, 23));
+
+
+                               /* // Get All Location Memo
+                                contentValues.put("id", user_id);
+                                Log.i("@@@@@@@@@@@@@@@@@@@@@",user_id);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        result = hrc.request("http://172.26.2.200:8000/api/getlm",contentValues);
+                                        Log.i("result", result);
+                                        Message msg = handler.obtainMessage();
+                                        handler.sendMessage(msg);
+                                    }
+                                }).start();
+                                handler = new Handler() {
+                                    public void handleMessage(Message msg) {
+                                        try {
+                                            JSONArray jsonArray = new JSONArray(result);
+                                            for(int i = 0; i < jsonArray.length(); i++) {
+                                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                                lat         = jsonObject.getDouble("latitude");
+                                                lng         = jsonObject.getDouble("longitude");
+                                                title_st    = jsonObject.getString("title");
+                                                content_st  = jsonObject.getString("content");
+                                                LatLng nl   = new LatLng(lat, lng);
+                                                Marker marker = mMap.addMarker(new MarkerOptions()
+                                                        .position(nl)
+                                                        .title(title_st)
+                                                        .snippet(content_st)
+                                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bookmark_black_24dp)));
+                                                marker.setTag("locationmemo");
+
+                                                // Send PushMessage
+                                                requestPost("http://hikonnect.ga/api/send", "위치메모가 있습니다.", "내용 확인 바랍니다.");
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                };*/
+                        }
+
+                        @Override
+                        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                        }
+
+                        @Override
+                        public void onProviderEnabled(String s) {
+
+                        }
+
+                        @Override
+                        // GPS OFF
+                        public void onProviderDisabled(String s) {
+                            Log.v("GPS Check", "false");
+                            showAlertDialog();
+                        }
+                    });
+
+                } catch (SecurityException ex) {
+                }
+                break;
+            case R.id.user_info_button:
+                Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
+                intent.putExtra("userid", user_id);
+                startActivity(intent);
+                break;
+            case R.id.myinfo_button:
+                Intent intent1 = new Intent(MapsActivity.this, myinfo.class);
+                intent1.putExtra("userid", user_id);
+                intent1.putExtra("velocity", velocity);
+                intent1.putExtra("distance", hiking_distance);
+                intent1.putExtra("alldistance", all_distance);
+                startActivity(intent1);
+                break;
+            case R.id.sendRecordData:
+                break;
+        }
     }
 }

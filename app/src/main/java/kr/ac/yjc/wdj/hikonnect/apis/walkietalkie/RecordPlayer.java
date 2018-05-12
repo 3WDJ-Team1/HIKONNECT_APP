@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.APIs.walkietalkie;
+package kr.ac.yjc.wdj.hikonnect.apis.walkietalkie;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;

@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect.APIs;
+package kr.ac.yjc.wdj.hikonnect.apis;
 
 import android.Manifest;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +17,9 @@ public class PermissionManager {
     private FragmentActivity mActivity;
 
     public String[] permissions = {
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.MODIFY_AUDIO_SETTINGS,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
     };

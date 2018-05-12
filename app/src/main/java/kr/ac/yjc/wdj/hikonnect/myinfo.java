@@ -1,17 +1,13 @@
 package kr.ac.yjc.wdj.hikonnect;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 /**
  * Created by jungyu on 2018-05-09.
@@ -37,12 +33,12 @@ public class myinfo extends Activity {
         //데이터 가져오기
         Intent intent = getIntent();
         //String user_id = intent.getStringExtra("userid");
-        Double velocity = intent.getDoubleExtra("velocity",0);
-        Double distance = intent.getDoubleExtra("distance",0);
+        Double velocity = intent.getDoubleExtra("velocity",0.0);
+        Double distance = intent.getDoubleExtra("distance",0.0);
         //String alldistance = intent.getStringExtra("alldistance");
        // myText.setText("id:"+ user_id);
-        myText2.setText("속도"+velocity+"m/s");
-        myText3.setText("거리"+distance);
+        myText2.setText("속도" + velocity + "m/s");
+        myText3.setText("거리" + distance);
 
 
 

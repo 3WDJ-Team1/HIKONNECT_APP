@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 
 /**
  * Created by jungyu on 2018-05-02.

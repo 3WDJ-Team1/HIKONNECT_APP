@@ -1,4 +1,4 @@
-package kr.ac.yjc.wdj.hikonnect;
+package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonRectangle;
 
-import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 
 /**
  * Created by jungyu on 2018-04-05.
@@ -21,8 +23,6 @@ import kr.ac.yjc.wdj.hikonnect.APIs.HttpRequest.HttpRequestConnection;
 
 public class LoginActivity extends Activity {
 
-    private String          laravel_local_ip,
-                            node_local_ip;
     EditText                id,
                             pw;
     TextView                tv;
@@ -38,9 +38,6 @@ public class LoginActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-
-        laravel_local_ip    = getString(R.string.laravel_local_server_ip);
-        node_local_ip       = getString(R.string.node_local_server_ip);
 
         id          = (EditText) findViewById(R.id.idtext);
         pw          = (EditText) findViewById(R.id.pwtext);
@@ -60,7 +57,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void run() {
 
-                        result = hrc.request(getString(R.string.laravel_local_server_ip)+ "/api/login_app", contentValues);
+                        result = hrc.request(Environment.LARAVEL_LOCAL_IP + "/api/login_app", contentValues);
 
                         Log.d("HIKONNECT", "SIGN IN res: " + result);
                         if (Boolean.valueOf(result)) {
