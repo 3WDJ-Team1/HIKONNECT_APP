@@ -667,7 +667,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationp.setLatitude(speed[1].latitude);
                 locationp.setLongitude(speed[1].longitude);
 
-                velocity = locations.distanceTo(locationp) / 10;
+                velocity = locations.distanceTo(locationp) / 3;
                 Log.d("velocity", String.valueOf(velocity));
 
                 for (int a = my_current_id - 1; a <= my_current_id + 1; a++) {
@@ -727,22 +727,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
 
-
                     locationstartend.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
                     locationstartend.setLongitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
-
-
-                    locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
-                    locationA.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
                 }
-                else {
+                else if (STATUS_HIKING == 0){
 
                     locationstartend.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
                     locationstartend.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
-
-
-                    locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
-                    locationA.setLongitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
                 }
 
                 Location locationB = new Location("point B");
@@ -750,12 +741,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationB.setLatitude(now_lat2);
                 locationB.setLongitude(now_lng2);
 
-
-
                 distance = locationstartend.distanceTo(locationB);
-                Log.d("dadadasdasdasdasd", distance.toString());
-                Log.d("current", String.valueOf(my_current_id));
-                Log.d("status", String.valueOf(STATUS_HIKING));
 
                 //hiking_distance;
                 Log.d("@@@@@@hiking_distance:", String.valueOf(hiking_distance));
