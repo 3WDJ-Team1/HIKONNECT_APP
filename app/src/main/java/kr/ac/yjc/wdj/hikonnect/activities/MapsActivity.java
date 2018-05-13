@@ -131,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // UI 변수
     private EditText                content, editText, title;
-    private Button                  post_btn, cancel, status;
+    private Button                  post_btn, cancel,status;
     private ImageView               imageView;
     private LinearLayout            linearLayout;
     private TextView                tv;
@@ -314,8 +314,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        status.setVisibility(View.VISIBLE);
-
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -324,19 +322,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     case 0:
                         STATUS_HIKING = 1;
                         status.setText("등산완료");
-                        // TODO : 고치세영
-//                        status.setVisibility(View.INVISIBLE);
-                        status.setVisibility(View.VISIBLE);
+                        status.setVisibility(View.INVISIBLE);
                         break;
                     case 1:
-                        // TODO : 고치세영
-//                        status.setVisibility(View.INVISIBLE);
-                        status.setVisibility(View.VISIBLE);
-                        // TODO : 고치세영
-//                        STATUS_HIKING = 2;
+                        status.setVisibility(View.INVISIBLE);
+                        STATUS_HIKING = 2;
                         // 2018-05-13 수정된 부분 ~~
                         // --------------------------------------------------------------------
-//                        STATUS_HIKING = 1;
                         Intent afterHikingIntent = new Intent(getBaseContext(), AfterHikingActivity.class);
                         // TODO : putExtra 로 데이터 입력
                         startActivity(afterHikingIntent);
@@ -374,6 +366,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
+                intent.putExtra("all",all_distance);
                 intent.putExtra("my_num", My_member_num);
                 startActivity(intent);
             }
@@ -619,7 +612,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int k = 0; k < crnidDistances.size(); k++) {
             all_distance += crnidDistances.get(k).getDistance();
         }
-
+        Log.d("all_distance", String.valueOf(all_distance));
         for (int a = 0; a < polylinegroup.size(); a++) {
             for (int b = 0; b < polylinegroup.get(a).size() - 1; b++) {
                 mMap.addPolyline(new PolylineOptions()
@@ -706,10 +699,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 my_current_id = minimum_group_poly;
-                Log.d("current", String.valueOf(my_current_id));
-                Log.d("status", String.valueOf(STATUS_HIKING));
+
+
+                Location locationA = new Location("point A");
+                Location locationstartend = new Location("point start");
+                ArrayList<LatLngCrnId> rolypoly = new ArrayList<LatLngCrnId>();
+                rolypoly = polylinegroup.get(polylinegroup.size()-1);
 
                 if(STATUS_HIKING == 1) {
+
                     for(int i = 0; i < minimum_poly; i ++) {
                         Location locationnow = new Location("now");
                         locationnow.setLatitude(polylinegroup.get(minimum_group_poly).get(i).getLatLng().latitude);
@@ -725,8 +723,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     for (int h = 0; h < my_current_id; h++) {
                         hiking_distance += crnidDistances.get(h).getDistance() * 1000;
+                        Log.d("dis", String.valueOf(crnidDistances.get(h).getDistance()));
+
                     }
+
+
+                    locationstartend.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
+                    locationstartend.setLongitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
+
+
+                    locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
+                    locationA.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
                 }
+                else {
+
+                    locationstartend.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
+                    locationstartend.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
+
+
+                    locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
+                    locationA.setLongitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
+                }
+
+                Location locationB = new Location("point B");
+
+                locationB.setLatitude(now_lat2);
+                locationB.setLongitude(now_lng2);
+
+
+
+                distance = locationstartend.distanceTo(locationB);
+                Log.d("dadadasdasdasdasd", distance.toString());
+                Log.d("current", String.valueOf(my_current_id));
+                Log.d("status", String.valueOf(STATUS_HIKING));
 
                 //hiking_distance;
                 Log.d("@@@@@@hiking_distance:", String.valueOf(hiking_distance));
@@ -747,34 +776,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 handler = new Handler(Looper.getMainLooper()) {
                     public void handleMessage(Message msg) {
 
-                        Location locationA = new Location("point A");
+                        tv.setText(String.valueOf(my_current_id));
 
-                        if(STATUS_HIKING == 1) {
-
-
-
-                            locationA.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
-                            locationA.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
-                        }
-                        else {
-                            ArrayList<LatLngCrnId> rolypoly = new ArrayList<LatLngCrnId>();
-                            rolypoly = polylinegroup.get(polylinegroup.size()-1);
-                            locationA.setLatitude(rolypoly.get(rolypoly.size()-1).getLatLng().latitude);
-                            locationA.setLongitude(rolypoly.get(rolypoly.size()-1).getLatLng().longitude);
-                        }
-
-                        Location locationB = new Location("point B");
-
-                        locationB.setLatitude(now_lat2);
-                        locationB.setLongitude(now_lng2);
-
-                        Location locationstart = new Location("point start");
-
-                        locationstart.setLatitude(polylinegroup.get(0).get(0).getLatLng().latitude);
-                        locationstart.setLongitude(polylinegroup.get(0).get(0).getLatLng().longitude);
-
-                        distance = locationstart.distanceTo(locationB);
-                        Log.d("dadadasdasdasdasd", distance.toString());
 
 
                         if (distance < 50) {
@@ -851,6 +854,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             Log.d("member_nonono", marker.getTag().toString());
                                             rlat = marker.getPosition().latitude;
                                             rlng = marker.getPosition().longitude;
+                                            if (marker.getTag().toString() != String.valueOf(My_member_num))
+                                            intent1.putExtra("my_distance",hiking_distance);
                                             intent1.putExtra("member_no", (Integer) marker.getTag());
                                             intent1.putExtra("latitude", rlat);
                                             intent1.putExtra("longitude", rlng);
@@ -876,14 +881,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 };
-                tf = false;
             }
         };
-        timer.schedule(timerTask, 0, 2000);
+        timer.schedule(timerTask, 0, 3000);
     }
-
-    ;
-
 
     public void showAlertDialog() {
         builder = new AlertDialog.Builder(this);

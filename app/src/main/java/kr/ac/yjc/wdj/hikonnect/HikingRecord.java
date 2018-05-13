@@ -32,12 +32,12 @@ import java.sql.Time;
 
 public class HikingRecord extends Activity  {
     HttpRequestConnection hrc = new HttpRequestConnection();
-    String result,nickname,profile,hiking_group;
+    String result,nickname,profile,hiking_group,rank;
     double distancee,velocity,all;
     double mydistance = -1;
 
 
-    TextView txtText,txtText2,txtText3,txtText4,txtText5;
+    TextView txtText,txtText2,txtText3,txtText4,txtText5,ranktxt;
     ContentValues contentValues = new ContentValues();
     Handler handler;
     String speed;
@@ -50,6 +50,7 @@ public class HikingRecord extends Activity  {
         setContentView(R.layout.hiking_record);
 
         //UI 객체생성
+        ranktxt = (TextView)findViewById(R.id.rank);
         txtText = (TextView)findViewById(R.id.txtText);
         txtText2 = (TextView)findViewById(R.id.txtText2);
         txtText3 = (TextView)findViewById(R.id.txtText3);
@@ -86,14 +87,17 @@ public class HikingRecord extends Activity  {
                         nickname = jsonObject.getString("nickname");
                         hiking_group = jsonObject.getString("hiking_group");
                         distancee = jsonObject.getDouble("distance");
+                        String distanceS =   String.format("%.1f",distancee);
                         velocity = jsonObject.getDouble("velocity");
+                        rank     = jsonObject.getString("rank");
                         String velo = String.format("%.1f",velocity);
 
                         double nokory = all*1000-distancee;
 
                         txtText.setText("닉네임:"+ nickname );
+                        ranktxt.setText("순위:"+rank);
                         txtText2.setText("그룹:" + hiking_group);
-                        txtText3.setText("거리:"+ distancee);
+                        txtText3.setText("등산거리:"+ distanceS+"m");
                         txtText4.setText("속도:"+velo+"m/s");
                         if (mydistance != -1) {
                             double result = mydistance - distancee;
