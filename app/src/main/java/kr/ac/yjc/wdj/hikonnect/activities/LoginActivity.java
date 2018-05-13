@@ -67,9 +67,10 @@ public class LoginActivity extends Activity {
                                     tv.setText("로그인 성공");
                                 }
                             });
-                            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("id", id.getText().toString());
                             startActivity(intent);
+                            finish();
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override

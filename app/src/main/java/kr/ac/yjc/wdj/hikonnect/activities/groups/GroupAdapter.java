@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
 
 /**
  * Created by LEE AREUM on 2018-05-04.
@@ -65,7 +66,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
                 @Override
                 public void onClick(View view) {
 
-                    Intent intent = new Intent(context, GroupTestActivity.class);
+                    Intent intent = new Intent(context, TabsActivity.class);
 
                     intent.putExtra("title", title.getText().toString());
                     intent.putExtra("groupUuid", groupUuid.getText().toString());

@@ -117,21 +117,24 @@
 
         <Button
             android:id="@+id/signInBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-            android:layout_marginLeft="95dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/cyan_600"
+            android:textColor="@color/white"
             android:text="SIGN IN"
             android:layout_below="@id/progressBar"/>
 
         <Button
             android:id="@+id/cancelBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="CANCLE"
-            android:layout_toRightOf="@id/signInBtn"
-            android:layout_alignBottom="@id/signInBtn"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
             android:layout_centerVertical="true"
-            android:layout_below="@id/progressBar"/>
+            android:layout_below="@id/signInBtn"/>
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -50,6 +50,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @since   2018-04-10
+ */
 public class TabsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     // UI 변수

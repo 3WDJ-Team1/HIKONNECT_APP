@@ -25,4 +25,9 @@
     <string name="user_id"></string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string-array name="groups_list_array">
+        <item>산 이름</item>
+        <item>작성자</item>
+        <item>산행날짜</item>
+    </string-array>
 </resources>

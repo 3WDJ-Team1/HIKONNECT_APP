@@ -1,12 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groups;
 
 
-/**
- * @file        kr.ac.yjc.wdj.hikonnect.activities.GroupActivity.java
- * @author      Areum Lee (leear5799@gmail.com)
- * @since       2018-04-30
- * @brief       The Activity used that get grouplist
- */
+
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -56,6 +51,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * The Activity used that get grouplist
+ * @author      Areum Lee (leear5799@gmail.com)
+ * @since       2018-04-30
+ */
 public class GroupActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     ActionBarDrawerToggle toggle;
@@ -110,11 +110,12 @@ public class GroupActivity extends AppCompatActivity
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
 
-        loadRecyclerViewData();
+        // TODO url 수정
+//        loadRecyclerViewData();
 
         page = 10;
 
-        /*listItems = new ArrayList<>();
+        listItems = new ArrayList<>();
 
         int ITEM_SIZE = 12;
 
@@ -135,9 +136,9 @@ public class GroupActivity extends AppCompatActivity
 
         for (int i = 0; i < ITEM_SIZE; i++) {
             items.add(item[i]);
-        }*/
+        }
 
-        //recyclerView.setAdapter(new GroupAdapter(getApplicationContext(), items));
+        recyclerView.setAdapter(new GroupAdapter(getApplicationContext(), items));
 
     }
 
