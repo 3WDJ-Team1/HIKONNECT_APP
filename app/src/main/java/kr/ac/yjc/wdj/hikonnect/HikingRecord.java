@@ -33,13 +33,14 @@ import java.sql.Time;
 public class HikingRecord extends Activity  {
     HttpRequestConnection hrc = new HttpRequestConnection();
     String result,nickname,profile,hiking_group;
-    double distancee,velocity;
+    double distancee,velocity,all;
+    double mydistance = -1;
 
 
-    TextView txtText,txtText2,txtText3,txtText4;
+    TextView txtText,txtText2,txtText3,txtText4,txtText5;
     ContentValues contentValues = new ContentValues();
     Handler handler;
-    String distance,speed;
+    String speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +54,13 @@ public class HikingRecord extends Activity  {
         txtText2 = (TextView)findViewById(R.id.txtText2);
         txtText3 = (TextView)findViewById(R.id.txtText3);
         txtText4 = (TextView)findViewById(R.id.txtText4);
+        txtText5 = (TextView)findViewById(R.id.txtText5);
 
         //데이터 가져오기
         Intent intent = getIntent();
         int member_no = intent.getIntExtra("member_no",0);
+        all = intent.getDoubleExtra("all",0);
+        mydistance = intent.getDoubleExtra("my_distance",-1);
 
 
         contentValues.put("member_no", member_no);
@@ -77,6 +81,7 @@ public class HikingRecord extends Activity  {
                     JSONArray jsonArray = new JSONArray(result);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        Log.d("my_distance2", String.valueOf(mydistance));
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         nickname = jsonObject.getString("nickname");
                         hiking_group = jsonObject.getString("hiking_group");
@@ -84,10 +89,18 @@ public class HikingRecord extends Activity  {
                         velocity = jsonObject.getDouble("velocity");
                         String velo = String.format("%.1f",velocity);
 
+                        double nokory = all*1000-distancee;
+
                         txtText.setText("닉네임:"+ nickname );
                         txtText2.setText("그룹:" + hiking_group);
                         txtText3.setText("거리:"+ distancee);
                         txtText4.setText("속도:"+velo+"m/s");
+                        if (mydistance != -1) {
+                            double result = mydistance - distancee;
+                            result = Math.abs(result);
+                            String result2 = String.format("%.1f",result);
+                            txtText5.setText("나와의 거리:" + result2);
+                        }
 
 
 
