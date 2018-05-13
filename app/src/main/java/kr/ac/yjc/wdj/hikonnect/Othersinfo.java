@@ -63,6 +63,7 @@ public class Othersinfo extends Activity {
 
         // 리스트를 생성한다.
         list = new ArrayList<String>();
+        arraylist = new ArrayList<String>();
 
 //         검색에 사용할 데이터을 미리 저장한다.
         Intent intent = getIntent();
@@ -88,18 +89,16 @@ public class Othersinfo extends Activity {
                         nickname = jsonObject.getString("nickname");
                         member_num = jsonObject.getInt("member_no");
 
-                        list.add(nickname);
+                        settingList(nickname);
+                        arraylist.add(nickname);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        };
-        //settingList();
 
-        // 리스트의 모든 데이터를 arraylist에 복사한다.// list 복사본을 만든다.
-        arraylist = new ArrayList<String>();
-        arraylist.addAll(list);
+        };
+
 
         // 리스트에 연동될 아답터를 생성한다.
         adapter = new SearchAdapter(list, this);
@@ -160,33 +159,7 @@ public class Othersinfo extends Activity {
 
 
     // 검색에 사용될 데이터를 리스트에 추가한다.
-    /*private void settingList(){
-        list.add("채수빈");
-        list.add("박지현");
-        list.add("수지");
-        list.add("남태현");
-        list.add("하성운");
-        list.add("크리스탈");
-        list.add("강승윤");
-        list.add("손나은");
-        list.add("남주혁");
-        list.add("루이");
-        list.add("진영");
-        list.add("슬기");
-        list.add("이해인");
-        list.add("고원희");
-        list.add("설리");
-        list.add("공명");
-        list.add("김예림");
-        list.add("혜리");
-        list.add("웬디");
-        list.add("박혜수");
-        list.add("카이");
-        list.add("진세연");
-        list.add("동호");
-        list.add("박세완");
-        list.add("도희");
-        list.add("창모");
-        list.add("허영지");
-    }*/
+    private void settingList(String nickname){
+        list.add(nickname);
+    }
 }
