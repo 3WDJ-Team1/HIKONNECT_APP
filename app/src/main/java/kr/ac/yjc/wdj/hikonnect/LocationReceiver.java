@@ -7,9 +7,9 @@ import android.location.LocationManager;
 import android.widget.Toast;
 
 /**
- * Created by jungyu on 2018-05-02.
+ * @author  Jungyu Choi
+ * @since   2018-05-02
  */
-
 public class LocationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

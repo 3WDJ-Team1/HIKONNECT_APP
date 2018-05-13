@@ -12,9 +12,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by jungyu on 2018-05-08.
+ * @author  Jungyu Choi
+ * @since   2018-05-08
  */
-
 public class ConnectServer {
     OkHttpClient client = new OkHttpClient();
 

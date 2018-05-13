@@ -11,13 +11,13 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-/*import kr.ac.yjc.wdj.myapplication.models.Conf;
-import kr.ac.yjc.wdj.myapplication.models.HikingPlan;*/
+/*import kr.ac.yjc.wdj.hikonnect.models.Conf;
+import kr.ac.yjc.wdj.hikonnect.models.HikingPlan;*/
 
-/**`
- * Created by Kwon on 3/26/2018.
+/**
+ * @author  Beomsu Kwon
+ * @since   2018-03-26
  */
-
 public class LocationService{
 
     private final String TAG = "LocationService";

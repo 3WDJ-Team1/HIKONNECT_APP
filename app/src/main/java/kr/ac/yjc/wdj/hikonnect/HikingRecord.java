@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,31 +14,25 @@ import android.view.Window;
 import android.widget.TextView;
 
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 
 /**
- * Created by jungyu on 2018-04-25.
+ * @author  Jungyu Choi
+ * @since   2018-04-25
  */
-
 public class HikingRecord extends Activity  {
-    HttpRequestConnection hrc = new HttpRequestConnection();
-    String result,nickname,profile,hiking_group;
-    double distancee,velocity;
+    HttpRequestConnection   hrc = new HttpRequestConnection();
+    String                  result,nickname,profile,hiking_group;
+    double                  distancee,velocity;
 
-
-    TextView txtText,txtText2,txtText3,txtText4;
-    ContentValues contentValues = new ContentValues();
-    Handler handler;
-    String distance,speed;
+    TextView                txtText,txtText2,txtText3,txtText4;
+    ContentValues           contentValues = new ContentValues();
+    Handler                 handler;
+    String                  distance,speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +42,14 @@ public class HikingRecord extends Activity  {
         setContentView(R.layout.hiking_record);
 
         //UI 객체생성
-        txtText = (TextView)findViewById(R.id.txtText);
-        txtText2 = (TextView)findViewById(R.id.txtText2);
-        txtText3 = (TextView)findViewById(R.id.txtText3);
-        txtText4 = (TextView)findViewById(R.id.txtText4);
+        txtText     = (TextView)findViewById(R.id.txtText);
+        txtText2    = (TextView)findViewById(R.id.txtText2);
+        txtText3    = (TextView)findViewById(R.id.txtText3);
+        txtText4    = (TextView)findViewById(R.id.txtText4);
 
         //데이터 가져오기
-        Intent intent = getIntent();
-        int member_no = intent.getIntExtra("member_no",0);
+        Intent  intent      = getIntent();
+        int     member_no   = intent.getIntExtra("member_no",0);
 
 
         contentValues.put("member_no", member_no);
@@ -78,18 +71,17 @@ public class HikingRecord extends Activity  {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        nickname = jsonObject.getString("nickname");
-                        hiking_group = jsonObject.getString("hiking_group");
-                        distancee = jsonObject.getDouble("distance");
-                        velocity = jsonObject.getDouble("velocity");
-                        String velo = String.format("%.1f",velocity);
+                        nickname        = jsonObject.getString("nickname");
+                        hiking_group    = jsonObject.getString("hiking_group");
+                        distancee       = jsonObject.getDouble("distance");
+                        velocity        = jsonObject.getDouble("velocity");
+
+                        String velo     = String.format("%.1f",velocity);
 
                         txtText.setText("닉네임:"+ nickname );
                         txtText2.setText("그룹:" + hiking_group);
                         txtText3.setText("거리:"+ distancee);
                         txtText4.setText("속도:"+velo+"m/s");
-
-
 
                     }
                 } catch (JSONException e) {

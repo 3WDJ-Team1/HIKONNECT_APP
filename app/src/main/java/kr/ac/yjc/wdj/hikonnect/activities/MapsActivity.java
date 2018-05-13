@@ -76,7 +76,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-//길이와 현재 fid를 담는 클래스입니다.
+/**
+ * 길이와 현재 fid를 담는 클래스입니다.
+ * @author  Jungyu Choi
+ * @since   2018-05
+ */
 class CrnidDistance {
     private double distance;
     private int currentid;

@@ -10,20 +10,20 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Created by jungyu on 2018-05-07.
+ * @author  Jungyu Choi
+ * @since   2018-05-07
  */
-
 public class SearchAdapter extends BaseAdapter {
 
-    private Context context;
-    private List<String> list;
-    private LayoutInflater inflate;
-    private ViewHolder viewHolder;
+    private Context         context;
+    private List<String>    list;
+    private LayoutInflater  inflate;
+    private ViewHolder      viewHolder;
 
     public SearchAdapter(List<String> list, Context context){
-        this.list = list;
-        this.context = context;
-        this.inflate = LayoutInflater.from(context);
+        this.list       = list;
+        this.context    = context;
+        this.inflate    = LayoutInflater.from(context);
     }
     @Override
     public int getCount() {

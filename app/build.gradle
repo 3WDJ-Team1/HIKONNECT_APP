@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
     defaultConfig {
-        applicationId "kr.ac.yjc.wdj.myapplication"
+        applicationId "kr.ac.yjc.wdj.hikonnect"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
@@ -24,16 +24,57 @@ android {
                 androidTestCompile 'com.android.support.test:runner:1.0.1'
                 androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
                 compile 'gun0912.ted:tedpermission:2.1.1'
-                compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
+//                compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
                 compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
                 compile 'com.github.clans:fab:1.6.4'
                 compile 'com.google.firebase:firebase-messaging:11.8.0'
                 compile 'com.google.firebase:firebase-core:11.8.0'
                 compile 'com.squareup.okhttp3:okhttp:3.7.0'
+
+                compile 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
+
+
+                // 테스트 지원 라이브러리..... 오류 발생함.
+//    androidTestCompile 'com.android.support.test:runner:1.0.1'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+                compile 'com.flipboard:bottomsheet-core:1.5.3'
+                compile 'com.flipboard:bottomsheet-commons:1.5.3' // optional
+
+                // Socket.io Library
+                compile ('io.socket:socket.io-client:1.0.0') {
+                    // excluding org.json which is provided by Android
+                    exclude group: 'org.json', module: 'json'
+                }
+
+
+                compile 'com.wang.avi:library:2.1.3'
+
+                // Material Edit Text
+                compile 'com.rengwuxian.materialedittext:library:2.1.4'
+                // Materialish Progress
+                compile 'com.pnikosis:materialish-progress:1.7'
+
+                // 에러나는 라이브러리~~~~~
+                // Meterial Design
+                // compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
+                // ~~~~~~~~~~
+
+
+                // Meterial Tab
+                compile 'it.neokree:MaterialTabs:0.11'
+                // Swipe Menu ListView
+                compile 'com.baoyz.swipemenulistview:library:1.3.0'
+                compile 'com.android.support:design:26.1.0'
+                // Navigation tab bar
+                compile 'devlight.io:navigationtabbar:1.2.5'
+                compile 'it.neokree:MaterialNavigationDrawer:1.3.2'
+
+                compile 'com.android.support:cardview-v7:26.1.+'
+                compile 'com.android.support:recyclerview-v7:26.1.+'
             }
         }
     }
 }
-dependencies {
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-}
+
+apply plugin: 'com.google.gms.google-services'
