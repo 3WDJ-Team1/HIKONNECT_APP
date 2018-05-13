@@ -29,27 +29,28 @@ import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
  */
 
 public class Othersinfo extends Activity {
-    private String nickname,hiking_group;
-    private Double distancee,velocity;
-    private List<String> list;          // 데이터를 넣은 리스트변수
-    private ListView listView;          // 검색을 보여줄 리스트변수
-    private EditText editSearch;        // 검색어를 입력할 Input 창
-    private SearchAdapter adapter;      // 리스트뷰에 연결할 아답터
-    private ArrayList<String> arraylist;
-    private int member_num;
-    Handler handler;
-    ContentValues contentValues = new ContentValues();
-    String result,user;
-    int my_num;
-    HttpRequestConnection hrc = new HttpRequestConnection();
+    private String              nickname,hiking_group;
+    private Double              distancee,velocity;
+    private List<String>        list;       // 데이터를 넣은 리스트변수
+    private ListView            listView;   // 검색을 보여줄 리스트변수
+    private EditText            editSearch; // 검색어를 입력할 Input 창
+    private SearchAdapter       adapter;    // 리스트뷰에 연결할 아답터
+    private ArrayList<String>   arraylist;
+    private int                 member_num;
+
+    Handler                 handler;
+    ContentValues           contentValues   = new ContentValues();
+    String                  result,user;
+    int                     my_num;
+    HttpRequestConnection   hrc             = new HttpRequestConnection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_info);
 
-        editSearch = (EditText) findViewById(R.id.editSearch);
-        listView = (ListView) findViewById(R.id.listView);
+        editSearch  = (EditText) findViewById(R.id.editSearch);
+        listView    = (ListView) findViewById(R.id.listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

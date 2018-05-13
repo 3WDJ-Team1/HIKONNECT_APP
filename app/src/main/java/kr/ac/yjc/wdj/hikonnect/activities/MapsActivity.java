@@ -55,12 +55,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import kr.ac.yjc.wdj.hikonnect.AfterHikingActivity;
 import kr.ac.yjc.wdj.hikonnect.BackPressClosHandler;
 import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.HikingRecord;
 import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
@@ -129,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // UI 변수
     private EditText                content, editText, title;
-    private Button                  post_btn, cancel,status;
+    private Button                  post_btn, cancel, status;
     private ImageView               imageView;
     private LinearLayout            linearLayout;
     private TextView                tv;
@@ -257,6 +259,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Intent intent = getIntent();
         user_id = intent.getExtras().getString("id");
 
+        btnSendRadio    = (FloatingActionButton) findViewById(R.id.sendRecordData);
+        btnToRecordList = (Button) findViewById(R.id.showRecordList);
+
         contentValues.put("user_id",user_id);
         new Thread(new Runnable() {
             @Override
@@ -309,18 +314,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        status.setVisibility(View.VISIBLE);
+
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (STATUS_HIKING == 0) {
-                    STATUS_HIKING = 1;
-                    status.setVisibility(View.INVISIBLE);
+                // -----------------------------------------------------------------
+                switch (STATUS_HIKING) {
+                    case 0:
+                        STATUS_HIKING = 1;
+                        status.setText("등산완료");
+                        // TODO : 고치세영
+//                        status.setVisibility(View.INVISIBLE);
+                        status.setVisibility(View.VISIBLE);
+                        break;
+                    case 1:
+                        // TODO : 고치세영
+//                        status.setVisibility(View.INVISIBLE);
+                        status.setVisibility(View.VISIBLE);
+                        // TODO : 고치세영
+//                        STATUS_HIKING = 2;
+                        // 2018-05-13 수정된 부분 ~~
+                        // --------------------------------------------------------------------
+//                        STATUS_HIKING = 1;
+                        Intent afterHikingIntent = new Intent(getBaseContext(), AfterHikingActivity.class);
+                        // TODO : putExtra 로 데이터 입력
+                        startActivity(afterHikingIntent);
+                        // ---------------------------------------------------------------------
+                        break;
+                    default:
+                        break;
                 }
-                else if (STATUS_HIKING == 1) {
-                    status.setVisibility(View.INVISIBLE);
-                    status.setText("등산완료");
-                    STATUS_HIKING = 0;
-                }
+                // -----------------------------------------------------------------
             }
         });
         fab2.setOnClickListener(new View.OnClickListener() {
@@ -488,6 +513,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 alertDialog.show();
             }
         });
+
+        // -------------------------- 사라져서 다시 추가된 부분 ----------------------------
+        isSendingNow = false;
+
+        // 무전 객체 초기화
+        walkieTalkie = new WalkieTalkie();
+        // 무전 받아오기 시작
+        walkieTalkie.receiveStart();
+        // 무전 버튼에 리스너 달기
+        btnSendRadio.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                isSendingNow = true;
+                walkieTalkie.sendStart();
+                Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+        btnSendRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isSendingNow) {
+                    isSendingNow = false;
+                    walkieTalkie.sendEnd();
+                    Toast.makeText(getBaseContext(), "무전 종료합니다", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        // 버튼 클릭 시 녹음 액티비티로 이동
+        btnToRecordList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
+                // TODO : putExtra로 값 넘기기
+                startActivity(recordIntent);
+            }
+        });
+        // -------------------------------------------------------------------------------------
     }
 
     @Override

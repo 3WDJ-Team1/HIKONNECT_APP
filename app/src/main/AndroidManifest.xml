@@ -63,7 +63,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecordListActivity">
-
+        </activity>
+        <activity android:name=".AfterHikingActivity">
         </activity>
 
         <!-- Services -->
