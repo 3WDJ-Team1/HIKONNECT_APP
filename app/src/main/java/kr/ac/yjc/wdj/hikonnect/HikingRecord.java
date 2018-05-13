@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,32 +14,25 @@ import android.view.Window;
 import android.widget.TextView;
 
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 
 /**
- * Created by jungyu on 2018-04-25.
+ * @author  Jungyu Choi
+ * @since   2018-04-25
  */
-
 public class HikingRecord extends Activity  {
-    HttpRequestConnection hrc = new HttpRequestConnection();
-    String result,nickname,profile,hiking_group,rank;
-    double distancee,velocity,all;
-    double mydistance = -1;
+    HttpRequestConnection   hrc = new HttpRequestConnection();
+    String                  result,nickname,profile,hiking_group;
+    double                  distancee,velocity;
 
-
-    TextView txtText,txtText2,txtText3,txtText4,txtText5,ranktxt;
-    ContentValues contentValues = new ContentValues();
-    Handler handler;
-    String speed;
+    TextView                txtText,txtText2,txtText3,txtText4;
+    ContentValues           contentValues = new ContentValues();
+    Handler                 handler;
+    String                  distance,speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +42,14 @@ public class HikingRecord extends Activity  {
         setContentView(R.layout.hiking_record);
 
         //UI 객체생성
-        ranktxt = (TextView)findViewById(R.id.rank);
-        txtText = (TextView)findViewById(R.id.txtText);
-        txtText2 = (TextView)findViewById(R.id.txtText2);
-        txtText3 = (TextView)findViewById(R.id.txtText3);
-        txtText4 = (TextView)findViewById(R.id.txtText4);
-        txtText5 = (TextView)findViewById(R.id.txtText5);
+        txtText     = (TextView)findViewById(R.id.txtText);
+        txtText2    = (TextView)findViewById(R.id.txtText2);
+        txtText3    = (TextView)findViewById(R.id.txtText3);
+        txtText4    = (TextView)findViewById(R.id.txtText4);
 
         //데이터 가져오기
-        Intent intent = getIntent();
-        int member_no = intent.getIntExtra("member_no",0);
-        all = intent.getDoubleExtra("all",0);
-        mydistance = intent.getDoubleExtra("my_distance",-1);
+        Intent  intent      = getIntent();
+        int     member_no   = intent.getIntExtra("member_no",0);
 
 
         contentValues.put("member_no", member_no);
@@ -82,31 +70,18 @@ public class HikingRecord extends Activity  {
                     JSONArray jsonArray = new JSONArray(result);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        Log.d("my_distance2", String.valueOf(mydistance));
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        nickname = jsonObject.getString("nickname");
-                        hiking_group = jsonObject.getString("hiking_group");
-                        distancee = jsonObject.getDouble("distance");
-                        String distanceS =   String.format("%.1f",distancee);
-                        velocity = jsonObject.getDouble("velocity");
-                        rank     = jsonObject.getString("rank");
-                        String velo = String.format("%.1f",velocity);
+                        nickname        = jsonObject.getString("nickname");
+                        hiking_group    = jsonObject.getString("hiking_group");
+                        distancee       = jsonObject.getDouble("distance");
+                        velocity        = jsonObject.getDouble("velocity");
 
-                        double nokory = all*1000-distancee;
+                        String velo     = String.format("%.1f",velocity);
 
                         txtText.setText("닉네임:"+ nickname );
-                        ranktxt.setText("순위:"+rank);
                         txtText2.setText("그룹:" + hiking_group);
-                        txtText3.setText("등산거리:"+ distanceS+"m");
+                        txtText3.setText("거리:"+ distancee);
                         txtText4.setText("속도:"+velo+"m/s");
-                        if (mydistance != -1) {
-                            double result = mydistance - distancee;
-                            result = Math.abs(result);
-                            String result2 = String.format("%.1f",result);
-                            txtText5.setText("나와의 거리:" + result2);
-                        }
-
-
 
                     }
                 } catch (JSONException e) {

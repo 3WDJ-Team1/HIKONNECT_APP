@@ -4,31 +4,28 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.gc.materialdesign.views.ButtonRectangle;
 
 import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 
 /**
- * Created by jungyu on 2018-04-05.
+ * @author  Jungyu Choi, Sungeun Kang
+ * @since   2018-04-05
  */
-
 public class LoginActivity extends Activity {
 
     EditText                id,
                             pw;
     TextView                tv;
-    ButtonRectangle         login;
+    Button                  login;
     ProgressBar             progressBar;
 
     ContentValues           contentValues = new ContentValues();
@@ -41,10 +38,10 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        id          = (EditText) findViewById(R.id.idtext);
-        pw          = (EditText) findViewById(R.id.pwtext);
+        id          = (EditText) findViewById(R.id.id_editText);
+        pw          = (EditText) findViewById(R.id.pw_editText);
         tv          = (TextView) findViewById(R.id.tv);
-        login       = (ButtonRectangle) findViewById(R.id.login);
+        login       = (Button) findViewById(R.id.signInBtn);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +51,7 @@ public class LoginActivity extends Activity {
                 tv.setText("로그인 중...");
                 contentValues.put("id", id.getText().toString());
                 contentValues.put("pw", pw.getText().toString());
+                progressBar.setVisibility(View.VISIBLE);
 
                 new Thread(new Runnable() {
                     @Override
@@ -67,10 +65,9 @@ public class LoginActivity extends Activity {
                                 @Override
                                 public void run() {
                                     tv.setText("로그인 성공");
-                                    progressBar.setVisibility(View.VISIBLE);
                                 }
                             });
-                            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("id", id.getText().toString());
                             startActivity(intent);
                             finish();
@@ -79,6 +76,7 @@ public class LoginActivity extends Activity {
                                 @Override
                                 public void run() {
                                     tv.setText("ID와 비밀번호를 확인해주세요.");
+                                    progressBar.setVisibility(View.GONE);
                                 }
                             });
                         }

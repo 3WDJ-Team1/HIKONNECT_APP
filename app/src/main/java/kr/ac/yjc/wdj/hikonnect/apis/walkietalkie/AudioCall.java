@@ -15,7 +15,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- * 통화 연결, 받기
+ * 무전 연결, 받기
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-06
  */
@@ -33,9 +33,9 @@ public class AudioCall {
     private final String    RECEIVE_TAG = "RECEIVING";
 
     // 변수
-    private InetAddress serverAddress;          // 서버 주소
-    private boolean     isSending   = false;    // 데이터 전송을 지속하고 있는지
-    private boolean     isReceiving = false;    // 데이터 수신을 지속하고 있는지
+    private InetAddress     serverAddress;          // 서버 주소
+    private boolean         isSending   = false;    // 데이터 전송을 지속하고 있는지
+    private boolean         isReceiving = false;    // 데이터 수신을 지속하고 있는지
 
     /**
      * serverAdderess 초기화

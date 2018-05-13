@@ -12,10 +12,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-/**
- * Created by Kwon on 3/26/2018.
- */
 
+/**
+ * @author  Beomsu Kwon
+ * @since   2018-03-26
+ */
 public class HttpRequestConnection {
 
     public String request(String _url, ContentValues _params) {

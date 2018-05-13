@@ -1,7 +1,33 @@
 <resources>
-    <string name="app_name">Hikonnect</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_name">HIKONNECT</string>
     <string name="hikonnect_server_ip">http://hikonnect.ga</string>
     <string name="laravel_local_server_ip">http://172.26.2.233:8000</string>
     <string name="node_local_server_ip">http://172.26.2.233:3000</string>
+    <string name="title_activity_maps">HIKONNECT</string>
+    <string name="id_hint">아이디</string>
+    <string name="password_hint">비밀번호</string>
+    <string name="loginBtn">로그인</string>
+    <string name="action_settings">Settings</string>
+    <string name="nav_item_attachment">Attachment</string>
+    <string name="nav_item_images">Images</string>
+    <string name="nav_item_location">My Location</string>
+    <string name="nav_sub_menu">Sub Menu</string>
+    <string name="nav_sub_menu_item01">Sub Menu Item 1</string>
+    <string name="nav_sub_menu_item02">Sub Menu Item 2</string>
+    <string name="drawer_header_text">Drawer Header</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="log_out">LOGOUT</string>
+    <string name="groups">Groups</string>
+    <string name="nav_my_page">User</string>
+    <string name="nav_my_groups">My Groups</string>
+    <string name="nav_my_profile">My Profile</string>
+    <string name="user_id"></string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string-array name="groups_list_array">
+        <item>산 이름</item>
+        <item>작성자</item>
+        <item>산행날짜</item>
+    </string-array>
 </resources>

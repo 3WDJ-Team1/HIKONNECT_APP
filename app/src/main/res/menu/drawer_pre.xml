@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sign_In_Btn"
+            android:checked="true"
+            android:icon="@drawable/ic_attachment"
+            android:title="@string/sign_in" />
+        <item
+            android:id="@+id/sign_Up_Btn"
+            android:icon="@drawable/ic_image"
+            android:title="@string/sign_up" />
+        <item
+            android:id="@+id/groups_Btn"
+            android:icon="@drawable/ic_place"
+            android:title="@string/groups" />
+    </group>
+
+</menu>

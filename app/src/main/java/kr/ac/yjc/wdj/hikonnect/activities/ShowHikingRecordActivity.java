@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import kr.ac.yjc.wdj.hikonnect.R;
 
 public class ShowHikingRecordActivity extends Activity{
     @Override
