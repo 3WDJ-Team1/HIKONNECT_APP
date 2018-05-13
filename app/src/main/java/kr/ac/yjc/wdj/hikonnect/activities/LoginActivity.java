@@ -73,6 +73,7 @@ public class LoginActivity extends Activity {
                             Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
                             intent.putExtra("id", id.getText().toString());
                             startActivity(intent);
+                            finish();
                         } else {
                             runOnUiThread(new Runnable() {
                                 @Override
