@@ -330,7 +330,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         // 2018-05-13 수정된 부분 ~~
                         // --------------------------------------------------------------------
                         Intent afterHikingIntent = new Intent(getBaseContext(), AfterHikingActivity.class);
-                        // TODO : putExtra 로 데이터 입력
+                        afterHikingIntent.putExtra("member_no",My_member_num);
                         startActivity(afterHikingIntent);
                         // ---------------------------------------------------------------------
                         break;
