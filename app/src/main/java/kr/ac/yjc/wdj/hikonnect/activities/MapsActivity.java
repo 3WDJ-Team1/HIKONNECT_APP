@@ -222,10 +222,8 @@ public class MapsActivity extends FragmentActivity implements
         // 퍼미션 권한 요청
         pManager.requestPermissions();
 
-        // ================================
         // 무전 객체 초기화
-//        walkieTalkie = new WalkieTalkie();
-        // ================================
+        walkieTalkie = new WalkieTalkie();
 
         // Location Service 초기화.
         locationService = new LocationService(this);
@@ -364,10 +362,8 @@ public class MapsActivity extends FragmentActivity implements
                     locationStartEnd.setLongitude(hikingRoutes.get(0).get(0).getLatLng().longitude);
                 } else if (HIKING_STATUS == 1) {
 
-                    // ================================
                     // 무전 받아오기 시작
-//                    walkieTalkie.receiveStart();
-                    // ================================
+                    walkieTalkie.receiveStart();
 
                     for(int idx = 0; idx < crtPosInRoute; idx++) {
                         Location _location1 = new Location("now");
