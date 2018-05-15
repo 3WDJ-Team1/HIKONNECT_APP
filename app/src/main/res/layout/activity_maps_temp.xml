@@ -349,7 +349,7 @@
     </LinearLayout>
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/show_user_info_btn"
+        android:id="@+id/show_member_list_btn"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/ic_people_black_36dp"
@@ -388,7 +388,7 @@
         fab:menu_colorRipple="@color/colorPrimary"
         android:layout_alignParentEnd="true"
         fab:menu_openDirection="down"
-        android:layout_below="@+id/show_user_info_btn"
+        android:layout_below="@+id/show_member_list_btn"
         android:alpha="0.7">
 
         <com.github.clans.fab.FloatingActionButton

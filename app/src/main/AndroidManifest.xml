@@ -36,7 +36,10 @@
         <activity
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivity"
             android:label="@string/title_activity_maps">
-        </activity>
+        </activity>0
+        <!--<activity android:name=".activities.MapsActivityTemp">-->
+            <!---->
+        <!--</activity>-->
         <activity
             android:name=".Othersinfo" />
         <!--<activity-->

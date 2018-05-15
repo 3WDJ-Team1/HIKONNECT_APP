@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 
-
 /**
  * @author  Jungyu Choi
  * @since   2018-04-11
@@ -74,7 +73,7 @@ public class  Locationmemo extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP+"/api/getLocationMemoDetail",contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/getLocationMemoDetail",contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
@@ -86,7 +85,7 @@ public class  Locationmemo extends Activity {
                     for(int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         titlestring     =  jsonObject.getString("title");
-                        contentstring     =  jsonObject.getString("content");
+                        contentstring   =  jsonObject.getString("content");
                         //path       = jsonObject.getString("image_path");
                         writer      = jsonObject.getString("writer");
                         TedPermission.with(Locationmemo.this)
@@ -126,5 +125,4 @@ public class  Locationmemo extends Activity {
         }
         return true;
     }
-
 }

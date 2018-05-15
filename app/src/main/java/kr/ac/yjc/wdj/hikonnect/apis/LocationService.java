@@ -62,38 +62,29 @@ public class LocationService{
     public LocationService(Context context) {
         // 위치 관리자 객체를 가져온다.
         this.lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
         this.context = context;
+
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            provider = LocationManager.NETWORK_PROVIDER;
+        }
+        else if (lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)){
+            provider = LocationManager.PASSIVE_PROVIDER;
+        }
+        else {
+            provider = LocationManager.GPS_PROVIDER;
+        }
+        Log.d(TAG, "Location Provier: " + provider);
     }
 
-    public void getMyLocation(LocationListener locationListener) {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION)
+    public void setLocationListener(LocationListener locationListener) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)                != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true) {
-            Log.v("넷워크 켜짐", "ㅎㅎ");
-            provider = LocationManager.NETWORK_PROVIDER;
-        }
-        else if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
-            Log.v("쥐퓌에스 켜짐", "ㅎㅎ");
-            provider = LocationManager.GPS_PROVIDER;
-        }
-        else {
-            Log.v("둘다 없음", "없어ㅠㅠ");
-            provider = LocationManager.GPS_PROVIDER;
-        }
-
-
         this.lm.requestLocationUpdates(
-                provider,
+                LocationManager.GPS_PROVIDER,
                 MIN_TIME_BW_UPDATES,
                 MIN_DISTANCE_CHANGE_FOR_UPDATE,
                 locationListener,
@@ -102,7 +93,7 @@ public class LocationService{
     }
 
     public void sendMyLocation() {
-        getMyLocation(ls);
+        setLocationListener(ls);
     }
 
 

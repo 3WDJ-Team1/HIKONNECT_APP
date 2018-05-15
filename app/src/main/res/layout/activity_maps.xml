@@ -30,7 +30,7 @@
 
 
             <TextView
-                android:id="@+id/sys_msg_txtview"
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="결과창"
@@ -58,14 +58,14 @@
                     android:textColorHint="@color/grey_500"/>
 
                 <ImageView
-                    android:id="@+id/l_memo_img"
+                    android:id="@+id/imageView1"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:scaleType="fitCenter"/>
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/l_memo_contnets_edttxt"
+                    android:id="@+id/content"
                     android:layout_weight="2"
                     android:hint="내용"
                     android:textColorHint="@color/grey_500"/>
@@ -78,21 +78,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="전송"
-                        android:id="@+id/loc_memo_store_btn"
+                        android:id="@+id/post_btn"
                         android:layout_weight="1"
                         android:backgroundTint="@color/cyan_500"/>
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="취소"
-                        android:id="@+id/l_memo_cancel_btn"
+                        android:id="@+id/cancel"
                         android:layout_weight="1"/>
                 </LinearLayout>
             </LinearLayout>
             <Button
                 android:text="등산시작"
                 android:visibility="invisible"
-                android:id="@+id/change_h_status_btn"
+                android:id="@+id/status"
                 android:layout_marginLeft="130dp"
                 android:layout_marginBottom="30dp"
                 android:layout_width="100dp"
@@ -101,7 +101,7 @@
             </LinearLayout>
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/show_my_info_btn"
+            android:id="@+id/myinfo_button"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:src="@drawable/ic_person_black_36dp"
@@ -115,7 +115,7 @@
             />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/show_user_info_btn"
+            android:id="@+id/user_info_button"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:src="@drawable/ic_people_black_36dp"
@@ -128,7 +128,7 @@
             />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/update_loc_btn"
+            android:id="@+id/gpsbutton"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:src="@drawable/ic_gps_fixed_black_36dp"
@@ -142,7 +142,7 @@
 
 
         <com.github.clans.fab.FloatingActionMenu
-            android:id="@+id/write_l_memo_fabmenu"
+            android:id="@+id/fabmenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -155,7 +155,7 @@
             >
 
             <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/l_memo_with_pic_fabbtn"
+                android:id="@+id/fab1"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_add_a_photo_black_36dp"
@@ -166,7 +166,7 @@
 
                 />
             <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/l_memo_without_pic_fabbtn"
+                android:id="@+id/fab2"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_create_black_36dp"
