@@ -71,19 +71,25 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     }
 
     /**
+     * 뷰홀더를 통해 값 넣기
      * @param viewHolder    viewHolder that was initialized by onCreateViewHolder
      * @param i             index of list
      */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+        // 공지사항일 때
         if(viewHolder instanceof ViewHolderNotice) {
+
             ((ViewHolderNotice) viewHolder).noticeNo.setText(i + 1 + "");
             ((ViewHolderNotice) viewHolder).noticeTitle.setText(((GroupNotice) dataList.get(i)).getTitle());
             ((ViewHolderNotice) viewHolder).noticeWriter.setText(((GroupNotice) dataList.get(i)).getWriter());
             ((ViewHolderNotice) viewHolder).noticeHits.setText(((GroupNotice) dataList.get(i)).getHits() + "");
+            ((ViewHolderNotice) viewHolder).noticeContent.setText(((GroupNotice) dataList.get(i)).getContent());
         } else if (viewHolder instanceof ViewHolderPlan) {
+            // 스케쥴일 때
 
         } else if (viewHolder instanceof ViewHolderMember) {
+            // 그룹 멤버일 때
             final ViewHolderMember tmpViewHolder = (ViewHolderMember) viewHolder;
             final int index = i;
             new AsyncTask<Void, Integer, Bitmap>() {
@@ -130,11 +136,12 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     }
 
     // ViewHolder for noitce list up
-    static class ViewHolderNotice extends RecyclerView.ViewHolder {
+    private static class ViewHolderNotice extends RecyclerView.ViewHolder {
         private TextView    noticeNo;
         private TextView    noticeTitle;
         private TextView    noticeWriter;
         private TextView    noticeHits;
+        private TextView    noticeContent;
 
         public ViewHolderNotice (View itemView) {
             super(itemView);
@@ -142,21 +149,22 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
             this.noticeTitle    = (TextView) itemView.findViewById(R.id.noticeTitle);
             this.noticeWriter   = (TextView) itemView.findViewById(R.id.noticeWriter);
             this.noticeHits     = (TextView) itemView.findViewById(R.id.noticeHits);
+            this.noticeContent  = (TextView) itemView.findViewById(R.id.groupNoticeContent);
         }
     }
 
     // ViewHolder for showing plan
-    public class ViewHolderPlan extends RecyclerView.ViewHolder {
+    private static class ViewHolderPlan extends RecyclerView.ViewHolder {
 
 
-        public ViewHolderPlan (View itemView) {
+        private ViewHolderPlan (View itemView) {
             super(itemView);
 
         }
     }
 
     // ViewHolder for member list up
-    public class ViewHolderMember extends RecyclerView.ViewHolder {
+    private static class ViewHolderMember extends RecyclerView.ViewHolder {
         public ImageView    profilePic;     // user's profile picture
         public TextView     userName;       // user's name
 

@@ -5,12 +5,6 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <Button
-            android:id="@+id/showRecordList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|top"
-            android:text="녹음 보기" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -21,6 +15,13 @@
             android:layout_height="match_parent"
             tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />
 
+        <Button
+            android:id="@+id/showRecordList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="24dp"
+            android:text="녹음 보기" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -108,7 +109,7 @@
             android:layout_marginRight="87dp"
             android:layout_marginBottom="30dp"
             fab:menu_fab_size="normal"
-            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/colorPrimary"
             fab:fab_colorRipple="@color/colorPrimary"
             />
@@ -121,7 +122,7 @@
             android:layout_gravity="bottom|left"
             android:layout_marginBottom="30dp"
             fab:menu_fab_size="normal"
-            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/colorPrimary"
             fab:fab_colorRipple="@color/colorPrimary"
             />
@@ -134,7 +135,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             fab:menu_fab_size="normal"
-            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/colorPrimary"
             fab:fab_colorRipple="@color/colorPrimary"
             />
@@ -148,7 +149,7 @@
             android:layout_marginBottom="70dp"
             fab:menu_icon="@drawable/ic_bookmark_black_36dp"
             fab:menu_fab_size="normal"
-            fab:menu_colorNormal="@color/colorPrimary"
+            fab:menu_colorNormal="@color/white"
             fab:menu_colorPressed="@color/colorPrimary"
             fab:menu_colorRipple="@color/colorPrimary"
             >
@@ -159,10 +160,9 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_add_a_photo_black_36dp"
                 fab:fab_size="mini"
-                fab:fab_colorNormal="@color/colorPrimary"
+                fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/colorPrimary"
                 fab:fab_colorRipple="@color/colorPrimary"
-
 
                 />
             <com.github.clans.fab.FloatingActionButton
@@ -171,7 +171,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_create_black_36dp"
                 fab:fab_size="mini"
-                fab:fab_colorNormal="@color/colorPrimary"
+                fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/colorPrimary"
                 fab:fab_colorRipple="@color/colorPrimary"
                 />

@@ -23,7 +23,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
 import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), MapsActivity.class);
-                intent.putExtra("id", getIntent().getExtras().getString("id"));
+                intent.putExtra("id", UsersData.USER_ID);
                 progressBar.setVisibility(View.VISIBLE);
                 startActivity(intent);
                 finish();

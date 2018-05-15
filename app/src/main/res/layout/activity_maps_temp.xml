@@ -1,0 +1,419 @@
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto">
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity"
+        />
+
+    <RelativeLayout
+        android:id="@+id/backGround"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+
+
+    <!-- TODO 화면 터치하면 보이게 -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/userDataBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:alpha="0.8"
+        android:visibility="gone"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="현재 속력"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey_800"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2">
+
+                    <!-- TODO 값을 넣어주세요 : 현재 속력 @+id/userSpeed -->
+                    <TextView
+                        android:id="@+id/userSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/red_400"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        android:gravity="bottom"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="km/h"
+                        android:gravity="bottom"
+                        android:layout_weight="1"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="총 이동 거리"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey_800"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2">
+
+                    <!-- TODO 값을 넣어주세요 : 총 이동 거리 @+id/distance -->
+                    <TextView
+                        android:id="@+id/distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="1.7"
+                        android:textAlignment="center"
+                        android:textColor="@color/cyan_500"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:gravity="bottom"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="km"
+                        android:gravity="bottom"
+                        android:layout_weight="1"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="도착 예상 시간"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey_800"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2">
+
+                    <!-- TODO 값을 넣어주세요 : 도착 예상 시간 @+id/arriveWhen -->
+                    <TextView
+                        android:id="@+id/arriveWhen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="2.3"
+                        android:textAlignment="center"
+                        android:textColor="@color/light_green_800"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="시간"
+                        android:gravity="bottom"
+                        android:layout_weight="1"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <!-- TODO 값을 넣어주세요 : 순위 @+id/userRank -->
+                <TextView
+                    android:id="@+id/userRank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="1"
+                    android:layout_weight="1"
+                    android:gravity="end|center"
+                    android:textSize="24dp"
+                    android:textColor="@color/pink_accent_400"
+                    android:textStyle="bold"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="등"
+                    android:gravity="start|center"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/showRecordList"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:layout_above="@+id/drawer"
+        android:backgroundTint="@color/pink_accent_400"
+        android:src="@android:drawable/ic_btn_speak_now"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/sys_msg_txtview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="결과창"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <!-- 위치메모 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="24dp"
+            android:layout_height="350dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            android:visibility="invisible"
+            android:id="@+id/imagelayout"
+            android:background="@color/colorPrimary"
+            android:layout_gravity="center_vertical|center"
+            android:gravity="center_vertical|center"
+            android:padding="16dp">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/title"
+                android:hint="제목 입력"
+                android:layout_weight="1"
+                android:textColorHint="@color/grey_500"/>
+
+            <ImageView
+                android:id="@+id/l_memo_img"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="fitCenter"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/l_memo_contnets_edttxt"
+                android:layout_weight="2"
+                android:hint="내용"
+                android:textColorHint="@color/grey_500"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전송"
+                    android:id="@+id/loc_memo_store_btn"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/cyan_500"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="취소"
+                    android:id="@+id/l_memo_cancel_btn"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+        </LinearLayout>
+        <!--위치메모 끝 -->
+
+    </LinearLayout>
+
+    <Button
+        android:text="등산시작"
+        android:visibility="visible"
+        android:id="@+id/change_h_status_btn"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginBottom="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_blue_500"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        />
+
+    <!-- TODO 화면 터치하면 @+id/sendRecordData 가시화 -->
+    <LinearLayout
+        android:id="@+id/drawer"
+        android:layout_width="50dp"
+        android:layout_height="10dp"
+        android:layout_above="@+id/recordBox"
+        android:background="@color/white"
+        android:alpha="0.7"
+        android:layout_centerHorizontal="true"
+        >
+        <TextView
+            android:id="@+id/openDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="▲"
+            android:textAlignment="center"
+            android:textSize="10dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/recordBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:alpha="0.7"
+        android:orientation="vertical"
+        >
+        <Button
+            android:id="@+id/sendRecordData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="무전 시작"
+            android:backgroundTint="@color/red_500"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/show_user_info_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_people_black_36dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/userDataBox"
+        android:alpha="0.7"
+        />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/update_loc_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_gps_fixed_black_36dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/drawer"
+        android:alpha="0.7"
+        />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/write_l_memo_fabmenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="70dp"
+        fab:menu_icon="@drawable/ic_bookmark_black_36dp"
+        fab:menu_fab_size="normal"
+        fab:menu_colorNormal="@color/white"
+        fab:menu_colorPressed="@color/colorPrimary"
+        fab:menu_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        fab:menu_openDirection="down"
+        android:layout_below="@+id/show_user_info_btn"
+        android:alpha="0.7">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/l_memo_with_pic_fabbtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_add_a_photo_black_36dp"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="@color/light_green_300"
+            fab:fab_colorPressed="@color/colorPrimary"
+            fab:fab_colorRipple="@color/colorPrimary"
+            android:alpha="0.7"
+            />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/l_memo_without_pic_fabbtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_create_black_36dp"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="@color/light_green_300"
+            fab:fab_colorPressed="@color/colorPrimary"
+            fab:fab_colorRipple="@color/colorPrimary"
+            android:alpha="0.7"
+            />
+    </com.github.clans.fab.FloatingActionMenu>
+
+
+</RelativeLayout>

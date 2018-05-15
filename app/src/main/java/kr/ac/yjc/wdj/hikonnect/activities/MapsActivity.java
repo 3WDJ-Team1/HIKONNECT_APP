@@ -15,13 +15,16 @@ import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -41,11 +44,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.os.Handler;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -137,12 +138,19 @@ public class MapsActivity extends FragmentActivity implements
     private FloatingActionButton    fabBtnLocMemoNoPic;
     private FloatingActionButton    btnUpdateLocation;
     private FloatingActionButton    btnShowUserInfo;
-    private FloatingActionButton    btnShowMyInfo;
 
-    private FloatingActionButton    btnSendRadio;       // 무전 버튼
-    private Button                  btnToRecordList;    // 녹음 리스트 액티비티로 전환하는 버튼
+    private ImageButton             btnToRecordList;    // 녹음 리스트 액티비티로 전환하는 버튼
 
     private LocationService         locationService;    // 위치 데이터 처리 클래스.
+    // <-- 추가
+    // UI 변수
+    private CardView                userDataBox;    // 자신의 현재 정보를 보여줄 CardView
+    private TextView                tvUserSpeed,    // 현재 속도 TextView (값 -> km/h 기준)
+                                    tvDistance,     // 총 이동 거리 TextView (값 -> km 기준)
+                                    tvArriveWhen;   // 예상 도착 시간 TextView (값 -> 시간 기준)
+    private LinearLayout            drawerLayout;   // 무전 버튼을 넣어둘 레이아웃
+    private Button                  btnSendRadio;  // 무전 시작 버튼
+    //  -->
 
     //속도 관련 데이터
     private double hikedDistance = 0;
@@ -199,6 +207,11 @@ public class MapsActivity extends FragmentActivity implements
 
     private LinkedList<Location> userLocations = new LinkedList<>();
 
+    //<-- 추가
+    private boolean isdataBoxVisible    = false;    // 현재 데이터 박스 상태
+    private boolean isRecBtnVisible     = false;    // 현재 녹음 버튼 상태
+    // -->
+
     @Override
     public void onBackPressed() {
         if (layoutWriteLocMemo.getVisibility() == View.VISIBLE) {
@@ -211,7 +224,7 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_maps_temp);
 
         final String user_id = getIntent().getExtras().getString("id");
 
@@ -243,14 +256,12 @@ public class MapsActivity extends FragmentActivity implements
         txtViewSysMsg           = (TextView)                findViewById(R.id.sys_msg_txtview);
         edtTxtLocMemoContents   = (EditText)                findViewById(R.id.l_memo_contnets_edttxt);
         btnWriteReqLocMemo      = (Button)                  findViewById(R.id.loc_memo_store_btn);
-        btnToRecordList         = (Button)                  findViewById(R.id.showRecordList);
         fabMenuWriteLocMemo     = (FloatingActionMenu)      findViewById(R.id.write_l_memo_fabmenu);
         fabBtnLocMemoPic        = (FloatingActionButton)    findViewById(R.id.l_memo_with_pic_fabbtn);
         fabBtnLocMemoNoPic      = (FloatingActionButton)    findViewById(R.id.l_memo_without_pic_fabbtn);
         btnUpdateLocation       = (FloatingActionButton)    findViewById(R.id.update_loc_btn);
-        btnShowMyInfo           = (FloatingActionButton)    findViewById(R.id.show_my_info_btn);
         btnShowUserInfo         = (FloatingActionButton)    findViewById(R.id.show_user_info_btn);
-        btnSendRadio            = (FloatingActionButton)    findViewById(R.id.sendRecordData);
+        btnToRecordList         = (ImageButton)             findViewById(R.id.showRecordList);
 
         txtViewSysMsg.setText("미수신중");
 
@@ -277,7 +288,9 @@ public class MapsActivity extends FragmentActivity implements
             }
         }).start();
 
-        btnShowMyInfo.setOnClickListener(this);
+        initUI();
+
+//        btnShowMyInfo.setOnClickListener(this);
         btnChangeHikingState.setOnClickListener(this);
         fabBtnLocMemoNoPic.setOnClickListener(this);
         btnShowUserInfo.setOnClickListener(this);
@@ -291,6 +304,7 @@ public class MapsActivity extends FragmentActivity implements
         btnSendRadio.setOnLongClickListener(this);
 
         btnToRecordList.setOnClickListener(this);
+
     }
 
     @Override
@@ -341,9 +355,46 @@ public class MapsActivity extends FragmentActivity implements
         }
     }
 
+    /**
+     * UI 초기화
+     */
+    private void initUI() {
+        userDataBox     = (CardView)        findViewById(R.id.userDataBox);
+        tvUserSpeed     = (TextView)        findViewById(R.id.userSpeed);
+        tvDistance      = (TextView)        findViewById(R.id.distance);
+        tvArriveWhen    = (TextView)        findViewById(R.id.arriveWhen);
+        drawerLayout    = (LinearLayout)    findViewById(R.id.drawer);
+        btnSendRadio    = (Button)          findViewById(R.id.sendRecordData);
+
+        // drawerLayout 을 클릭하면 무전 버튼 가시화
+        drawerLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecBtnVisible) {
+                    btnSendRadio.setVisibility(View.GONE);
+                } else {
+                    btnSendRadio.setVisibility(View.VISIBLE);
+                }
+                isRecBtnVisible = !isRecBtnVisible;
+            }
+        });
+
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if (isdataBoxVisible) {
+                    userDataBox.setVisibility(View.GONE);
+                } else {
+                    userDataBox.setVisibility(View.VISIBLE);
+                }
+                isdataBoxVisible = !isdataBoxVisible;
+            }
+        });
         timer = new Timer();
         timerTask = new TimerTask() {
             @Override

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.beans.Record;
 import kr.ac.yjc.wdj.hikonnect.apis.walkietalkie.RecordPlayer;
@@ -53,10 +54,11 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         ((RecordViewHolder) holder).recordNo.setText(position + 1 + "");
         ((RecordViewHolder) holder).recordName.setText(recordList.get(position).getFileName());
+        ((RecordViewHolder) holder).layout.setClickable(true);
         ((RecordViewHolder) holder).layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RecordPlayer player = new RecordPlayer("172.26.1.140");
+                RecordPlayer player = new RecordPlayer(Environment.WALKIE_TALKIE_SERVER_IP);
 
                 player.playRecords(recordList.get(position).getFileName());
             }

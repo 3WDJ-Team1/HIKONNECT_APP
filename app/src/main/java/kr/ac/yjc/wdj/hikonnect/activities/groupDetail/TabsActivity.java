@@ -118,7 +118,7 @@ public class TabsActivity extends FragmentActivity implements OnMapReadyCallback
         adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
         adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember);
 
-        this.groupId        = "16f78874-b51c-3ad0-9b91-5d35f22a412b";
+        groupId             = getIntent().getExtras().getString("groupId");
         // 이 사람이 그룹에 있으면 그룹 참가 버튼 -> 그룹 탈퇴 버튼
 //        initVarisJoined("", "");
         // 플로팅 버튼 누르면 그룹 참가

@@ -85,6 +85,7 @@
         <activity android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity" />
         <activity android:name=".activities.group_list.groups_list_main"/>
         <activity android:name=".activities.group_list.groups_list"/>
+
         <!--Activities End-->
 
         <!-- Services -->
