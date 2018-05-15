@@ -25,6 +25,7 @@ public class SearchAdapter extends BaseAdapter {
         this.context    = context;
         this.inflate    = LayoutInflater.from(context);
     }
+
     @Override
     public int getCount() {
         return list.size();

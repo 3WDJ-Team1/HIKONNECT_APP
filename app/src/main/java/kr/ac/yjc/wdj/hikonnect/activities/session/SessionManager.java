@@ -14,9 +14,9 @@ import kr.ac.yjc.wdj.hikonnect.activities.user.LoginActivity;
  */
 
 public class SessionManager {
-    SharedPreferences   pref;
-    Context context;
-    SharedPreferences.Editor editor;
+    SharedPreferences           pref;
+    Context                     context;
+    SharedPreferences.Editor    editor;
 
     int PRIVATE_MODE =0;
 

@@ -37,6 +37,12 @@
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivity"
             android:label="@string/title_activity_maps">
         </activity>
+        <activity android:name=".activities.MapsActivityTemp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Othersinfo" />
         <!--<activity-->
@@ -69,10 +75,10 @@
         <activity android:name=".activities.SplashActivity"
                   android:theme="@style/SplashTheme"
                   android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".RecordListActivity">
         </activity>

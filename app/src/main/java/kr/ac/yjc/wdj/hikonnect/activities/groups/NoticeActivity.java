@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.GHttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
@@ -84,7 +85,7 @@ public class NoticeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request("http://192.168.1.146:8000/api/schedule", contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/schedule", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }

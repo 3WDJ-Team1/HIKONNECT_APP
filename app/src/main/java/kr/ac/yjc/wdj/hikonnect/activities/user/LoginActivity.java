@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.RelativeLayout;
 import java.io.IOException;
 import java.net.URL;
 
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
@@ -42,7 +44,7 @@ import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
     ActionBarDrawerToggle       dtToggle;
-    SessionManager session;
+    SessionManager              session;
     RelativeLayout              rLayout;
     DrawerLayout                dlDrawer;
     EditText                    id, pw;
@@ -51,6 +53,16 @@ public class LoginActivity extends AppCompatActivity {
     String                      user;
 
     ContentValues contentValues = new ContentValues();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("HIKONNECT", "login check: " + session.isLoggedIn());
+        if (session.isLoggedIn()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     OkHttpClient client = new OkHttpClient();
 
-                    URL url = new URL("http://192.168.1.146:8000/api/login_app");
+                    URL url = new URL(Environment.LARAVEL_HIKONNECT_IP + "/api/login_app");
 
                     RequestBody body = new FormBody.Builder()
                             .add("id", id.getText().toString())

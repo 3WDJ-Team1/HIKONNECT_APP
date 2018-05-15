@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import java.io.IOException;
 import java.net.URL;
 
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.PreActivity;
@@ -127,7 +128,7 @@ public class UserRegisterActivity extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                result = hrc.request("http://192.168.1.146:8000/api/user", contentValues);
+                                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/user", contentValues);
                                 Message msg = handler.obtainMessage();
                                 handler.sendMessage(msg);
                             }

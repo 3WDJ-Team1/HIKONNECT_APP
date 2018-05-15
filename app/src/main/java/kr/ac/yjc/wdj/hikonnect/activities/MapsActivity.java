@@ -35,17 +35,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 import com.gun0912.tedpermission.PermissionListener;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.os.Handler;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -76,6 +76,7 @@ import okhttp3.Response;
 /**
  * 길이와 현재 fid를 담는 클래스입니다.
  * @author  Jungyu Choi
+ * @author  bs Kwon
  * @since   2018-05
  */
 class CrnidDistance {
@@ -97,7 +98,7 @@ class CrnidDistance {
 }
 
 //현재 위치와 fid를 담는 클래스입니다.
-class LatLngCrnId {
+class LatLngCrnId implements ClusterItem {
 
     private LatLng latLng;
     private int currentid;
@@ -114,6 +115,11 @@ class LatLngCrnId {
         this.currentid = cuid;
         this.latLng = loca;
     }
+
+    @Override
+    public LatLng getPosition() {
+        return latLng;
+    }
 }
 
 //메인 클래스 입니다.
@@ -123,7 +129,13 @@ public class MapsActivity extends FragmentActivity implements
         View.OnLongClickListener{
 
     private final String TAG = "HIKONNECT";
+
+    private final static int DOUB_TO_STR_IDX = 5;
+
     // UI 변수
+    private TextView                txtViewAltitude;
+    private TextView                txtViewAvgSpeed;
+    private TextView                txtViewRank;
     private EditText                edtTxtLocMemoContents;
     private EditText                edtTxtLocMemoTitle;
     private Button                  btnWriteReqLocMemo;
@@ -131,7 +143,6 @@ public class MapsActivity extends FragmentActivity implements
     private Button                  btnChangeHikingState;
     private ImageView               imgViewLocMemo;
     private LinearLayout            layoutWriteLocMemo;
-    private TextView                txtViewSysMsg;
     private FloatingActionMenu      fabMenuWriteLocMemo;
     private FloatingActionButton    fabBtnLocMemoPic;
     private FloatingActionButton    fabBtnLocMemoNoPic;
@@ -145,18 +156,19 @@ public class MapsActivity extends FragmentActivity implements
     private LocationService         locationService;    // 위치 데이터 처리 클래스.
 
     //속도 관련 데이터
-    private double hikedDistance = 0;
-    private LatLng crtPos = new LatLng(0, 0);
-    private LatLng              past_pos        = new LatLng(0, 0);
+    private double              hikedDistance = 0;
+    private double              crtAltitude;
+    private LatLng              crtPos      = new LatLng(0, 0);
+    private LatLng              past_pos    = new LatLng(0, 0);
 
     // GoogleMaps
     private GoogleMap                           mMap;
-    private ArrayList<ArrayList<LatLngCrnId>>   hikingRoutes = new ArrayList<>();
+    private ArrayList<ArrayList<LatLngCrnId>>   hikingRoutes    = new ArrayList<>();
     private ArrayList<CrnidDistance>            crnidDistances  = new ArrayList<>();
     private ArrayList<Marker>                   markers         = new ArrayList<>();
 
     // 데이터 관련 변수
-    private int myMemberNo;
+    private int                 myMemberNo;
     private int                 location_no;
     private int                 HIKING_STATUS   = 0;
     private String              image_path      = "File_path";
@@ -170,9 +182,10 @@ public class MapsActivity extends FragmentActivity implements
     private OkHttpClient        httpClient = new OkHttpClient();
 
     // 구글맵 관련 데이터
-    private double  velocity    = 0;
-    private int crtRoute;
-    private int crtPosInRoute;
+    private ClusterManager<LatLngCrnId>     myClusterManager;
+    private double                          velocity    = 0;
+    private int                             crtRoute;
+    private int                             crtPosInRoute;
 
     // 상수
     private static final int PICK_FROM_CAMERA   = 0;
@@ -235,13 +248,15 @@ public class MapsActivity extends FragmentActivity implements
 
         backPressClosHandler = new BackPressClosHandler(MapsActivity.this);
 
+        txtViewAltitude         = (TextView)                findViewById(R.id.altitude_txtview);
+        txtViewAvgSpeed         = (TextView)                findViewById(R.id.avg_speed_txtview);
+        txtViewRank             = (TextView)                findViewById(R.id.rank_txtview);
         layoutWriteLocMemo      = (LinearLayout)            findViewById(R.id.imagelayout);
         edtTxtLocMemoTitle      = (EditText)                findViewById(R.id.title);
-        btnChangeHikingState    = (Button)                  findViewById(R.id.change_h_status_btn);
         imgViewLocMemo          = (ImageView)               findViewById(R.id.l_memo_img);
-        btnWriteCancelLocMemo   = (Button)                  findViewById(R.id.l_memo_cancel_btn);
-        txtViewSysMsg           = (TextView)                findViewById(R.id.sys_msg_txtview);
         edtTxtLocMemoContents   = (EditText)                findViewById(R.id.l_memo_contnets_edttxt);
+        btnWriteCancelLocMemo   = (Button)                  findViewById(R.id.l_memo_cancel_btn);
+        btnChangeHikingState    = (Button)                  findViewById(R.id.change_h_status_btn);
         btnWriteReqLocMemo      = (Button)                  findViewById(R.id.loc_memo_store_btn);
         btnToRecordList         = (Button)                  findViewById(R.id.showRecordList);
         fabMenuWriteLocMemo     = (FloatingActionMenu)      findViewById(R.id.write_l_memo_fabmenu);
@@ -249,10 +264,8 @@ public class MapsActivity extends FragmentActivity implements
         fabBtnLocMemoNoPic      = (FloatingActionButton)    findViewById(R.id.l_memo_without_pic_fabbtn);
         btnUpdateLocation       = (FloatingActionButton)    findViewById(R.id.update_loc_btn);
         btnShowMyInfo           = (FloatingActionButton)    findViewById(R.id.show_my_info_btn);
-        btnShowUserInfo         = (FloatingActionButton)    findViewById(R.id.show_user_info_btn);
+        btnShowUserInfo         = (FloatingActionButton)    findViewById(R.id.show_member_list_btn);
         btnSendRadio            = (FloatingActionButton)    findViewById(R.id.sendRecordData);
-
-        txtViewSysMsg.setText("미수신중");
 
         Log.d(TAG, "getMyMemNo: param: id:" + user_id);
         new Thread(new Runnable() {
@@ -344,6 +357,12 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        myClusterManager = new ClusterManager<>(getBaseContext(), mMap);
+
+        mMap.setOnCameraIdleListener(myClusterManager);
+        mMap.setOnMarkerClickListener(myClusterManager);
+
         timer = new Timer();
         timerTask = new TimerTask() {
             @Override
@@ -361,24 +380,23 @@ public class MapsActivity extends FragmentActivity implements
                     locationStartEnd.setLatitude(hikingRoutes.get(0).get(0).getLatLng().latitude);
                     locationStartEnd.setLongitude(hikingRoutes.get(0).get(0).getLatLng().longitude);
                 } else if (HIKING_STATUS == 1) {
-
                     // 무전 받아오기 시작
                     walkieTalkie.receiveStart();
 
                     for(int idx = 0; idx < crtPosInRoute; idx++) {
-                        Location _location1 = new Location("now");
+                        Location _location1 = new Location("loc1");
                         _location1.setLatitude(hikingRoutes.get(crtRoute).get(idx).getLatLng().latitude);
                         _location1.setLongitude(hikingRoutes.get(crtRoute).get(idx).getLatLng().longitude);
 
-                        Location _location2 = new Location("now2");
+                        Location _location2 = new Location("loc2");
                         _location2.setLatitude(hikingRoutes.get(crtRoute).get(idx + 1).getLatLng().latitude);
                         _location2.setLongitude(hikingRoutes.get(crtRoute).get(idx + 1).getLatLng().longitude);
 
                         hikedDistance += _location1.distanceTo(_location2);
                     }
 
-                    for (int h = 0; h < myCurrentFid; h++) {
-                        hikedDistance += crnidDistances.get(h).getDistance();
+                    for (int idx = 0; idx < myCurrentFid; idx++) {
+                        hikedDistance += crnidDistances.get(idx).getDistance();
                     }
 
                     locationStartEnd.setLatitude(rolypoly.get(rolypoly.size() - 1).getLatLng().latitude);
@@ -388,11 +406,11 @@ public class MapsActivity extends FragmentActivity implements
                 hrc = new HttpRequestConnection();
                 contentValues = new ContentValues();
 
-                contentValues.put("distance", hikedDistance);
-                contentValues.put("member_no", myMemberNo);
-                contentValues.put("latitude", crtPos.latitude);
-                contentValues.put("longitude", crtPos.longitude);
-                contentValues.put("velocity", velocity);
+                contentValues.put("distance",   hikedDistance);
+                contentValues.put("member_no",  myMemberNo);
+                contentValues.put("latitude",   crtPos.latitude);
+                contentValues.put("longitude",  crtPos.longitude);
+                contentValues.put("velocity",   velocity);
 
                 http_response = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storesend", contentValues);
 
@@ -418,9 +436,6 @@ public class MapsActivity extends FragmentActivity implements
                     @Override
                     public void run() {
                         try {
-
-                            mMap.clear();
-
                             for (int a = 0; a < hikingRoutes.size(); a++) {
                                 for (int b = 0; b < hikingRoutes.get(a).size() - 1; b++) {
                                     mMap.addPolyline(new PolylineOptions()
@@ -434,10 +449,9 @@ public class MapsActivity extends FragmentActivity implements
                                 marker.remove();
                             }
 
-                            JSONObject first = new JSONObject(http_response);
-                            JSONArray jsonArray = first.getJSONArray("members");
-                            JSONArray jsonArray2 = first.getJSONArray("location_memos");
-                            Log.d("test", String.valueOf(jsonArray));
+                            JSONObject first        = new JSONObject(http_response);
+                            JSONArray jsonArray     = first.getJSONArray("members");
+                            JSONArray jsonArray2    = first.getJSONArray("location_memos");
 
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -518,6 +532,9 @@ public class MapsActivity extends FragmentActivity implements
                 });
             }
         };
+
+//        myClusterManager.addItem();
+
         requestGet(Environment.NODE_HIKONNECT_IP + "/dummy/school", null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -600,7 +617,7 @@ public class MapsActivity extends FragmentActivity implements
         }
 
         velocity = (hikedPeriod / userLocations.size()) * 1000;
-        Log.d(TAG, "velocity: " + velocity);
+
 
         double  distanceWithPos = Double.POSITIVE_INFINITY;
         Location routeStartPoint = new Location("routeStartPoint");
@@ -627,6 +644,15 @@ public class MapsActivity extends FragmentActivity implements
         } catch (Exception e) {
             Log.e(TAG, "get current fid: ", e);
         }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtViewAvgSpeed.setText(String.valueOf(velocity));
+                txtViewAltitude.setText(String.valueOf(crtAltitude));
+//                txtViewRank.setText();
+            }
+        });
     }
 
     public void showAlertDialog() {
@@ -643,7 +669,6 @@ public class MapsActivity extends FragmentActivity implements
                         intent.addCategory(Intent.CATEGORY_DEFAULT);
                         startActivityForResult(intent, 1);
                         onRestart();
-                        txtViewSysMsg.setText("미수신중");
                     }
                 });
         builder.setNegativeButton("취소", null);
@@ -653,14 +678,16 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     public void updateLocation() {
-        locationService.getMyLocation(new LocationListener() {
+        locationService.setLocationListener(new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 double lat = location.getLatitude();
                 double lng = location.getLongitude();
+                double alt = location.getAltitude();
 
                 past_pos = crtPos;
                 crtPos = new LatLng(lat, lng);
+                crtAltitude = alt;
             }
 
             @Override
@@ -738,22 +765,30 @@ public class MapsActivity extends FragmentActivity implements
                     public void run() {
                         ContentValues contentValues2 = new ContentValues();
 
-                        contentValues2.put("member_no", myMemberNo);
-                        contentValues2.put("lat", crtPos.latitude);
-                        contentValues2.put("lng", crtPos.longitude);
-                        contentValues2.put("edtTxtLocMemoTitle", edtTxtLocMemoTitle.getText().toString());
-                        contentValues2.put("edtTxtLocMemoContents", edtTxtLocMemoContents.getText().toString());
-                        contentValues2.put("image_path", image_path);
-
-                        http_response = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storeLocationMemo", contentValues2);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                txtViewSysMsg.setText("위치 메모 등록 완료.");
-                                hidePopup();
-                            }
-                        });
+//                        contentValues2.put("schedule_no",    );
+//                        contentValues2.put("hiking_group",   );
+//                        contentValues2.put("title",          );
+//                        contentValues2.put("writer",         );
+//                        contentValues2.put("picture",        );
+//                        contentValues2.put("latitude",       );
+//                        contentValues2.put("longitude",      );
+//
+//                        contentValues2.put("member_no", myMemberNo);
+//                        contentValues2.put("lat", crtPos.latitude);
+//                        contentValues2.put("lng", crtPos.longitude);
+//                        contentValues2.put("edtTxtLocMemoTitle", edtTxtLocMemoTitle.getText().toString());
+//                        contentValues2.put("edtTxtLocMemoContents", edtTxtLocMemoContents.getText().toString());
+//                        contentValues2.put("image_path", image_path);
+//
+//                        http_response = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storeLocationMemo", contentValues2);
+//
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                txtViewSysMsg.setText("위치 메모 등록 완료.");
+//                                hidePopup();
+//                            }
+//                        });
                     }
                 }).start();
                 break;
@@ -764,8 +799,8 @@ public class MapsActivity extends FragmentActivity implements
                 switch (HIKING_STATUS) {
                     case 0:
                         HIKING_STATUS = 1;
-                        btnChangeHikingState.setText("등산완료");
                         btnChangeHikingState.setVisibility(View.INVISIBLE);
+                        btnChangeHikingState.setText("등산완료");
                         break;
                     case 1:
                         btnChangeHikingState.setVisibility(View.INVISIBLE);
@@ -840,7 +875,7 @@ public class MapsActivity extends FragmentActivity implements
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(crtPos));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(crtPos, 19));
                 break;
-            case R.id.show_user_info_btn:
+            case R.id.show_member_list_btn:
                 Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
                 intent.putExtra("my_num", myMemberNo);
                 startActivity(intent);
@@ -872,5 +907,15 @@ public class MapsActivity extends FragmentActivity implements
             Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    public String double2String(double num) {
+        String str = String.valueOf(num);
+
+        int dotIdx = str.indexOf(".");
+
+        str = str.substring(dotIdx + 2);
+
+        return str;
     }
 }

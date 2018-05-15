@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
@@ -116,7 +117,7 @@ public class MemberListActivity extends AppCompatActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request("http://192.168.1.146:8000//api/list_group/", contentValues);
+                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/list_group/", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
