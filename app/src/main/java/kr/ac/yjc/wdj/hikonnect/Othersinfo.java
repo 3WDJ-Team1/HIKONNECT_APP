@@ -12,8 +12,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.ac.yjc.wdj.hikonnect.activities.MapsActivity;
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 
 /**
@@ -29,23 +33,49 @@ import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
  */
 
 public class Othersinfo extends Activity {
-    private String              nickname, hiking_group;
-    private Double              distancee;
-    private Double              velocity;
+    private final int           REQUEST         = 100;
+    private String              nickname;
+    private Button              filter_rank;
+    private Double              distancee,velocity;
     private List<String>        list;       // 데이터를 넣은 리스트변수
     private ListView            listView;   // 검색을 보여줄 리스트변수
     private EditText            editSearch; // 검색어를 입력할 Input 창
     private SearchAdapter       adapter;    // 리스트뷰에 연결할 아답터
-    private ArrayList<String>   nicknames;
-    private ArrayList<Integer>  memberNos;
+    private ArrayList<String>   nicknamelist;
+    private ArrayList<NicknameNumber>   arraylist;
     private int                 member_num;
 
+    class NicknameNumber {
+
+        private  String nickname;
+        private  int    number;
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+
+        public NicknameNumber(String nickname, int number) {
+            this.nickname   = nickname;
+            this.number     = number;
+        }
+    }
     Handler                 handler;
     ContentValues           contentValues   = new ContentValues();
-    String                  result, user;
+    String                  result,user;
     int                     my_num;
     HttpRequestConnection   hrc             = new HttpRequestConnection();
 
+    private void resultData(int member_num) {
+        Log.d("member_numnum", String.valueOf(member_num));
+        Intent intent = new Intent();
+        intent.putExtra("user_number",member_num);
+        setResult(RESULT_OK,intent);
+        finish();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,22 +83,24 @@ public class Othersinfo extends Activity {
 
         editSearch  = (EditText) findViewById(R.id.editSearch);
         listView    = (ListView) findViewById(R.id.listView);
+        filter_rank = (Button)findViewById(R.id.rank);
+
+        listView.setClickable(true);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                Log.d("HIKONNECT", "nickname: " + nicknames.get(pos));
-                Log.d("HIKONNECT", "memberNo: " + memberNos.get(pos));
-                // Intent intent = new Intent(Othersinfo.this,MapsActivity.class);
-                // intent.putExtra("fromother")
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                resultData(arraylist.get(i).getNumber());
             }
         });
 
-        // 리스트를 생성한다.
-        list = new ArrayList<>();
-        nicknames = new ArrayList<>();
-        memberNos = new ArrayList<>();
 
-        // 검색에 사용할 데이터을 미리 저장한다.
+
+        // 리스트를 생성한다.
+        list = new ArrayList<String>();
+        nicknamelist = new ArrayList<String>();
+        arraylist = new ArrayList<NicknameNumber>();
+
+//         검색에 사용할 데이터을 미리 저장한다.
         Intent intent = getIntent();
         my_num = intent.getIntExtra("my_num",0);
         contentValues.put("member_no",my_num);
@@ -78,7 +110,6 @@ public class Othersinfo extends Activity {
             public void run() {
                 result = hrc.request(Environment.LARAVEL_HIKONNECT_IP+"/api/getScheduleMembers",contentValues);
                 Log.i("result", result);
-
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
@@ -94,9 +125,9 @@ public class Othersinfo extends Activity {
                         member_num = jsonObject.getInt("member_no");
 
                         settingList(nickname);
-                        nicknames.add(nickname);
-                        memberNos.add(member_num);
-                        list.add(nickname);
+                        NicknameNumber nnn = new NicknameNumber(nickname,member_num);
+                        arraylist.add(nnn);
+                        nicknamelist.add(nickname);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -143,19 +174,19 @@ public class Othersinfo extends Activity {
 
         // 문자 입력이 없을때는 모든 데이터를 보여준다.
         if (charText.length() == 0) {
-            list.addAll(nicknames);
+            list.addAll(nicknamelist);
         }
         // 문자 입력을 할때..
         else
         {
             // 리스트의 모든 데이터를 검색한다.
-            for(int i = 0; i < nicknames.size(); i++)
+            for(int i = 0;i < nicknamelist.size(); i++)
             {
                 // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
-                if (nicknames.get(i).toLowerCase().contains(charText))
+                if (nicknamelist.get(i).toLowerCase().contains(charText))
                 {
                     // 검색된 데이터를 리스트에 추가한다.
-                    list.add(nicknames.get(i));
+                    list.add(nicknamelist.get(i));
                 }
             }
         }

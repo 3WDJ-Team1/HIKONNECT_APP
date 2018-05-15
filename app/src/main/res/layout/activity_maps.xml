@@ -1,232 +1,194 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />
-
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <Button
             android:id="@+id/showRecordList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="100dp"
             android:text="녹음 보기" />
 
-        <LinearLayout
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#33000000"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="고도"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/altitude_txtview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="1234"
-                android:textSize="10sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="현재 속도"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/avg_speed_txtview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="1234"
-                android:textSize="10sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="순위"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/rank_txtview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="1234"
-                android:textSize="10sp" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/imagelayout"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:layout_gravity="center_vertical|center"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/colorPrimary"
-                android:gravity="center_vertical|center"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:visibility="invisible">
 
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="결과창"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="24dp"
+                android:layout_height="350dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:id="@+id/imagelayout"
+                android:background="@color/colorPrimary"
+                android:layout_gravity="center_vertical|center"
+                android:gravity="center_vertical|center"
+                android:padding="16dp">
                 <EditText
-                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:id="@+id/title"
                     android:hint="제목 입력"
-                    android:textColorHint="@color/grey_500" />
+                    android:layout_weight="1"
+                    android:textColorHint="@color/grey_500"/>
 
                 <ImageView
-                    android:id="@+id/l_memo_img"
+                    android:id="@+id/imageView1"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:scaleType="fitCenter" />
-
+                    android:scaleType="fitCenter"/>
                 <EditText
-                    android:id="@+id/l_memo_contnets_edttxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/content"
                     android:layout_weight="2"
                     android:hint="내용"
-                    android:textColorHint="@color/grey_500" />
-
+                    android:textColorHint="@color/grey_500"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
                     <Button
-                        android:id="@+id/loc_memo_store_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="전송"
+                        android:id="@+id/post_btn"
                         android:layout_weight="1"
-                        android:backgroundTint="@color/cyan_500"
-                        android:text="전송" />
-
+                        android:backgroundTint="@color/cyan_500"/>
                     <Button
-                        android:id="@+id/l_memo_cancel_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="취소" />
+                        android:text="취소"
+                        android:id="@+id/cancel"
+                        android:layout_weight="1"/>
                 </LinearLayout>
             </LinearLayout>
-
             <Button
-                android:id="@+id/change_h_status_btn"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginLeft="130dp"
-                android:backgroundTint="@color/cyan_600"
                 android:text="등산시작"
-                android:visibility="invisible" />
-        </LinearLayout>
+                android:visibility="invisible"
+                android:id="@+id/status"
+                android:layout_marginLeft="130dp"
+                android:layout_marginBottom="30dp"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/myinfo_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_person_black_36dp"
+            android:layout_gravity="bottom|center"
+            android:layout_marginRight="87dp"
+            android:layout_marginBottom="30dp"
+            fab:menu_fab_size="normal"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/white"
+            />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/user_info_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_people_black_36dp"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="30dp"
+            fab:menu_fab_size="normal"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/white"
+            />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/gpsbutton"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_gps_fixed_black_36dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="8dp"
+            fab:menu_fab_size="normal"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/white"
+            fab:fab_colorRipple="@color/white"
+            />
+
 
         <com.github.clans.fab.FloatingActionMenu
-            android:id="@+id/write_l_memo_fabmenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="210dp"
-            fab:menu_colorNormal="@color/colorPrimary"
-            fab:menu_colorPressed="@color/colorPrimary"
-            fab:menu_colorRipple="@color/colorPrimary"
-            fab:menu_fab_size="normal"
-            fab:menu_icon="@drawable/ic_bookmark_black_36dp">
-
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/l_memo_with_pic_fabbtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_add_a_photo_black_36dp"
-                fab:fab_colorNormal="@color/colorPrimary"
-                fab:fab_colorPressed="@color/colorPrimary"
-                fab:fab_colorRipple="@color/colorPrimary"
-                fab:fab_size="mini" />
-
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/l_memo_without_pic_fabbtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_create_black_36dp"
-                fab:fab_colorNormal="@color/colorPrimary"
-                fab:fab_colorPressed="@color/colorPrimary"
-                fab:fab_colorRipple="@color/colorPrimary"
-                fab:fab_size="mini" />
-        </com.github.clans.fab.FloatingActionMenu>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/update_loc_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="140dp"
-            android:src="@drawable/ic_gps_fixed_black_36dp"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_colorPressed="@color/colorPrimary"
-            fab:fab_colorRipple="@color/colorPrimary"
-            fab:menu_fab_size="normal" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/show_member_list_btn"
+            android:id="@+id/fabmenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="70dp"
-            android:src="@drawable/ic_people_black_36dp"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_colorPressed="@color/colorPrimary"
-            fab:fab_colorRipple="@color/colorPrimary"
-            fab:menu_fab_size="normal" />
+            fab:menu_icon="@drawable/ic_bookmark_black_36dp"
+            fab:menu_fab_size="normal"
+            fab:menu_colorNormal="@color/white"
+            fab:menu_colorPressed="@color/white"
+            fab:menu_colorRipple="@color/white"
+            >
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/show_my_info_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="8dp"
-            android:src="@drawable/ic_person_black_36dp"
-            fab:fab_colorNormal="@color/colorPrimary"
-            fab:fab_colorPressed="@color/colorPrimary"
-            fab:fab_colorRipple="@color/colorPrimary"
-            fab:menu_fab_size="normal" />
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_add_a_photo_black_36dp"
+                fab:fab_size="mini"
+                fab:fab_colorNormal="@color/white"
+                fab:fab_colorPressed="@color/white"
+                fab:fab_colorRipple="@color/white"
+
+
+                />
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_create_black_36dp"
+                fab:fab_size="mini"
+                fab:fab_colorNormal="@color/white"
+                fab:fab_colorPressed="@color/white"
+                fab:fab_colorRipple="@color/white"
+                />
+        </com.github.clans.fab.FloatingActionMenu>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/sendRecordData"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@android:drawable/ic_btn_speak_now"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="16dp"
-            android:src="@android:drawable/ic_btn_speak_now"
+            fab:menu_fab_size="normal"
             fab:fab_colorNormal="@color/red_500"
             fab:fab_colorPressed="@color/grey_300"
             fab:fab_colorRipple="@color/white"
-            fab:menu_fab_size="normal" />
+            />
     </FrameLayout>
 
 

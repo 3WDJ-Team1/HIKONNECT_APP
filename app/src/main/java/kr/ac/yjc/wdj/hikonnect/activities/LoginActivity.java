@@ -65,6 +65,7 @@ public class LoginActivity extends Activity {
                                 @Override
                                 public void run() {
                                     tv.setText("로그인 성공");
+                                    progressBar.setVisibility(View.VISIBLE);
                                 }
                             });
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
