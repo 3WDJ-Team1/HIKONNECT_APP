@@ -44,7 +44,7 @@ public class HikingRecord extends Activity  {
 
         //UI 객체생성
         txtText     = (TextView)findViewById(R.id.txtText);
-        rank        =  (TextView)findViewById(R.id.rank);
+        rank        = (TextView)findViewById(R.id.rank);
         txtText2    = (TextView)findViewById(R.id.txtText2);
         txtText3    = (TextView)findViewById(R.id.txtText3);
         txtText4    = (TextView)findViewById(R.id.txtText4);
