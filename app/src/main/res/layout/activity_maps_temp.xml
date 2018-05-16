@@ -250,7 +250,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/title"
+                android:id="@+id/l_memo_title"
                 android:hint="제목 입력"
                 android:layout_weight="1"
                 android:textColorHint="@color/grey_500"/>
@@ -294,7 +294,7 @@
 
     <Button
         android:text="등산시작"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:id="@+id/change_h_status_btn"
         android:layout_marginStart="72dp"
         android:layout_marginEnd="72dp"
@@ -376,7 +376,22 @@
         android:alpha="0.7"
         />
 
-    <com.github.clans.fab.FloatingActionMenu
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/write_location_memo_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_bookmark_black_36dp"
+        android:layout_marginBottom="70dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/drawer"
+        android:alpha="0.7"
+        />
+    <!--위치 메모 버튼 수정-->
+    <!--<com.github.clans.fab.FloatingActionMenu
         android:id="@+id/write_l_memo_fabmenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -413,7 +428,7 @@
             fab:fab_colorRipple="@color/colorPrimary"
             android:alpha="0.7"
             />
-    </com.github.clans.fab.FloatingActionMenu>
+    </com.github.clans.fab.FloatingActionMenu>-->
 
 
 </RelativeLayout>

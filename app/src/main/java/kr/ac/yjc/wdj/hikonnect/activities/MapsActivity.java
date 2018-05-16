@@ -270,9 +270,9 @@ public class MapsActivity extends FragmentActivity implements
         btnWriteCancelLocMemo   = (Button)                  findViewById(R.id.l_memo_cancel_btn);
         btnChangeHikingState    = (Button)                  findViewById(R.id.change_h_status_btn);
         btnWriteReqLocMemo      = (Button)                  findViewById(R.id.loc_memo_store_btn);
-        fabMenuWriteLocMemo     = (FloatingActionMenu)      findViewById(R.id.write_l_memo_fabmenu);
-        fabBtnLocMemoPic        = (FloatingActionButton)    findViewById(R.id.l_memo_with_pic_fabbtn);
-        fabBtnLocMemoNoPic      = (FloatingActionButton)    findViewById(R.id.l_memo_without_pic_fabbtn);
+//        fabMenuWriteLocMemo     = (FloatingActionMenu)      findViewById(R.id.write_l_memo_fabmenu);
+//        fabBtnLocMemoPic        = (FloatingActionButton)    findViewById(R.id.l_memo_with_pic_fabbtn);
+//        fabBtnLocMemoNoPic      = (FloatingActionButton)    findViewById(R.id.l_memo_without_pic_fabbtn);
         btnUpdateLocation       = (FloatingActionButton)    findViewById(R.id.update_loc_btn);
         btnShowUserInfo         = (FloatingActionButton)    findViewById(R.id.show_member_list_btn);
         btnToRecordList         = (ImageButton)             findViewById(R.id.showRecordList);
@@ -858,7 +858,7 @@ public class MapsActivity extends FragmentActivity implements
                         break;
                 }
                 break;
-            case R.id.l_memo_with_pic_fabbtn:
+            /*case R.id.l_memo_with_pic_fabbtn:
                 fabMenuWriteLocMemo.close(true);
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapsActivity.this);
 
@@ -895,8 +895,8 @@ public class MapsActivity extends FragmentActivity implements
                     }
                 });
                 alertDialog.show();
-                break;
-            case R.id.l_memo_without_pic_fabbtn:
+                break;*/
+            /*case R.id.l_memo_without_pic_fabbtn:
                 fabMenuWriteLocMemo.close(true);
                 AlertDialog.Builder ad = new AlertDialog.Builder(MapsActivity.this);
 
@@ -924,7 +924,7 @@ public class MapsActivity extends FragmentActivity implements
                 Intent intent = new Intent(MapsActivity.this, Othersinfo.class);
                 intent.putExtra("my_num", myMemberNo);
                 startActivity(intent);
-                break;
+                break;*/
             /*case R.id.show_my_info_btn:
             Intent intent1 = new Intent(MapsActivity.this, HikingRecord.class);
                 intent1.putExtra("member_no", myMemberNo);
