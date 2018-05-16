@@ -424,13 +424,15 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                     final String reqUrl = urlBuilder.build().toString();
 
+                    String memberNo    = String.valueOf(2);
                     String latitude     = String.valueOf(myCurrentLocation.getLatitude());
                     String longitude    = String.valueOf(myCurrentLocation.getLongitude());
                     String velocity     = String.valueOf(myCurrentLocation.getSpeed());
+                    String distance     = String.valueOf(hikedDistance);
 
                     RequestBody requestBody = new FormBody.Builder()
-                            .add("member_no", "2")
-                            .add("distance", "20")
+                            .add("member_no", memberNo)
+                            .add("distance", distance)
                             .add("latitude", latitude)
                             .add("longitude", longitude)
                             .add("velocity", velocity)
