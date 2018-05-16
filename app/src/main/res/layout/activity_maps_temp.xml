@@ -110,7 +110,7 @@
                         android:id="@+id/distance"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="1.7"
+                        android:text="0.0"
                         android:textAlignment="center"
                         android:textColor="@color/cyan_500"
                         android:textSize="20dp"
@@ -157,7 +157,7 @@
                         android:id="@+id/arriveWhen"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="2.3"
+                        android:text="0.0"
                         android:textAlignment="center"
                         android:textColor="@color/light_green_800"
                         android:textSize="20dp"
@@ -294,7 +294,7 @@
 
     <Button
         android:text="등산시작"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:id="@+id/change_h_status_btn"
         android:layout_marginStart="72dp"
         android:layout_marginEnd="72dp"
@@ -345,7 +345,7 @@
             android:textColor="@color/white"
             android:textSize="18dp"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
 
     <com.github.clans.fab.FloatingActionButton
@@ -387,7 +387,7 @@
         fab:fab_colorPressed="@color/colorPrimary"
         fab:fab_colorRipple="@color/colorPrimary"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/drawer"
+        android:layout_below="@+id/show_member_list_btn"
         android:alpha="0.7"
         />
     <!--위치 메모 버튼 수정-->

@@ -1,5 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,8 +32,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -45,6 +49,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
@@ -153,6 +158,7 @@ class HikingField {
         routes.add(latLng);
     }
 }
+
 public class MapsActivityTemp extends FragmentActivity implements
         OnMapReadyCallback,
         OnMapClickListener,
@@ -160,6 +166,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     private final String                TAG = "HIKONNECT";
 
+    private int                         myMemberNo = 1;
     // 지도, 위치.
     private GoogleMap                   gMap;
     private Location                    myCurrentLocation;
@@ -171,13 +178,14 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     // 등산 데이터.
     private ArrayList<HikingField>      hikingFields        = new ArrayList<>();
+    private int                         hikingState         = 0;
     private int                         currentFID          = 0;
     private int                         currentPointInFID   = 0;
 
     private LinkedList<LatLng>          allHikingRoute = new LinkedList<>();
     private HashMap<Integer, MapItem>   mapItems = new HashMap<>();
     private ArrayList<MarkerOptions>    markerOptions = new ArrayList<>();
-    private ArrayList<Marker>           markers = new ArrayList<>();
+    private ArrayList<Marker>           markers;
     private ClusterManager<MapItem>     myClusterManager;
     private Marker                      myMarker;
 
@@ -212,10 +220,36 @@ public class MapsActivityTemp extends FragmentActivity implements
     private LinearLayout    drawerLayout;       // 무전 버튼을 넣어둘 레이아웃
     private Button          btnSendRadio;       // 무전 시작 버튼
     private ImageButton     showRecordList;     // 음성 녹음 리스트.
+
+    // [1.7] 등산 상태 변경 버튼
+    private Button          btnChangeHikingState;   // 등산 시작, 등산 끝 버튼.
+
     // [3] 상태 저장 변수.
     private boolean     isdataBoxVisible        = false;    // 현재 데이터 박스 상태
     private boolean     isRecBtnVisible         = false;    // 현재 녹음 버튼 상태
     private boolean     isRequestingLocation    = false;    // 위치 관리자 활성화 상태.
+
+    private class MapItemRenderer extends DefaultClusterRenderer<MapItem> {
+
+        public MapItemRenderer() {
+            super(getApplicationContext(), gMap, myClusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MapItem item, MarkerOptions markerOptions) {
+
+            if (item instanceof LocationMemo) {
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            }
+            if (item instanceof Member) {
+                if (((Member) item).getMember_no() == myMemberNo) {
+                    markerOptions.visible(false);
+                } else {
+                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                }
+            }
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -239,7 +273,6 @@ public class MapsActivityTemp extends FragmentActivity implements
         initializeUI();
     }
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
@@ -248,23 +281,31 @@ public class MapsActivityTemp extends FragmentActivity implements
         mapUiSettings.setMapToolbarEnabled(false);
 
         try {
-            myMarker = gMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(0, 0))
-                    .zIndex(1.0f)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
             googleMap.setOnMapClickListener(this);
 
             myClusterManager = new ClusterManager<>(this, gMap);
+            myClusterManager.setRenderer(new MapItemRenderer());
             myClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MapItem>() {
                 @Override
                 public boolean onClusterItemClick(MapItem mapItem) {
-                    Log.d(TAG, "onClusterClick: CLICKED!");
-                    if (gMap.getCameraPosition().zoom <= 25)
-                        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mapItem.getPosition(), gMap.getCameraPosition().zoom + 1));
+                    if (mapItem instanceof LocationMemo) {
+                        Log.d(TAG, "onClusterItemClick: no: " + ((LocationMemo) mapItem).getNo());
+                    }
+                    if (mapItem instanceof Member) {
+                        Log.d(TAG, "onClusterItemClick: member_no: " + ((Member) mapItem).getMember_no());
+                    }
                     return false;
                 }
             });
+
+            gMap.setOnMarkerClickListener(myClusterManager);
+            gMap.setOnMapClickListener(this);
             gMap.setOnCameraIdleListener(myClusterManager);
+
+            myMarker = gMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(0, 0))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.baseline_fiber_manual_record_black_18dp))
+                    .zIndex(1.0f));
 
             requestHikingRoute();
 
@@ -277,12 +318,23 @@ public class MapsActivityTemp extends FragmentActivity implements
                     paintMakers();
                     updateHikedDistance();
 
+                    markers = new ArrayList<>(myClusterManager.getMarkerCollection().getMarkers());
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {
+                                if (getDisToStartPoint() < 50) {
+                                    btnChangeHikingState.setVisibility(View.VISIBLE);
+                                } else {
+                                    btnChangeHikingState.setVisibility(View.GONE);
+                                }
+
                                 myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
-                                tvDistance.setText(String.valueOf(hikedDistance));
+
+                                if (hikingState != 0) {
+                                    tvDistance.setText(String.valueOf(hikedDistance));
+                                }
                             } catch (Exception e) {
                                 Log.e(TAG, "timerTask: ", e);
                             }
@@ -302,7 +354,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     @Override
     public void onMapClick(LatLng latLng) {
         if (isdataBoxVisible) {
-            userDataBox.setVisibility(View.INVISIBLE);
+            userDataBox.setVisibility(View.GONE);
             isdataBoxVisible = false;
         } else {
             userDataBox.setVisibility(View.VISIBLE);
@@ -424,11 +476,18 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                     final String reqUrl = urlBuilder.build().toString();
 
-                    String memberNo    = String.valueOf(2);
-                    String latitude     = String.valueOf(myCurrentLocation.getLatitude());
-                    String longitude    = String.valueOf(myCurrentLocation.getLongitude());
-                    String velocity     = String.valueOf(myCurrentLocation.getSpeed());
-                    String distance     = String.valueOf(hikedDistance);
+                    String memberNo     = String.valueOf(myMemberNo);
+                    String latitude     = String.valueOf(0);
+                    String longitude    = String.valueOf(0);
+                    String velocity     = String.valueOf(0);
+                    String distance     = String.valueOf(0);
+
+                    if (hikingState != 0) {
+                        latitude = String.valueOf(myCurrentLocation.getLatitude());
+                        longitude = String.valueOf(myCurrentLocation.getLongitude());
+                        velocity = String.valueOf(myCurrentLocation.getSpeed());
+                        distance = String.valueOf(hikedDistance);
+                    }
 
                     RequestBody requestBody = new FormBody.Builder()
                             .add("member_no", memberNo)
@@ -453,6 +512,8 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                 JSONObject result = (JSONObject) parser.parse(response.body().string());
 
+                                Log.i(TAG, "onResponse: " + result);
+
                                 JSONArray locationMemos = (JSONArray) result.get("location_memos");
                                 JSONArray members = (JSONArray) result.get("members");
 
@@ -468,9 +529,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                                             .position(locationMemo.getPosition());
                                 }
                                 for (Object idx : members) {
-                                    double latitude = Double.valueOf(((JSONObject) idx).get("latitude").toString());
-                                    double longitude = Double.valueOf(((JSONObject) idx).get("longitude").toString());
-                                    int memberNo = Integer.valueOf(((JSONObject) idx).get("member_no").toString());
+                                    double latitude     = Double.valueOf(((JSONObject) idx).get("latitude").toString());
+                                    double longitude    = Double.valueOf(((JSONObject) idx).get("longitude").toString());
+                                    int memberNo        = Integer.valueOf(((JSONObject) idx).get("member_no").toString());
 
                                     Member member = new Member(new LatLng(latitude, longitude), memberNo);
 
@@ -517,6 +578,22 @@ public class MapsActivityTemp extends FragmentActivity implements
         } catch (Exception e) {
             Log.e(TAG, "updateCurrentFID: ", e);
         }
+    }
+
+    private double getDisToStartPoint() {
+        try {
+           LatLng startPoint = allHikingRoute.get(0);
+
+           Location startPointLoc = new Location("startPoint");
+           startPointLoc.setLatitude(startPoint.latitude);
+           startPointLoc.setLongitude(startPoint.longitude);
+
+           return startPointLoc.distanceTo(myCurrentLocation);
+
+        } catch (Exception e) {
+
+        }
+        return -1.0d;
     }
 
     private void updateHikedDistance() {
@@ -586,6 +663,9 @@ public class MapsActivityTemp extends FragmentActivity implements
         btnSendRadio    = (Button) findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
         showRecordList  = (ImageButton) findViewById(R.id.showRecordList);
 
+        // [1.6] 등산 상태 변경 버튼
+        btnChangeHikingState = (Button) findViewById(R.id.change_h_status_btn);
+
         // [2] 이벤트 리스너 등록
         // [2.1] 위치 메모 작성 버튼.
         fabWriteLocationMemo.setOnClickListener(new View.OnClickListener() {
@@ -631,7 +711,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 Intent groupMemberList = new Intent(MapsActivityTemp.this, Othersinfo.class);
-                groupMemberList.putExtra("member_no", 1);
+                groupMemberList.putExtra("member_no", myMemberNo);
                 startActivity(groupMemberList);
             }
         });
@@ -640,6 +720,27 @@ public class MapsActivityTemp extends FragmentActivity implements
             public void onClick(View v) {
                 Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
                 startActivity(recordIntent);
+            }
+        });
+        // [2.4] 등산 상태 변경 버튼
+        btnChangeHikingState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (hikingState) {
+                    case 0:     // 등산 전
+                        hikingState = 1;
+                        btnChangeHikingState.setVisibility(View.GONE);
+                        btnChangeHikingState.setText("산행 종료");
+                        break;
+                    case 1:     // 등산 중
+                        hikingState = 2;
+                        btnChangeHikingState.setVisibility(View.GONE);
+                        break;
+                    case 2:     // 등산 후
+                        hikingState = 3;
+                        btnChangeHikingState.setVisibility(View.GONE);
+                        break;
+                }
             }
         });
 
