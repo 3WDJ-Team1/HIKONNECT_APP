@@ -35,6 +35,7 @@
         android:alpha="0.8"
         android:visibility="gone"
         >
+        <!--TODO 여기다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 
         <LinearLayout
             android:layout_width="match_parent"

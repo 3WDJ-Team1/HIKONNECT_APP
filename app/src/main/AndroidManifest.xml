@@ -69,13 +69,18 @@
         <activity android:name=".activities.SplashActivity"
                   android:theme="@style/SplashTheme"
                   android:screenOrientation="portrait">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+        <activity android:name=".RecordListActivity" />
+        <activity android:name=".AfterHikingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecordListActivity" />
-        <activity android:name=".AfterHikingActivity" />
         <activity android:name=".activities.MainActivity"
                   android:theme="@style/AppTheme"/>
         <activity android:name=".activities.groups.GroupActivity"/>
@@ -86,7 +91,6 @@
         <activity android:name=".activities.schedule_detail.ScheduleDetailActivity">
 
         </activity>
-
         <!--Activities End-->
 
         <!-- Services -->
