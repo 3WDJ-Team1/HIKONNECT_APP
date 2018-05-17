@@ -185,10 +185,10 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
                             "\"input\":\""  + input     + "\"," +
                             "\"page\":"     + page      +
                             "}";
-                    Log.d("request", jsonString);
+                    Log.d("request", jsonString + "\n to: " + Environment.LARAVEL_HIKONNECT_IP + "/api/groupList");
                     // 서버에 요청
                     result = requestPost(
-                            Environment.LARAVEL_SOL_SERVER + "/groupList",
+                            Environment.LARAVEL_HIKONNECT_IP + "/api/groupList",
                             jsonString
                     );
                 } catch (IOException ie) {
@@ -211,11 +211,10 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
                         listItems.add(new ListViewItem(
                                 jsonObject.getString("uuid"),
                                 jsonObject.getString("title"),
-                                /*jsonObject.getString("leader")*/"test",
+                                jsonObject.getString("nickname"),
                                 jsonObject.getString("content"),
                                 getBaseContext()
                         ));
-//                        listItems.add(new ListViewItem(jsonObject.getString("title"), getBaseContext()));
                     }
 
                     list_adapter.notifyDataSetChanged();

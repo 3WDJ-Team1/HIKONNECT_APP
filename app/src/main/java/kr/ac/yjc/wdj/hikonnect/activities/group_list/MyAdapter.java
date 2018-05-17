@@ -21,6 +21,7 @@ import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
+import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -32,7 +33,8 @@ import okhttp3.Response;
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private List<ListViewItem> listItems;
+    private List<ListViewItem>  listItems;
+    private String              status;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MyAdapter(List<ListViewItem> listItems) {
@@ -64,14 +66,59 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 // 부모 액티비티의 Context 객체 받아오기
-                Context parent = listItems.get(position).getParent();
+                final Context parent = listItem.getParent();
 
-                Intent intent = new Intent(parent, TabsActivity.class);
-                // 그룹 아이디 값 보내기
-                intent.putExtra("groupId", listItem.getGroupId());
+                // 그룹 참가 여부 ( 불참, 참가자, 주최자 ) 확인
+                new AsyncTask<String, Integer, String>() {
 
-                // 액티비티 전환
-                parent.startActivity(intent);
+                    @Override
+                    protected String doInBackground(String... params) {
+                        // http request (post)
+                        try {
+                            OkHttpClient client = new OkHttpClient();
+
+                            String dataJSONObj = "{" +
+                                    "\"userid\":\"" + params[1] + "\"," +
+                                    "\"uuid\":\"" + params[0] + "\"" +
+                                    "}";
+                            RequestBody body = RequestBody.create(Environment.JSON, dataJSONObj);
+
+                            Request request = new Request.Builder()
+                                    .url(Environment.LARAVEL_SOL_SERVER + "/checkMember")
+                                    .post(body)
+                                    .build();
+
+                            Response response = client.newCall(request).execute();
+
+                            return response.body().string();
+
+                        } catch (IOException ie) {
+                            ie.printStackTrace();
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        super.onPostExecute(s);
+                        Log.d("status", s);
+
+                        // status 초기화
+                        status = s;
+
+                        Intent intent = new Intent(parent, TabsActivity.class);
+                        // 그룹 아이디 값 보내기
+                        intent.putExtra("groupId", listItem.getGroupId());
+                        // 그룹 이름 보내기
+                        intent.putExtra("groupName", listItem.getHead());
+                        // 참여 상태 보내기
+                        intent.putExtra("status", status);
+
+                        // 액티비티 전환
+                        parent.startActivity(intent);
+
+                    }
+                }.execute(listItem.getGroupId(), UsersData.USER_ID);
             }
         });
 
@@ -113,6 +160,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     protected void onPostExecute(String s) {
                         super.onPostExecute(s);
                         holder.joinButton.setEnabled(false);
+                        holder.joinButton.setClickable(false);
                         Toast.makeText(listItem.getParent(), "참가신청 되었습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }.execute();
@@ -142,12 +190,22 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
 
-            textViewHead    = (TextView) itemView.findViewById(R.id.textViewHead);
-            textViewWriter  = (TextView) itemView.findViewById(R.id.tvWriter);
-            textViewContent = (TextView) itemView.findViewById(R.id.tvContent);
-            linearLayout    = (LinearLayout) itemView.findViewById(R.id.linearLayout);
-            joinButton      = (Button) itemView.findViewById(R.id.joinButton);
+            textViewHead    = (TextView)        itemView.findViewById(R.id.textViewHead);
+            textViewWriter  = (TextView)        itemView.findViewById(R.id.tvWriter);
+            textViewContent = (TextView)        itemView.findViewById(R.id.tvContent);
+            linearLayout    = (LinearLayout)    itemView.findViewById(R.id.linearLayout);
+            joinButton      = (Button)          itemView.findViewById(R.id.joinButton);
         }
+    }
+
+    /**
+     * 사용자가 현재 그룹에 참가하고 있는 지 여부를 isJoined 에 넣음
+     * @param groupId   그룹 아이디
+     * @param userId    해당 사용자의 아이디
+     */
+    private void isUserJoined(final String groupId, String userId) {
+
+
     }
 
 

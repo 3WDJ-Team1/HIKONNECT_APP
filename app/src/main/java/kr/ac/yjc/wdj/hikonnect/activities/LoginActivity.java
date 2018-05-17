@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
 
                             // 리퀘스트 객체 생성
                             Request request = new Request.Builder()
-                                    .url(Environment.LARAVEL_SOL_SERVER + "/loginprocess")
+                                    .url(Environment.LARAVEL_HIKONNECT_IP + "/api/loginprocess")
                                     .post(body)
                                     .build();
 
@@ -90,8 +90,10 @@ public class LoginActivity extends Activity {
 
                             String resultJson = result.body().string();
 
+                            Log.d("result", resultJson);
+
                             // 결과 값이 "false" --> 아이디 없음
-                            if (resultJson == "false") {
+                            if (resultJson.equals("\"false\"")) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -99,7 +101,7 @@ public class LoginActivity extends Activity {
                                         progressBar.setVisibility(View.GONE);
                                     }
                                 });
-                            } else if (resultJson == "pwfalse") {
+                            } else if (resultJson.equals("\"pwfalse\"")) {
                                 // 결과 값이 "pwfalse" --> 비밀번호 틀림
                                 runOnUiThread(new Runnable() {
                                     @Override

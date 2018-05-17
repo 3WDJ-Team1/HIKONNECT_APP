@@ -33,7 +33,7 @@ import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
  */
 
 public class ScheduleActivity extends AppCompatActivity {
-    GHttpRequestConnection hrc = new GHttpRequestConnection();
+   /* GHttpRequestConnection hrc = new GHttpRequestConnection();
     String result;
     Handler handler;
     ScheduleAdapter list_adapter;
@@ -59,7 +59,7 @@ public class ScheduleActivity extends AppCompatActivity {
         HashMap<String, String> userId = session.getUserId();
         id = userId.get(SessionManager.KEY_ID);
 
-        /*toolbar = (Toolbar) findViewById(R.id.toolbar);
+        *//*toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(toolbar);
 
@@ -75,7 +75,7 @@ public class ScheduleActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
 
         HashMap<String, String> userId = session.getUserId();
-        id = userId.get(SessionManager.KEY_ID);*/
+        id = userId.get(SessionManager.KEY_ID);*//*
 
         Intent intent = getIntent();
         groupUuid = intent.getStringExtra("groupUuid");
@@ -90,7 +90,7 @@ public class ScheduleActivity extends AppCompatActivity {
 
         loadRecyclerViewData();
 
-        /*int ITEM_SIZE = 5;
+        *//*int ITEM_SIZE = 5;
 
         List<ScheduleListItem> items = new ArrayList<>();
         ScheduleListItem[] item = new ScheduleListItem[ITEM_SIZE];
@@ -104,7 +104,7 @@ public class ScheduleActivity extends AppCompatActivity {
             items.add(item[i]);
         }
 
-        recyclerView.setAdapter(new ScheduleAdapter(getApplicationContext(), items));*/
+        recyclerView.setAdapter(new ScheduleAdapter(getApplicationContext(), items));*//*
     }
 
     public void loadRecyclerViewData() {
@@ -142,12 +142,12 @@ public class ScheduleActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        *//*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }*/
+        }*//*
         super.onBackPressed();
     }
 
@@ -161,7 +161,7 @@ public class ScheduleActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
+*/
     /*@Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
