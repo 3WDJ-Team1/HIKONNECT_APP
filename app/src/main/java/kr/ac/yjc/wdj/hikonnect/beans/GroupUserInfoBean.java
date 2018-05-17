@@ -26,6 +26,31 @@ public class GroupUserInfoBean extends Bean {
 
     private Context baseContext;
 
+
+    /**
+     * 스케줄 내부 멤버 볼 때 사용할 생성자
+     * @param userId        유저 아이디
+     * @param nickname      유저 닉네임
+     * @param gender        성별
+     * @param age_group     연령대
+     * @param scope         공개범위
+     * @param phone         휴대전화 번호
+     * @param grade         등급
+     */
+    public GroupUserInfoBean(
+                                String  userId,
+                                String  nickname,
+                                int     gender,
+                                int     age_group,
+                                int     scope,
+                                String  phone,
+                                String  grade,
+                                Context baseContext
+                            )
+    {
+        this(userId, nickname, null, grade, phone, null, gender, age_group, scope, baseContext);
+    }
+
     /**
      * 초기화
      * @param userId    String  유저 아이디

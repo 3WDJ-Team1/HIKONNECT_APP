@@ -188,7 +188,7 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
                     Log.d("request", jsonString + "\n to: " + Environment.LARAVEL_HIKONNECT_IP + "/api/groupList");
                     // 서버에 요청
                     result = requestPost(
-                            Environment.LARAVEL_HIKONNECT_IP + "/api/groupList",
+                            Environment.LARAVEL_SOL_SERVER + "/groupList",
                             jsonString
                     );
                 } catch (IOException ie) {

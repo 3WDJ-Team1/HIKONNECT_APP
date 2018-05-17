@@ -29,6 +29,7 @@ import devlight.io.library.ntb.NavigationTabBar;
 import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
+import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
 import kr.ac.yjc.wdj.hikonnect.beans.Bean;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
@@ -60,10 +61,11 @@ public class TabsActivity extends AppCompatActivity {
     private static RecycleAdapterForGDetail     adapterNotice,      // rvNotice에 값을 연결할 어댑터
                                                 adapterMember,      // rvMember에 값을 연결할 어댑터
                                                 adapterSchedule;    // rvPlan 에 값을 연결할 어댑터
+    private MemberListAdapter                   adapterMemberJoined;// rvMemberJoined에 값을 연결할 어댑터
     private ArrayList<Bean>                     dataListNotice,     // notice URL 요청으로 받아온 값을 담아둘 곳
                                                 dataListMember,     // member URL 요청으로 받아온 값을 담아둘 곳
-                                                dataListSchedule,   // schedule URL 요청으로 받아온 값을 담아둘 곳
-                                                dataListJoinedMember;
+                                                dataListSchedule;   // schedule URL 요청으로 받아온 값을 담아둘 곳
+    private ArrayList<GroupUserInfoBean>        dataListJoinedMember;
     // 데이터 담아둘 변수
     private String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
     private int                 firstIndex;         // 요청 공지사항 데이터 시작 인덱스
@@ -75,9 +77,6 @@ public class TabsActivity extends AppCompatActivity {
     private boolean     isScrolling;                                // 현재 스크롤 되고 있는지 확인
     private int         currentItems, totalItems, scrollOutItems;   // 현재 스크롤 위치 파악하기 위한 변수
 
-    // 상수
-    private final int   ACCEPTED        = 1;
-    private final int   NOT_ACCEPTED    = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -104,7 +103,8 @@ public class TabsActivity extends AppCompatActivity {
         toolbarLayout       = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
         adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
         adapterSchedule     = new RecycleAdapterForGDetail(R.layout.schedule_item_cardview_, dataListSchedule);
-        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember, dataListJoinedMember, status);
+        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember);
+        adapterMemberJoined = new MemberListAdapter(R.layout.member_list_schedule, dataListJoinedMember, status);
 
         // 툴바에 그룹 이름 넣기
         toolbarLayout.setTitle(intent.getStringExtra("groupName"));
@@ -119,6 +119,9 @@ public class TabsActivity extends AppCompatActivity {
 
         // 공지사항 리스트 받아오기
         datafetchForNotice(groupId, firstIndex);
+
+        // 참여자 값 받기
+        datafetchForMember(groupId);
 
         setListenerToFloatingButton();
     }
@@ -273,15 +276,20 @@ public class TabsActivity extends AppCompatActivity {
                     // 그룹 멤버 리스트
                     case 2:
                         view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_members, null, false);
-                        RecyclerView rvMember = (RecyclerView) view.findViewById(R.id.groupMemberList);
+                        RecyclerView rvMember       = (RecyclerView) view.findViewById(R.id.groupMemberList);
+                        RecyclerView rvMemberJoined = (RecyclerView) view.findViewById(R.id.groupMemberListJoined);
 
-                        rvMember.setAdapter(adapterMember);
+                        if (status.equals("owner")) {
+                            rvMember.setAdapter(adapterMember);
+                            rvMember.setHasFixedSize(true);
+                            rvMember.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
+                        } else {
+                            rvMember.setVisibility(View.GONE);
+                        }
 
-                        rvMember.setHasFixedSize(true);
-                        rvMember.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
-
-                        // 참여자 값 받기
-                        datafetchForMember(groupId);
+                        rvMemberJoined.setAdapter(adapterMemberJoined);
+                        rvMemberJoined.setHasFixedSize(true);
+                        rvMemberJoined.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
                         container.addView(view);
                         break;
@@ -421,6 +429,8 @@ public class TabsActivity extends AppCompatActivity {
                             .url(Environment.LARAVEL_SOL_SERVER + "/schedule/" + groupId)
                             .build();
 
+                    Log.d("schedule", Environment.LARAVEL_SOL_SERVER + "/schedule/" + groupId);
+
                     // 결과 받아오기
                     Response response = client.newCall(request).execute();
 
@@ -436,10 +446,12 @@ public class TabsActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 Log.d("#schedule#", s);
                 try {
+
                     // JSON  파싱 후
                     JSONArray   jsonArray   = new JSONArray(s);
                     for (int i = 0 ; i < jsonArray.length() ; i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                         // 데이터 넣기
                         dataListSchedule.add(new GroupSchedule(
                                 jsonObject.getInt("no"),
@@ -448,7 +460,7 @@ public class TabsActivity extends AppCompatActivity {
                                 jsonObject.getString("leader"),
                                 jsonObject.getDouble("mnt_id"),
                                 jsonObject.getString("start_date"),
-                                jsonObject.getJSONArray("route"),
+                                new JSONArray(jsonObject.get("route").toString()),
                                 getBaseContext()
                         ));
                     }
@@ -539,7 +551,9 @@ public class TabsActivity extends AppCompatActivity {
                         );
                         dataListJoinedMember.add(userInfoBean);
                     }
+
                     adapterMember.notifyDataSetChanged();
+                    adapterMemberJoined.notifyDataSetChanged();
 
                     progressBar.setVisibility(View.GONE);
                 } catch (JSONException je) {

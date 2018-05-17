@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,9 +21,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,13 +54,15 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
     // 데이터 변수
     private String          status;             // 그룹의 손님/참가자/오너
-    private String          mntName;            // 산 이름
     private double          mntId;              // 산 코드
     private String          content;            // 내용
-    private String          route;              // 경로
     private String          startDate;          // 시작일
     private String          groupId;            // 그룹 아이디
     private int             scheduleNo;         // 스케줄 번호
+    private String          scheduleTitle;      // 스케줄 제목
+
+    private ArrayList<GroupUserInfoBean>    dataList;
+    private MemberListAdapter               adapter;
 
     // 상수
     private final int       PAGE_COUNT = 2;
@@ -65,6 +71,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_detail);
+
 
         initData();
         initUI();
@@ -96,22 +103,34 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
      */
     private void initData() {
         Intent intent = getIntent();
-        status      = intent.getStringExtra("status");
-        mntId       = intent.getDoubleExtra("mntId", 0);
-        content     = intent.getStringExtra("content");
-        route       = intent.getStringExtra("route");
-        startDate   = intent.getStringExtra("startDate");
-        groupId     = TabsActivity.groupId;
-        scheduleNo  = intent.getIntExtra("scheduleNo", 0);
+        status          = intent.getStringExtra("status");
+        mntId           = intent.getDoubleExtra("mntId", 0);
+        content         = intent.getStringExtra("content");
+        startDate       = intent.getStringExtra("startDate");
+        groupId         = TabsActivity.groupId;
+        scheduleNo      = intent.getIntExtra("scheduleNo", 0);
+        scheduleTitle   = intent.getStringExtra("scheduleTitle");
+        dataList        = new ArrayList<>();
+        adapter         = new MemberListAdapter(
+                R.layout.member_list_schedule,
+                dataList,
+                status
+        );
+
+        getScheduleMembers(groupId, scheduleNo);
     }
 
     /**
      * UI 초기화
      */
     private void initUI() {
+
         tvScheduleTitle = (TextView)    findViewById(R.id.scheduleTitle);
         viewPager       = (ViewPager)   findViewById(R.id.viewPager);
         tabLayout       = (TabLayout)   findViewById(R.id.tabs);
+
+        // 타이틀 지정
+        tvScheduleTitle.setText(scheduleTitle);
 
         viewPager.setAdapter(new PagerAdapter() {
             @Override
@@ -152,32 +171,27 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                         mapFragment.getMapAsync(ScheduleDetailActivity.this);
 
                         TextView mountainName   = (TextView) view.findViewById(R.id.mountainName);
-                        TextView routes         = (TextView) view.findViewById(R.id.routes);
                         TextView tvPlan         = (TextView) view.findViewById(R.id.tvPlan);
 
                         // TODO 산 이름으로
-                        mountainName.setText(mntId + "");
-                        routes.setText(route);
-                        tvPlan.setText(startDate + "\n" + content);
+                        getMntNameFromMntId(mntId, mountainName);
+                        tvPlan.setText(startDate + "\n\n" + content);
 
                         container.addView(view);
                         break;
                     // 스케줄에 참여한 인원 페이지
                     case 1:
                         // 멤버 리스트 페이지 내부 레이아웃 가져오기
-                        view = LayoutInflater.from(getBaseContext()).inflate(R.layout.schedule_page_member, container, false);
+                        view = LayoutInflater.from(getBaseContext()).inflate(R.layout.schedule_page_member, null, false);
 
                         // RecyclerView 찾아
                         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.scheduleMember);
 
-                        ArrayList<GroupUserInfoBean> dataList = new ArrayList<>();
-
                         // TODO 어댑터 붙이기
-                        recyclerView.setAdapter(new MemberListAdapter(
-                                R.layout.member_list_schedule,
-                                dataList,
-                                status
-                        ));
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.setHasFixedSize(true);
+
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
                         container.addView(view);
                         break;
@@ -196,11 +210,38 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
     /**
      * 산 코드로 산 이름 찾아서 반환
      * @param inputMntId    산 코드
-     * @return              산 이름
      */
-    private String getMntNameFromMntId(double inputMntId) {
+    private void getMntNameFromMntId(final double inputMntId, final TextView tv) {
         // http 리퀘스트로 산 이름 알아내기
-        return null;
+        new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .url(Environment.LARAVEL_SOL_SERVER + "/mnt_name/" + inputMntId)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                String string = s.replace('\"', ' ');
+                // 변수에 넣기
+                tv.setText(string);
+            }
+        }.execute();
     }
 
     /**
@@ -209,9 +250,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
      * @param scheduleNo    스케줄 번호
      * @return              스케줄 멤버 리스트
      */
-    private ArrayList<GroupUserInfoBean> getScheduleMembers(final String groupId, final int scheduleNo) {
-
-        ArrayList<GroupUserInfoBean> list = new ArrayList<>();
+    private void getScheduleMembers(final String groupId, final int scheduleNo) {
 
         // http 리퀘스트로 스케줄 멤버 리스트 만들기
         new AsyncTask<Void, Integer, String>() {
@@ -239,10 +278,32 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                 super.onPostExecute(s);
 
                 Log.d("SCHEDULE", s);
+                try {
 
+                    JSONArray jsonArray = new JSONArray(s);
 
+                    for (int i = 0; i < jsonArray.length(); i++) {
+
+                        JSONObject object = jsonArray.getJSONObject(i);
+
+                        dataList.add(new GroupUserInfoBean(
+                                object.getString("userid"),
+                                object.getString("nickname"),
+                                object.getInt("gender"),
+                                object.getInt("age_group"),
+                                object.getInt("scope"),
+                                object.getString("phone"),
+                                object.getString("grade"),
+                                getBaseContext()
+                        ));
+                    }
+
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
             }
         }.execute();
-        return null;
+
     }
 }

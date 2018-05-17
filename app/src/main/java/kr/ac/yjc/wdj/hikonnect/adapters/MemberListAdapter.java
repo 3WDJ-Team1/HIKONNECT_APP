@@ -46,46 +46,52 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
     }
 
     @Override
-    public void onBindViewHolder(final MemberHolder memberHolder, final int i) {
+    public void onBindViewHolder(final MemberHolder memberHolder, int i) {
         memberHolder.memberName.setText(dataList.get(i).getNickname());
 
+        final int index = i;
         // TODO 생각 좀 해보고...
-        if (!status.equals("guest")) {
+        Log.d("STATUS:", status + "");
+//        if (!status.equals("guest")) {
             memberHolder.cardWrapper.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    memberHolder.detailWrapper.setVisibility(View.VISIBLE);
+                    if (memberHolder.detailWrapper.getVisibility() == View.GONE) {
+                        memberHolder.detailWrapper.setVisibility(View.VISIBLE);
 
-                    ArrayList<String> detailList = new ArrayList<>();
-                    ArrayList<Drawable> iconList = new ArrayList<>();
+                        ArrayList<String> detailList = new ArrayList<>();
+                        ArrayList<Drawable> iconList = new ArrayList<>();
 
-                    // dataList init
-                    detailList.add(dataList.get(i).getGrade());
-                    detailList.add(dataList.get(i).getGender());
-                    detailList.add(dataList.get(i).getAgeGroup());
-                    detailList.add(dataList.get(i).getPhone());
+                        // dataList init
+                        detailList.add(dataList.get(index).getGrade());
+                        detailList.add(dataList.get(index).getGender());
+                        detailList.add(dataList.get(index).getAgeGroup());
+                        detailList.add(dataList.get(index).getPhone());
 
-                    // iconList init
-                    iconList.add(dataList.get(i).getBaseContext()
-                            .getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
-                    iconList.add(dataList.get(i).getBaseContext()
-                            .getResources().getDrawable(R.drawable.ic_gender_svgrepo_com));
-                    iconList.add(dataList.get(i).getBaseContext()
-                            .getResources().getDrawable(R.drawable.ic_group_svgrepo_com));
-                    iconList.add(dataList.get(i).getBaseContext()
-                            .getResources().getDrawable(R.drawable.ic_telephone_call_svgrepo_com));
+                        // iconList init
+                        iconList.add(dataList.get(index).getBaseContext()
+                                .getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
+                        iconList.add(dataList.get(index).getBaseContext()
+                                .getResources().getDrawable(R.drawable.ic_gender_svgrepo_com));
+                        iconList.add(dataList.get(index).getBaseContext()
+                                .getResources().getDrawable(R.drawable.ic_group_svgrepo_com));
+                        iconList.add(dataList.get(index).getBaseContext()
+                                .getResources().getDrawable(R.drawable.ic_telephone_call_svgrepo_com));
 
-                    memberHolder.rvMemberInfoDetail.setHasFixedSize(true);
+                        memberHolder.rvMemberInfoDetail.setHasFixedSize(true);
 
-                    memberHolder.rvMemberInfoDetail.setAdapter(new MemberDetailAdapter(
-                            R.layout.member_info_detail_item,
-                            detailList,
-                            iconList
-                    ));
-                    memberHolder.rvMemberInfoDetail.setLayoutManager(new LinearLayoutManager(dataList.get(i).getBaseContext(), LinearLayoutManager.VERTICAL, false));
+                        memberHolder.rvMemberInfoDetail.setAdapter(new MemberDetailAdapter(
+                                R.layout.member_info_detail_item,
+                                detailList,
+                                iconList
+                        ));
+                        memberHolder.rvMemberInfoDetail.setLayoutManager(new LinearLayoutManager(dataList.get(index).getBaseContext(), LinearLayoutManager.VERTICAL, false));
+                    } else {
+                        memberHolder.detailWrapper.setVisibility(View.GONE);
+                    }
                 }
             });
-        }
+//        }
     }
 
     @Override
@@ -94,7 +100,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
     }
 
     public static class MemberHolder extends RecyclerView.ViewHolder {
-        private ImageView       profilePic;         // 멤버 프로필 사진
         private TextView        memberName;         // 멤버 이름
         private RelativeLayout  cardWrapper;        // 전체 카드의 wrapper
         private LinearLayout    detailWrapper;      // 상세 정보 나열 wrapper
@@ -106,7 +111,6 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
          */
         private MemberHolder (View itemView) {
             super(itemView);
-            profilePic          = (ImageView)       itemView.findViewById(R.id.profilePic);
             memberName          = (TextView)        itemView.findViewById(R.id.memberName);
             cardWrapper         = (RelativeLayout)  itemView.findViewById(R.id.cardWrapper);
             detailWrapper       = (LinearLayout)    itemView.findViewById(R.id.detailWrapper);

@@ -36,10 +36,6 @@
         <activity
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp"
             android:label="@string/title_activity_maps">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Othersinfo" />
@@ -73,26 +69,19 @@
         <activity android:name=".activities.SplashActivity"
                   android:theme="@style/SplashTheme"
                   android:screenOrientation="portrait">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".RecordListActivity">
-        </activity>
-        <activity android:name=".AfterHikingActivity">
-        </activity>
-        <activity android:name=".activities.MainActivity"
-                  android:theme="@style/AppTheme"/>
-        <activity android:name=".activities.groups.GroupActivity"/>
-        <activity android:name=".activities.user.UserRegisterActivity"/>
-        <activity android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity" />
-        <activity android:name=".activities.group_list.groups_list_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".RecordListActivity" />
+        <activity android:name=".AfterHikingActivity" />
+        <activity android:name=".activities.MainActivity"
+                  android:theme="@style/AppTheme"/>
+        <activity android:name=".activities.groups.GroupActivity"/>
+        <activity android:name=".activities.user.UserRegisterActivity"/>
+        <activity android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity" />
+        <activity android:name=".activities.group_list.groups_list_main"/>
         <activity android:name=".activities.group_list.groups_list"/>
         <activity android:name=".activities.schedule_detail.ScheduleDetailActivity">
 

@@ -37,8 +37,6 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
 
     // for member
     private String          status;
-    private ArrayList<Bean> dataListJoined  = new ArrayList<>();
-    private ArrayList<Bean> tempList        = new ArrayList<>();
     private int             index;
 
     /**
@@ -47,13 +45,6 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList) {
         this.listLayout = listLayout;
         this.dataList   = dataList;
-    }
-
-    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, ArrayList<Bean> dataListJoined,String status) {
-        this.listLayout     = listLayout;
-        this.dataList       = dataList;
-        this.dataListJoined = dataListJoined;
-        this.status         = status;
     }
 
     /**
@@ -118,8 +109,6 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     // 데이터 이동
                     // 산 이름
                     intent.putExtra("mntId", schedule.getMntId());
-                    // 경로
-                    intent.putExtra("route", schedule.getRoute().toString());
                     // 일자
                     intent.putExtra("startDate", schedule.getStartDate());
                     // 내용
@@ -128,6 +117,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     intent.putExtra("status", status);
                     // 스케줄 번호
                     intent.putExtra("scheduleNo", schedule.getNo());
+                    // 스케줄 제목
+                    intent.putExtra("scheduleTitle", schedule.getTitle());
 
                     // 상세 페이지로 이동
                     schedule.getBaseContext().startActivity(intent);
@@ -136,60 +127,50 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
 
         } else if (viewHolder instanceof ViewHolderMember) {
             // 그룹 멤버일 때
-
-            if (i < dataList.size() && status.equals("owner")) {
-                tempList    = dataList;
-                index       = i;
-            } else if ( i >= dataList.size()) {
-                tempList    = dataListJoined;
-                index       = i - dataList.size();
-            }
-
             // TODO Image 변경되게 바꿀 것
 //            ((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
-            if (tempList.size() > index)
-                ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) tempList.get(index)).getNickname());
+            ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) dataList.get(index)).getNickname());
 
-            Log.d("templist", tempList.size() + "");
+            // TODO 그룹 참가 수락 리스너
 
-            if (tempList == dataListJoined) {
-                ((ViewHolderMember) viewHolder).btnAcceptUser.setVisibility(View.GONE);
-                ((ViewHolderMember) viewHolder).btnRejectUser.setVisibility(View.GONE);
-            }
-            // TODO 생각 좀 해보고...
+            // TODO 그룹 참가 거절 리스너
+
             if (!status.equals("guest")) {
                 ((ViewHolderMember) viewHolder).cardWrapper.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((ViewHolderMember) viewHolder).detailWrapper.setVisibility(View.VISIBLE);
+                        if (((ViewHolderMember) viewHolder).detailWrapper.getVisibility() == View.GONE) {
+                            ((ViewHolderMember) viewHolder).detailWrapper.setVisibility(View.VISIBLE);
+                            ArrayList<String> detailList = new ArrayList<>();
+                            ArrayList<Drawable> iconList = new ArrayList<>();
 
-                        ArrayList<String> detailList = new ArrayList<>();
-                        ArrayList<Drawable> iconList = new ArrayList<>();
+                            // dataList init
+                            detailList.add(((GroupUserInfoBean) dataList.get(index)).getGrade());
+                            detailList.add(((GroupUserInfoBean) dataList.get(index)).getGender());
+                            detailList.add(((GroupUserInfoBean) dataList.get(index)).getAgeGroup());
+                            detailList.add(((GroupUserInfoBean) dataList.get(index)).getPhone());
 
-                        // dataList init
-                        detailList.add(((GroupUserInfoBean) tempList.get(index)).getGrade());
-                        detailList.add(((GroupUserInfoBean) tempList.get(index)).getGender());
-                        detailList.add(((GroupUserInfoBean) tempList.get(index)).getAgeGroup());
-                        detailList.add(((GroupUserInfoBean) tempList.get(index)).getPhone());
+                            // iconList init
+                            iconList.add(((GroupUserInfoBean) dataList.get(index)).getBaseContext()
+                                    .getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
+                            iconList.add(((GroupUserInfoBean) dataList.get(index)).getBaseContext()
+                                    .getResources().getDrawable(R.drawable.ic_gender_svgrepo_com));
+                            iconList.add(((GroupUserInfoBean) dataList.get(index)).getBaseContext()
+                                    .getResources().getDrawable(R.drawable.ic_group_svgrepo_com));
+                            iconList.add(((GroupUserInfoBean) dataList.get(index)).getBaseContext()
+                                    .getResources().getDrawable(R.drawable.ic_telephone_call_svgrepo_com));
 
-                        // iconList init
-                        iconList.add(((GroupUserInfoBean) tempList.get(index)).getBaseContext()
-                                .getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
-                        iconList.add(((GroupUserInfoBean) tempList.get(index)).getBaseContext()
-                                .getResources().getDrawable(R.drawable.ic_gender_svgrepo_com));
-                        iconList.add(((GroupUserInfoBean) tempList.get(index)).getBaseContext()
-                                .getResources().getDrawable(R.drawable.ic_group_svgrepo_com));
-                        iconList.add(((GroupUserInfoBean) tempList.get(index)).getBaseContext()
-                                .getResources().getDrawable(R.drawable.ic_telephone_call_svgrepo_com));
+                            ((ViewHolderMember) viewHolder).rvMemberInfoDetail.setHasFixedSize(true);
 
-                        ((ViewHolderMember) viewHolder).rvMemberInfoDetail.setHasFixedSize(true);
-
-                        ((ViewHolderMember) viewHolder).rvMemberInfoDetail.setAdapter(new MemberDetailAdapter(
-                                R.layout.member_info_detail_item,
-                                detailList,
-                                iconList
-                        ));
-                        ((ViewHolderMember) viewHolder).rvMemberInfoDetail.setLayoutManager(new LinearLayoutManager(((GroupUserInfoBean) tempList.get(index)).getBaseContext(), LinearLayoutManager.VERTICAL, false));
+                            ((ViewHolderMember) viewHolder).rvMemberInfoDetail.setAdapter(new MemberDetailAdapter(
+                                    R.layout.member_info_detail_item,
+                                    detailList,
+                                    iconList
+                            ));
+                            ((ViewHolderMember) viewHolder).rvMemberInfoDetail.setLayoutManager(new LinearLayoutManager(((GroupUserInfoBean) dataList.get(index)).getBaseContext(), LinearLayoutManager.VERTICAL, false));
+                        } else {
+                            ((ViewHolderMember) viewHolder).detailWrapper.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
@@ -203,7 +184,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
      */
     @Override
     public int getItemCount() {
-        return dataList.size() + dataListJoined.size();
+        return dataList.size();
     }
 
     /**
