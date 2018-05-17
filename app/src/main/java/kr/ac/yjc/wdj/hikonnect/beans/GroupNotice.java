@@ -7,40 +7,28 @@ package kr.ac.yjc.wdj.hikonnect.beans;
  * @see     Bean
  */
 public class GroupNotice extends Bean{
-    private String  uuid;       // notice uuid
+
     private String  writer;     // writer of notice
     private String  title;      // title of notice
     private String  content;    // content of notice
-    private int     hits;       // hits of notice
+    private String  picture;    // picture of notice
     private String  createdAt;  // created date of notice
-    private String  updatedAt;  // updated date of notice
 
     // init member variables
-    public GroupNotice(String   uuid,
-                       String   writer,
+    public GroupNotice(String   writer,
                        String   title,
                        String   content,
-                       int      hits,
-                       String   createdAt,
-                       String   updatedAt)
+                       String   picture,
+                       String   createdAt)
     {
-        this.uuid       = uuid;
         this.writer     = writer;
         this.title      = title;
         this.content    = content;
-        this.hits       = hits;
+        this.picture    = picture;
         this.createdAt  = createdAt;
-        this.updatedAt  = updatedAt;
     }
 
     // getters and setters
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 
     public String getWriter() {
         return writer;
@@ -66,12 +54,12 @@ public class GroupNotice extends Bean{
         this.content = content;
     }
 
-    public int getHits() {
-        return hits;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setHits(int hits) {
-        this.hits = hits;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public String getCreatedAt() {
@@ -82,11 +70,4 @@ public class GroupNotice extends Bean{
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

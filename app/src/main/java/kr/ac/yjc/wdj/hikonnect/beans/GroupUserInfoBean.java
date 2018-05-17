@@ -1,5 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
+import android.content.Context;
+
 /**
  * store group user's information
  * @author  Sungeun Kang (kasueu0814@gmail.com)
@@ -7,45 +9,73 @@ package kr.ac.yjc.wdj.hikonnect.beans;
  * @see     Bean
  */
 public class GroupUserInfoBean extends Bean {
-    private String  userUuid;       // user's uuid
+    private String  userId;         // user's id
     private String  nickname;       // user's nickname
-    private String  imagePath;      // image path of user's profile pic
+    private String  profile;        // image path of user's profile pic
+    private String  grade;
     private String  phone;          // user's phone number
     private String  gender;         // user's gender
     private String  ageGroup;       // user's age group
-    private String  openScope;      // open scope of user's information
-    private Boolean isPhoneOpen;    // open user's phone number public
-    private Boolean isGenderOpen;   // open user's gender public
-    private Boolean isAgeGroupOpen; // open user's age group public
+    private String  enterDate;
 
-    public GroupUserInfoBean(/*String     userUuid,*/
+    private boolean isPhoneOpen;    // open user's phone number public
+    private boolean isGenderOpen;   // open user's gender public
+    private boolean isAgeGroupOpen; // open user's age group public
+    private boolean openGroup;
+    private boolean openAll;
+
+    private Context baseContext;
+
+    /**
+     * 초기화
+     * @param userId    String  유저 아이디
+     * @param nickname  String  유저 닉네임
+     * @param profile   String  유저 프로필 사진 경로
+     * @param grade     String  유저 등급
+     * @param phone     String  유저 핸드폰 번호
+     * @param enterDate String  유저 들어온 날짜
+     * @param gender    int     유저 성별
+     * @param ageGroup  int     유저 연령대
+     * @param scope     int     정보 공개 설정
+     * @param baseContext
+     */
+    public GroupUserInfoBean(
+                             String     userId,
                              String     nickname,
-                             String     imagePath,
+                             String     profile,
+                             String     grade,
                              String     phone,
+                             String     enterDate,
                              int        gender,
                              int        ageGroup,
-                             int        scope)
+                             int        scope,
+                             Context    baseContext)
     {
-        /*this.userUuid       = userUuid;*/
+        this.userId         = userId;
         this.nickname       = nickname;
-        this.imagePath      = imagePath;
+        this.profile        = profile;
+        this.grade          = grade;
         this.phone          = phone;
+        this.enterDate      = enterDate;
         this.gender         = gender == 0 ? "남자" : "여자";
         this.ageGroup       = ageGroup + "대";
+        this.baseContext    = baseContext;
 
         String strScope = scope + "";
 
         switch (strScope.length()) {
             case 3:
-                this.openScope = "none";
-                initOpenSettings(strScope, 3);
+                openGroup   = false;
+                openAll     = false;
                 break;
             case 4:
-                this.openScope = "group";
+                openGroup   = true;
+                openAll     = false;
                 initOpenSettings(strScope, 4);
                 break;
             case 5:
-                this.openScope = "all";
+                openGroup   = true;
+                openAll     = true;
                 initOpenSettings(strScope, 5);
                 break;
         }
@@ -60,13 +90,85 @@ public class GroupUserInfoBean extends Bean {
     }
 
     // getters and setters
-   /* public String getUserUuid() {
-        return userUuid;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserUuid(String userUuid) {
-        this.userUuid = userUuid;
-    }*/
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getEnterDate() {
+        return enterDate;
+    }
+
+    public void setEnterDate(String enterDate) {
+        this.enterDate = enterDate;
+    }
+
+    public String getAgeGroup() {
+        return ageGroup;
+    }
+
+    public void setAgeGroup(String ageGroup) {
+        this.ageGroup = ageGroup;
+    }
+
+    public boolean isPhoneOpen() {
+        return isPhoneOpen;
+    }
+
+    public void setPhoneOpen(boolean phoneOpen) {
+        isPhoneOpen = phoneOpen;
+    }
+
+    public boolean isGenderOpen() {
+        return isGenderOpen;
+    }
+
+    public void setGenderOpen(boolean genderOpen) {
+        isGenderOpen = genderOpen;
+    }
+
+    public boolean isAgeGroupOpen() {
+        return isAgeGroupOpen;
+    }
+
+    public void setAgeGroupOpen(boolean ageGroupOpen) {
+        isAgeGroupOpen = ageGroupOpen;
+    }
+
+    public boolean isOpenGroup() {
+        return openGroup;
+    }
+
+    public void setOpenGroup(boolean openGroup) {
+        this.openGroup = openGroup;
+    }
+
+    public boolean isOpenAll() {
+        return openAll;
+    }
+
+    public void setOpenAll(boolean openAll) {
+        this.openAll = openAll;
+    }
 
     public String getNickname() {
         return nickname;
@@ -74,14 +176,6 @@ public class GroupUserInfoBean extends Bean {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
     }
 
     public String getPhone() {
@@ -100,35 +194,11 @@ public class GroupUserInfoBean extends Bean {
         this.gender = gender;
     }
 
-    /*public String getAgeGroup() {
-        return ageGroup;
+    public Context getBaseContext() {
+        return baseContext;
     }
 
-    public void setAgeGroup(String ageGroup) {
-        this.ageGroup = ageGroup;
+    public void setBaseContext(Context baseContext) {
+        this.baseContext = baseContext;
     }
-
-    public Boolean getPhoneOpen() {
-        return isPhoneOpen;
-    }
-
-    public void setPhoneOpen(Boolean phoneOpen) {
-        isPhoneOpen = phoneOpen;
-    }
-
-    public Boolean getGenderOpen() {
-        return isGenderOpen;
-    }
-
-    public void setGenderOpen(Boolean genderOpen) {
-        isGenderOpen = genderOpen;
-    }
-
-    public Boolean getAgeGroupOpen() {
-        return isAgeGroupOpen;
-    }
-
-    public void setAgeGroupOpen(Boolean ageGroupOpen) {
-        isAgeGroupOpen = ageGroupOpen;
-    }*/
 }

@@ -87,8 +87,16 @@
         <activity android:name=".activities.groups.GroupActivity"/>
         <activity android:name=".activities.user.UserRegisterActivity"/>
         <activity android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity" />
-        <activity android:name=".activities.group_list.groups_list_main"/>
+        <activity android:name=".activities.group_list.groups_list_main">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activities.group_list.groups_list"/>
+        <activity android:name=".activities.schedule_detail.ScheduleDetailActivity">
+
+        </activity>
 
         <!--Activities End-->
 

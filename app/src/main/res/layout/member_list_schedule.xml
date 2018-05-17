@@ -40,24 +40,6 @@
                 android:textStyle="bold"
                 android:textSize="20dp"/>
 
-            <Button
-                android:id="@+id/btnAcceptUser"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:text="수락"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/cyan_500"
-                android:layout_toStartOf="@+id/btnRejectUser"/>
-
-            <Button
-                android:id="@+id/btnRejectUser"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:text="거절"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/red_300"
-                android:layout_alignParentEnd="true"/>
-
             <LinearLayout
                 android:id="@+id/detailWrapper"
                 android:layout_width="match_parent"

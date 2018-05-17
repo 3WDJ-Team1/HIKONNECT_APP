@@ -14,13 +14,13 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/groupPlanList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            tools:listitem="@layout/schedule_item_cardview" />
+            tools:listitem="@layout/schedule_item_cardview_" />
 
     </LinearLayout>
 </FrameLayout>

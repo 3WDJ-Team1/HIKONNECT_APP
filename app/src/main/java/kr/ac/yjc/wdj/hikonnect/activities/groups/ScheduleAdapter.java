@@ -18,8 +18,8 @@ import kr.ac.yjc.wdj.hikonnect.R;
  * Created by LEE AREUM on 2018-05-08.
  */
 
-public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHolder> {
-    Context context;
+public class ScheduleAdapter /*extends RecyclerView.Adapter<ScheduleAdapter.ViewHolder>*/ {
+    /*Context context;
     List<ScheduleListItem> items;
 
     public ScheduleAdapter(Context context, List<ScheduleListItem> items) {
@@ -71,10 +71,10 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
 
                     Intent intent = new Intent(context, SchedulViewActivitiy.class);
 
-                /*if (intent != null) {
+                *//*if (intent != null) {
                     intent.putExtra("title", title);
                     context.startActivity(intent);
-                }*/
+                }*//*
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
@@ -90,6 +90,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
                 }
             });
         }
-    }
+    }*/
 }
 
