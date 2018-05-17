@@ -14,13 +14,13 @@
         tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity"
         />
 
+    <!--TODO 지워도 되는 지 확인 -->
     <RelativeLayout
         android:id="@+id/backGround"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </RelativeLayout>
-
 
     <!-- TODO 화면 터치하면 보이게 -->
     <!--나의 등산 정보-->
@@ -35,181 +35,228 @@
         android:alpha="0.8"
         android:visibility="gone"
         >
-        <!--TODO 여기다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="16dp">
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="현재 속력"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:layout_weight="1"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="16dp">
 
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="2">
-
-                    <!-- TODO 값을 넣어주세요 : 현재 속력 @+id/userSpeed -->
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center">
                     <TextView
-                        android:id="@+id/userSpeed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="현재 속력"
                         android:textAlignment="center"
-                        android:textColor="@color/red_400"
-                        android:textSize="20dp"
-                        android:textStyle="bold"
-                        android:layout_weight="1"
-                        android:gravity="bottom"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="km/h"
-                        android:gravity="bottom"
-                        android:layout_weight="1"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold"/>
-
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="총 이동 거리"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="2">
-
-                    <!-- TODO 값을 넣어주세요 : 총 이동 거리 @+id/distance -->
-                    <TextView
-                        android:id="@+id/distance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="0.0"
-                        android:textAlignment="center"
-                        android:textColor="@color/cyan_500"
-                        android:textSize="20dp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        android:gravity="bottom"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="km"
-                        android:gravity="bottom"
-                        android:layout_weight="1"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="도착 예상 시간"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_weight="2">
-
-                    <!-- TODO 값을 넣어주세요 : 도착 예상 시간 @+id/arriveWhen -->
-                    <TextView
-                        android:id="@+id/arriveWhen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="0.0"
-                        android:textAlignment="center"
-                        android:textColor="@color/light_green_800"
-                        android:textSize="20dp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp"
+                        android:textColor="@color/grey_800"
                         android:layout_weight="1"/>
 
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="2">
+
+                        <!-- TODO 값을 넣어주세요 : 현재 속력 @+id/userSpeed -->
+                        <TextView
+                            android:id="@+id/userSpeed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="2"
+                            android:textAlignment="center"
+                            android:textColor="@color/red_400"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            android:layout_weight="1"
+                            android:gravity="bottom"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="km/h"
+                            android:gravity="bottom"
+                            android:layout_weight="1"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="총 이동 거리"
+                        android:textAlignment="center"
+                        android:textColor="@color/grey_800"
+                        android:layout_weight="1"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="2">
+
+                        <TextView
+                            android:id="@+id/distance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="0.0"
+                            android:textAlignment="center"
+                            android:textColor="@color/cyan_500"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"
+                            android:gravity="bottom"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="km"
+                            android:gravity="bottom"
+                            android:layout_weight="1"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="도착 예상 시간"
+                        android:textAlignment="center"
+                        android:textColor="@color/grey_800"
+                        android:layout_weight="1"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="2">
+
+                        <TextView
+                            android:id="@+id/arriveWhen"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="0.0"
+                            android:textAlignment="center"
+                            android:textColor="@color/light_green_800"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="4dp"
+                            android:layout_weight="1"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="시간"
+                            android:gravity="bottom"
+                            android:layout_weight="1"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/userRank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:layout_weight="1"
+                        android:gravity="end|center"
+                        android:textSize="24dp"
+                        android:textColor="@color/pink_accent_400"
+                        android:textStyle="bold"
+                        />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="시간"
-                        android:gravity="bottom"
+                        android:text="등"
+                        android:gravity="start|center"
                         android:layout_weight="1"
                         android:textColor="@color/black"
-                        android:textSize="18dp"
+                        android:textSize="24dp"
                         android:textStyle="bold" />
 
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
-                <!-- TODO 값을 넣어주세요 : 순위 @+id/userRank -->
-                <TextView
-                    android:id="@+id/userRank"
+                <!--TODO 진척률 나타낼 seekBar-->
+                <SeekBar
+                    android:id="@+id/seekBar"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="0"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="50"
+                    android:layout_gravity="center"
+                    android:progressTint="@color/teal_accent_200"
+                    android:thumbTint="@color/teal_accent_700"
+                    android:progress="60"/>
+
+                <!-- TODO 진척률 가지고 있을 TextView -->
+                <TextView
+                    android:id="@+id/seekBarProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end|center"
-                    android:textSize="24dp"
-                    android:textColor="@color/pink_accent_400"
+                    android:text="60"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    />
+                    android:textAlignment="center"
+                    android:textColor="@color/cyan_accent_700"
+                    android:enabled="false"/>
 
                 <TextView
+                    android:id="@+id/textView5"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="등"
-                    android:gravity="start|center"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:text="%"
+                    android:textAlignment="center"
                     android:textColor="@color/black"
-                    android:textSize="24dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -257,7 +304,6 @@
                     android:layout_weight="2"
                     android:orientation="horizontal">
 
-                    <!-- TODO 값을 넣어주세요 : 현재 속력 @+id/userSpeed -->
                     <TextView
                         android:id="@+id/otherUserSpeed"
                         android:layout_width="wrap_content"
@@ -305,7 +351,6 @@
                     android:layout_weight="2"
                     android:orientation="horizontal">
 
-                    <!-- TODO 값을 넣어주세요 : 총 이동 거리 @+id/distance -->
                     <TextView
                         android:id="@+id/otherUserDistance"
                         android:layout_width="wrap_content"
@@ -354,7 +399,6 @@
                     android:layout_weight="2"
                     android:orientation="horizontal">
 
-                    <!-- TODO 값을 넣어주세요 : 도착 예상 시간 @+id/arriveWhen -->
                     <TextView
                         android:id="@+id/otherUserArriveWhen"
                         android:layout_width="wrap_content"
@@ -386,7 +430,6 @@
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
-                <!-- TODO 값을 넣어주세요 : 순위 @+id/userRank -->
                 <TextView
                     android:id="@+id/otherUserRank"
                     android:layout_width="wrap_content"
@@ -504,7 +547,6 @@
         android:layout_alignParentBottom="true"
         />
 
-    <!-- TODO 화면 터치하면 @+id/sendRecordData 가시화 -->
     <LinearLayout
         android:id="@+id/drawer"
         android:layout_width="50dp"
