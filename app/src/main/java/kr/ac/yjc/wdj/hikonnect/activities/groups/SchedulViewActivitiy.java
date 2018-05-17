@@ -10,12 +10,12 @@ import kr.ac.yjc.wdj.hikonnect.R;
 
 
 public class SchedulViewActivitiy extends AppCompatActivity {
-    private Button memberViewBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedule_view);
+
 
     }
 }

@@ -35,7 +35,8 @@
         <activity android:name=".activities.user.LoginActivity"/>
         <activity android:name=".activities.groups.NoticeActivity"/>
         <activity android:name=".activities.PreActivity"/>
-        <activity android:name=".activities.user.UserProfileActivity"/>
+        <activity android:name=".activities.myPage.UserRecordActivity"/>
+        <activity android:name=".activities.myPage.UserProfileActivity"/>
         <activity android:name=".activities.groups.ScheduleActivity"/>
         <activity android:name=".activities.groups.SchedulViewActivitiy"/>
         <activity android:name=".activities.groups.MemberListActivity"/>

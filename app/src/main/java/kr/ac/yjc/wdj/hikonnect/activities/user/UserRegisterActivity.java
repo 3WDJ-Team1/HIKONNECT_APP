@@ -127,7 +127,7 @@ public class UserRegisterActivity extends AppCompatActivity {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                result = hrc.request("http://192.168.1.146:8000/api/user", contentValues);
+                                result = hrc.request("http://172.26.1.145:8000/api/user", contentValues);
                                 Message msg = handler.obtainMessage();
                                 handler.sendMessage(msg);
                             }

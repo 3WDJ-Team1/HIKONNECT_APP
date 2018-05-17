@@ -15,6 +15,10 @@
                 android:id="@+id/my_groups"
                 android:title="@string/nav_my_groups" />
             <item
+                android:id="@+id/my_records"
+                android:icon="@drawable/ic_emoticon"
+                android:title="@string/nav_my_records"/>
+            <item
                 android:icon="@drawable/ic_emoticon"
                 android:id="@+id/my_profile"
                 android:title="@string/nav_my_profile" />

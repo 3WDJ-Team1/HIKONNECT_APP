@@ -1,6 +1,5 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,10 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,9 +19,9 @@ import java.util.HashMap;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
-import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 
 /**
  * @file        kr.ac.yjc.wdj.hikonnect.activities.MainActivity.java
@@ -113,6 +109,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, GroupActivity.class));
         } else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
+        } else if (id == R.id.my_records) {
+            startActivity(new Intent(this, UserRecordActivity.class));
         } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
