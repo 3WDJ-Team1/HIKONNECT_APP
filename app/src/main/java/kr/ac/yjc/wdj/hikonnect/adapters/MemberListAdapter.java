@@ -51,8 +51,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
 
         final int index = i;
         // TODO 생각 좀 해보고...
-        Log.d("STATUS:", status + "");
-//        if (!status.equals("guest")) {
+        if (status != null && !status.equals("\"guest\"")) {
             memberHolder.cardWrapper.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -91,7 +90,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
                     }
                 }
             });
-//        }
+        }
     }
 
     @Override

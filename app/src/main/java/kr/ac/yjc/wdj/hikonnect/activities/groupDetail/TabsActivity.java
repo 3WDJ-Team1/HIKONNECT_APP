@@ -103,7 +103,7 @@ public class TabsActivity extends AppCompatActivity {
         toolbarLayout       = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
         adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
         adapterSchedule     = new RecycleAdapterForGDetail(R.layout.schedule_item_cardview_, dataListSchedule);
-        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember);
+        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember, status);
         adapterMemberJoined = new MemberListAdapter(R.layout.member_list_schedule, dataListJoinedMember, status);
 
         // 툴바에 그룹 이름 넣기
@@ -279,7 +279,7 @@ public class TabsActivity extends AppCompatActivity {
                         RecyclerView rvMember       = (RecyclerView) view.findViewById(R.id.groupMemberList);
                         RecyclerView rvMemberJoined = (RecyclerView) view.findViewById(R.id.groupMemberListJoined);
 
-                        if (status.equals("owner")) {
+                        if (status.equals("\"owner\"")) {
                             rvMember.setAdapter(adapterMember);
                             rvMember.setHasFixedSize(true);
                             rvMember.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
@@ -522,7 +522,6 @@ public class TabsActivity extends AppCompatActivity {
                         userInfoBean = new GroupUserInfoBean(
                                 objNotEnter.getString("userid"),
                                 objNotEnter.getString("nickname"),
-                                objNotEnter.getString("profile"),
                                 objNotEnter.getString("grade"),
                                 objNotEnter.getString("phone"),
                                 objNotEnter.getString("enter_date"),
@@ -540,7 +539,6 @@ public class TabsActivity extends AppCompatActivity {
                         userInfoBean = new GroupUserInfoBean(
                                 objEnter.getString("userid"),
                                 objEnter.getString("nickname"),
-                                objEnter.getString("profile"),
                                 objEnter.getString("grade"),
                                 objEnter.getString("phone"),
                                 objEnter.getString("enter_date"),

@@ -58,8 +58,6 @@ public class HikingRecord extends Activity  {
         all_distance        = intent.getDoubleExtra("all_distance",0)*1000;
         final int     member_no   = intent.getIntExtra("member_no",0);
 
-
-
         contentValues.put("member_no", member_no);
         Log.d("member_no@#", String.valueOf(member_no)+my_distance+all_distance);
         new Thread(new Runnable() {

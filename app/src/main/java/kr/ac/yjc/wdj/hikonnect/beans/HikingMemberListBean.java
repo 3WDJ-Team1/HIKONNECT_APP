@@ -5,70 +5,60 @@ import android.graphics.drawable.Drawable;
 /**
  * 등산 중인 멤버 데이터를 담아 둘 클래스
  * @author  Sungeun Kang (kasueu0814@gmail.com)
- * @since   2018-03-30
+ * @since   2018-05-18
  * @see     kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter
  */
 public class HikingMemberListBean {
-    private Drawable    profilePic;             // 리스트에 있는 프로필 사진 경로
-    private String      userName;               // 리스트에 있는 유저 이름
-    private Double      distToDestination;      // 리스트에 있는 목적지까지의 거리
-    private Double      distFromMe;             // 리스트에 있는 나와의 거리
-    private Boolean     isShown;                // 리스트에 있는 체크 박스의 값
+
+    private int     memberNo;   // 멤버 번호
+    private String  nickname;   // 닉네임
+    private double  lat;        // 위도
+    private double  lng;        // 경도
 
     /**
-     * @param profilePic            프로필 사진 경로
-     * @param userName              유저 이름
-     * @param distToDestination     목적지 까지의 거리
-     * @param distFromMe            나와의 거리
-     * @param isShown               체크 박스 불린 값
+     * 초기화
+     * @param memberNo  멤버 번호
+     * @param nickname  닉네임
+     * @param lat       latitude
+     * @param lng       longitude
      */
-    public HikingMemberListBean(Drawable profilePic, String userName, Double distToDestination, Double distFromMe, Boolean isShown) {
-        // init member variables
-        this.profilePic         = profilePic;
-        this.userName           = userName;
-        this.distToDestination  = distToDestination;
-        this.distFromMe         = distFromMe;
-        this.isShown            = isShown;
+    public HikingMemberListBean(int memberNo, String nickname, double lat, double lng) {
+        this.memberNo   = memberNo;
+        this.nickname   = nickname;
+        this.lat        = lat;
+        this.lng        = lng;
     }
 
     // getters and setters
-    public Drawable getProfilePic() {
-        return profilePic;
+    public int getMemberNo() {
+        return memberNo;
     }
 
-    public void setProfilePic(Drawable profilePic) {
-        this.profilePic = profilePic;
+    public void setMemberNo(int memberNo) {
+        this.memberNo = memberNo;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public Double getDistToDestination() {
-        return distToDestination;
+    public double getLat() {
+        return lat;
     }
 
-    public void setDistToDestination(Double distToDestination) {
-        this.distToDestination = distToDestination;
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 
-    public Double getDistFromMe() {
-        return distFromMe;
+    public double getLng() {
+        return lng;
     }
 
-    public void setDistFromMe(Double distFromMe) {
-        this.distFromMe = distFromMe;
-    }
-
-    public Boolean getIsShown() {
-        return isShown;
-    }
-
-    public void setIsShown(Boolean shown) {
-        isShown = shown;
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 }

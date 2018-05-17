@@ -47,6 +47,12 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         this.dataList   = dataList;
     }
 
+    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, String status) {
+        this.listLayout = listLayout;
+        this.dataList   = dataList;
+        this.status     = status;
+    }
+
     /**
      * Overrided
      * @return  ViewHolder viewHolder
@@ -135,7 +141,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
 
             // TODO 그룹 참가 거절 리스너
 
-            if (!status.equals("guest")) {
+            if (!status.equals("\"guest\"")) {
                 ((ViewHolderMember) viewHolder).cardWrapper.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -60,6 +60,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.HikingRecord;
 import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
@@ -810,7 +811,11 @@ public class MapsActivityTemp extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 Intent groupMemberList = new Intent(MapsActivityTemp.this, Othersinfo.class);
-                groupMemberList.putExtra("member_no", myMemberNo);
+//                groupMemberList.putExtra("member_no", myMemberNo);
+                // TODO soft 코딩으로 전환
+                groupMemberList.putExtra("groupId", "57a89f8f-4dc8-11e8-82cb-42010a9200af");
+                groupMemberList.putExtra("scheduleNo", 1);
+
                 startActivity(groupMemberList);
             }
         });

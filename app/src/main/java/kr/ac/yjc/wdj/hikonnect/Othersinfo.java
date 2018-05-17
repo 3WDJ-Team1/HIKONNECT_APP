@@ -3,10 +3,13 @@ package kr.ac.yjc.wdj.hikonnect;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,127 +25,141 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.activities.MapsActivity;
+import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
+import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
+import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
+import kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by jungyu on 2018-05-02.
  */
 
 public class Othersinfo extends Activity {
-    private final int          REQUEST         = 100;
-    private String              nickname;
-    private Button              filter_rank;
-    private Double              distancee,velocity;
-    private List<String>        list;       // 데이터를 넣은 리스트변수
-    private ListView            listView;   // 검색을 보여줄 리스트변수
-    private EditText            editSearch; // 검색어를 입력할 Input 창
-    private SearchAdapter       adapter;    // 리스트뷰에 연결할 아답터
-    private ArrayList<String>   nicknamelist;
-    private ArrayList<NicknameNumber>   arraylist;
-    private int                 member_num;
 
-    class NicknameNumber {
+    // UI 변수
+    private RecyclerView                    listView;   // 검색을 보여줄 리스트변수
+    private EditText                        editSearch; // 검색어를 입력할 Input 창
 
-        private  String nickname;
-        private  int    number;
+    // 데이터 변수
+    private HikingMemberListAdapter         adapter;    // 리스트뷰에 연결할 아답터
+    private ArrayList<HikingMemberListBean> dataList,
+                                            tempList;
+    private String                          groupId;
+    private int                             scheduleNo;
 
-        public String getNickname() {
-            return nickname;
-        }
 
-        public int getNumber() {
-            return number;
-        }
-
-        public NicknameNumber(String nickname, int number) {
-            this.nickname   = nickname;
-            this.number     = number;
-        }
-    }
-    Handler                 handler;
-    ContentValues           contentValues   = new ContentValues();
-    String                  result,user;
-    int                     my_num;
-    HttpRequestConnection   hrc             = new HttpRequestConnection();
-
-    private void resultData(int member_num) {
-        Log.d("member_numnum", String.valueOf(member_num));
-        Intent intent = new Intent();
-        intent.putExtra("user_number",member_num);
-        setResult(RESULT_OK,intent);
-        finish();
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_info);
 
-        editSearch  = (EditText) findViewById(R.id.editSearch);
-        listView    = (ListView) findViewById(R.id.listView);
+        initUI();
+        initData();
 
-        listView.setClickable(true);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                resultData(arraylist.get(i).getNumber());
-            }
-        });
+    }
 
+    // 검색을 수행하는 메소드
+    public void search(String charText) {
 
+        // 문자 입력시마다 리스트를 지우고 새로 뿌려준다.
+        dataList.clear();
 
-        // 리스트를 생성한다.
-        list = new ArrayList<String>();
-        nicknamelist = new ArrayList<String>();
-        arraylist = new ArrayList<NicknameNumber>();
-
-
-        Intent intent = getIntent();
-        my_num = intent.getIntExtra("my_num",0);
-        contentValues.put("member_no",my_num);
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP+"/api/getScheduleMembers",contentValues);
-                Log.i("result", result);
-                Message msg = handler.obtainMessage();
-                handler.sendMessage(msg);
-            }
-        }).start();
-        handler = new Handler(Looper.getMainLooper()) {
-            public void handleMessage(Message msg) {
-                try {
-                    JSONArray jsonArray = new JSONArray(result);
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        nickname = jsonObject.getString("nickname");
-                        Log.d("nicknick",nickname);
-                        member_num = jsonObject.getInt("member_no");
-
-                        settingList(nickname);
-                        Log.d("listv", String.valueOf(list));
-                        NicknameNumber nnn = new NicknameNumber(nickname,member_num);
-                        arraylist.add(nnn);
-                        nicknamelist.add(nickname);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        // 문자 입력이 없을때는 모든 데이터를 보여준다.
+        if (charText.length() == 0) {
+            dataList.addAll(tempList);
+        }
+        // 문자 입력을 할때..
+        else
+        {
+            // 리스트의 모든 데이터를 검색한다.
+            for(int i = 0;i < tempList.size(); i++)
+            {
+                // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
+                if (tempList.get(i).getNickname().toLowerCase().contains(charText))
+                {
+                    // 검색된 데이터를 리스트에 추가한다.
+                    dataList.add(tempList.get(i));
                 }
             }
+        }
+        // 리스트 데이터가 변경되었으므로 아답터를 갱신하여 검색된 데이터를 화면에 보여준다.
+        adapter.notifyDataSetChanged();
+    }
 
-        };
+    /**
+     * 멤버 데이터 받아오기
+     * @param groupId       그룹 아이디
+     * @param scheduleNo    스케줄 번호
+     */
+    private void initMembersData(String groupId, int scheduleNo) {
 
+        new AsyncTask<String, Integer, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                try {
+                    OkHttpClient client = new OkHttpClient();
 
-        // 리스트에 연동될 아답터를 생성한다.
-        adapter = new SearchAdapter(list, this);
+                    Request request = new Request.Builder()
+                            .url(Environment.LARAVEL_SOL_SERVER + "/getHikingMembers/" + params[0] + "/" + params[1])
+                            .build();
 
-        // 리스트뷰에 아답터를 연결한다.
-        listView.setAdapter(adapter);
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    return null;
+                }
+
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                try {
+
+                    JSONArray jsonArray = new JSONArray(s);
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+
+                        JSONObject object = jsonArray.getJSONObject(i);
+
+                        HikingMemberListBean userInfo = new HikingMemberListBean(
+                                object.getInt("member_no"),
+                                object.getString("nickname"),
+                                object.getDouble("latitude"),
+                                object.getDouble("longitude")
+                        );
+
+                        dataList.add(userInfo);
+                        tempList.add(userInfo);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
+
+            }
+        }.execute(groupId, scheduleNo + "");
+    }
+
+    /**
+     * UI 초기화
+     */
+    private void initUI() {
+        editSearch  = (EditText)        findViewById(R.id.editSearch);
+        listView    = (RecyclerView)    findViewById(R.id.listView);
 
         // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
         editSearch.addTextChangedListener(new TextWatcher() {
@@ -163,41 +180,27 @@ public class Othersinfo extends Activity {
                 search(text);
             }
         });
-
-
     }
 
-    // 검색을 수행하는 메소드
-    public void search(String charText) {
+    /**
+     * 데이터 초기화
+     */
+    private void initData() {
+        Intent intent = getIntent();
 
-        // 문자 입력시마다 리스트를 지우고 새로 뿌려준다.
-        list.clear();
+        groupId     = intent.getStringExtra("groupId");
+        scheduleNo  = intent.getIntExtra("scheduleNo", 0);
+        dataList    = new ArrayList<>();
+        tempList    = new ArrayList<>();
 
-        // 문자 입력이 없을때는 모든 데이터를 보여준다.
-        if (charText.length() == 0) {
-            list.addAll(nicknamelist);
-        }
-        // 문자 입력을 할때..
-        else
-        {
-            // 리스트의 모든 데이터를 검색한다.
-            for(int i = 0;i < nicknamelist.size(); i++)
-            {
-                // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
-                if (nicknamelist.get(i).toLowerCase().contains(charText))
-                {
-                    // 검색된 데이터를 리스트에 추가한다.
-                    list.add(nicknamelist.get(i));
-                }
-            }
-        }
-        // 리스트 데이터가 변경되었으므로 아답터를 갱신하여 검색된 데이터를 화면에 보여준다.
-        adapter.notifyDataSetChanged();
-    }
+        // 리스트에 연동될 아답터를 생성한다.
+        adapter     = new HikingMemberListAdapter(R.layout.member_list_schedule, dataList, this);
 
+        // 리스트뷰에 아답터를 연결한다.
+        listView.setAdapter(adapter);
+        listView.setHasFixedSize(true);
+        listView.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
-    // 검색에 사용될 데이터를 리스트에 추가한다.
-    private void settingList(String nickname){
-        list.add(nickname);
+        initMembersData(groupId, scheduleNo);
     }
 }

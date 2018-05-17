@@ -55,7 +55,6 @@
         <!-- Activities -->
         <!--<activity android:name=".activities.MapsActivity1"-->
             <!--android:label="@string/title_activity_maps" />-->
-        <activity android:name=".activities.myPage.HikingMemberListActivity" />
         <activity android:name=".activities.groupDetail.TabsActivity" />
         <activity android:name=".activities.user.LoginActivity"/>
         <activity android:name=".activities.groups.NoticeActivity"/>

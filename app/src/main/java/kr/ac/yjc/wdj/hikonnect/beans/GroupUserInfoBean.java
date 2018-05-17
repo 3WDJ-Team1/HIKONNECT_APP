@@ -11,7 +11,6 @@ import android.content.Context;
 public class GroupUserInfoBean extends Bean {
     private String  userId;         // user's id
     private String  nickname;       // user's nickname
-    private String  profile;        // image path of user's profile pic
     private String  grade;
     private String  phone;          // user's phone number
     private String  gender;         // user's gender
@@ -48,14 +47,13 @@ public class GroupUserInfoBean extends Bean {
                                 Context baseContext
                             )
     {
-        this(userId, nickname, null, grade, phone, null, gender, age_group, scope, baseContext);
+        this(userId, nickname, grade, phone, null, gender, age_group, scope, baseContext);
     }
 
     /**
      * 초기화
      * @param userId    String  유저 아이디
      * @param nickname  String  유저 닉네임
-     * @param profile   String  유저 프로필 사진 경로
      * @param grade     String  유저 등급
      * @param phone     String  유저 핸드폰 번호
      * @param enterDate String  유저 들어온 날짜
@@ -67,7 +65,6 @@ public class GroupUserInfoBean extends Bean {
     public GroupUserInfoBean(
                              String     userId,
                              String     nickname,
-                             String     profile,
                              String     grade,
                              String     phone,
                              String     enterDate,
@@ -78,7 +75,6 @@ public class GroupUserInfoBean extends Bean {
     {
         this.userId         = userId;
         this.nickname       = nickname;
-        this.profile        = profile;
         this.grade          = grade;
         this.phone          = phone;
         this.enterDate      = enterDate;
@@ -121,14 +117,6 @@ public class GroupUserInfoBean extends Bean {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getProfile() {
-        return profile;
-    }
-
-    public void setProfile(String profile) {
-        this.profile = profile;
     }
 
     public String getGrade() {

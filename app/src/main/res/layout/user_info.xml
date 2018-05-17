@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/editSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="유저 아이디를 입력하세요."/>
+        android:layout_height="50dp"
+        android:background="@color/black">
 
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/listView"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="#999999"
-            android:dividerHeight="1dp">
-        </ListView>
-    </LinearLayout>
+            android:text="다른 멤버 찾기"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="24dp"
+            android:textStyle="bold"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/editSearch"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="유저 아이디를 입력하세요."
+        android:textColor="@color/black"
+        android:textSize="18dp"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/member_list_schedule">
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

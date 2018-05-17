@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         btnStartHiking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), MapsActivity.class);
+                Intent intent = new Intent(getBaseContext(), MapsActivityTemp.class);
                 intent.putExtra("id", UsersData.USER_ID);
                 progressBar.setVisibility(View.VISIBLE);
                 startActivity(intent);
