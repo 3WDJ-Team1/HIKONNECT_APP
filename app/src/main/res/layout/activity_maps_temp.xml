@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto">
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -17,10 +18,12 @@
         android:id="@+id/backGround"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     </RelativeLayout>
 
 
     <!-- TODO 화면 터치하면 보이게 -->
+    <!--나의 등산 정보-->
     <android.support.v7.widget.CardView
         android:id="@+id/userDataBox"
         android:layout_width="match_parent"
@@ -32,6 +35,7 @@
         android:alpha="0.8"
         android:visibility="gone"
         >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +114,7 @@
                         android:id="@+id/distance"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="1.7"
+                        android:text="0.0"
                         android:textAlignment="center"
                         android:textColor="@color/cyan_500"
                         android:textSize="20dp"
@@ -157,7 +161,7 @@
                         android:id="@+id/arriveWhen"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="2.3"
+                        android:text="0.0"
                         android:textAlignment="center"
                         android:textColor="@color/light_green_800"
                         android:textSize="20dp"
@@ -189,7 +193,7 @@
                     android:id="@+id/userRank"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="1"
+                    android:text="0"
                     android:layout_weight="1"
                     android:gravity="end|center"
                     android:textSize="24dp"
@@ -210,7 +214,204 @@
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+    <!--나의 등산 정보 끝-->
+    <!--다른 맴버 등산 정보-->
+    <android.support.v7.widget.CardView
+        android:id="@+id/otherUserDataBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/userDataBox"
+        android:alpha="0.8"
+        android:elevation="5dp"
+        android:visibility="gone">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="현재 속력"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey_800" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2"
+                    android:orientation="horizontal">
+
+                    <!-- TODO 값을 넣어주세요 : 현재 속력 @+id/userSpeed -->
+                    <TextView
+                        android:id="@+id/otherUserSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:text="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/red_400"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:text="km/h"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="총 이동 거리"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey_800" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2"
+                    android:orientation="horizontal">
+
+                    <!-- TODO 값을 넣어주세요 : 총 이동 거리 @+id/distance -->
+                    <TextView
+                        android:id="@+id/otherUserDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:text="0.0"
+                        android:textAlignment="center"
+                        android:textColor="@color/cyan_500"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:text="km"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="도착 예상 시간"
+                    android:textAlignment="center"
+                    android:textColor="@color/grey_800" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2"
+                    android:orientation="horizontal">
+
+                    <!-- TODO 값을 넣어주세요 : 도착 예상 시간 @+id/arriveWhen -->
+                    <TextView
+                        android:id="@+id/otherUserArriveWhen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="4dp"
+                        android:layout_weight="1"
+                        android:text="0.0"
+                        android:textAlignment="center"
+                        android:textColor="@color/light_green_800"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:text="시간"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <!-- TODO 값을 넣어주세요 : 순위 @+id/userRank -->
+                <TextView
+                    android:id="@+id/otherUserRank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="end|center"
+                    android:text="0"
+                    android:textColor="@color/pink_accent_400"
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="start|center"
+                    android:text="등"
+                    android:textColor="@color/black"
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <!--다른 맴버 등산 정보 끝-->
+    <!--무전 리스트 버튼-->
     <ImageButton
         android:id="@+id/showRecordList"
         android:layout_width="50dp"
@@ -220,18 +421,12 @@
         android:backgroundTint="@color/pink_accent_400"
         android:src="@android:drawable/ic_btn_speak_now"
         />
+    <!--무전 리스트 버튼 끝-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/sys_msg_txtview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="결과창"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <!-- 위치메모 -->
         <LinearLayout
@@ -241,7 +436,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:id="@+id/imagelayout"
             android:background="@color/colorPrimary"
             android:layout_gravity="center_vertical|center"
@@ -250,7 +445,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/title"
+                android:id="@+id/l_memo_title"
                 android:hint="제목 입력"
                 android:layout_weight="1"
                 android:textColorHint="@color/grey_500"/>
@@ -294,7 +489,7 @@
 
     <Button
         android:text="등산시작"
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/change_h_status_btn"
         android:layout_marginStart="72dp"
         android:layout_marginEnd="72dp"
@@ -345,7 +540,7 @@
             android:textColor="@color/white"
             android:textSize="18dp"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
 
     <com.github.clans.fab.FloatingActionButton
@@ -376,7 +571,22 @@
         android:alpha="0.7"
         />
 
-    <com.github.clans.fab.FloatingActionMenu
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/write_location_memo_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_bookmark_black_36dp"
+        android:layout_marginBottom="70dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/show_member_list_btn"
+        android:alpha="0.7"
+        />
+    <!--위치 메모 버튼 수정-->
+    <!--<com.github.clans.fab.FloatingActionMenu
         android:id="@+id/write_l_memo_fabmenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -413,7 +623,7 @@
             fab:fab_colorRipple="@color/colorPrimary"
             android:alpha="0.7"
             />
-    </com.github.clans.fab.FloatingActionMenu>
+    </com.github.clans.fab.FloatingActionMenu>-->
 
 
 </RelativeLayout>

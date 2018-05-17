@@ -120,8 +120,6 @@ public class MapsActivity1 extends FragmentActivity implements OnMapReadyCallbac
 
         // 와이파이 다이렉트 연결을 위해 연결 가능한 디바이스들을 검색.
         // mWDController.discoverPeers(mChannel);
-
-        lService.sendMyLocation();
     }
 
     @Override

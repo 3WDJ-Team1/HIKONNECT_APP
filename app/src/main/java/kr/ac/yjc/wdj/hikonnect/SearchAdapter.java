@@ -15,17 +15,16 @@ import java.util.List;
  */
 public class SearchAdapter extends BaseAdapter {
 
-    private Context         context;
-    private List<String>    list;
-    private LayoutInflater  inflate;
-    private ViewHolder      viewHolder;
+    private Context context;
+    private List<String> list;
+    private LayoutInflater inflate;
+    private ViewHolder viewHolder;
 
     public SearchAdapter(List<String> list, Context context){
-        this.list       = list;
-        this.context    = context;
-        this.inflate    = LayoutInflater.from(context);
+        this.list = list;
+        this.context = context;
+        this.inflate = LayoutInflater.from(context);
     }
-
     @Override
     public int getCount() {
         return list.size();

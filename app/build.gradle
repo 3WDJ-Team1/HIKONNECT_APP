@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 26
     buildToolsVersion "27.0.3"
@@ -35,7 +34,7 @@ android {
 
                 compile 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
 
-
+                compile 'de.hdodenhof:circleimageview:2.2.0'
                 // 테스트 지원 라이브러리..... 오류 발생함.
 //    androidTestCompile 'com.android.support.test:runner:1.0.1'
 //    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -44,7 +43,7 @@ android {
                 compile 'com.flipboard:bottomsheet-commons:1.5.3' // optional
 
                 // Socket.io Library
-                compile ('io.socket:socket.io-client:1.0.0') {
+                compile('io.socket:socket.io-client:1.0.0') {
                     // excluding org.json which is provided by Android
                     exclude group: 'org.json', module: 'json'
                 }
@@ -61,7 +60,6 @@ android {
                 // compile 'com.github.navasmdc:MaterialDesign:1.5@aar'
                 // ~~~~~~~~~~
 
-
                 // Meterial Tab
                 compile 'it.neokree:MaterialTabs:0.11'
                 // Swipe Menu ListView
@@ -77,5 +75,8 @@ android {
         }
     }
 }
-
 apply plugin: 'com.google.gms.google-services'
+
+dependencies {
+    compile files('libs/json-simple-1.1.jar')
+}
