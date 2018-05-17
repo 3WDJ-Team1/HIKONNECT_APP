@@ -34,6 +34,7 @@ android {
 
                 compile 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
 
+                compile 'de.hdodenhof:circleimageview:2.2.0'
                 // 테스트 지원 라이브러리..... 오류 발생함.
 //    androidTestCompile 'com.android.support.test:runner:1.0.1'
 //    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'

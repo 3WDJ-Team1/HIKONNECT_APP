@@ -3,12 +3,20 @@ package kr.ac.yjc.wdj.hikonnect.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.location.Location;
 import android.location.LocationListener;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -36,12 +45,14 @@ import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -66,19 +77,13 @@ import okhttp3.Response;
 
 class Member extends MapItem implements ClusterItem {
 
-    private int member_no;
+    int member_no;
+    int userid;
+    Bitmap profileImg;
 
     Member(LatLng location, int member_no) {
         super(location);
         this.member_no = member_no;
-    }
-
-    public void setMember_no(int member_no) {
-        this.member_no = member_no;
-    }
-
-    public int getMember_no() {
-        return member_no;
     }
 
     @Override
@@ -89,18 +94,10 @@ class Member extends MapItem implements ClusterItem {
 
 class LocationMemo extends MapItem implements ClusterItem {
 
-    private int no;
+    int no;
 
     LocationMemo(LatLng location, int no) {
         super(location);
-        this.no = no;
-    }
-
-    public int getNo() {
-        return no;
-    }
-
-    public void setNo(int no) {
         this.no = no;
     }
 
@@ -167,6 +164,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private final String                TAG = "HIKONNECT";
 
     private int                         myMemberNo = 1;
+
     // 지도, 위치.
     private GoogleMap                   gMap;
     private Location                    myCurrentLocation;
@@ -181,6 +179,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private int                         hikingState         = 0;
     private int                         currentFID          = 0;
     private int                         currentPointInFID   = 0;
+    private double                      wholeDistance       = 0.0;
 
     private LinkedList<LatLng>          allHikingRoute = new LinkedList<>();
     private HashMap<Integer, MapItem>   mapItems = new HashMap<>();
@@ -195,6 +194,11 @@ public class MapsActivityTemp extends FragmentActivity implements
     private TextView            tvUserSpeed;    // 현재 속도 TextView (값 -> km/h 기준)
     private TextView            tvDistance;     // 총 이동 거리 TextView (값 -> km 기준)
     private TextView            tvArriveWhen;   // 예상 도착 시간 TextView (값 -> 시간 기준)
+
+    private CardView            otherUserDataBox;
+    private TextView            tvOtherUserSpeed;
+    private TextView            tvOtherUserDistance;
+    private TextView            tvOtherUserArriveWhen;
 
     // [1.2] 위치 메모.
     private FloatingActionButton    fabWriteLocationMemo;
@@ -231,8 +235,27 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     private class MapItemRenderer extends DefaultClusterRenderer<MapItem> {
 
+        static private final int BIT_MAP_SIZE = 200;
+        private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
+        private final IconGenerator mClusterIconGenerator = new IconGenerator(getApplicationContext());
+        private final ImageView mImageView;
+        private final ImageView mClusterImageView;
+        private final int mDimension;
+
+        private Bitmap bitmap;
+
         public MapItemRenderer() {
             super(getApplicationContext(), gMap, myClusterManager);
+
+            View multiProfile = getLayoutInflater().inflate(R.layout.multi_profile, null);
+            mClusterIconGenerator.setContentView(multiProfile);
+            mClusterImageView = (ImageView) multiProfile.findViewById(R.id.marker_img);
+
+            mImageView = new ImageView(getApplicationContext());
+            mDimension = 5;
+            int padding = 5;
+            mImageView.setPadding(padding, padding, padding, padding);
+            mIconGenerator.setContentView(mImageView);
         }
 
         @Override
@@ -242,11 +265,58 @@ public class MapsActivityTemp extends FragmentActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             }
             if (item instanceof Member) {
-                if (((Member) item).getMember_no() == myMemberNo) {
+
+                if (((Member) item).member_no == myMemberNo) {
                     markerOptions.visible(false);
                 } else {
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                    getUserProfileImg();
+                    RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                    roundedBitmapDrawable.setCornerRadius(100.0f);
+                    roundedBitmapDrawable.setAntiAlias(true);
+
+                    mImageView.setImageDrawable(roundedBitmapDrawable);
+                    Bitmap icon = mIconGenerator.makeIcon();
+                    markerOptions
+                            .icon(BitmapDescriptorFactory.fromBitmap(icon));
                 }
+            }
+        }
+
+        private void getUserProfileImg() {
+            try {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            HttpUrl.Builder urlBuilder = HttpUrl
+                                    .parse(/*Environment.NODE_HIKONNECT_IP*/"http://172.26.2.88:3000" + "/images/UserProfile/" + "test1" + ".jpg")
+                                    .newBuilder();
+
+                            String reqUrl = urlBuilder.build().toString();
+
+                            Request req = new Request.Builder()
+                                    .url(reqUrl)
+                                    .build();
+
+                            Response response = okHttpClient.newCall(req).execute();
+
+                            if (response.isSuccessful()) {
+                                InputStream is = response.body().byteStream();
+
+                                Bitmap originBitmap = BitmapFactory.decodeStream(is);
+
+                                bitmap = Bitmap.createScaledBitmap(originBitmap, BIT_MAP_SIZE, BIT_MAP_SIZE, true);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "run: ", e);
+                        }
+                    }
+                });
+                thread.start();
+                thread.join();
+
+            } catch (Exception e) {
+                Log.e(TAG, "getUserProfileImg: ", e);
             }
         }
     }
@@ -288,11 +358,17 @@ public class MapsActivityTemp extends FragmentActivity implements
             myClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MapItem>() {
                 @Override
                 public boolean onClusterItemClick(MapItem mapItem) {
+                    if (otherUserDataBox.getVisibility() == View.GONE) {
+                        otherUserDataBox.setVisibility(View.VISIBLE);
+                    } else {
+                        otherUserDataBox.setVisibility(View.GONE);
+                    }
+
                     if (mapItem instanceof LocationMemo) {
-                        Log.d(TAG, "onClusterItemClick: no: " + ((LocationMemo) mapItem).getNo());
+                        Log.d(TAG, "onClusterItemClick: no: " + ((LocationMemo) mapItem).no);
                     }
                     if (mapItem instanceof Member) {
-                        Log.d(TAG, "onClusterItemClick: member_no: " + ((Member) mapItem).getMember_no());
+                        Log.d(TAG, "onClusterItemClick: member_no: " + ((Member) mapItem).member_no);
                     }
                     return false;
                 }
@@ -304,7 +380,8 @@ public class MapsActivityTemp extends FragmentActivity implements
 
             myMarker = gMap.addMarker(new MarkerOptions()
                     .position(new LatLng(0, 0))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.baseline_fiber_manual_record_black_18dp))
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)/*R.drawable.baseline_fiber_manual_record_black_18dp*/)
+                    .alpha(0.8f)
                     .zIndex(1.0f));
 
             requestHikingRoute();
@@ -380,6 +457,12 @@ public class MapsActivityTemp extends FragmentActivity implements
                     @Override
                     public void onFailure(Call call, IOException e) {
                         Log.e(TAG, "Request Hiking Route: ", e);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MapsActivityTemp.this, "연결 상태 불량.\n네트워크 상태를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
@@ -390,6 +473,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
 
                             JSONArray routeSet = (JSONArray) parser.parse(serverRes);
+                            wholeDistance = 0.0;
 
                             for (Object idx : routeSet) {
                                 JSONObject attributes = (JSONObject) ((JSONObject) idx).get("attributes");
@@ -398,8 +482,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 int fid         = Integer.valueOf(attributes.get("FID").toString());
                                 double fieldLength = Double.valueOf(attributes.get("PMNTN_LT").toString());
 
+                                wholeDistance += fieldLength;
+
                                 HikingField hikingField = new HikingField(fid, fieldLength);
-                                Log.d(TAG, "onResponse: fid: " + fid);
                                 for (Object _idx : paths) {
                                     double lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
                                     double lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
@@ -407,11 +492,11 @@ public class MapsActivityTemp extends FragmentActivity implements
                                     hikingField.addLatLng(new LatLng(lat, lng));
 
                                     allHikingRoute.offer(new LatLng(lat, lng));
-                                    Log.d(TAG, "onResponse: lat: " + lat + ", lng: " + lng);
                                 }
 
                                 hikingFields.add(hikingField);
                             }
+
                             paintHikingRoute();
                         } catch (Exception e) {
                             Log.e(TAG, "Parse Server Res: ", e);
@@ -485,7 +570,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                     if (hikingState != 0) {
                         latitude = String.valueOf(myCurrentLocation.getLatitude());
                         longitude = String.valueOf(myCurrentLocation.getLongitude());
-                        velocity = String.valueOf(myCurrentLocation.getSpeed());
+                        velocity = String.valueOf(myCurrentLocation.getSpeed() * 3.6);
                         distance = String.valueOf(hikedDistance);
                     }
 
@@ -503,6 +588,12 @@ public class MapsActivityTemp extends FragmentActivity implements
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e(TAG, "Http updateHikingState: ", e);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MapsActivityTemp.this, "연결 상태 불량.\n네트워크 상태를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
                         @Override
@@ -511,8 +602,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 JSONParser parser = new JSONParser();
 
                                 JSONObject result = (JSONObject) parser.parse(response.body().string());
-
-                                Log.i(TAG, "onResponse: " + result);
 
                                 JSONArray locationMemos = (JSONArray) result.get("location_memos");
                                 JSONArray members = (JSONArray) result.get("members");
@@ -582,7 +671,12 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     private double getDisToStartPoint() {
         try {
-           LatLng startPoint = allHikingRoute.get(0);
+            LatLng startPoint = null;
+            if (hikingState == 0 ) {
+                startPoint = allHikingRoute.get(0);
+            } else if (hikingState == 1){
+                startPoint = allHikingRoute.getLast();
+            }
 
            Location startPointLoc = new Location("startPoint");
            startPointLoc.setLatitude(startPoint.latitude);
@@ -636,10 +730,15 @@ public class MapsActivityTemp extends FragmentActivity implements
     private void initializeUI() {
         // [1] Layout 초기화.
         // [1.1] 상태 표시 레이아웃.
-        userDataBox = (CardView) findViewById(R.id.userDataBox);     // Text View를 담을 부모 레이아웃.
-        tvUserSpeed = (TextView) findViewById(R.id.userSpeed);       // 유저의 현재 속도.
-        tvDistance = (TextView) findViewById(R.id.distance);        // 유저가 온 거리.
-        tvArriveWhen = (TextView) findViewById(R.id.arriveWhen);      // 유저의 예상 도착시간.
+        userDataBox     = (CardView) findViewById(R.id.userDataBox);     // Text View를 담을 부모 레이아웃.
+        tvUserSpeed     = (TextView) findViewById(R.id.userSpeed);       // 유저의 현재 속도.
+        tvDistance      = (TextView) findViewById(R.id.distance);        // 유저가 온 거리.
+        tvArriveWhen    = (TextView) findViewById(R.id.arriveWhen);      // 유저의 예상 도착시간.
+
+        otherUserDataBox        = (CardView) findViewById(R.id.otherUserDataBox);
+        tvOtherUserSpeed        = (TextView) findViewById(R.id.otherUserSpeed);
+        tvOtherUserDistance     = (TextView) findViewById(R.id.otherUserDistance);
+        tvOtherUserArriveWhen   = (TextView) findViewById(R.id.otherUserArriveWhen);
 
         // [1.2] 위치 메모.
         fabWriteLocationMemo = (FloatingActionButton) findViewById(R.id.write_location_memo_btn);
@@ -743,7 +842,14 @@ public class MapsActivityTemp extends FragmentActivity implements
                 }
             }
         });
-
+        // [5] 무전 리스트
+        showRecordList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
+                startActivity(recordIntent);
+            }
+        });
         // [4] drawerLayout 을 클릭하면 무전 버튼 가시화
         drawerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -756,13 +862,29 @@ public class MapsActivityTemp extends FragmentActivity implements
                 isRecBtnVisible = !isRecBtnVisible;
             }
         });
+
     }
 
     @Override
     public void onLocationChanged(Location location) {
         myCurrentLocation = location;
 
-        tvUserSpeed.setText(String.valueOf(location.getSpeed()));
+        double userSpeed = Math.round(location.getSpeed() * 36d) / 10d;
+        tvUserSpeed.setText(String.valueOf(userSpeed));
+
+        Log.d(TAG, "onLocationChanged: userSpeed: " + userSpeed);
+        Log.d(TAG, "onLocationChanged: 1: " + String.valueOf(wholeDistance - hikedDistance));
+        Log.d(TAG, "onLocationChanged: 2: " + String.valueOf((wholeDistance - hikedDistance) / userSpeed));
+        Log.d(TAG, "onLocationChanged: 3: " + String.valueOf(Math.round((wholeDistance - hikedDistance) / userSpeed * 1000d) / 1000d));
+
+        double arriveWhen = (wholeDistance - hikedDistance) / userSpeed;
+
+        if (arriveWhen == Double.POSITIVE_INFINITY) {
+            tvArriveWhen.setText("0.0");
+        } else {
+            double arriveWhenFormatted = Math.round(arriveWhen * 100d) / 100d;
+            tvArriveWhen.setText(String.valueOf(arriveWhenFormatted));
+        }
     }
 
     @Override
