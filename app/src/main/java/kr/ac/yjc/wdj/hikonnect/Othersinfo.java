@@ -33,7 +33,7 @@ import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
  */
 
 public class Othersinfo extends Activity {
-    private final int           REQUEST         = 100;
+    private final int          REQUEST         = 100;
     private String              nickname;
     private Button              filter_rank;
     private Double              distancee,velocity;
@@ -100,7 +100,7 @@ public class Othersinfo extends Activity {
         nicknamelist = new ArrayList<String>();
         arraylist = new ArrayList<NicknameNumber>();
 
-//         검색에 사용할 데이터을 미리 저장한다.
+
         Intent intent = getIntent();
         my_num = intent.getIntExtra("my_num",0);
         contentValues.put("member_no",my_num);
@@ -122,9 +122,11 @@ public class Othersinfo extends Activity {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         nickname = jsonObject.getString("nickname");
+                        Log.d("nicknick",nickname);
                         member_num = jsonObject.getInt("member_no");
 
                         settingList(nickname);
+                        Log.d("listv", String.valueOf(list));
                         NicknameNumber nnn = new NicknameNumber(nickname,member_num);
                         arraylist.add(nnn);
                         nicknamelist.add(nickname);

@@ -28,9 +28,9 @@ public class HikingRecord extends Activity  {
     HttpRequestConnection   hrc = new HttpRequestConnection();
     String                  result,nickname,profile,hiking_group;
     int                     ranking;
-    double                  distancee,velocity;
+    double                  distancee,velocity,my_distance,all_distance;
 
-    TextView                txtText,txtText2,txtText3,txtText4,rank,txt5;
+    TextView                txtText,txtText2,txtText3,txtText4,rank,txt5,txtText6;
     ContentValues           contentValues = new ContentValues();
     Handler                 handler;
     String                  distance,speed;
@@ -49,15 +49,19 @@ public class HikingRecord extends Activity  {
         txtText3    = (TextView)findViewById(R.id.txtText3);
         txtText4    = (TextView)findViewById(R.id.txtText4);
         txt5        = (TextView)findViewById(R.id.txtText5);
+        txtText6    = (TextView)findViewById(R.id.txtText6);
 
 
         //데이터 가져오기
         Intent  intent      = getIntent();
-        int     member_no   = intent.getIntExtra("member_no",0);
+        my_distance        = intent.getDoubleExtra("my_distance",-1);
+        all_distance        = intent.getDoubleExtra("all_distance",0)*1000;
+        final int     member_no   = intent.getIntExtra("member_no",0);
+
 
 
         contentValues.put("member_no", member_no);
-        Log.d("member_no@#", String.valueOf(member_no));
+        Log.d("member_no@#", String.valueOf(member_no)+my_distance+all_distance);
         new Thread(new Runnable() {
 
             @Override
@@ -82,13 +86,16 @@ public class HikingRecord extends Activity  {
                         ranking             =  jsonObject.getInt("rank");
 
                         String velo     = String.format("%.1f",velocity);
-
-                        txtText.setText("닉네임:"+ nickname );
-                        rank    .setText("순위"+ranking);
+                        txtText.setText("닉네임:"+ nickname);
+                        rank    .setText("순위:"+ranking);
                         txtText2.setText("그룹:" + hiking_group);
+                        double result_distance1 = Math.abs(my_distance - distancee);
+                        String  result_distance2 = String.format("%.1f",result_distance1);
                         txtText3.setText("거리:"+ distancee);
                         txtText4.setText("속도:"+velo+"m/s");
-                        txt5.setText("나와의 거리:");
+                        if (my_distance != -1 )
+                        txt5.setText("나와의 거리:"+result_distance2);
+                        txtText6.setText("퍼센트:"+String.format("%.1f",(distancee/all_distance)*100));
 
                     }
                 } catch (JSONException e) {
