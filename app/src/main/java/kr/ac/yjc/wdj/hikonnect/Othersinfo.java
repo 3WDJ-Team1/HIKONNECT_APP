@@ -83,7 +83,6 @@ public class Othersinfo extends Activity {
 
         editSearch  = (EditText) findViewById(R.id.editSearch);
         listView    = (ListView) findViewById(R.id.listView);
-        filter_rank = (Button)findViewById(R.id.rank);
 
         listView.setClickable(true);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
