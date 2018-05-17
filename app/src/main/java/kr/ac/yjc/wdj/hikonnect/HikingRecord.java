@@ -94,8 +94,8 @@ public class HikingRecord extends Activity  {
                         txtText3.setText("거리:"+ distancee);
                         txtText4.setText("속도:"+velo+"m/s");
                         if (my_distance != -1 )
-                        txt5.setText("나와의 거리:"+result_distance2);
-                        txtText6.setText("퍼센트:"+String.format("%.1f",(distancee/all_distance)*100));
+                        txtText6.setText("나와의 거리:"+result_distance2);
+                        txt5.setText("퍼센트:"+String.format("%.1f",(distancee/all_distance)*100));
 
                     }
                 } catch (JSONException e) {
