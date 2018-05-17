@@ -467,15 +467,13 @@
         />
     <!--무전 리스트 버튼 끝-->
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <!-- 위치메모 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="24dp"
             android:layout_height="350dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
@@ -483,8 +481,8 @@
             android:visibility="gone"
             android:id="@+id/imagelayout"
             android:background="@color/colorPrimary"
-            android:layout_gravity="center_vertical|center"
-            android:gravity="center_vertical|center"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:padding="16dp">
             <EditText
                 android:layout_width="match_parent"
@@ -529,7 +527,7 @@
         </LinearLayout>
         <!--위치메모 끝 -->
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <Button
         android:text="등산시작"
