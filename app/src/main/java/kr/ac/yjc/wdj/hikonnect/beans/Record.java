@@ -1,6 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 
 /**
  * 녹음 파일 관련 정보 Db로 부터 받아와 저장할 객체
@@ -20,8 +20,8 @@ public class Record {
      * 테스트용
      */
     public Record() {
-        setUrl("http://" + Environment.WALKIE_TALKIE_SERVER_IP + ":"
-                + Environment.WALKIE_TALKIE_HTTP_PORT + Environment.RECORD_FILE_ROUTE + "test111.wav");
+        setUrl("http://" + Environments.WALKIE_TALKIE_SERVER_IP + ":"
+                + Environments.WALKIE_TALKIE_HTTP_PORT + Environments.RECORD_FILE_ROUTE + "test111.wav");
     }
 
     /**

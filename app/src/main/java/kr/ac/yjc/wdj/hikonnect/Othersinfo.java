@@ -109,7 +109,7 @@ public class Othersinfo extends Activity {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environment.LARAVEL_SOL_SERVER + "/getHikingMembers/" + params[0] + "/" + params[1])
+                            .url(Environments.LARAVEL_SOL_SERVER + "/getHikingMembers/" + params[0] + "/" + params[1])
                             .build();
 
                     Response response = client.newCall(request).execute();

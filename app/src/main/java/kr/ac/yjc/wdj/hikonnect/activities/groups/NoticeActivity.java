@@ -1,6 +1,5 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groups;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +15,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.GHttpRequestConnection;
-import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 
 public class NoticeActivity extends AppCompatActivity {
     GHttpRequestConnection hrc = new GHttpRequestConnection();
@@ -85,7 +83,7 @@ public class NoticeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/schedule", contentValues);
+                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/schedule", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }

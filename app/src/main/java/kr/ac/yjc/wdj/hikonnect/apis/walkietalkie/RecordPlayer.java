@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 
 import java.io.IOException;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 
 /**
  * 녹음 파일 받아오기
@@ -14,8 +14,8 @@ import kr.ac.yjc.wdj.hikonnect.Environment;
  */
 public class RecordPlayer {
     private         String serverURL;
-    private final   String PORT         = Environment.WALKIE_TALKIE_HTTP_PORT;
-    private final   String FILE_ROUTE   = Environment.RECORD_FILE_ROUTE; // TODO 라우팅 경로 수정
+    private final   String PORT         = Environments.WALKIE_TALKIE_HTTP_PORT;
+    private final   String FILE_ROUTE   = Environments.RECORD_FILE_ROUTE; // TODO 라우팅 경로 수정
 
     /**
      * 초기화

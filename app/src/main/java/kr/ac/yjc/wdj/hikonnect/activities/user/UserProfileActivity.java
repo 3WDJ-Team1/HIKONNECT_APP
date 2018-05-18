@@ -2,11 +2,9 @@ package kr.ac.yjc.wdj.hikonnect.activities.user;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -24,27 +21,15 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupAdapter;
-import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupListItem;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class UserProfileActivity extends AppCompatActivity
             implements NavigationView.OnNavigationItemSelectedListener{
@@ -119,7 +104,7 @@ public class UserProfileActivity extends AppCompatActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/userinfo", contentValues);
+                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/userinfo", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }

@@ -64,7 +64,7 @@ public class HikingRecord extends Activity  {
 
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP+"/api/getMemberDetail",contentValues);
+                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP+"/api/getMemberDetail",contentValues);
                 Log.i("result", result);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);

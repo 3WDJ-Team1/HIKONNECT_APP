@@ -2,9 +2,9 @@ package kr.ac.yjc.wdj.hikonnect;
 
 import okhttp3.MediaType;
 
-public abstract class Environment {
+public abstract class Environments {
     // local
-    private static final String LOCAL_HOST              = "http://172.26.2.233";    // localhost
+    private static final String LOCAL_HOST              = "http://172.26.1.88";    // localhost
     public  static final String LARAVEL_LOCAL_IP        = LOCAL_HOST + ":8000";     // laravel(local)
     public  static final String NODE_LOCAL_IP           = LOCAL_HOST+ ":3000";      // node (local)
 
