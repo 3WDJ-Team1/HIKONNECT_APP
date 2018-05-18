@@ -50,7 +50,7 @@
                 android:textSize="40sp"
                 android:textColor="@color/red_600"
                 android:text="24"
-                android:textAlignment="textEnd"
+                android:gravity="center|end"
                 android:textStyle="bold"
                 android:layout_weight="1" />
             <TextView
@@ -59,7 +59,7 @@
                 android:textSize="32sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:textAlignment="textStart"
+                android:gravity="center|start"
                 android:text="명"
                 android:layout_weight="1"/>
         </LinearLayout>

@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,11 +16,10 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
-import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -81,10 +79,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                                     "\"userid\":\"" + params[1] + "\"," +
                                     "\"uuid\":\"" + params[0] + "\"" +
                                     "}";
-                            RequestBody body = RequestBody.create(Environment.JSON, dataJSONObj);
+                            RequestBody body = RequestBody.create(Environments.JSON, dataJSONObj);
 
                             Request request = new Request.Builder()
-                                    .url(Environment.LARAVEL_SOL_SERVER + "/checkMember")
+                                    .url(Environments.LARAVEL_SOL_SERVER + "/checkMember")
                                     .post(body)
                                     .build();
 
@@ -141,10 +139,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                                     "\"uuid\":\"" + groupId + "\"" +
                                     "}";
 
-                            RequestBody body = RequestBody.create(Environment.JSON, sendData);
+                            RequestBody body = RequestBody.create(Environments.JSON, sendData);
 
                             Request request = new Request.Builder()
-                                    .url(Environment.LARAVEL_SOL_SERVER + "/member")
+                                    .url(Environments.LARAVEL_SOL_SERVER + "/member")
                                     .post(body)
                                     .build();
 

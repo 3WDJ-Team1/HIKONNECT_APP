@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -185,10 +185,10 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
                             "\"input\":\""  + input     + "\"," +
                             "\"page\":"     + page      +
                             "}";
-                    Log.d("request", jsonString + "\n to: " + Environment.LARAVEL_HIKONNECT_IP + "/api/groupList");
+                    Log.d("request", jsonString + "\n to: " + Environments.LARAVEL_HIKONNECT_IP + "/api/groupList");
                     // 서버에 요청
                     result = requestPost(
-                            Environment.LARAVEL_SOL_SERVER + "/groupList",
+                            Environments.LARAVEL_SOL_SERVER + "/groupList",
                             jsonString
                     );
                 } catch (IOException ie) {
@@ -276,7 +276,7 @@ public class groups_list_main extends AppCompatActivity implements AdapterView.O
     private String requestPost(String serverUrl, String jsonData) throws IOException {
         OkHttpClient    client  = new OkHttpClient();
         // request body 만들기
-        RequestBody body = RequestBody.create(Environment.JSON, jsonData);
+        RequestBody body = RequestBody.create(Environments.JSON, jsonData);
         // request 객체 만들기
         Request request = new Request.Builder()
                 .url(serverUrl)

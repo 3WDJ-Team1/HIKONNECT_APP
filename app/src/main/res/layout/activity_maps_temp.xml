@@ -33,7 +33,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:alpha="0.8"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <LinearLayout
@@ -225,7 +225,7 @@
                 android:paddingEnd="16dp">
 
                 <!--TODO 진척률 나타낼 seekBar-->
-                <SeekBar
+                <ProgressBar
                     android:id="@+id/seekBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -233,7 +233,8 @@
                     android:layout_gravity="center"
                     android:progressTint="@color/teal_accent_200"
                     android:thumbTint="@color/teal_accent_700"
-                    android:progress="60"/>
+                    android:progress="60"
+                    style="@android:style/Widget.ProgressBar.Horizontal"/>
 
                 <!-- TODO 진척률 가지고 있을 TextView -->
                 <TextView

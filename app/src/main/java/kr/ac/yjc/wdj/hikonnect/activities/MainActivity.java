@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
                     OkHttpClient okHttpClient = new OkHttpClient();
 
                     HttpUrl httpUrl = HttpUrl
-                            .parse(Environment.NODE_SOL_SERVER + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .parse(Environments.NODE_SOL_SERVER + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
                             .newBuilder()
                             .build();
 

@@ -31,7 +31,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
@@ -220,7 +220,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environment.LARAVEL_SOL_SERVER + "/mnt_name/" + inputMntId)
+                            .url(Environments.LARAVEL_SOL_SERVER + "/mnt_name/" + inputMntId)
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -261,7 +261,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environment.LARAVEL_SOL_SERVER + "/schedule_member/" + groupId + "/" + scheduleNo)
+                            .url(Environments.LARAVEL_SOL_SERVER + "/schedule_member/" + groupId + "/" + scheduleNo)
                             .build();
 
                     Response response = client.newCall(request).execute();

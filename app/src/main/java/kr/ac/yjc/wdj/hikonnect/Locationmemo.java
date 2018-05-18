@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +21,18 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author  Jungyu Choi
@@ -46,13 +54,18 @@ public class  Locationmemo extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.location_memo);
+
+        Intent intent = getIntent();
+        location_num = intent.getIntExtra("location_no", 0);
 
         permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
                 Toast.makeText(Locationmemo.this, "권한 허가", Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
                 Toast.makeText(Locationmemo.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
@@ -66,46 +79,80 @@ public class  Locationmemo extends Activity {
         contentValues = new ContentValues();
         hrc = new HttpRequestConnection();
 
-        Intent intent = getIntent();
-        location_num= intent.getIntExtra("location_no",0);
-
-        contentValues.put("location_no",location_num);
+        contentValues.put("location_no", location_num);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/getLocationMemoDetail",contentValues);
-                Message msg = handler.obtainMessage();
-                handler.sendMessage(msg);
-            }
-        }).start();
-        handler = new Handler() {
-            public void handleMessage(Message msg) {
+
                 try {
-                      JSONArray jsonArray = new JSONArray(result);
-                    for(int i = 0; i < jsonArray.length(); i++) {
+                    OkHttpClient client = new OkHttpClient();
+
+                    HttpUrl httpUrl = HttpUrl
+                            .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getLocationMemoDetail")
+                            .newBuilder()
+                            .build();
+
+                    RequestBody reqBody = new FormBody.Builder()
+                            .add("location_no", String.valueOf(location_num))
+                            .build();
+
+                    Request req = new Request.Builder()
+                            .url(httpUrl)
+                            .post(reqBody)
+                            .build();
+
+                    Response response = client
+                            .newCall(req)
+                            .execute();
+
+                    result = response.body().string();
+
+                    Log.d("HIKONNECT", "run: response: " + result);
+
+                    JSONArray jsonArray = new JSONArray(result);
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        titlestring     =  jsonObject.getString("title");
-                        contentstring   =  jsonObject.getString("content");
-                        //path       = jsonObject.getString("image_path");
-                        writer      = jsonObject.getString("writer");
+                        titlestring = jsonObject.getString("title");
+                        contentstring = jsonObject.getString("content");
+                        writer = jsonObject.getString("writer");
                         TedPermission.with(Locationmemo.this)
                                 .setPermissionListener(permissionlistener)
                                 .setRationaleMessage("사진을 보려면 권한이 필요함")
                                 .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
-                                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE)
+                                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                                 .check();
 
                         //path = path.replaceAll("\\/","/");
-                        title.setText(titlestring);
-                        content.setText(contentstring);
-                        writertv.setText(writer);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
 
+                    httpUrl = HttpUrl
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/LocationMemo/" + location_num + "_" + writer + ".jpg")
+                            .newBuilder()
+                            .build();
+
+                    req = new Request.Builder().url(httpUrl).build();
+
+                    Response res = client.newCall(req).execute();
+
+                    InputStream is = res.body().byteStream();
+
+                    final Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            title.setText(titlestring);
+                            content.setText(contentstring);
+                            writertv.setText(writer);
+                            image1.setImageBitmap(bitmap);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-        };
+        }).start();
     }
     public void mOnClose2(View v){
         //데이터 전달하기

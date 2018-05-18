@@ -57,7 +57,7 @@ import org.json.JSONObject;
 
 import kr.ac.yjc.wdj.hikonnect.AfterHikingActivity;
 import kr.ac.yjc.wdj.hikonnect.BackPressClosHandler;
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.HikingRecord;
 import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
@@ -278,7 +278,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/getMemberNoByUserId",contentValues);
+                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/getMemberNoByUserId",contentValues);
                 Log.i("result", result);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
@@ -411,7 +411,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storeLocationMemo", contentValues2);
+                            result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/storeLocationMemo", contentValues2);
                             Message msg = handler.obtainMessage();
                             handler.sendMessage(msg);
                         }
@@ -637,7 +637,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        requestGet(Environment.NODE_HIKONNECT_IP + "/dummy/school", null);
+        requestGet(Environments.NODE_HIKONNECT_IP + "/dummy/school", null);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -789,7 +789,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 contentValues.put("velocity",velocity);
 
 
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/storesend", contentValues);
+                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/storesend", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
                 handler = new Handler(Looper.getMainLooper()) {

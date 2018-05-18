@@ -1,8 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect.activities.user;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -14,11 +12,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,17 +25,10 @@ import android.widget.Spinner;
 import java.io.IOException;
 import java.net.URL;
 
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.PreActivity;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * @file        kr.ac.yjc.wdj.hikonnect.activities.MainActivity.java
@@ -48,8 +37,8 @@ import okhttp3.Response;
  * @brief       The Activity used when register new user
  */
 
-public class UserRegisterActivity extends AppCompatActivity {
-    EditText id, pw, nickname, phoneNum;
+public class UserRegisterActivity/* extends AppCompatActivity*/ {
+    /*EditText id, pw, nickname, phoneNum;
     Spinner gender, age_group;
     CheckBox gendersc, phonesc, agesc, groupsc;
     Button logup, cancle;
@@ -65,8 +54,8 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_registeration);
+        super.onCreate(savedInstanceState);*/
+        /*setContentView(R.layout.user_registeration);
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         dlDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -104,50 +93,39 @@ public class UserRegisterActivity extends AppCompatActivity {
         logup           = findViewById(R.id.signUpBtn);
         cancle          = findViewById(R.id.cancelBtn);
 
-            /*gendersc        = findViewById(R.id.gender_ck);
+            *//*gendersc        = findViewById(R.id.gender_ck);
             phonesc         = findViewById(R.id.phone_ck);
             agesc           = findViewById(R.id.age_ck);
-            groupsc         = findViewById(R.id.private_ck);*/
+            groupsc         = findViewById(R.id.private_ck);*//*
 
-        logup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    contentValues.put("idv", id.getText().toString());
-                    contentValues.put("pwv", pw.getText().toString());
-                    contentValues.put("nn", nickname.getText().toString());
-                    contentValues.put("gender", gender.getSelectedItem().toString());
-                    contentValues.put("age", age_group.getSelectedItem().toString());
-                    contentValues.put("phone", phoneNum.getText().toString());
-                    contentValues.put("phonesc", true);
-                    contentValues.put("gendersc",true);
-                    contentValues.put("agesc", true);
-                    contentValues.put("groupsc", "all");
+            logup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        contentValues.put("idv", id.getText().toString());
+                        contentValues.put("pwv", pw.getText().toString());
+                        contentValues.put("nn", nickname.getText().toString());
+                        contentValues.put("gender", gender.getSelectedItem().toString());
+                        contentValues.put("age", age_group.getSelectedItem().toString());
+                        contentValues.put("phone", phoneNum.getText().toString());
+                        contentValues.put("phonesc", true);
+                        contentValues.put("gendersc",true);
+                        contentValues.put("agesc", true);
+                        contentValues.put("groupsc", "all");
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            result = hrc.request("http://172.26.1.145:8000/api/user", contentValues);
-                            Message msg = handler.obtainMessage();
-                            handler.sendMessage(msg);
-                        }
-                    }).start();
-                    handler = new Handler() {
-                        public void handleMessage(Message msg) {
-                            if (msg.what == 0) {
-                                Intent intent = new Intent(UserRegisterActivity.this,PreActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                //
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/user", contentValues);
+                                Message msg = handler.obtainMessage();
+                                handler.sendMessage(msg);
                             }
                         }
-                    };
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 /*
             // 화면 터치 시, 키보드 자판 없어짐
             rLayout.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +141,7 @@ public class UserRegisterActivity extends AppCompatActivity {
                     startActivity(new Intent(UserRegisterActivity.this, MainActivity.class));
                 }
             });*/
-    }
+   /* }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,5 +170,5 @@ public class UserRegisterActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

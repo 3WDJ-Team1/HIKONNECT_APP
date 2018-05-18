@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
@@ -76,11 +76,11 @@ public class LoginActivity extends Activity {
                             Log.d("json", jsonObj);
 
                             // 리퀘스트 바디 생성
-                            RequestBody body = RequestBody.create(Environment.JSON, jsonObj);
+                            RequestBody body = RequestBody.create(Environments.JSON, jsonObj);
 
                             // 리퀘스트 객체 생성
                             Request request = new Request.Builder()
-                                    .url(Environment.LARAVEL_SOL_SERVER + "/loginprocess")
+                                    .url(Environments.LARAVEL_SOL_SERVER + "/loginprocess")
                                     .post(body)
                                     .build();
 

@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import java.io.IOException;
 import java.net.URL;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     OkHttpClient client = new OkHttpClient();
 
-                    URL url = new URL(Environment.LARAVEL_HIKONNECT_IP + "/api/login_app");
+                    URL url = new URL(Environments.LARAVEL_HIKONNECT_IP + "/api/login_app");
 
                     RequestBody body = new FormBody.Builder()
                             .add("id", id.getText().toString())

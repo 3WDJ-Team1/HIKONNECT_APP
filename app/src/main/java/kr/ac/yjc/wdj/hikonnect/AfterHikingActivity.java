@@ -7,19 +7,28 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import kr.ac.yjc.wdj.hikonnect.adapters.AfterHikingListAdapter;
 import kr.ac.yjc.wdj.hikonnect.beans.AfterHikingMenu;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 등산 직후 화면
  * @author  Sungeun Kang(kasueu0814@gmail.com)
+ * @author  bs Kwon <rnjs9957@gmail.com>
  * @since   2018-05-12
  */
 public class AfterHikingActivity extends AppCompatActivity {
@@ -51,7 +60,11 @@ public class AfterHikingActivity extends AppCompatActivity {
         images      = new ArrayList<>();
 
         // hikingMenus 설정
-        setHikingMenus();
+        try {
+            setHikingMenus();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // RecyclerView에 Adapter 붙이기
         rvAfterHikingList.setAdapter(new AfterHikingListAdapter(hikingMenus, R.layout.after_hiking_list_item));
@@ -70,30 +83,62 @@ public class AfterHikingActivity extends AppCompatActivity {
     /**
      * menus, images 초기화 --> 메뉴 추가 시 이곳에 적용
      */
-    private void initData() {
+    private void initData() throws InterruptedException {
         // TODO : intent로 받아오도록 변경하기
         // TODO : 데이터 DB 에서 받아올 수 있도록 하기
+        Intent intent = getIntent();
+        final int memberNo = intent.getIntExtra("member_no", 1);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpUrl httpUrl = HttpUrl.parse("http://172.26.1.88:8000/api/getAfterHikingInfo").newBuilder().build();
+
+                RequestBody reqBody = new FormBody.Builder()
+                        .add("member_no", String.valueOf(memberNo))
+                        .build();
+                Request req = new Request.Builder().url(httpUrl).post(reqBody).build();
+
+                Response response = null;
+                try {
+                    response = new OkHttpClient().newCall(req).execute();
+
+                    String result = null;
+
+                    result = response.body().string();
+
+                    Log.d("HIKONNECT", "initData: res: " + result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        thread.join();
+
         // 내용 초기화
+        images.add(getResources().getDrawable(R.drawable.ic_baseline_alarm_24px));
         menuTitles.add("총 등산 시간");
         menuValues.add("6.5 시간");
+
+        images.add(getResources().getDrawable(R.drawable.ic_ranking_svgrepo_com));
         menuTitles.add("순위");
         menuValues.add("8등");
+
+        images.add(getResources().getDrawable(R.drawable.ic_mountain_svgrepo_com));
         menuTitles.add("완료한 산");
         menuValues.add("소백산");
+
+        images.add(getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
         menuTitles.add("현재 등급");
         menuValues.add("한라산");
-
-        // image 초기화
-        images.add(getResources().getDrawable(R.drawable.ic_baseline_alarm_24px));
-        images.add(getResources().getDrawable(R.drawable.ic_ranking_svgrepo_com));
-        images.add(getResources().getDrawable(R.drawable.ic_mountain_svgrepo_com));
-        images.add(getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));        
     }
 
     /**
      * hikingMenus 설정
      */
-    private void setHikingMenus() {
+    private void setHikingMenus() throws InterruptedException {
         initData();
 
         Iterator<String>    iForTitles  = menuTitles.iterator();

@@ -26,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import devlight.io.library.ntb.NavigationTabBar;
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
@@ -150,10 +150,10 @@ public class TabsActivity extends AppCompatActivity {
                                             "\"uuid\":\""   + groupId           + "\""  +
                                         "}";
 
-                                RequestBody body = RequestBody.create(Environment.JSON, sendData);
+                                RequestBody body = RequestBody.create(Environments.JSON, sendData);
 
                                 Request request = new Request.Builder()
-                                        .url(Environment.LARAVEL_SOL_SERVER + "/member")
+                                        .url(Environments.LARAVEL_SOL_SERVER + "/member")
                                         .post(body)
                                         .build();
 
@@ -369,7 +369,7 @@ public class TabsActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environment.LARAVEL_SOL_SERVER + "/list_announce/" + groupId + "/" + page)
+                            .url(Environments.LARAVEL_SOL_SERVER + "/list_announce/" + groupId + "/" + page)
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -426,10 +426,10 @@ public class TabsActivity extends AppCompatActivity {
 
                     // 리퀘스트 생성
                     Request request = new Request.Builder()
-                            .url(Environment.LARAVEL_SOL_SERVER + "/schedule/" + groupId)
+                            .url(Environments.LARAVEL_SOL_SERVER + "/schedule/" + groupId)
                             .build();
 
-                    Log.d("schedule", Environment.LARAVEL_SOL_SERVER + "/schedule/" + groupId);
+                    Log.d("schedule", Environments.LARAVEL_SOL_SERVER + "/schedule/" + groupId);
 
                     // 결과 받아오기
                     Response response = client.newCall(request).execute();
@@ -490,7 +490,7 @@ public class TabsActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environment.LARAVEL_SOL_SERVER + "/list_member/" + groupId)
+                            .url(Environments.LARAVEL_SOL_SERVER + "/list_member/" + groupId)
                             .build();
 
                     Response response = client.newCall(request).execute();

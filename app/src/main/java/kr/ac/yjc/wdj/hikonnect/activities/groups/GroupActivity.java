@@ -5,7 +5,6 @@ package kr.ac.yjc.wdj.hikonnect.activities.groups;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,39 +17,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * The Activity used that get grouplist
@@ -151,7 +132,7 @@ public class GroupActivity extends AppCompatActivity
         new Thread(new Runnable() {
             @Override
             public void run() {
-                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/groupList", contentValues);
+                result = hrc.request(Environments.LARAVEL_HIKONNECT_IP + "/api/groupList", contentValues);
                 Message msg = handler.obtainMessage();
                 handler.sendMessage(msg);
             }
