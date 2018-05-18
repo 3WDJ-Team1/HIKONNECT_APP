@@ -174,9 +174,9 @@ public class UserProfileActivity extends AppCompatActivity
 
         if (id == R.id.groups) {
             startActivity(new Intent(this, GroupActivity.class));
-        } else if (id == R.id.my_groups) {
+        } /*else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
-        } else if (id == R.id.my_profile) {
+        }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
             session.logOutUser();

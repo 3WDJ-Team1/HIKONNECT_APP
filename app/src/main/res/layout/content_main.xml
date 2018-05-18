@@ -10,7 +10,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_main"
+    >
 
     <ProgressBar
         android:id="@+id/startHikingProgressBar"
@@ -19,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:indeterminate="false"
-        android:visibility="gone" />
+        android:visibility="gone"
+        />
 
     <android.support.v7.widget.CardView
         android:id="@+id/mainCard"
@@ -34,10 +36,12 @@
 
             <ImageView
                 android:id="@+id/nowScheduleImg"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:srcCompat="@drawable/ic_image"
-                android:layout_marginEnd="8dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                app:srcCompat="@drawable/splash"
+                android:scaleType="fitXY"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:layout_alignParentEnd="true"/>
 
             <TextView
@@ -46,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="nowScheduleTitle!"
                 android:layout_alignParentStart="true"
-                android:layout_margin="8dp"
+                android:layout_margin="16dp"
                 android:textColor="@color/black"
                 android:textSize="24dp"
                 android:textStyle="bold"
@@ -58,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:text="nowScheduleContent..."
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:textColor="@color/grey_600"
                 android:textSize="16dp"
                 android:layout_below="@+id/nowScheduleTitle"
@@ -71,7 +75,7 @@
                 android:textSize="20dp"
                 android:text="등산하기"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/light_green_600"
+                android:backgroundTint="@color/red_accent_400"
                 android:layout_below="@+id/nowScheduleImg"
                 />
 
@@ -93,7 +97,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grey_200"
-        android:layout_below="@+id/tvNowGroup">
+        android:layout_below="@+id/tvNowGroup"
+        tools:listitem="@layout/main_list_item"
+        >
     </android.support.v7.widget.RecyclerView>
 
     <TextView
@@ -112,7 +118,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_below="@+id/tvGroups"
-        android:background="@color/grey_200">
+        android:background="@color/grey_200"
+        tools:listitem="@layout/main_list_item">
     </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

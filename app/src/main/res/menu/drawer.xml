@@ -4,18 +4,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/groups"
-            android:icon="@drawable/ic_place"
+            android:icon="@drawable/ic_people_black_36dp"
             android:title="@string/groups" />
     </group>
 
     <item android:title="@string/nav_my_page">
         <menu>
+            <!--<item-->
+                <!--android:icon="@drawa"-->
+                <!--android:id="@+id/my_groups"-->
+                <!--android:title="@string/nav_my_groups" />-->
             <item
-                android:icon="@drawable/ic_emoticon"
-                android:id="@+id/my_groups"
-                android:title="@string/nav_my_groups" />
-            <item
-                android:icon="@drawable/ic_emoticon"
+                android:icon="@drawable/ic_person_black_36dp"
                 android:id="@+id/my_profile"
                 android:title="@string/nav_my_profile" />
             <!--<item
@@ -23,7 +23,7 @@
                 android:id="@+id/my_profile"
                 android:title="My Profile"/>-->
             <item
-                android:icon="@drawable/ic_emoticon"
+                android:icon="@android:drawable/ic_lock_idle_lock"
                 android:id="@+id/log_out"
                 android:title="@string/log_out"/>
         </menu>

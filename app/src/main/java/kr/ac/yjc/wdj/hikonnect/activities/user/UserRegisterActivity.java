@@ -29,7 +29,6 @@ import android.widget.Spinner;
 import java.io.IOException;
 import java.net.URL;
 
-import kr.ac.yjc.wdj.hikonnect.Environment;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.PreActivity;
@@ -50,105 +49,105 @@ import okhttp3.Response;
  */
 
 public class UserRegisterActivity extends AppCompatActivity {
-        EditText id, pw, nickname, phoneNum;
-        Spinner gender, age_group;
-        CheckBox gendersc, phonesc, agesc, groupsc;
-        Button logup, cancle;
-        ContentValues contentValues = new ContentValues();
-        Intent intent;
-        Toolbar myToolbar;
-        DrawerLayout dlDrawer;
-        ActionBarDrawerToggle dtToggle;
-        RelativeLayout rLayout;
-        HttpRequestConnection hrc = new HttpRequestConnection();
-        String result;
-        Handler handler;
+    EditText id, pw, nickname, phoneNum;
+    Spinner gender, age_group;
+    CheckBox gendersc, phonesc, agesc, groupsc;
+    Button logup, cancle;
+    ContentValues contentValues = new ContentValues();
+    Intent intent;
+    Toolbar myToolbar;
+    DrawerLayout dlDrawer;
+    ActionBarDrawerToggle dtToggle;
+    RelativeLayout rLayout;
+    HttpRequestConnection hrc = new HttpRequestConnection();
+    String result;
+    Handler handler;
 
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.user_registeration);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.user_registeration);
 
-            myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-            dlDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        dlDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-            setSupportActionBar(myToolbar);
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null)
-                actionBar.setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(myToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
-            dtToggle = new ActionBarDrawerToggle(this, dlDrawer, R.string.app_name, R.string.app_name);
-            dlDrawer.addDrawerListener(dtToggle);
+        dtToggle = new ActionBarDrawerToggle(this, dlDrawer, R.string.app_name, R.string.app_name);
+        dlDrawer.addDrawerListener(dtToggle);
 
-            // Spinner
-            Spinner gdSpinner = (Spinner)findViewById(R.id.gender_spinner);
-            ArrayAdapter gdAdapter = ArrayAdapter.createFromResource(this, R.array.gender, android.R.layout.simple_spinner_item);
-            gdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            gdSpinner.setAdapter(gdAdapter);
+        // Spinner
+        Spinner gdSpinner = (Spinner)findViewById(R.id.gender_spinner);
+        ArrayAdapter gdAdapter = ArrayAdapter.createFromResource(this, R.array.gender, android.R.layout.simple_spinner_item);
+        gdAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        gdSpinner.setAdapter(gdAdapter);
 
-            Spinner ageSpinner = (Spinner)findViewById(R.id.age_group_spinner);
-            ArrayAdapter ageAdapter = ArrayAdapter.createFromResource(this, R.array.age_group, android.R.layout.simple_spinner_item);
-            ageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            ageSpinner.setAdapter(ageAdapter);
+        Spinner ageSpinner = (Spinner)findViewById(R.id.age_group_spinner);
+        ArrayAdapter ageAdapter = ArrayAdapter.createFromResource(this, R.array.age_group, android.R.layout.simple_spinner_item);
+        ageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ageSpinner.setAdapter(ageAdapter);
 
 
-            //loginProgressBar = findViewById(R.id.login_progress_bar);
+        //loginProgressBar = findViewById(R.id.login_progress_bar);
 
-            id              = findViewById(R.id.id_editText);
-            pw              = findViewById(R.id.pw_editText);
-            nickname        = findViewById(R.id.nickname_editText);
-            phoneNum        = findViewById(R.id.phoneNum_editText);
+        id              = findViewById(R.id.id_editText);
+        pw              = findViewById(R.id.pw_editText);
+        nickname        = findViewById(R.id.nickname_editText);
+        phoneNum        = findViewById(R.id.phoneNum_editText);
 
-            gender          = findViewById(R.id.gender_spinner);
-            age_group       = findViewById(R.id.age_group_spinner);
+        gender          = findViewById(R.id.gender_spinner);
+        age_group       = findViewById(R.id.age_group_spinner);
 
-            logup           = findViewById(R.id.signUpBtn);
-            cancle          = findViewById(R.id.cancelBtn);
+        logup           = findViewById(R.id.signUpBtn);
+        cancle          = findViewById(R.id.cancelBtn);
 
             /*gendersc        = findViewById(R.id.gender_ck);
             phonesc         = findViewById(R.id.phone_ck);
             agesc           = findViewById(R.id.age_ck);
             groupsc         = findViewById(R.id.private_ck);*/
 
-            logup.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        contentValues.put("idv", id.getText().toString());
-                        contentValues.put("pwv", pw.getText().toString());
-                        contentValues.put("nn", nickname.getText().toString());
-                        contentValues.put("gender", gender.getSelectedItem().toString());
-                        contentValues.put("age", age_group.getSelectedItem().toString());
-                        contentValues.put("phone", phoneNum.getText().toString());
-                        contentValues.put("phonesc", true);
-                        contentValues.put("gendersc",true);
-                        contentValues.put("agesc", true);
-                        contentValues.put("groupsc", "all");
+        logup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    contentValues.put("idv", id.getText().toString());
+                    contentValues.put("pwv", pw.getText().toString());
+                    contentValues.put("nn", nickname.getText().toString());
+                    contentValues.put("gender", gender.getSelectedItem().toString());
+                    contentValues.put("age", age_group.getSelectedItem().toString());
+                    contentValues.put("phone", phoneNum.getText().toString());
+                    contentValues.put("phonesc", true);
+                    contentValues.put("gendersc",true);
+                    contentValues.put("agesc", true);
+                    contentValues.put("groupsc", "all");
 
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                result = hrc.request(Environment.LARAVEL_HIKONNECT_IP + "/api/user", contentValues);
-                                Message msg = handler.obtainMessage();
-                                handler.sendMessage(msg);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            result = hrc.request("http://172.26.1.145:8000/api/user", contentValues);
+                            Message msg = handler.obtainMessage();
+                            handler.sendMessage(msg);
+                        }
+                    }).start();
+                    handler = new Handler() {
+                        public void handleMessage(Message msg) {
+                            if (msg.what == 0) {
+                                Intent intent = new Intent(UserRegisterActivity.this,PreActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                //
                             }
-                        }).start();
-                        handler = new Handler() {
-                            public void handleMessage(Message msg) {
-                                if (msg.what == 0) {
-                                    Intent intent = new Intent(UserRegisterActivity.this,PreActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    //
-                                }
-                            }
-                        };
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        }
+                    };
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
+            }
+        });
 /*
             // 화면 터치 시, 키보드 자판 없어짐
             rLayout.setOnClickListener(new View.OnClickListener() {
@@ -158,41 +157,40 @@ public class UserRegisterActivity extends AppCompatActivity {
                     imManager.hideSoftInputFromWindow(logup.getWindowToken(), 0);
                 }
             });
-
             cancle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     startActivity(new Intent(UserRegisterActivity.this, MainActivity.class));
                 }
             });*/
-        }
+    }
 
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        dtToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        dtToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (dtToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
-        @Override
-        protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-            super.onPostCreate(savedInstanceState);
-
-            dtToggle.syncState();
-        }
-
-        @Override
-        public void onConfigurationChanged(Configuration newConfig) {
-            super.onConfigurationChanged(newConfig);
-
-            dtToggle.onConfigurationChanged(newConfig);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (dtToggle.onOptionsItemSelected(item)) {
-                return true;
-            }
-
-            return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
     }
+}

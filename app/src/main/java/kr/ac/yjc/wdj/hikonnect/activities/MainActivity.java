@@ -1,7 +1,10 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -20,6 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,6 +40,10 @@ import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MainPageAdapter;
 import kr.ac.yjc.wdj.hikonnect.beans.Group;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * The Activity used app's main page
@@ -86,7 +97,43 @@ public class MainActivity extends AppCompatActivity
 
         txtView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.main_textview);
 
-        txtView.setText(id);
+        txtView.setText(UsersData.USER_NAME);
+
+        final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
+
+        new AsyncTask<Void, Integer, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                try {
+                    OkHttpClient okHttpClient = new OkHttpClient();
+
+                    HttpUrl httpUrl = HttpUrl
+                            .parse(Environment.NODE_SOL_SERVER + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .newBuilder()
+                            .build();
+
+                    Request req = new Request.Builder().url(httpUrl).build();
+
+                    Response res = okHttpClient.newCall(req).execute();
+
+                    InputStream is = res.body().byteStream();
+
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+                    return bitmap;
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+
+                imageView.setImageBitmap(bitmap);
+            }
+        }.execute();
 
         //changeTxtName(id);
 
@@ -126,9 +173,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.groups) {
             startActivity(new Intent(this, groups_list_main.class));
-        } else if (id == R.id.my_groups) {
+        } /*else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
-        } else if (id == R.id.my_profile) {
+        }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
             session.logOutUser();

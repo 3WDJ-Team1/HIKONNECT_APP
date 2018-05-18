@@ -13,8 +13,8 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/groupImg"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 app:srcCompat="@drawable/ic_image"/>
 
             <TextView
