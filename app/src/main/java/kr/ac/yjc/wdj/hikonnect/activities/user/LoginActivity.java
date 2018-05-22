@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     OkHttpClient client = new OkHttpClient();
 
-                    URL url = new URL("http://172.26.1.5:8000/api/login_app");
+                    URL url = new URL("http://192.168.1.146:8000/api/login_app");
 
                     RequestBody body = new FormBody.Builder()
                             .add("id", id.getText().toString())

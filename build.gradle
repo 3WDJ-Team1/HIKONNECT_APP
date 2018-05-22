@@ -20,6 +20,9 @@ allprojects {
         maven {
             url "https://maven.google.com" // Google's Maven repository.
         }
+        maven {
+            url 'https://jitpack.io' // A repository for draw bar graph in user's record.
+        }
     }
 }
 task clean(type: Delete) {
