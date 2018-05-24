@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
 
                             // 리퀘스트 객체 생성
                             Request request = new Request.Builder()
-                                    .url(Environments.LARAVEL_SOL_SERVER + "/loginprocess")
+                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/loginprocess")
                                     .post(body)
                                     .build();
 

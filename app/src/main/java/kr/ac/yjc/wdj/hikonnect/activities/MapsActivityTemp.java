@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -52,6 +53,7 @@ import com.google.maps.android.ui.IconGenerator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -115,7 +117,7 @@ class MultiDrawable extends Drawable {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         if (mDrawables.size() == 1) {
             mDrawables.get(0).draw(canvas);
             return;
@@ -210,6 +212,9 @@ class Member extends MapItem implements ClusterItem {
 class LocationMemo extends MapItem implements ClusterItem {
 
     int no;
+    String title;
+    String contents;
+    Bitmap picture;
 
     LocationMemo(LatLng location, int no) {
         super(location);
@@ -229,6 +234,10 @@ class MapItem implements ClusterItem {
         this.location = location;
     }
 
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
+
     @Override
     public LatLng getPosition() {
         return location;
@@ -241,7 +250,7 @@ class HikingField {
     private double  fieldLength;
     private ArrayList<LatLng> routes = new ArrayList<>();
 
-    public HikingField(int fid, double fieldLength) {
+    HikingField(int fid, double fieldLength) {
         this.fid            = fid;
         this.fieldLength    = fieldLength;
     }
@@ -285,7 +294,6 @@ public class MapsActivityTemp extends FragmentActivity implements
     // 지도, 위치.
     private GoogleMap                   gMap;
     private Location                    myCurrentLocation;
-    private SupportMapFragment          mapFragment;
     private double                      hikedDistance = 0.0;
 
     // HTTP 통신.
@@ -320,6 +328,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private TextView            tvHikingProgress;
 
     private CardView            otherUserDataBox;
+    private TextView            TvOtherUserNickname;
     private TextView            tvOtherUserSpeed;
     private TextView            tvOtherUserDistance;
     private TextView            tvOtherUserArriveWhen;
@@ -400,7 +409,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 .icon(BitmapDescriptorFactory.fromBitmap(icon));
                     } else  {
                         Bitmap profileImg = ((Member) item).profileImg;
-                        profileImg = profileImg.createScaledBitmap(profileImg, 150, 150, true);
+                        profileImg = Bitmap.createScaledBitmap(profileImg, 150, 150, true);
                         mImageView.setImageBitmap(profileImg);
                         Bitmap icon = mIconGenerator.makeIcon();
                         markerOptions
@@ -421,12 +430,12 @@ public class MapsActivityTemp extends FragmentActivity implements
         setContentView(R.layout.activity_maps_temp);
 
         Intent intent = getIntent();
-        String userid = "test2";
-//        intent.getStringExtra("id");
+//        String userid = "admi";
+        String userid = intent.getStringExtra("id");
         getMemberNoByUserID(userid);
 
         // [1] GoogleMaps Fragment 불러오기.
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         // [2] 위치 서비스 클래스 초기화.
@@ -461,6 +470,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 public boolean onClusterItemClick(final MapItem mapItem) {
                     if (mapItem instanceof LocationMemo) {
                         Log.d(TAG, "onClusterItemClick: no: " + ((LocationMemo) mapItem).no);
+
                         Intent intent1 = new Intent(MapsActivityTemp.this, Locationmemo.class);
                         intent1.putExtra("location_no", ((LocationMemo) mapItem).no);
                         intent1.putExtra("latitude", mapItem.getPosition().latitude);
@@ -470,6 +480,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                TvOtherUserNickname.setText("");
                                 tvOtherUserSpeed.setText("0.0");
                                 tvOtherUserDistance.setText("0.00");
                                 tvOtherUserArriveWhen.setText("0.0");
@@ -477,6 +488,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                             }
                         });
                         new Thread(new Runnable() {
+                            String nickname;
                             double distance;
                             double velocity;
                             int rank;
@@ -506,6 +518,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                     JSONObject result = (JSONObject) ((JSONArray) parser.parse(response.body().string())).get(0);
 
+                                    nickname    = String.valueOf(result.get("nickname"));
                                     distance    = Double.valueOf(result.get("distance").toString());
                                     distance    = Math.round(Math.abs(distance - hikedDistance) * 100d) / 100d;
                                     velocity    = Double.valueOf(result.get("velocity").toString());
@@ -514,7 +527,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-
+                                            TvOtherUserNickname.setText(nickname);
                                             tvOtherUserSpeed.setText(String.valueOf(velocity));
                                             tvOtherUserDistance.setText(String.valueOf(distance));
                                             tvOtherUserRank.setText(String.valueOf(rank));
@@ -561,8 +574,17 @@ public class MapsActivityTemp extends FragmentActivity implements
                         @Override
                         public void run() {
                             try {
+                                switch (myHikingState) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        break;
+                                    case 2:
+                                        break;
+                                }
                                 if (getDisToStartPoint() < 50) {
-                                    btnChangeHikingState.setVisibility(View.VISIBLE);
+                                    if (myHikingState == 0 || myHikingState == 1)
+                                        btnChangeHikingState.setVisibility(View.VISIBLE);
                                 } else {
                                     btnChangeHikingState.setVisibility(View.GONE);
                                 }
@@ -659,7 +681,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 .newCall(req)
                 .enqueue(new Callback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(TAG, "Request Hiking Route: ", e);
                         runOnUiThread(new Runnable() {
                             @Override
@@ -670,7 +692,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         try {
                             JSONParser parser = new JSONParser();
                             String serverRes = response.body().string();
@@ -683,8 +705,8 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 JSONObject attributes = (JSONObject) ((JSONObject) idx).get("attributes");
                                 JSONArray paths = (JSONArray) ((JSONArray) ((JSONObject) ((JSONObject) idx).get("geometry")).get("paths")).get(0);
 
-                                int fid         = Integer.valueOf(attributes.get("FID").toString());
-                                double fieldLength = Double.valueOf(attributes.get("PMNTN_LT").toString());
+                                int fid             = Integer.valueOf(attributes.get("FID").toString());
+                                double fieldLength  = Double.valueOf(attributes.get("PMNTN_LT").toString());
 
                                 wholeDistance += fieldLength;
 
@@ -702,8 +724,10 @@ public class MapsActivityTemp extends FragmentActivity implements
                             }
 
                             paintHikingRoute();
-                        } catch (Exception e) {
-                            Log.e(TAG, "Parse Server Res: ", e);
+                        } catch (NullPointerException npe) {
+                            Log.e(TAG, "onResponse: ", npe);
+                        } catch (ParseException pse) {
+                            Log.e(TAG, "Parse Server Res: ", pse);
                         }
                     }
                 });
@@ -712,7 +736,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private void getMemberNoByUserID(String userID) {
 
         HttpUrl.Builder urlBuilder = HttpUrl
-                .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getMemberNoByUserId")
+                .parse(Environments.LARAVEL_LOCAL_IP + "/api/getMemberNoByUserId")
                 .newBuilder();
 
         final String reqUrl = urlBuilder.build().toString();
@@ -725,21 +749,23 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         okHttpClient.newCall(req).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "onFailure: ", e);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 try {
 
                     JSONParser parser = new JSONParser();
 
                     JSONArray result = (JSONArray) parser.parse(response.body().string());
 
-                    int memNo = Integer.valueOf(((JSONObject)result.get(0)).get("member_no").toString());
+                    int memNo       = Integer.valueOf(((JSONObject)result.get(0)).get("member_no").toString());
+                    int hikingState = Integer.valueOf(((JSONObject)result.get(0)).get("hiking_state").toString());
 
                     myMemberNo = memNo;
+                    myHikingState = hikingState;
 
                 } catch (Exception e) {
                     Log.e(TAG, "onResponse: ", e);
@@ -829,7 +855,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                     okHttpClient.newCall(req).enqueue(new Callback() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             Log.e(TAG, "Http updateHikingInfo: ", e);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -840,12 +866,13 @@ public class MapsActivityTemp extends FragmentActivity implements
                         }
 
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                             try {
                                 JSONParser parser = new JSONParser();
 
                                 JSONObject result = (JSONObject) parser.parse(response.body().string());
 
+                                Log.d(TAG, "onResponse: res: " + result);
                                 JSONArray locationMemos = (JSONArray) result.get("location_memos");
                                 JSONArray members = (JSONArray) result.get("members");
 
@@ -864,25 +891,29 @@ public class MapsActivityTemp extends FragmentActivity implements
                                     int     memberNo        = Integer.valueOf(((JSONObject) idx).get("member_no").toString());
                                     String  userID          = String.valueOf(((JSONObject) idx).get("userid").toString());
 
-                                    Member member = new Member(new LatLng(latitude, longitude), memberNo);
-                                    member.userID = userID;
+                                    if (mapItems.containsKey(memberNo)) {
+                                        Member member = (Member) mapItems.get(memberNo);
+                                        member.setLocation(new LatLng(latitude, longitude));
 
-                                    HttpUrl httpUrl = HttpUrl
-                                            .parse("http://172.26.2.88:3000/images/UserProfile/" + userID + ".jpg")
-                                            .newBuilder()
-                                            .build();
+                                    } else {
+                                        Member member = new Member(new LatLng(latitude, longitude), memberNo);
+                                        member.userID = userID;
 
-                                    Request req = new Request.Builder().url(httpUrl).build();
+                                        HttpUrl httpUrl = HttpUrl
+                                                .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + userID + ".jpg")
+                                                .newBuilder()
+                                                .build();
 
-                                    Response res = okHttpClient.newCall(req).execute();
+                                        Request req = new Request.Builder().url(httpUrl).build();
 
-                                    InputStream is = res.body().byteStream();
+                                        Response res = okHttpClient.newCall(req).execute();
 
-                                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                                        InputStream is = res.body().byteStream();
 
-                                    member.profileImg = bitmap;
+                                        member.profileImg = BitmapFactory.decodeStream(is);
 
-                                    mapItems.put(memberNo, member);
+                                        mapItems.put(memberNo, member);
+                                    }
                                 }
                             } catch (Exception e) {
                                 Log.e(TAG, "Post Response: ", e);
@@ -941,9 +972,9 @@ public class MapsActivityTemp extends FragmentActivity implements
            return startPointLoc.distanceTo(myCurrentLocation);
 
         } catch (Exception e) {
-
+            Log.e(TAG, "getDisToStartPoint: ", e);
         }
-        return -1.0d;
+        return 0.0d;
     }
 
     private void updateHikedDistance() {
@@ -959,7 +990,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 if (idx == 0) continue;
                 if (idx > idxCurrentFID) break;
 
-                hikedDistance += hikingFields.get(idx - 1).getFieldLength() * 1000;
+                hikedDistance += hikingFields.get(idx - 1).getFieldLength() * 100;
             }
 
             for (LatLng latLng : hikingFields.get(currentFID).getRoutes()) {
@@ -1010,12 +1041,12 @@ public class MapsActivityTemp extends FragmentActivity implements
 
             okHttpClient.newCall(req).enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     Log.e(TAG, "onFailure: ", e);
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     String result = response.body().string();
 
                     Log.d(TAG, "Update Hiking State: res: " + result);
@@ -1038,6 +1069,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         tvHikingProgress            = (TextView) findViewById(R.id.seekBarProgress);
 
         otherUserDataBox            = (CardView) findViewById(R.id.otherUserDataBox);
+        TvOtherUserNickname         = (TextView) findViewById(R.id.otherUserNickname);
         tvOtherUserSpeed            = (TextView) findViewById(R.id.otherUserSpeed);
         tvOtherUserDistance         = (TextView) findViewById(R.id.otherUserDistance);
         tvOtherUserArriveWhen       = (TextView) findViewById(R.id.otherUserArriveWhen);
@@ -1078,6 +1110,12 @@ public class MapsActivityTemp extends FragmentActivity implements
                 } else {
                     linearLayoutLocationMemo.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+        // 레이아웃 뒤쪽 클릭 무시.
+        linearLayoutLocationMemo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
             }
         });
         imgViewLMemoImg.setOnClickListener(new View.OnClickListener() {
@@ -1125,12 +1163,12 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                 okHttpClient.newCall(request).enqueue(new Callback() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(TAG, "onFailure: ", e);
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String result = response.body().string();
 
                         Log.d(TAG, "onResponse: " + result);
@@ -1185,6 +1223,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                         myHikingState = 1;
                         btnChangeHikingState.setVisibility(View.GONE);
                         btnChangeHikingState.setText("산행 종료");
+                        userDataBox.setVisibility(View.VISIBLE);
                         updateHikingState();
                         break;
                     case 1:     // 등산 중
@@ -1228,7 +1267,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         Log.d(TAG, "sendPicture: imagePath: " + imagePath);
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);//경로를 통해 비트맵으로 전환
-        bitmap = bitmap.createScaledBitmap(bitmap, 150, 150, true);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
         imgViewLMemoImg.setImageBitmap(bitmap);//이미지 뷰에 비트맵 넣기
 
     }
@@ -1257,7 +1296,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     private void getPictureForPhoto() {
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-        bitmap = bitmap.createScaledBitmap(bitmap, 150, 150, true);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
         imgViewLMemoImg.setImageBitmap(bitmap);//이미지 뷰에 비트맵 넣기
     }
 
@@ -1297,6 +1336,8 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d(TAG, "Location Changed!");
+
         myCurrentLocation = location;
 
         double userSpeed = Math.round(location.getSpeed() * 36d) / 10d;

@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
                     OkHttpClient okHttpClient = new OkHttpClient();
 
                     HttpUrl httpUrl = HttpUrl
-                            .parse(Environments.NODE_SOL_SERVER + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
                             .newBuilder()
                             .build();
 

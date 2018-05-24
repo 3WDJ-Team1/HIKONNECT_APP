@@ -92,16 +92,15 @@ public class AfterHikingActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpUrl httpUrl = HttpUrl.parse("http://172.26.1.88:8000/api/getAfterHikingInfo").newBuilder().build();
+                HttpUrl httpUrl = HttpUrl.parse("http://172.26.2.140:8000/api/getHikingResult").newBuilder().build();
 
                 RequestBody reqBody = new FormBody.Builder()
                         .add("member_no", String.valueOf(memberNo))
                         .build();
                 Request req = new Request.Builder().url(httpUrl).post(reqBody).build();
 
-                Response response = null;
                 try {
-                    response = new OkHttpClient().newCall(req).execute();
+                    Response response = new OkHttpClient().newCall(req).execute();
 
                     String result = null;
 
