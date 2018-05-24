@@ -76,6 +76,7 @@ import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
+import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
 import okhttp3.Call;
@@ -1329,7 +1330,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                 case CAMERA_CODE:
                     getPictureForPhoto(); //카메라에서 가져오기
                     break;
-
+                case HikingMemberListAdapter.REQUEST_CODE:
+                    Log.d(TAG, "onActivityResult: HikingMemberListAdpater");
+                    break;
             }
         }
     }

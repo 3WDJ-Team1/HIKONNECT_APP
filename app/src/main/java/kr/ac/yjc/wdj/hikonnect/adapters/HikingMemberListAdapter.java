@@ -30,6 +30,8 @@ import kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean;
  */
 public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberListAdapter.HikingMemberHolder> {
 
+    public static final int REQUEST_CODE = 1005;
+
     private ArrayList<HikingMemberListBean> dataList;
     private int                             layout;
     private Activity                        parent;
@@ -60,13 +62,14 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
             @Override
             public void onClick(View v) {
 
+                Log.d("HIKONNECT", "recycler view Clicked!!");
                 Intent intent = new Intent();
                 intent.putExtra("user_number", bean.getMemberNo());
                 intent.putExtra("user_lat", bean.getLatitude());
                 intent.putExtra("user_lng", bean.getLongitude());
 
                 parent.setResult(Activity.RESULT_OK, intent);
-                parent.finish();
+                parent.finishActivity(REQUEST_CODE);
             }
         });
         if (dataList.get(i).getProfileImg() != null) {
