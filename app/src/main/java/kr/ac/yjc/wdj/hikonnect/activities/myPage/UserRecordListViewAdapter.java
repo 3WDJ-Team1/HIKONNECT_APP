@@ -44,7 +44,7 @@ public class UserRecordListViewAdapter extends BaseAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.user_records_listview_item, parent, false);
+            convertView = inflater.inflate(R.layout.user_records_listview_item, null, true);
         }
 
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.menuIcon);
@@ -58,6 +58,19 @@ public class UserRecordListViewAdapter extends BaseAdapter {
         descTextVeiw.setText(listViewItem.getDesc());
 
         return convertView;
+    }
+
+    class ViewHolder {
+        ImageView   iconImageView;
+        TextView    titleTxtView;
+        TextView    contentTxtView;
+
+        ViewHolder(View v) {
+            iconImageView   = (ImageView) v.findViewById(R.id.menuIcon);
+            titleTxtView    = (TextView) v.findViewById(R.id.itemTitle);
+            contentTxtView  = (TextView) v.findViewById(R.id.itemContent);
+        }
+
     }
 
     public void addItem(Drawable icon, String title, String desc) {
