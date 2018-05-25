@@ -21,12 +21,11 @@
             android:layout_height="wrap_content"
             android:padding="8dp">
 
-            <ImageView
+            <com.mikhaellopez.circularimageview.CircularImageView
                 android:id="@+id/profilePic"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_group_white_24px"
-                android:background="@color/grey_300"
                 android:layout_marginStart="8dp"/>
 
             <TextView

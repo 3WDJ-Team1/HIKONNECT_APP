@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
@@ -93,15 +95,15 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
     }
 
     class HikingMemberHolder extends RecyclerView.ViewHolder {
-        private TextView        memberName;         // 멤버 이름
-        private RelativeLayout  cardWrapper;
-        private ImageView       userProfileImg;
+        private TextView            memberName;         // 멤버 이름
+        private RelativeLayout      cardWrapper;
+        private CircularImageView   userProfileImg;
 
         public HikingMemberHolder(View itemView) {
             super(itemView);
-            memberName      = (TextView)        itemView.findViewById(R.id.memberName);
-            userProfileImg  = (ImageView)       itemView.findViewById(R.id.profilePic);
-            cardWrapper     = (RelativeLayout)  itemView.findViewById(R.id.cardWrapper);
+            memberName      = (TextView)            itemView.findViewById(R.id.memberName);
+            userProfileImg  = (CircularImageView)   itemView.findViewById(R.id.profilePic);
+            cardWrapper     = (RelativeLayout)      itemView.findViewById(R.id.cardWrapper);
         }
     }
 }

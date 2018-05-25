@@ -2,7 +2,10 @@ package kr.ac.yjc.wdj.hikonnect.adapters;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,14 +19,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.schedule_detail.ScheduleDetailActivity;
 import kr.ac.yjc.wdj.hikonnect.beans.Bean;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupSchedule;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -140,6 +153,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
             // TODO Image 변경되게 바꿀 것
 //            ((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
             ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) dataList.get(index)).getNickname());
+            ((ViewHolderMember) viewHolder).profilePic.setImageBitmap(((GroupUserInfoBean) dataList.get(index)).getProfilePic());
 
             // TODO 그룹 참가 수락 리스너
 
@@ -151,8 +165,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     public void onClick(View v) {
                         if (((ViewHolderMember) viewHolder).detailWrapper.getVisibility() == View.GONE) {
                             ((ViewHolderMember) viewHolder).detailWrapper.setVisibility(View.VISIBLE);
-                            ArrayList<String> detailList = new ArrayList<>();
-                            ArrayList<Drawable> iconList = new ArrayList<>();
+                            ArrayList<String>   detailList  = new ArrayList<>();
+                            ArrayList<Drawable> iconList    = new ArrayList<>();
 
                             // dataList init
                             detailList.add(((GroupUserInfoBean) dataList.get(index)).getGrade());
@@ -224,15 +238,15 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
      */
     private static class ViewHolderMember extends RecyclerView.ViewHolder {
 
-        private ImageView       profilePic;         // 멤버 프로필 사진
-        private TextView        memberName;         // 멤버 이름
-        private RelativeLayout  cardWrapper;        // 전체 카드의 wrapper
-        private LinearLayout    detailWrapper;      // 상세 정보 나열 wrapper
-        private RecyclerView    rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
+        private CircularImageView   profilePic;         // 멤버 프로필 사진
+        private TextView            memberName;         // 멤버 이름
+        private RelativeLayout      cardWrapper;        // 전체 카드의 wrapper
+        private LinearLayout        detailWrapper;      // 상세 정보 나열 wrapper
+        private RecyclerView        rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
 
         // buttons
-        private Button          btnAcceptUser,      // 멤버 참가 수락 버튼
-                                btnRejectUser;      // 멤버 참가 거절 버튼
+        private Button              btnAcceptUser,      // 멤버 참가 수락 버튼
+                                    btnRejectUser;      // 멤버 참가 거절 버튼
 
         /**
          * 초기화
@@ -240,13 +254,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
          */
         private ViewHolderMember (View itemView) {
             super(itemView);
-            profilePic          = (ImageView)       itemView.findViewById(R.id.profilePic);
-            memberName          = (TextView)        itemView.findViewById(R.id.memberName);
-            cardWrapper         = (RelativeLayout)  itemView.findViewById(R.id.cardWrapper);
-            detailWrapper       = (LinearLayout)    itemView.findViewById(R.id.detailWrapper);
-            rvMemberInfoDetail  = (RecyclerView)    itemView.findViewById(R.id.rvMemberInfoDetail);
-            btnAcceptUser       = (Button)          itemView.findViewById(R.id.btnAcceptUser);
-            btnRejectUser       = (Button)          itemView.findViewById(R.id.btnRejectUser);
+            profilePic          = (CircularImageView)   itemView.findViewById(R.id.profilePic);
+            memberName          = (TextView)            itemView.findViewById(R.id.memberName);
+            cardWrapper         = (RelativeLayout)      itemView.findViewById(R.id.cardWrapper);
+            detailWrapper       = (LinearLayout)        itemView.findViewById(R.id.detailWrapper);
+            rvMemberInfoDetail  = (RecyclerView)        itemView.findViewById(R.id.rvMemberInfoDetail);
+            btnAcceptUser       = (Button)              itemView.findViewById(R.id.btnAcceptUser);
+            btnRejectUser       = (Button)              itemView.findViewById(R.id.btnRejectUser);
         }
     }
 

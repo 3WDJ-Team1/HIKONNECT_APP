@@ -111,6 +111,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
                         Intent intent = new Intent(parent, TabsActivity.class);
 
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         // 그룹 아이디 값 보내기
                         intent.putExtra("groupId", listItem.getGroupId());
                         // 그룹 이름 보내기

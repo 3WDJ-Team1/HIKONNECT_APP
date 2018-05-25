@@ -29,14 +29,6 @@
                 android:tint="@color/grey_300"
                 android:visibility="visible"/>
 
-            <!--<ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/hikonnect_logo_toolbar"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="88dp"/>-->
-
             <TextView
                 android:id="@+id/scheduleTitle"
                 android:layout_width="wrap_content"
@@ -47,14 +39,14 @@
                 android:textSize="20sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:text="title"/>
+                android:text="다른 멤버 찾기"/>
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
     <include
-        layout="@layout/activity_schedule_detail"
+        layout="@layout/user_info"
         android:id="@+id/layout_content_main"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -356,7 +356,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                                 scrollOutItems  = ((LinearLayoutManager)recyclerView.getLayoutManager())
                                                     .findFirstVisibleItemPosition();
 
-                                if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
+                                if (isScrolling && (currentItems + scrollOutItems > totalItems)) {
                                     isScrolling = false;
                                     // data fetch
                                     datafetchForNotice(TabsActivity.groupId, firstIndex);
