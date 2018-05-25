@@ -114,6 +114,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                         // 참여 상태 보내기
                         intent.putExtra("status", status);
 
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                         // 액티비티 전환
                         parent.startActivity(intent);
 

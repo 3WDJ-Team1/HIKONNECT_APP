@@ -19,7 +19,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp;
@@ -56,7 +58,7 @@ public class AfterHikingActivity extends AppCompatActivity {
 
     // 출력 데이터
     private int                         remainMembers;      // 남은 맴버의 수.
-    private double                      hikingTime;         // 등산 한 시간.
+    private String                      hikingTime;         // 등산 한 시간.
     private int                         hikingRank;         // 등산 순위.
     private String                      completedMountain;  // 완료한 산 이름.
     private String                      hikingTear;         // 산행 등급.
@@ -132,7 +134,7 @@ public class AfterHikingActivity extends AppCompatActivity {
                     JSONObject resObj = (JSONObject) ((JSONArray) parser.parse(result)).get(0);
 
                     remainMembers       = Integer.valueOf(resObj.get("remain_member") != null ? resObj.get("remain_member").toString() : "0");
-                    hikingTime          = Double.valueOf(resObj.get("hiking_time") != null ? resObj.get("hiking_time").toString() : "0");
+                    hikingTime          = String.valueOf(resObj.get("hiking_time") != null ? resObj.get("hiking_time").toString() : "0");
                     hikingRank          = Integer.valueOf(resObj.get("rank") != null ? resObj.get("rank").toString() : "0");
                     completedMountain   = resObj.get("mountain") != null ? resObj.get("mountain").toString() : "No Data";
                     hikingTear          = resObj.get("hiking_tear") != null ? resObj.get("hiking_tear").toString() : "No Data";

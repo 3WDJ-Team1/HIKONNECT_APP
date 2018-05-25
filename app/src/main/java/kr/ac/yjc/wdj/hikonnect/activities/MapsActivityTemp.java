@@ -1,6 +1,8 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -21,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -45,6 +48,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -63,7 +67,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -286,9 +289,10 @@ public class MapsActivityTemp extends FragmentActivity implements
         OnMapClickListener,
         LocationListener {
 
-    private final String                TAG             = "HIKONNECT";
-    private final int                   GALLERY_CODE    = 1110;
-    private final int                   CAMERA_CODE     = 1111;
+    private final String                TAG                 = "HIKONNECT";
+    private final int                   GALLERY_CODE        = 1110;
+    private final int                   CAMERA_CODE         = 1111;
+    private final int                   REQUEST_TAKE_PHOTO  = 1112;
 
     private int                         myMemberNo = 2;
 
@@ -312,9 +316,10 @@ public class MapsActivityTemp extends FragmentActivity implements
     private int                         currentPointInFID   = 0;
     private double                      wholeDistance       = 0.0;
 
-    private LinkedList<LatLng>          allHikingRoute = new LinkedList<>();
+    private ArrayList<LatLng>           allHikingRoute = new ArrayList<>();
     private HashMap<Integer, MapItem>   mapItems = new HashMap<>();
     private ClusterManager<MapItem>     myClusterManager;
+    private MarkerManager               myMarkerManager;
     private ArrayList<Marker>           markers = new ArrayList<>();
     private Marker                      myMarker;
 
@@ -345,6 +350,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private ImageView       imgViewLMemoImg;
     private Button          btnLMemoSendReq;
     private Button          btnLMemoCancel;
+    private Uri             imageUri;       // 사진 Uri.
 
     // [1.3] 자기 위치 갱신 버튼.
     private FloatingActionButton    fabUpdateMyLocation;
@@ -396,7 +402,10 @@ public class MapsActivityTemp extends FragmentActivity implements
         protected void onBeforeClusterItemRendered(MapItem item, MarkerOptions markerOptions) {
 
             if (item instanceof LocationMemo) {
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_bookmarks_24px));
+                Bitmap icon = mIconGenerator.makeIcon();
+                markerOptions
+                        .icon(BitmapDescriptorFactory.fromBitmap(icon));
             }
             if (item instanceof Member) {
 
@@ -418,6 +427,11 @@ public class MapsActivityTemp extends FragmentActivity implements
                     }
                 }
             }
+        }
+
+        @Override
+        protected void onClusterItemRendered(MapItem clusterItem, Marker marker) {
+            marker.setTag(clusterItem);
         }
     }
 
@@ -548,6 +562,8 @@ public class MapsActivityTemp extends FragmentActivity implements
                 }
             });
 
+            myMarkerManager = myClusterManager.getMarkerManager();
+
             gMap.setOnMarkerClickListener(myClusterManager);
             gMap.setOnMapClickListener(this);
             gMap.setOnCameraIdleListener(myClusterManager);
@@ -566,10 +582,8 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                     updateHikingInfo();
                     updateCurrentFID();
-                    paintMakers();
+                    paintMarkers();
                     updateHikedDistance();
-
-                    markers = new ArrayList<>(myClusterManager.getMarkerCollection().getMarkers());
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -600,7 +614,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                             }
                         }
                     });
-                    Log.d(TAG, "myMemberNo: " + myMemberNo);
                 }
             };
 
@@ -718,7 +731,12 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                     hikingField.addLatLng(new LatLng(lat, lng));
 
-                                    allHikingRoute.offer(new LatLng(lat, lng));
+                                    if (allHikingRoute.size() > 0) {
+                                        if (allHikingRoute.get(allHikingRoute.size() - 1).equals(new LatLng(lat, lng))) {
+                                            continue;
+                                        }
+                                    }
+                                    allHikingRoute.add(new LatLng(lat, lng));
                                 }
 
                                 hikingFields.add(hikingField);
@@ -737,7 +755,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private void getMemberNoByUserID(String userID) {
 
         HttpUrl.Builder urlBuilder = HttpUrl
-                .parse(Environments.LARAVEL_LOCAL_IP + "/api/getMemberNoByUserId")
+                .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getMemberNoByUserId")
                 .newBuilder();
 
         final String reqUrl = urlBuilder.build().toString();
@@ -796,12 +814,10 @@ public class MapsActivityTemp extends FragmentActivity implements
         });
     }
 
-    private void paintMakers() {
+    private void paintMarkers() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-                Log.d(TAG, "mapItems size: " + mapItems.size());
 
                 myClusterManager.clearItems();
                 for (int key : mapItems.keySet()) {
@@ -812,6 +828,10 @@ public class MapsActivityTemp extends FragmentActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        for (Marker marker : myClusterManager.getMarkerCollection().getMarkers()) {
+                            marker.setPosition(((MapItem)marker.getTag()).getPosition());
+                        }
+
                         myClusterManager.cluster();
                     }
                 });
@@ -873,7 +893,6 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                 JSONObject result = (JSONObject) parser.parse(response.body().string());
 
-                                Log.d(TAG, "onResponse: res: " + result);
                                 JSONArray locationMemos = (JSONArray) result.get("location_memos");
                                 JSONArray members = (JSONArray) result.get("members");
 
@@ -963,7 +982,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             if (myHikingState == 0 ) {
                 startPoint = allHikingRoute.get(0);
             } else if (myHikingState == 1){
-                startPoint = allHikingRoute.getLast();
+                startPoint = allHikingRoute.get(allHikingRoute.size() -1 );
             }
 
            Location startPointLoc = new Location("startPoint");
@@ -1011,7 +1030,6 @@ public class MapsActivityTemp extends FragmentActivity implements
 
             hikedDistance = Math.round(hikedDistance) / 100d;
 
-            Log.d(TAG, "updateHikedDistance: hiked: " + hikedDistance + ", whole: " + wholeDistance);
             hikingProgress = (int) (hikedDistance / wholeDistance * 100);
 
             runOnUiThread(new Runnable() {
@@ -1122,10 +1140,29 @@ public class MapsActivityTemp extends FragmentActivity implements
         imgViewLMemoImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent getPhotoIntent = new Intent(Intent.ACTION_PICK);
-                getPhotoIntent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                getPhotoIntent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-                startActivityForResult(getPhotoIntent, GALLERY_CODE);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivityTemp.this);
+                builder.setTitle("사진 등록");
+                builder.setMessage("사진 등록 방법을 선택해주세요.");
+                builder.setPositiveButton("카메라", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
+
+                        startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
+                    }
+                });
+                builder.setNegativeButton("갤러리", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent getPhotoIntent = new Intent(Intent.ACTION_PICK);
+                        getPhotoIntent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        getPhotoIntent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+                        startActivityForResult(getPhotoIntent, GALLERY_CODE);
+                    }
+                });
+                builder.show();
             }
         });
         btnLMemoSendReq.setOnClickListener(new View.OnClickListener() {
@@ -1166,13 +1203,26 @@ public class MapsActivityTemp extends FragmentActivity implements
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(TAG, "onFailure: ", e);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MapsActivityTemp.this, "메모 등록에 실패했습니다.\n다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String result = response.body().string();
 
-                        Log.d(TAG, "onResponse: " + result);
+                        if (result.equals("Success")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    linearLayoutLocationMemo.setVisibility(View.GONE);
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -1205,7 +1255,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             public void onClick(View v) {
                 Intent groupMemberList = new Intent(MapsActivityTemp.this, Othersinfo.class);
                 groupMemberList.putExtra("member_no", myMemberNo);
-                startActivity(groupMemberList);
+                startActivityForResult(groupMemberList, HikingMemberListAdapter.REQUEST_CODE);
             }
         });
         showRecordList.setOnClickListener(new View.OnClickListener() {
@@ -1295,8 +1345,11 @@ public class MapsActivityTemp extends FragmentActivity implements
         return cursor.getString(column_index);
     }
 
-    private void getPictureForPhoto() {
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+    private void getPictureForPhoto(Intent intent) {
+
+        Bundle extras = intent.getExtras();
+
+        Bitmap bitmap = (Bitmap)extras.get("data");
         bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
         imgViewLMemoImg.setImageBitmap(bitmap);//이미지 뷰에 비트맵 넣기
     }
@@ -1327,11 +1380,14 @@ public class MapsActivityTemp extends FragmentActivity implements
                 case GALLERY_CODE:
                     sendPicture(data.getData()); //갤러리에서 가져오기
                     break;
-                case CAMERA_CODE:
-                    getPictureForPhoto(); //카메라에서 가져오기
+                case REQUEST_TAKE_PHOTO:
+                    getPictureForPhoto(data); //카메라에서 가져오기
                     break;
                 case HikingMemberListAdapter.REQUEST_CODE:
-                    Log.d(TAG, "onActivityResult: HikingMemberListAdpater");
+                    Intent intent = data;
+                    double latitude = intent.getDoubleExtra("user_lat", 0.0d);
+                    double longitude = intent.getDoubleExtra("user_lng", 0.0d);
+                    gMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
                     break;
             }
         }
@@ -1339,7 +1395,6 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, "Location Changed!");
 
         myCurrentLocation = location;
 

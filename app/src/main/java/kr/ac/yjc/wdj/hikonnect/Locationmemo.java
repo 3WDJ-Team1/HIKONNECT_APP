@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 import okhttp3.FormBody;
@@ -32,39 +34,43 @@ import okhttp3.Response;
 
 /**
  * @author  Jungyu Choi
+ * @author  bs Kwon<rnjs9957@gmail.com>
  * @since   2018-04-11
  */
 public class  Locationmemo extends Activity {
 
-    int location_num;
-    String titlestring, contentstring,path,writer,result;
-    Handler handler;
-    TextView txtViewContents, txtViewTitle, txtViewWriter;
-    Bitmap bitmap;
-    ContentValues contentValues;
-    HttpRequestConnection hrc;
-    ImageView imgViewPicture;
-    PermissionListener permissionlistener = null;
+    int             memo_num;           // Location memo's number.
+    String          memoTitleStr;       // Location memo's Title.
+    String          memoContentsStr;    // Location memo's Contents.
+    String          memoWriterStr;      // Location memo's Writer.
+    String          memoNicknameStr;    // Writer's nickname.
+    String          memoCreatedTimeStr; // Location memo's created time.
 
+    String          result;             // Http response contents.
+
+    TextView        txtViewCreatedTime;
+    TextView        txtViewContents;
+    TextView        txtViewTitle;
+    TextView        txtViewWriter;
+    ImageView       imgViewPicture;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);     // Disable Title bar.
         setContentView(R.layout.location_memo);
 
+        // Get location memo number from parents activity.
         Intent intent = getIntent();
-        location_num = intent.getIntExtra("location_no", 0);
+        memo_num = intent.getIntExtra("location_no", 0);
 
-        txtViewTitle    = (TextView)    findViewById(R.id.txtLocationMemoTitle);
-        txtViewWriter   = (TextView)    findViewById(R.id.txtLocationMemoWriter);
-        txtViewContents = (TextView)    findViewById(R.id.txtLocationMemoContent);
-        imgViewPicture  = (ImageView)   findViewById(R.id.imgViewLocationMemoPic);
+        // Initialize UI.
+        txtViewCreatedTime      = (TextView)    findViewById(R.id.txtMemoCreatedTime);
+        txtViewTitle            = (TextView)    findViewById(R.id.txtLocationMemoTitle);
+        txtViewWriter           = (TextView)    findViewById(R.id.txtLocationMemoWriter);
+        txtViewContents         = (TextView)    findViewById(R.id.txtLocationMemoContent);
+        imgViewPicture          = (ImageView)   findViewById(R.id.imgViewLocationMemoPic);
 
-        contentValues = new ContentValues();
-        hrc = new HttpRequestConnection();
-
-        contentValues.put("location_no", location_num);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -78,7 +84,7 @@ public class  Locationmemo extends Activity {
                             .build();
 
                     RequestBody reqBody = new FormBody.Builder()
-                            .add("location_no", String.valueOf(location_num))
+                            .add("location_no", String.valueOf(memo_num))
                             .build();
 
                     Request req = new Request.Builder()
@@ -98,13 +104,18 @@ public class  Locationmemo extends Activity {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        titlestring = jsonObject.getString("title");
-                        contentstring = jsonObject.getString("content");
-                        writer = jsonObject.getString("writer");
+                        memoTitleStr        = jsonObject.getString("title");
+                        memoContentsStr     = jsonObject.getString("content");
+                        memoWriterStr       = jsonObject.getString("writer");
+                        memoNicknameStr     = jsonObject.getString("nickname");
+
+                        String createdTime  = jsonObject.getString("created_at");
+                        Date date           = new SimpleDateFormat("yy-mm-dd").parse(createdTime);
+                        memoCreatedTimeStr  = new SimpleDateFormat("yyyy년 mm월 dd일 E요일").format(date);
                     }
 
                     httpUrl = HttpUrl
-                            .parse(Environments.NODE_HIKONNECT_IP + "/images/LocationMemo/" + location_num + "_" + writer + ".jpg")
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/LocationMemo/" + memo_num + "_" + memoWriterStr + ".jpg")
                             .newBuilder()
                             .build();
 
@@ -119,9 +130,10 @@ public class  Locationmemo extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            txtViewTitle.setText(titlestring);
-                            txtViewContents.setText(contentstring);
-                            txtViewWriter.setText(writer);
+                            txtViewCreatedTime.setText(memoCreatedTimeStr.toString());
+                            txtViewTitle.setText(memoTitleStr);
+                            txtViewContents.setText(memoContentsStr);
+                            txtViewWriter.setText(memoNicknameStr);
                             imgViewPicture.setImageBitmap(bitmap);
                         }
                     });
