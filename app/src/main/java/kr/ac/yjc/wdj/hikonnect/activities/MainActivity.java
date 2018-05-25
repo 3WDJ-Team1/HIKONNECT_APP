@@ -1,6 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -35,14 +36,9 @@ import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
-import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
-import kr.ac.yjc.wdj.hikonnect.adapters.MainPageAdapter;
-import kr.ac.yjc.wdj.hikonnect.beans.Group;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -82,10 +78,14 @@ public class MainActivity extends AppCompatActivity
     // 로딩화면
     private LoadingDialog   loadingDialog;
 
+    private SharedPreferences   pref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+         pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         // UI 초기화
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
 
         txtView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.main_textview);
 
-        txtView.setText(UsersData.USER_NAME);
+        txtView.setText(pref.getString("user_name", ""));
 
         final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
 
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity
             protected Bitmap doInBackground(Void... params) {
                 try {
                     HttpUrl httpUrl = HttpUrl
-                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + pref.getString("user_id", "") + ".jpg")
                             .newBuilder()
                             .build();
 
@@ -196,7 +196,14 @@ public class MainActivity extends AppCompatActivity
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
-            session.logOutUser();
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.apply();
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+//            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }
 
@@ -245,7 +252,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 loadingDialog.show();
                 Intent intent = new Intent(getBaseContext(), MapsActivityTemp.class);
-                intent.putExtra("id", UsersData.USER_ID);
+                intent.putExtra("id", pref.getString("user_id", ""));
                 startActivity(intent);
                 finish();
             }

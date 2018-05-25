@@ -1,10 +1,10 @@
 package kr.ac.yjc.wdj.hikonnect.activities.group_list;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -48,11 +48,10 @@ import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
+import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -86,6 +85,8 @@ public class groups_list_main extends AppCompatActivity
     // 어댑터/핸들러/레이아웃 매니저
     private LinearLayoutManager     manager;
 
+    public SharedPreferences        pref;
+
     // 기타 변수
     private Boolean isScrolling = false;
     private int     currentItems, totalItems, scrollOutItems;
@@ -105,6 +106,7 @@ public class groups_list_main extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list_drawer);
 
+        pref            = getSharedPreferences("loginData", MODE_PRIVATE);
         datePicker      = (DatePicker)  findViewById(R.id.Datepicker);
         spinner         = (Spinner)     findViewById(R.id.group_search_spinner);
 //        list            = (LinearLayout)findViewById(R.id.list);
@@ -153,7 +155,7 @@ public class groups_list_main extends AppCompatActivity
 
         txtView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.main_textview);
 
-        txtView.setText(UsersData.USER_NAME);
+        txtView.setText(pref.getString("user_name", "No data"));
 
         final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
 
@@ -165,7 +167,7 @@ public class groups_list_main extends AppCompatActivity
             protected Bitmap doInBackground(Void... params) {
                 try {
                     HttpUrl httpUrl = HttpUrl
-                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + pref.getString("user_id", "") + ".jpg")
                             .newBuilder()
                             .build();
 
@@ -221,7 +223,7 @@ public class groups_list_main extends AppCompatActivity
         recyclerView.setLayoutManager(manager);
         listItems = new ArrayList<>();
 
-        list_adapter = new MyAdapter(listItems);
+        list_adapter = new MyAdapter(listItems, pref);
         recyclerView.setAdapter(list_adapter);
         loadRecyclerViewData();
 
@@ -437,6 +439,9 @@ public class groups_list_main extends AppCompatActivity
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
+
+            Intent intent = new Intent(groups_list_main.this, LoginActivity.class);
+            startActivity(intent);
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }

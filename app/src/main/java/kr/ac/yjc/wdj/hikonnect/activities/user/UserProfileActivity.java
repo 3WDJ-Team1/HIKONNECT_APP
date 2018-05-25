@@ -164,7 +164,9 @@ public class UserProfileActivity extends AppCompatActivity
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
-            session.logOutUser();
+            Intent intent = new Intent(UserProfileActivity.this, LoginActivity.class);
+            startActivity(intent);
+//            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }
 

@@ -1,30 +1,26 @@
 package kr.ac.yjc.wdj.hikonnect;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
-import kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp;
 import kr.ac.yjc.wdj.hikonnect.adapters.AfterHikingListAdapter;
 import kr.ac.yjc.wdj.hikonnect.beans.AfterHikingMenu;
 import okhttp3.FormBody;
@@ -63,6 +59,8 @@ public class AfterHikingActivity extends AppCompatActivity {
     private String                      completedMountain;  // 완료한 산 이름.
     private String                      hikingTear;         // 산행 등급.
 
+    //
+    public SharedPreferences            pref = getSharedPreferences("loginData", MODE_PRIVATE);
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +85,7 @@ public class AfterHikingActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        userName.setText(UsersData.USER_NAME);
+        userName.setText(pref.getString("user_name", ""));
 
         // RecyclerView에 Adapter 붙이기
         rvAfterHikingList.setAdapter(new AfterHikingListAdapter(hikingMenus, R.layout.after_hiking_list_item));

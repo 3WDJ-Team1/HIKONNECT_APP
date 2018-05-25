@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -78,7 +79,6 @@ import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
@@ -369,6 +369,8 @@ public class MapsActivityTemp extends FragmentActivity implements
     // [3] 상태 저장 변수.
     private int         hikingProgress          = 0;
 
+    private SharedPreferences   pref;
+
     private boolean     isdataBoxVisible        = false;    // 현재 데이터 박스 상태
     private boolean     isRecBtnVisible         = false;    // 현재 녹음 버튼 상태
     private boolean     isRequestingLocation    = false;    // 위치 관리자 활성화 상태.
@@ -438,6 +440,8 @@ public class MapsActivityTemp extends FragmentActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         PermissionManager permissionManager = new PermissionManager(this);
         permissionManager.requestPermissions();
@@ -604,7 +608,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                                     btnChangeHikingState.setVisibility(View.GONE);
                                 }
 
-                                myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
+                                if (myCurrentLocation != null) {
+                                    myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
+                                }
 
                                 if (myHikingState != 0) {
                                     tvDistance.setText(String.valueOf(hikedDistance));
@@ -1187,7 +1193,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                         .addFormDataPart("hiking_group",    "57a89f8f-4dc8-11e8-82cb-42010a9200af")
                         .addFormDataPart("title",           edtTextLMemoTitle.getText().toString())
                         .addFormDataPart("content",         edtTextLMemoContent.getText().toString())
-                        .addFormDataPart("writer",          UsersData.USER_ID)
+                        .addFormDataPart("writer",          pref.getString("user_id", ""))
                         .addFormDataPart("picture",         "true")
                         .addFormDataPart("latitude",        String.valueOf(myCurrentLocation.getLatitude()))
                         .addFormDataPart("longitude",       String.valueOf(myCurrentLocation.getLongitude()))
