@@ -1,6 +1,18 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import kr.ac.yjc.wdj.hikonnect.Environments;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * store group user's information
@@ -24,6 +36,7 @@ public class GroupUserInfoBean extends Bean {
     private boolean openAll;
 
     private Context baseContext;
+    private Bitmap  profilePic;
 
 
     /**
@@ -101,13 +114,55 @@ public class GroupUserInfoBean extends Bean {
                 break;
         }
 
-
+        // enterDate 가 null 이 아니면 비트맵 받아오기
+        if (enterDate != null) {
+            initProfilePic(userId);
+        }
     }
 
     private void initOpenSettings(String strScope, int length) {
         this.isPhoneOpen    = (strScope.charAt(length - 3) == '1') ? true : false;
         this.isGenderOpen   = (strScope.charAt(length - 2) == '1') ? true : false;
         this.isAgeGroupOpen = (strScope.charAt(length - 1) == '1') ? true : false;
+    }
+
+    /**
+     * 유저 프로필 사진 등록
+     * @param id    아이디
+     */
+    private void initProfilePic(final String id) {
+        new AsyncTask<Void, Integer, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                try {
+                    HttpUrl httpUrl = HttpUrl
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + id + ".jpg")
+                            .newBuilder()
+                            .build();
+
+                    Request req = new Request.Builder().url(httpUrl).build();
+
+                    Response res = new OkHttpClient().newCall(req).execute();
+
+                    InputStream is = res.body().byteStream();
+
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+                    return bitmap;
+                } catch (IOException ie) {
+
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+
+                profilePic = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
+            }
+        }.execute();
     }
 
     // getters and setters
@@ -213,5 +268,13 @@ public class GroupUserInfoBean extends Bean {
 
     public void setBaseContext(Context baseContext) {
         this.baseContext = baseContext;
+    }
+
+    public Bitmap getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Bitmap profilePic) {
+        this.profilePic = profilePic;
     }
 }

@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.R;
@@ -48,6 +50,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
     @Override
     public void onBindViewHolder(final MemberHolder memberHolder, int i) {
         memberHolder.memberName.setText(dataList.get(i).getNickname());
+        memberHolder.profilePic.setImageBitmap(dataList.get(i).getProfilePic());
 
         final int index = i;
         // TODO 생각 좀 해보고...
@@ -99,10 +102,11 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
     }
 
     public static class MemberHolder extends RecyclerView.ViewHolder {
-        private TextView        memberName;         // 멤버 이름
-        private RelativeLayout  cardWrapper;        // 전체 카드의 wrapper
-        private LinearLayout    detailWrapper;      // 상세 정보 나열 wrapper
-        private RecyclerView    rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
+        private TextView            memberName;         // 멤버 이름
+        private CircularImageView   profilePic;         // 프로필 사진
+        private RelativeLayout      cardWrapper;        // 전체 카드의 wrapper
+        private LinearLayout        detailWrapper;      // 상세 정보 나열 wrapper
+        private RecyclerView        rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
 
         /**
          * 초기화
@@ -110,10 +114,11 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
          */
         private MemberHolder (View itemView) {
             super(itemView);
-            memberName          = (TextView)        itemView.findViewById(R.id.memberName);
-            cardWrapper         = (RelativeLayout)  itemView.findViewById(R.id.cardWrapper);
-            detailWrapper       = (LinearLayout)    itemView.findViewById(R.id.detailWrapper);
-            rvMemberInfoDetail  = (RecyclerView)    itemView.findViewById(R.id.rvMemberInfoDetail);
+            memberName          = (TextView)            itemView.findViewById(R.id.memberName);
+            profilePic          = (CircularImageView)   itemView.findViewById(R.id.profilePic);
+            cardWrapper         = (RelativeLayout)      itemView.findViewById(R.id.cardWrapper);
+            detailWrapper       = (LinearLayout)        itemView.findViewById(R.id.detailWrapper);
+            rvMemberInfoDetail  = (RecyclerView)        itemView.findViewById(R.id.rvMemberInfoDetail);
         }
     }
 }

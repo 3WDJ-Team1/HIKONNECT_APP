@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -151,7 +153,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
             // TODO Image 변경되게 바꿀 것
 //            ((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
             ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) dataList.get(index)).getNickname());
-            ((ViewHolderMember) viewHolder).setProfilePic(((GroupUserInfoBean) dataList.get(index)).getUserId());
+            ((ViewHolderMember) viewHolder).profilePic.setImageBitmap(((GroupUserInfoBean) dataList.get(index)).getProfilePic());
 
             // TODO 그룹 참가 수락 리스너
 
@@ -236,15 +238,15 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
      */
     private static class ViewHolderMember extends RecyclerView.ViewHolder {
 
-        private ImageView       profilePic;         // 멤버 프로필 사진
-        private TextView        memberName;         // 멤버 이름
-        private RelativeLayout  cardWrapper;        // 전체 카드의 wrapper
-        private LinearLayout    detailWrapper;      // 상세 정보 나열 wrapper
-        private RecyclerView    rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
+        private CircularImageView   profilePic;         // 멤버 프로필 사진
+        private TextView            memberName;         // 멤버 이름
+        private RelativeLayout      cardWrapper;        // 전체 카드의 wrapper
+        private LinearLayout        detailWrapper;      // 상세 정보 나열 wrapper
+        private RecyclerView        rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
 
         // buttons
-        private Button          btnAcceptUser,      // 멤버 참가 수락 버튼
-                                btnRejectUser;      // 멤버 참가 거절 버튼
+        private Button              btnAcceptUser,      // 멤버 참가 수락 버튼
+                                    btnRejectUser;      // 멤버 참가 거절 버튼
 
         /**
          * 초기화
@@ -252,52 +254,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
          */
         private ViewHolderMember (View itemView) {
             super(itemView);
-            profilePic          = (ImageView)       itemView.findViewById(R.id.profilePic);
-            memberName          = (TextView)        itemView.findViewById(R.id.memberName);
-            cardWrapper         = (RelativeLayout)  itemView.findViewById(R.id.cardWrapper);
-            detailWrapper       = (LinearLayout)    itemView.findViewById(R.id.detailWrapper);
-            rvMemberInfoDetail  = (RecyclerView)    itemView.findViewById(R.id.rvMemberInfoDetail);
-            btnAcceptUser       = (Button)          itemView.findViewById(R.id.btnAcceptUser);
-            btnRejectUser       = (Button)          itemView.findViewById(R.id.btnRejectUser);
-        }
-
-        /**
-         * 유저 프로필 사진 등록
-         * @param userId    아이디
-         */
-        private void setProfilePic(final String userId) {
-
-            new AsyncTask<Void, Integer, Bitmap>() {
-                @Override
-                protected Bitmap doInBackground(Void... params) {
-                    try {
-                        HttpUrl httpUrl = HttpUrl
-                                .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + userId + ".jpg")
-                                .newBuilder()
-                                .build();
-
-                        Request req = new Request.Builder().url(httpUrl).build();
-
-                        Response res = new OkHttpClient().newCall(req).execute();
-
-                        InputStream is = res.body().byteStream();
-
-                        Bitmap bitmap = BitmapFactory.decodeStream(is);
-
-                        return bitmap;
-                    } catch (IOException ie) {
-                        ie.printStackTrace();
-                        return null;
-                    }
-                }
-
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    super.onPostExecute(bitmap);
-
-                    profilePic.setImageBitmap(bitmap);
-                }
-            }.execute();
+            profilePic          = (CircularImageView)   itemView.findViewById(R.id.profilePic);
+            memberName          = (TextView)            itemView.findViewById(R.id.memberName);
+            cardWrapper         = (RelativeLayout)      itemView.findViewById(R.id.cardWrapper);
+            detailWrapper       = (LinearLayout)        itemView.findViewById(R.id.detailWrapper);
+            rvMemberInfoDetail  = (RecyclerView)        itemView.findViewById(R.id.rvMemberInfoDetail);
+            btnAcceptUser       = (Button)              itemView.findViewById(R.id.btnAcceptUser);
+            btnRejectUser       = (Button)              itemView.findViewById(R.id.btnRejectUser);
         }
     }
 

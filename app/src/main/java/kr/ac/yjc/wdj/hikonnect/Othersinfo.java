@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class Othersinfo extends Activity {
     private RecyclerView                    listView;   // 검색을 보여줄 리스트변수
     private ProgressBar                     progressBar;// 진행 상황을 표시할 ProgressBar
     private EditText                        editSearch; // 검색어를 입력할 Input 창
+    private ImageButton                     btnGoBack;  // 뒤로가기 버튼
 
     // 데이터 변수
     private HikingMemberListAdapter         adapter;    // 리스트뷰에 연결할 아답터
@@ -72,7 +74,7 @@ public class Othersinfo extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.user_info);
+        setContentView(R.layout.user_info_app_bar);
 
         initUI();
         initData();
@@ -251,6 +253,15 @@ public class Othersinfo extends Activity {
         editSearch  = (EditText)        findViewById(R.id.editSearch);
         listView    = (RecyclerView)    findViewById(R.id.listView);
         progressBar = (ProgressBar)     findViewById(R.id.otherInfoProgressBar);
+        btnGoBack   = (ImageButton)     findViewById(R.id.btnGoBack);
+
+        // 뒤로가기 리스너 정의
+        btnGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
         editSearch.addTextChangedListener(new TextWatcher() {
