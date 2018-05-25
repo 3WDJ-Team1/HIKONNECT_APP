@@ -1,6 +1,5 @@
 package kr.ac.yjc.wdj.hikonnect;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -15,16 +14,13 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 import okhttp3.FormBody;
@@ -43,11 +39,11 @@ public class  Locationmemo extends Activity {
     int location_num;
     String titlestring, contentstring,path,writer,result;
     Handler handler;
-    TextView content,title,writertv;
+    TextView txtViewContents, txtViewTitle, txtViewWriter;
     Bitmap bitmap;
     ContentValues contentValues;
     HttpRequestConnection hrc;
-    ImageView image1;
+    ImageView imgViewPicture;
     PermissionListener permissionlistener = null;
 
 
@@ -60,21 +56,10 @@ public class  Locationmemo extends Activity {
         Intent intent = getIntent();
         location_num = intent.getIntExtra("location_no", 0);
 
-        permissionlistener = new PermissionListener() {
-            @Override
-            public void onPermissionGranted() {
-                Toast.makeText(Locationmemo.this, "권한 허가", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                Toast.makeText(Locationmemo.this, "권한 거부\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
-            }
-        };
-        title = findViewById(R.id.gettitle);
-        image1 = findViewById(R.id.image1);
-        content = findViewById(R.id.getcontent);
-        writertv = findViewById(R.id.idtext);
+        txtViewTitle    = (TextView)    findViewById(R.id.txtLocationMemoTitle);
+        txtViewWriter   = (TextView)    findViewById(R.id.txtLocationMemoWriter);
+        txtViewContents = (TextView)    findViewById(R.id.txtLocationMemoContent);
+        imgViewPicture  = (ImageView)   findViewById(R.id.imgViewLocationMemoPic);
 
         contentValues = new ContentValues();
         hrc = new HttpRequestConnection();
@@ -116,14 +101,6 @@ public class  Locationmemo extends Activity {
                         titlestring = jsonObject.getString("title");
                         contentstring = jsonObject.getString("content");
                         writer = jsonObject.getString("writer");
-                        TedPermission.with(Locationmemo.this)
-                                .setPermissionListener(permissionlistener)
-                                .setRationaleMessage("사진을 보려면 권한이 필요함")
-                                .setDeniedMessage("왜 거부하셨어요...\n하지만 [설정] > [권한] 에서 권한을 허용할 수 있어요.")
-                                .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
-                                .check();
-
-                        //path = path.replaceAll("\\/","/");
                     }
 
                     httpUrl = HttpUrl
@@ -142,10 +119,10 @@ public class  Locationmemo extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            title.setText(titlestring);
-                            content.setText(contentstring);
-                            writertv.setText(writer);
-                            image1.setImageBitmap(bitmap);
+                            txtViewTitle.setText(titlestring);
+                            txtViewContents.setText(contentstring);
+                            txtViewWriter.setText(writer);
+                            imgViewPicture.setImageBitmap(bitmap);
                         }
                     });
                 } catch (Exception e) {

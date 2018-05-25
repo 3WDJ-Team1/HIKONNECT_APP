@@ -12,10 +12,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp;
 import kr.ac.yjc.wdj.hikonnect.adapters.AfterHikingListAdapter;
 import kr.ac.yjc.wdj.hikonnect.beans.AfterHikingMenu;
 import okhttp3.FormBody;
@@ -33,6 +40,7 @@ import okhttp3.Response;
  */
 public class AfterHikingActivity extends AppCompatActivity {
     // UI 변수
+    private TextView                    tvRemainMembers;    // 남은 등산 맴버 수.
     private TextView                    userName;           // 사용자 이름
     private RecyclerView                rvAfterHikingList;  // 등산 후 통계를 종류별로 나타낼 RecyclerView
     private Button                      btnToOthersInfo;    // 현재 등산 중인 멤버 리스트로 이동 버튼
@@ -43,12 +51,23 @@ public class AfterHikingActivity extends AppCompatActivity {
     private ArrayList<String>           menuValues;         // 메뉴 리스트 값
     private ArrayList<Drawable>         images;             // image drawables
 
+    // Intent 전달 데이터.
+    private int                         memberNum;          // 맴버 번호.
+
+    // 출력 데이터
+    private int                         remainMembers;      // 남은 맴버의 수.
+    private double                      hikingTime;         // 등산 한 시간.
+    private int                         hikingRank;         // 등산 순위.
+    private String                      completedMountain;  // 완료한 산 이름.
+    private String                      hikingTear;         // 산행 등급.
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_hiking);
 
         // UI 초기화
+        tvRemainMembers     = (TextView) findViewById(R.id.howManyNowHiking);
         userName            = (TextView) findViewById(R.id.userName);
         rvAfterHikingList   = (RecyclerView) findViewById(R.id.afterHikingList);
         btnToOthersInfo     = (Button) findViewById(R.id.showMemberList);
@@ -66,6 +85,8 @@ public class AfterHikingActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        userName.setText(UsersData.USER_NAME);
+
         // RecyclerView에 Adapter 붙이기
         rvAfterHikingList.setAdapter(new AfterHikingListAdapter(hikingMenus, R.layout.after_hiking_list_item));
         rvAfterHikingList.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
@@ -75,7 +96,9 @@ public class AfterHikingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), Othersinfo.class);
+                intent.putExtra("member_no", memberNum);
                 startActivity(intent);
+                AfterHikingActivity.this.finish();
             }
         });
     }
@@ -87,29 +110,36 @@ public class AfterHikingActivity extends AppCompatActivity {
         // TODO : intent로 받아오도록 변경하기
         // TODO : 데이터 DB 에서 받아올 수 있도록 하기
         Intent intent = getIntent();
-        final int memberNo = intent.getIntExtra("member_no", 1);
+        memberNum = intent.getIntExtra("member_no", 1);
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpUrl httpUrl = HttpUrl.parse("http://172.26.1.88:8000/api/getAfterHikingInfo").newBuilder().build();
+                HttpUrl httpUrl = HttpUrl.parse("http://172.26.2.140:8000/api/getHikingResult").newBuilder().build();
 
                 RequestBody reqBody = new FormBody.Builder()
-                        .add("member_no", String.valueOf(memberNo))
+                        .add("member_no", String.valueOf(memberNum))
                         .build();
                 Request req = new Request.Builder().url(httpUrl).post(reqBody).build();
 
-                Response response = null;
                 try {
-                    response = new OkHttpClient().newCall(req).execute();
+                    Response response = new OkHttpClient().newCall(req).execute();
 
-                    String result = null;
+                    String result = response.body().string();
 
-                    result = response.body().string();
+                    JSONParser parser = new JSONParser();
 
-                    Log.d("HIKONNECT", "initData: res: " + result);
+                    JSONObject resObj = (JSONObject) ((JSONArray) parser.parse(result)).get(0);
+
+                    remainMembers       = Integer.valueOf(resObj.get("remain_member") != null ? resObj.get("remain_member").toString() : "0");
+                    hikingTime          = Double.valueOf(resObj.get("hiking_time") != null ? resObj.get("hiking_time").toString() : "0");
+                    hikingRank          = Integer.valueOf(resObj.get("rank") != null ? resObj.get("rank").toString() : "0");
+                    completedMountain   = resObj.get("mountain") != null ? resObj.get("mountain").toString() : "No Data";
+                    hikingTear          = resObj.get("hiking_tear") != null ? resObj.get("hiking_tear").toString() : "No Data";
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (ParseException pse) {
+                    pse.printStackTrace();
                 }
             }
         });
@@ -117,22 +147,26 @@ public class AfterHikingActivity extends AppCompatActivity {
         thread.start();
         thread.join();
 
+        //
+        tvRemainMembers.setText(String.valueOf(remainMembers));
+
+
         // 내용 초기화
         images.add(getResources().getDrawable(R.drawable.ic_baseline_alarm_24px));
         menuTitles.add("총 등산 시간");
-        menuValues.add("6.5 시간");
+        menuValues.add(String.valueOf(hikingTime));
 
         images.add(getResources().getDrawable(R.drawable.ic_ranking_svgrepo_com));
         menuTitles.add("순위");
-        menuValues.add("8등");
+        menuValues.add(String.valueOf(hikingRank) + "등");
 
         images.add(getResources().getDrawable(R.drawable.ic_mountain_svgrepo_com));
         menuTitles.add("완료한 산");
-        menuValues.add("소백산");
+        menuValues.add(completedMountain);
 
         images.add(getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
         menuTitles.add("현재 등급");
-        menuValues.add("한라산");
+        menuValues.add(hikingTear);
     }
 
     /**

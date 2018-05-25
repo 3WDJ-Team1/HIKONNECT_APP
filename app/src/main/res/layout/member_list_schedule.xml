@@ -26,7 +26,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_group_white_24px"
-                android:tint="@color/grey_700"
+                android:background="@color/grey_300"
                 android:layout_marginStart="8dp"/>
 
             <TextView

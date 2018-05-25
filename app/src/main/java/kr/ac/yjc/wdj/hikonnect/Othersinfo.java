@@ -3,6 +3,8 @@ package kr.ac.yjc.wdj.hikonnect;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +39,11 @@ import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
 import kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -47,6 +54,7 @@ public class Othersinfo extends Activity {
 
     // UI 변수
     private RecyclerView                    listView;   // 검색을 보여줄 리스트변수
+    private ProgressBar                     progressBar;// 진행 상황을 표시할 ProgressBar
     private EditText                        editSearch; // 검색어를 입력할 Input 창
 
     // 데이터 변수
@@ -55,6 +63,10 @@ public class Othersinfo extends Activity {
                                             tempList;
     private String                          groupId;
     private int                             scheduleNo;
+
+    // 18.05.23(Wed) bs Kwon
+    private int                             memberNo;
+    // 18.05.23(Wed) bs Kwon
 
 
     @Override
@@ -108,9 +120,44 @@ public class Othersinfo extends Activity {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-                    Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_SOL_SERVER + "/getHikingMembers/" + params[0] + "/" + params[1])
+                    /*  18.05.23(Wed) bs Kwon
+
+                        [1] Request URL changed.
+
+                            /api/getHikingMembers
+                            ->
+                            /api/getScheduleMembers
+
+                        [2] Request Method and Params changed.
+
+                            [Method] GET
+                            [Params]
+                            1, Group ID         user's group ID.
+                            2, Schedule NO      user's schedule ID.
+                            ->
+                            [Method] POST
+                            [Params]
+                            1. Member NO        user's member NO.
+                    */
+                    HttpUrl httpUrl = HttpUrl
+                            .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getScheduleMembers")
+                            .newBuilder()
                             .build();
+
+                    RequestBody reqBody = new FormBody.Builder()
+                            .add("member_no", String.valueOf(memberNo))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .url(httpUrl)
+                            .post(reqBody)
+                            .build();
+
+                    // 18.05.23(Wed) bs Kwon
+
+                    /*Request request = new Request.Builder()
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/getHikingMembers/" + params[0] + "/" + params[1])
+                            .build();*/
 
                     Response response = client.newCall(request).execute();
 
@@ -134,22 +181,65 @@ public class Othersinfo extends Activity {
 
                         JSONObject object = jsonArray.getJSONObject(i);
 
-                        HikingMemberListBean userInfo = new HikingMemberListBean(
-                                object.getInt("member_no"),
-                                object.getString("nickname"),
-                                object.getDouble("latitude"),
-                                object.getDouble("longitude")
-                        );
+                        new AsyncTask<JSONObject, Integer, JSONObject>() {
 
-                        dataList.add(userInfo);
-                        tempList.add(userInfo);
+                            @Override
+                            protected JSONObject doInBackground(JSONObject... jsonObjects) {
+                                try {
+                                    JSONObject jsonObj = jsonObjects[0];
+
+                                    Request req = new Request.Builder()
+                                            .url(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + jsonObj.getString("userid") + ".jpg")
+                                            .build();
+
+                                    OkHttpClient client = new OkHttpClient();
+
+                                    Response res = client.newCall(req).execute();
+
+                                    InputStream is = res.body().byteStream();
+
+                                    Bitmap userProfileImg = BitmapFactory.decodeStream(is);
+
+                                    HikingMemberListBean userInfo = new HikingMemberListBean(
+                                            jsonObj.getInt("member_no"),
+                                            jsonObj.getString("nickname"),
+                                            jsonObj.getDouble("distance"),
+                                            jsonObj.getInt("rank"),
+                                            userProfileImg,
+                                            jsonObj.getDouble("latitude"),
+                                            jsonObj.getDouble("longitude")
+                                            );
+
+                                    dataList.add(userInfo);
+                                    tempList.add(userInfo);
+                                } catch (JSONException jse) {
+                                    jse.printStackTrace();
+                                } catch (IOException ioe) {
+                                    ioe.printStackTrace();
+                                }
+                                return null;
+                            }
+
+                            @Override
+                            protected void onPostExecute(JSONObject jsonObject) {
+                                super.onPostExecute(jsonObject);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }.execute(object);
                     }
-
-                    adapter.notifyDataSetChanged();
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
+                publishProgress(100);
+            }
 
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
+                if (values[0] == 100) {
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         }.execute(groupId, scheduleNo + "");
     }
@@ -160,6 +250,7 @@ public class Othersinfo extends Activity {
     private void initUI() {
         editSearch  = (EditText)        findViewById(R.id.editSearch);
         listView    = (RecyclerView)    findViewById(R.id.listView);
+        progressBar = (ProgressBar)     findViewById(R.id.otherInfoProgressBar);
 
         // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
         editSearch.addTextChangedListener(new TextWatcher() {
@@ -190,6 +281,9 @@ public class Othersinfo extends Activity {
 
         groupId     = intent.getStringExtra("groupId");
         scheduleNo  = intent.getIntExtra("scheduleNo", 0);
+        // 18.05.23(Wed) bs Kwon
+        memberNo    = intent.getIntExtra("member_no", 0);
+        // 18.05.23(Wed) bs Kwon
         dataList    = new ArrayList<>();
         tempList    = new ArrayList<>();
 

@@ -23,8 +23,8 @@ public class Locationmemo extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.location_memo);
 
-        title = findViewById(R.id.gettitle);
-        content = findViewById(R.id.getcontent);
+        title = findViewById(R.id.txtLocationMemoTitle);
+        content = findViewById(R.id.txtLocationMemoContent);
 
         Intent intent = getIntent();
         title.setText(intent.getStringExtra("title"));

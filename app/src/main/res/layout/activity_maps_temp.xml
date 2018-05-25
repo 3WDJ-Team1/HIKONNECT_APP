@@ -13,16 +13,104 @@
         android:layout_height="match_parent"
         tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity"
         />
-
-    <!--TODO 지워도 되는 지 확인 -->
-    <RelativeLayout
-        android:id="@+id/backGround"
+    <Button
+        android:text="등산시작"
+        android:visibility="gone"
+        android:id="@+id/change_h_status_btn"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginBottom="60dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_blue_500"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        />
 
-    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/drawer"
+        android:layout_width="50dp"
+        android:layout_height="10dp"
+        android:layout_above="@+id/recordBox"
+        android:background="@color/white"
+        android:alpha="0.7"
+        android:layout_centerHorizontal="true"
+        >
+        <TextView
+            android:id="@+id/openDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="▲"
+            android:textAlignment="center"
+            android:textSize="10dp"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/recordBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:alpha="0.7"
+        android:orientation="vertical"
+        >
+        <Button
+            android:id="@+id/sendRecordData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="무전 시작"
+            android:backgroundTint="@color/red_500"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
 
-    <!-- TODO 화면 터치하면 보이게 -->
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/show_member_list_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_people_black_36dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/userDataBox"
+        android:alpha="0.7"
+        />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/update_loc_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_gps_fixed_black_36dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/drawer"
+        android:alpha="0.7"
+        />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/write_location_memo_btn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_bookmark_black_36dp"
+        android:layout_marginBottom="70dp"
+        fab:menu_fab_size="normal"
+        fab:fab_colorNormal="@color/white"
+        fab:fab_colorPressed="@color/colorPrimary"
+        fab:fab_colorRipple="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/show_member_list_btn"
+        android:alpha="0.7"
+        />
+
     <!--나의 등산 정보-->
     <android.support.v7.widget.CardView
         android:id="@+id/userDataBox"
@@ -33,9 +121,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:alpha="0.8"
-        android:visibility="visible"
+        android:visibility="gone"
         >
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -282,7 +369,18 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:orientation="horizontal">
-
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/otherUserNickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="닉네임"/>
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -341,7 +439,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="총 이동 거리"
+                    android:text="나와의 거리"
                     android:textAlignment="center"
                     android:textColor="@color/grey_800" />
 
@@ -467,7 +565,6 @@
         android:src="@android:drawable/ic_btn_speak_now"
         />
     <!--무전 리스트 버튼 끝-->
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -475,7 +572,7 @@
         <!-- 위치메모 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="500dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
@@ -484,7 +581,15 @@
             android:background="@color/colorPrimary"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:alpha=".9">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="위치 메모 작성"
+                android:textSize="25sp"
+                android:textColor="@color/black"
+                android:textAlignment="center" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -495,9 +600,12 @@
 
             <ImageView
                 android:id="@+id/l_memo_img"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:scaleType="fitCenter"/>
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/location_memo_img_view_txt"
+                />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -509,7 +617,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_weight="1">
+                android:gravity="bottom">
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -529,104 +637,6 @@
         <!--위치메모 끝 -->
 
     </RelativeLayout>
-
-    <Button
-        android:text="등산시작"
-        android:visibility="gone"
-        android:id="@+id/change_h_status_btn"
-        android:layout_marginStart="72dp"
-        android:layout_marginEnd="72dp"
-        android:layout_marginBottom="60dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/light_blue_500"
-        android:textColor="@color/white"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:layout_alignParentBottom="true"
-        />
-
-    <LinearLayout
-        android:id="@+id/drawer"
-        android:layout_width="50dp"
-        android:layout_height="10dp"
-        android:layout_above="@+id/recordBox"
-        android:background="@color/white"
-        android:alpha="0.7"
-        android:layout_centerHorizontal="true"
-        >
-        <TextView
-            android:id="@+id/openDrawer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="▲"
-            android:textAlignment="center"
-            android:textSize="10dp"
-            android:textColor="@color/black"/>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/recordBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:alpha="0.7"
-        android:orientation="vertical"
-        >
-        <Button
-            android:id="@+id/sendRecordData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="무전 시작"
-            android:backgroundTint="@color/red_500"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/show_member_list_btn"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:src="@drawable/ic_people_black_36dp"
-        fab:menu_fab_size="normal"
-        fab:fab_colorNormal="@color/white"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="@color/colorPrimary"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/userDataBox"
-        android:alpha="0.7"
-        />
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/update_loc_btn"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:src="@drawable/ic_gps_fixed_black_36dp"
-        fab:menu_fab_size="normal"
-        fab:fab_colorNormal="@color/white"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="@color/colorPrimary"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/drawer"
-        android:alpha="0.7"
-        />
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/write_location_memo_btn"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:src="@drawable/ic_bookmark_black_36dp"
-        android:layout_marginBottom="70dp"
-        fab:menu_fab_size="normal"
-        fab:fab_colorNormal="@color/white"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="@color/colorPrimary"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/show_member_list_btn"
-        android:alpha="0.7"
-        />
     <!--위치 메모 버튼 수정-->
     <!--<com.github.clans.fab.FloatingActionMenu
         android:id="@+id/write_l_memo_fabmenu"
