@@ -128,6 +128,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     // 스케줄 경로 FID 배열(String)
                     intent.putExtra("scheduleRoute", schedule.getRoute());
 
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     // 상세 페이지로 이동
                     schedule.getBaseContext().startActivity(intent);
                 }

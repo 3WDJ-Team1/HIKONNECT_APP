@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp;
 import kr.ac.yjc.wdj.hikonnect.beans.HikingMemberListBean;
 
 /**
@@ -69,7 +70,7 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
                 intent.putExtra("user_lng", bean.getLongitude());
 
                 parent.setResult(Activity.RESULT_OK, intent);
-                parent.finishActivity(REQUEST_CODE);
+                parent.finish();
             }
         });
         if (dataList.get(i).getProfileImg() != null) {
