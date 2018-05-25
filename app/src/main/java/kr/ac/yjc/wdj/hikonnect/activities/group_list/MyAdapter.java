@@ -20,6 +20,7 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -75,14 +76,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                         try {
                             OkHttpClient client = new OkHttpClient();
 
-                            String dataJSONObj = "{" +
-                                    "\"userid\":\"" + params[1] + "\"," +
-                                    "\"uuid\":\"" + params[0] + "\"" +
-                                    "}";
-                            RequestBody body = RequestBody.create(Environments.JSON, dataJSONObj);
+                            RequestBody body = new FormBody.Builder()
+                                    .add("userid", params[1])
+                                    .add("uuid", params[0])
+                                    .build();
 
                             Request request = new Request.Builder()
-                                    .url(Environments.LARAVEL_SOL_SERVER + "/checkMember")
+                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/checkMember")
                                     .post(body)
                                     .build();
 
@@ -105,6 +105,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                         status = s;
 
                         Intent intent = new Intent(parent, TabsActivity.class);
+
                         // 그룹 아이디 값 보내기
                         intent.putExtra("groupId", listItem.getGroupId());
                         // 그룹 이름 보내기
@@ -136,7 +137,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
                             String sendData = "{" +
                                     "\"userid\":\"" + UsersData.USER_ID + "\"," +
-                                    "\"uuid\":\"" + groupId + "\"" +
+                                    "\"uuid\":\""   + groupId           + "\""  +
                                     "}";
 
                             RequestBody body = RequestBody.create(Environments.JSON, sendData);

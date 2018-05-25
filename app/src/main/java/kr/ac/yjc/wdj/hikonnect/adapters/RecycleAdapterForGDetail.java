@@ -125,6 +125,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     intent.putExtra("scheduleNo", schedule.getNo());
                     // 스케줄 제목
                     intent.putExtra("scheduleTitle", schedule.getTitle());
+                    // 스케줄 경로 FID 배열(String)
+                    intent.putExtra("scheduleRoute", schedule.getRoute());
 
                     // 상세 페이지로 이동
                     schedule.getBaseContext().startActivity(intent);

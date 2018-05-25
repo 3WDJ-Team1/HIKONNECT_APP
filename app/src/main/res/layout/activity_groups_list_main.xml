@@ -1,68 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.group_list.groups_list_main">
-
-    <Spinner
-        android:id="@+id/planets_spinner"
-        android:layout_width="130dp"
-        android:layout_height="40dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
+    tools:context=".activities.group_list.groups_list_main"
+    android:layout_marginTop="56dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
 
     <LinearLayout
-        android:id="@+id/list"
-        android:layout_width="368dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="52dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteX="8dp">
+        android:id="@+id/wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="11">
+
+
+        <Spinner
+            android:id="@+id/group_search_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:entries="@array/group_search_selector"
+            android:layout_weight="1"/>
+
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/list"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="52dp"-->
+        <!--android:orientation="vertical">-->
+        <!--</LinearLayout>-->
+
+        <EditText
+            android:id="@+id/tvSearchText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="9"
+            android:hint="검색"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:inputType="text"/>
+
+        <ImageButton
+            android:id="@+id/btnSearchGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_search_svgrepo_com"
+            android:backgroundTint="@color/grey_800"
+            android:tint="@color/white"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/container"
-        android:layout_width="190dp"
-        android:layout_height="40dp"
-        android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@+id/planets_spinner"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="130dp"></LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvGroupList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/groups_list_item"
+        android:layout_below="@+id/wrapper"
+        android:layout_marginTop="8dp">
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_search_category_default"
-        tools:layout_editor_absoluteX="344dp" />
+    </android.support.v7.widget.RecyclerView>
 
     <DatePicker
         android:id="@+id/Datepicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp">
+        android:layout_below="@+id/wrapper"
+        android:background="@color/white"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/set"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="set" />
+            android:layout_gravity="end|top"
+            android:backgroundTint="@color/blue_500"
+            android:text="set"
+            android:textColor="@color/white" />
 
     </DatePicker>
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

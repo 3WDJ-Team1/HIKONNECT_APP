@@ -35,37 +35,60 @@
 
         <activity
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".Othersinfo" />
+            android:name=".Othersinfo"
+            android:screenOrientation="portrait"/>
         <!--<activity-->
             <!--android:name=".myinfo"-->
             <!--android:theme="@android:style/Theme.Dialog" />-->
         <activity
             android:name=".HikingRecord"
-            android:theme="@android:style/Theme.Dialog" />
+            android:theme="@android:style/Theme.Dialog"
+            android:screenOrientation="portrait" />
         <activity
             android:name="kr.ac.yjc.wdj.hikonnect.Locationmemo"
-            android:theme="@android:style/Theme.Dialog" />
+            android:theme="@android:style/Theme.Dialog"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="kr.ac.yjc.wdj.hikonnect.activities.LoginActivity">
+            android:name="kr.ac.yjc.wdj.hikonnect.activities.LoginActivity"
+            android:screenOrientation="portrait">
 
         </activity>
         <!-- Activities -->
         <!--<activity android:name=".activities.MapsActivity1"-->
             <!--android:label="@string/title_activity_maps" />-->
-        <activity android:name=".activities.groupDetail.TabsActivity" />
-        <activity android:name=".activities.user.LoginActivity"/>
-        <activity android:name=".activities.groups.NoticeActivity"/>
-        <activity android:name=".activities.PreActivity"/>
-        <activity android:name=".activities.myPage.UserRecordActivity"/>
-        <activity android:name=".activities.myPage.UserProfileActivity"/>
-        <activity android:name=".activities.groups.ScheduleActivity"/>
-        <activity android:name=".activities.groups.SchedulViewActivitiy"/>
-        <activity android:name=".activities.groups.MemberListActivity"/>
-        <activity android:name=".activities.groups.GroupTestActivity"/>
-        <activity android:name=".activities.groupDetail.GroupDetailActivity"/>
+        <activity
+            android:name=".activities.groupDetail.TabsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.user.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groups.NoticeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groups.ScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groups.SchedulViewActivitiy"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groups.MemberListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groups.GroupTestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groupDetail.GroupDetailActivity"
+            android:screenOrientation="portrait" />
+        <!--
+                  android:theme="@style/SplashTheme"-->
         <activity android:name=".activities.SplashActivity"
                   android:theme="@style/SplashTheme"
                   android:screenOrientation="portrait">
@@ -74,17 +97,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecordListActivity" />
-        <activity android:name=".AfterHikingActivity" />
-        <activity android:name=".activities.MainActivity"
-                  android:theme="@style/AppTheme"/>
-        <activity android:name=".activities.groups.GroupActivity"/>
-        <activity android:name=".activities.user.UserRegisterActivity"/>
-        <activity android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity" />
-        <activity android:name=".activities.group_list.groups_list_main"/>
-        <activity android:name=".activities.group_list.groups_list"/>
-        <activity android:name=".activities.schedule_detail.ScheduleDetailActivity">
-
+        <activity
+            android:name=".RecordListActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".AfterHikingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.groups.GroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.group_list.groups_list_main"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.schedule_detail.ScheduleDetailActivity"
+            android:screenOrientation="portrait">
         </activity>
         <!--Activities End-->
 

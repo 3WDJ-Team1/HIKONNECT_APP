@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    @author Sungeun Kang (kasueu0814@gmail.com)
+    @since  2018-05-23
+-->
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.MainActivity"
+    tools:showIn="@layout/app_bar_main"
+    >
+
+    <ImageView
+        android:id="@+id/main_logo"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/hikonnect_logo_black"
+        />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/mainCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_below="@+id/main_logo"
+        android:elevation="1dp"
+        app:cardCornerRadius="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/nowScheduleImg"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:srcCompat="@drawable/splash"
+                android:scaleType="fitXY"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_alignParentEnd="true"/>
+
+            <TextView
+                android:id="@+id/nowScheduleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="nowScheduleTitle!"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/nowScheduleContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="nowScheduleContent..."
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/grey_600"
+                android:textSize="16dp"
+                android:layout_below="@+id/nowScheduleTitle"
+                />
+
+            <Button
+                android:id="@+id/btnStartHiking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="등산하기"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/red_accent_400"
+                android:layout_below="@+id/nowScheduleImg"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
+                />
+
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mainCard"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <Button
+            android:id="@+id/btnToGroupMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:text="Group\nMenu"
+            android:textSize="24dp"
+            android:textColor="@color/white"
+            android:layout_marginEnd="4dp"
+            android:backgroundTint="@color/amber_500"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:id="@+id/btnToMyMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:text="My\nMenu"
+            android:textSize="24dp"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/brown_500"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

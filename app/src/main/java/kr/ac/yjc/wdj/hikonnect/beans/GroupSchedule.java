@@ -17,7 +17,7 @@ public class GroupSchedule extends Bean {
     private String      leader;     // 주최자
     private double      mntId;      // 등산할 산 코드
     private String      startDate;  // 시작일
-    private JSONArray   route;      // 경로
+    private String      route;      // 경로
     private Context     baseContext;
 
     /**
@@ -28,10 +28,10 @@ public class GroupSchedule extends Bean {
      * @param leader        String      주최자
      * @param mntId         double      산코드
      * @param startDate     String      산행 시작일
-     * @param route         JSONArray   경로
+     * @param route         String      경로
      * @param baseContext   Context     현재 액티비티의 Context
      */
-    public GroupSchedule(int no, String title, String content, String leader, double mntId, String startDate, JSONArray route, Context baseContext) {
+    public GroupSchedule(int no, String title, String content, String leader, double mntId, String startDate, String route, Context baseContext) {
         this.no         = no;
         this.title      = title;
         this.content    = content;
@@ -91,11 +91,11 @@ public class GroupSchedule extends Bean {
         this.startDate = startDate;
     }
 
-    public JSONArray getRoute() {
+    public String getRoute() {
         return route;
     }
 
-    public void setRoute(JSONArray route) {
+    public void setRoute(String route) {
         this.route = route;
     }
 

@@ -15,12 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -40,9 +43,11 @@ import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MainPageAdapter;
 import kr.ac.yjc.wdj.hikonnect.beans.Group;
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -65,17 +70,27 @@ public class MainActivity extends AppCompatActivity
     // 내부
     private TextView        nowScheduleTitle, NowScheduleContent; // 현재 산행 진행 중인 그룹 제목, 내용
     private ImageView       nowScheduleImg; // 현재 산행 진행중인 그룹 사진
-    private Button          btnStartHiking; // 등산 시작 버튼
+    private Button          btnStartHiking, // 등산 시작 버튼
+                            btnToGroupMenu, // 그룹 메뉴 버튼
+                            btnToMyMenu;    // 마이 메뉴 버튼
     private RecyclerView    rvNowJoined, rvNowRecruit;  // 현재 참여한 그룹, 현재 모집중인 그룹
     private ProgressBar     progressBar;
+
+    // HTTP request
+    private OkHttpClient    client;
+
+    // 로딩화면
+    private LoadingDialog   loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // UI 초기화
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -101,20 +116,21 @@ public class MainActivity extends AppCompatActivity
 
         final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
 
+        // OKHttpClient 초기화
+        client = new OkHttpClient();
+
         new AsyncTask<Void, Integer, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... params) {
                 try {
-                    OkHttpClient okHttpClient = new OkHttpClient();
-
                     HttpUrl httpUrl = HttpUrl
-                            .parse(Environments.NODE_SOL_SERVER + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
                             .newBuilder()
                             .build();
 
                     Request req = new Request.Builder().url(httpUrl).build();
 
-                    Response res = okHttpClient.newCall(req).execute();
+                    Response res = client.newCall(req).execute();
 
                     InputStream is = res.body().byteStream();
 
@@ -151,6 +167,8 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         } else {
             super.onBackPressed();
         }
@@ -192,23 +210,24 @@ public class MainActivity extends AppCompatActivity
      * 내부 메인페이지 UI 초기화
      */
     private void initInnerPageUI() {
-        final View contentMain = findViewById(R.id.layout_app_bar_main).findViewById(R.id.layout_content_main);
-
         // 뷰 붙이기
-        nowScheduleImg      = (ImageView) contentMain.findViewById(R.id.nowScheduleImg);
-        nowScheduleTitle    = (TextView) contentMain.findViewById(R.id.nowScheduleTitle);
-        NowScheduleContent  = (TextView) contentMain.findViewById(R.id.nowScheduleContent);
-        btnStartHiking      = (Button) contentMain.findViewById(R.id.btnStartHiking);
-        rvNowJoined         = (RecyclerView) contentMain.findViewById(R.id.rvNowJoined);
-        rvNowJoined.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvNowRecruit        = (RecyclerView) contentMain.findViewById(R.id.rvNowRecruit);
-        rvNowRecruit.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.HORIZONTAL, false));
+        nowScheduleImg      = (ImageView)   findViewById(R.id.nowScheduleImg);
+        nowScheduleTitle    = (TextView)    findViewById(R.id.nowScheduleTitle);
+        NowScheduleContent  = (TextView)    findViewById(R.id.nowScheduleContent);
+        btnStartHiking      = (Button)      findViewById(R.id.btnStartHiking);// 로딩 화면 초기화
+        btnToGroupMenu      = (Button)      findViewById(R.id.btnToGroupMenu);
+        btnToMyMenu         = (Button)      findViewById(R.id.btnToMyMenu);
 
-        progressBar         = (ProgressBar) contentMain.findViewById(R.id.startHikingProgressBar);
+        loadingDialog       = new LoadingDialog(this);
+
+//        progressBar         = (ProgressBar)     contentMain.findViewById(R.id.startHikingProgressBar);
 
         // 어댑터 붙이기
         // TODO 데이터 http 로 받아와서 넣기
-        ArrayList<Group> dataList = new ArrayList<>();
+        /*ArrayList<Group> dataList = new ArrayList<>();
+
+        getGroupsInfo(UsersData.USER_ID);
+
         dataList.add(new Group("test1"));
         dataList.add(new Group("test2"));
         dataList.add(new Group("test3"));
@@ -218,19 +237,69 @@ public class MainActivity extends AppCompatActivity
 
         rvNowJoined.setAdapter(new MainPageAdapter(dataList, R.layout.main_list_item));
         rvNowRecruit.setAdapter(new MainPageAdapter(dataList, R.layout.main_list_item));
-
+*/
         // 리스너 붙이기
         // 등산 시작 버튼 클릭 시 맵으로 이동
         btnStartHiking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadingDialog.show();
                 Intent intent = new Intent(getBaseContext(), MapsActivityTemp.class);
                 intent.putExtra("id", UsersData.USER_ID);
-                progressBar.setVisibility(View.VISIBLE);
                 startActivity(intent);
                 finish();
             }
         });
+
+        // 그룹 메뉴 버튼 누르면 그룹 메뉴로 이동
+        btnToGroupMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), groups_list_main.class);
+                startActivity(intent);
+            }
+        });
+
+        // 마이 메뉴 버튼 누르면 마이 메뉴로 이동
+        btnToMyMenu.setOnClickListener(null);
+    }
+
+    /**
+     * 현재 유저가 참여하고 있는 그룹 찾기
+     * @param userId    유저 아이디
+     */
+    private void getGroupsInfo(String userId) {
+        final String loginId = userId;
+
+        new AsyncTask<String, Integer, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                try {
+                    RequestBody body = new FormBody.Builder()
+                            .add("userid", loginId)
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/my_group")
+                            .post(body)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+                } catch (IOException ie) {
+                    Log.e("IOException", "IOException in MainActivity.getGroupsInfo()\n" + ie);
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                // TODO 추가하기
+            }
+        }.execute();
     }
 }
 

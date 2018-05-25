@@ -20,7 +20,6 @@ import java.io.IOException;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
-import kr.ac.yjc.wdj.hikonnect.apis.HttpRequest.HttpRequestConnection;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -38,20 +37,21 @@ public class LoginActivity extends Activity {
     Button          login;
     ProgressBar     progressBar;
 
-    ContentValues   contentValues = new ContentValues();
-    OkHttpClient    hrc = new OkHttpClient();
+    ContentValues   contentValues   = new ContentValues();
+    OkHttpClient    hrc             = new OkHttpClient();
 
-    String                  result;
+    String          result;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.login_designed);
 
-        id          = (EditText) findViewById(R.id.id_editText);
-        pw          = (EditText) findViewById(R.id.pw_editText);
-        tv          = (TextView) findViewById(R.id.tv);
-        login       = (Button) findViewById(R.id.signInBtn);
+        id          = (EditText)    findViewById(R.id.id_editText);
+        pw          = (EditText)    findViewById(R.id.pw_editText);
+        tv          = (TextView)    findViewById(R.id.tv);
+        login       = (Button)      findViewById(R.id.signInBtn);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +61,7 @@ public class LoginActivity extends Activity {
                 tv.setText("로그인 중...");
                 contentValues.put("id", id.getText().toString());
                 contentValues.put("pw", pw.getText().toString());
+                login.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
 
                 new Thread(new Runnable() {
@@ -80,7 +81,7 @@ public class LoginActivity extends Activity {
 
                             // 리퀘스트 객체 생성
                             Request request = new Request.Builder()
-                                    .url(Environments.LARAVEL_SOL_SERVER + "/loginprocess")
+                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/loginprocess")
                                     .post(body)
                                     .build();
 
@@ -99,6 +100,7 @@ public class LoginActivity extends Activity {
                                     public void run() {
                                         tv.setText("ID를 확인해주세요.");
                                         progressBar.setVisibility(View.GONE);
+                                        login.setVisibility(View.VISIBLE);
                                     }
                                 });
                             } else if (resultJson.equals("\"pwfalse\"")) {
@@ -108,6 +110,7 @@ public class LoginActivity extends Activity {
                                     public void run() {
                                         tv.setText("비밀번호를 확인해주세요.");
                                         progressBar.setVisibility(View.GONE);
+                                        login.setVisibility(View.VISIBLE);
                                     }
                                 });
                             } else {
@@ -139,6 +142,7 @@ public class LoginActivity extends Activity {
 
                                 startActivity(intent);
                                 finish();
+                                overridePendingTransition(R.anim.fade, R.anim.hold);
                             }
 
                         } catch (IOException ie) {

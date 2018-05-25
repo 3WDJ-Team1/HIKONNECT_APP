@@ -421,8 +421,8 @@ public class MapsActivityTemp extends FragmentActivity implements
         setContentView(R.layout.activity_maps_temp);
 
         Intent intent = getIntent();
-        String userid = "test2";
-//        intent.getStringExtra("id");
+//        String userid = "test2";
+        String userid = intent.getStringExtra("id");
         getMemberNoByUserID(userid);
 
         // [1] GoogleMaps Fragment 불러오기.
@@ -1330,5 +1330,12 @@ public class MapsActivityTemp extends FragmentActivity implements
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

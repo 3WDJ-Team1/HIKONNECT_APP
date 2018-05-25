@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- < 회원 정보 -->
     <string-array name="gender">
         <item>성별</item>
         <item>남자</item>
@@ -15,4 +16,5 @@
         <item>50대</item>
         <item>60대</item>
     </string-array>
+    <!-- 회원 정보 > -->
 </resources>

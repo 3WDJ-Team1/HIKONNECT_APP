@@ -1,25 +1,35 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groupDetail;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,32 +39,43 @@ import devlight.io.library.ntb.NavigationTabBar;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
+import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
+import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
+import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
 import kr.ac.yjc.wdj.hikonnect.beans.Bean;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupSchedule;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-10
  */
-public class TabsActivity extends AppCompatActivity {
+public class TabsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     // UI 변수
-    private ViewPager               viewPager;          // 전체 페이지
-    private NavigationTabBar        navigationTabBar;   // 네비게이션 탭 바
-    private FloatingActionButton    btnEnterGroup;      // 그룹 참가 버튼
-    private CollapsingToolbarLayout toolbarLayout;      // 툴바레이아웃
-    private ProgressBar             progressBar;        // 로딩 시간...
+    private ViewPager                           viewPager;          // 전체 페이지
+    private NavigationTabBar                    navigationTabBar;   // 네비게이션 탭 바
+    private FloatingActionButton                btnEnterGroup;      // 그룹 참가 버튼
+    private FloatingActionButton                btnExitGroup;       // 그룹 탈퇴 버튼
+    private LoadingDialog                       loadingDialog;      // 로딩 화면
+    private DrawerLayout                        drawer;             // drawer
+    private Toolbar                             toolbar;
+    private ActionBarDrawerToggle               toggle;
+    private NavigationView                      navigationView;
+    private TextView                            txtView;
 
     // UI 내부 데이터 연결 객체
     private ArrayList<NavigationTabBar.Model>   models;             // 네비게이션 탭 안의 메뉴 구성을 위한 모델
@@ -66,54 +87,76 @@ public class TabsActivity extends AppCompatActivity {
                                                 dataListMember,     // member URL 요청으로 받아온 값을 담아둘 곳
                                                 dataListSchedule;   // schedule URL 요청으로 받아온 값을 담아둘 곳
     private ArrayList<GroupUserInfoBean>        dataListJoinedMember;
+
     // 데이터 담아둘 변수
-    private String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
-    private int                 firstIndex;         // 요청 공지사항 데이터 시작 인덱스
-    private static final int    PAGE_COUNT = 3;     // 총 페이지의 수
-    private static String       status;             // 사용자가 해당 그룹에 참여하고 있는 지 여부
-    public  static String       groupId;            // 해당 그룹의 id
+    private static final    int                 PAGE_COUNT = 3;     // 총 페이지의 수
+    private static          String              status;             // 사용자가 해당 그룹에 참여하고 있는 지 여부
+    public  static          String              groupId;            // 해당 그룹의 id
+    private                 String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
+    private                 int                 firstIndex;         // 요청 공지사항 데이터 시작 인덱스
 
     // 무한 스크롤
-    private boolean     isScrolling;                                // 현재 스크롤 되고 있는지 확인
-    private int         currentItems, totalItems, scrollOutItems;   // 현재 스크롤 위치 파악하기 위한 변수
+    private                 boolean             isScrolling;        // 현재 스크롤 되고 있는지 확인
+    private                 int                 currentItems,       // 현재 스크롤 위치 파악하기 위한 변수
+                                                totalItems,
+                                                scrollOutItems;
 
+    // OKHttp
+    private OkHttpClient        client;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.group_detail_home);
+        setContentView(R.layout.group_detail_drawer);
 
+        // [1] 변수 초기화
+        // intent
         Intent intent       = getIntent();
         groupId             = intent.getStringExtra("groupId");
         status              = intent.getStringExtra("status");
 
-        viewPager           = (ViewPager)           findViewById(R.id.vp_horizontal_ntb);
-        navigationTabBar    = (NavigationTabBar)    findViewById(R.id.ntb_horizontal);
-        progressBar         = (ProgressBar)         findViewById(R.id.pageProgress);
+        // UI 변수
+        btnEnterGroup       = (FloatingActionButton)    findViewById(R.id.btnEnterGroup);
+        btnExitGroup        = (FloatingActionButton)    findViewById(R.id.btnExitGroup);
+        viewPager           = (ViewPager)               findViewById(R.id.vp_horizontal_ntb);
+        navigationTabBar    = (NavigationTabBar)        findViewById(R.id.ntb_horizontal);
+        toolbar             = (Toolbar)                 findViewById(R.id.toolbar);
+        drawer              = (DrawerLayout)            findViewById(R.id.drawer_layout);
+        navigationView      = (NavigationView)          findViewById(R.id.nav_view);
+        loadingDialog       = new LoadingDialog(this);
+
+        // 데이터 변수
         models              = new ArrayList<>();
         colors              = getResources().getStringArray(R.array.default_preview);
-        btnEnterGroup       = (FloatingActionButton) findViewById(R.id.btnEnterGroup);
         isScrolling         = false;
         dataListNotice      = new ArrayList<>();
         dataListMember      = new ArrayList<>();
         dataListJoinedMember= new ArrayList<>();
         dataListSchedule    = new ArrayList<>();
         firstIndex          = 0;
-        toolbarLayout       = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
+
+        // 어댑터 변수
         adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
         adapterSchedule     = new RecycleAdapterForGDetail(R.layout.schedule_item_cardview_, dataListSchedule);
         adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember, status);
         adapterMemberJoined = new MemberListAdapter(R.layout.member_list_schedule, dataListJoinedMember, status);
 
-        // 툴바에 그룹 이름 넣기
-        toolbarLayout.setTitle(intent.getStringExtra("groupName"));
+        // OKHttp
+        client = new OkHttpClient();
 
         //TODO
         // 이 사람이 그룹에 있으면 그룹 참가 버튼 -> 그룹 탈퇴 버튼
+
 //        initVarisJoined("", "");
         // 플로팅 버튼 누르면 그룹 참가
 //        setListenerToFloatingButton();
+
+        toggleBtnIfJoined();
+
+        // 툴바 초기화
+        initToolbar();
+
         // 페이지 불러오기
         initUI();
 
@@ -123,6 +166,7 @@ public class TabsActivity extends AppCompatActivity {
         // 참여자 값 받기
         datafetchForMember(groupId);
 
+        // 버튼에 리스너 달기
         setListenerToFloatingButton();
     }
 
@@ -130,6 +174,7 @@ public class TabsActivity extends AppCompatActivity {
      * 플로팅 버튼에 리스너 달기
      */
     private void setListenerToFloatingButton () {
+        // 그룹 참가
         btnEnterGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,7 +182,7 @@ public class TabsActivity extends AppCompatActivity {
                         @Override
                         protected void onPreExecute() {
                             super.onPreExecute();
-                            progressBar.setVisibility(View.VISIBLE);
+                            loadingDialog.show();
                         }
 
                         @Override
@@ -153,7 +198,7 @@ public class TabsActivity extends AppCompatActivity {
                                 RequestBody body = RequestBody.create(Environments.JSON, sendData);
 
                                 Request request = new Request.Builder()
-                                        .url(Environments.LARAVEL_SOL_SERVER + "/member")
+                                        .url(Environments.LARAVEL_HIKONNECT_IP + "/api/member")
                                         .post(body)
                                         .build();
 
@@ -169,10 +214,69 @@ public class TabsActivity extends AppCompatActivity {
                         protected void onPostExecute(String s) {
                             super.onPostExecute(s);
                             Toast.makeText(getBaseContext(), "참가신청 되었습니다.", Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
+                            loadingDialog.dismiss();
                             btnEnterGroup.setVisibility(View.GONE);
                         }
                     }.execute();
+            }
+        });
+
+        // 그룹 탈퇴
+        btnExitGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new AsyncTask<Void, Integer, String>() {
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+
+                        try {
+                            RequestBody body = new FormBody.Builder()
+                                    .add("userid", UsersData.USER_ID)
+                                    .add("uuid", groupId)
+                                    .build();
+
+                            Request request = new Request.Builder()
+                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/out_group")
+                                    .post(body)
+                                    .build();
+
+                            Response response = client.newCall(request).execute();
+
+                            return response.body().string();
+
+                        } catch (IOException ie) {
+
+                            Log.e("IOExcept", "IOException at btnExitGroup.setOnClickListener!!\n" + ie);
+                            return null;
+
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        super.onPostExecute(s);
+
+                        if (Boolean.parseBoolean(s)) {
+                            Toast.makeText(
+                                    getBaseContext(),
+                                    "성공적으로 탈퇴되었습니다.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+
+                            status = "guest";
+                            toggleBtnIfJoined();
+                        } else {
+                            Toast.makeText(
+                                    getBaseContext(),
+                                    "오류로 인해 탈퇴하지 못했습니다.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    }
+
+                }.execute();
             }
         });
     }
@@ -341,6 +445,93 @@ public class TabsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 툴바 초기화
+     */
+    private void initToolbar() {
+        Log.e("null??", R.id.toolbar + "/" + toolbar);
+        // 툴바 설정
+        toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
+        // 토글 버튼 설정
+        toggle = new ActionBarDrawerToggle(
+                this,
+                drawer,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+
+        // 토글 버튼 추가
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // 각 리스트 별 리스너 장착
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // 프로필 이름 설정
+        txtView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.main_textview);
+        txtView.setText(UsersData.USER_NAME);
+
+        // 프로필 사진
+        final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
+
+        // 서버에서 사진 받아와 넣기
+        new AsyncTask<Void, Integer, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                try {
+
+                    HttpUrl httpUrl = HttpUrl
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .newBuilder()
+                            .build();
+
+                    Request     req = new Request.Builder().url(httpUrl).build();
+                    Response    res = client.newCall(req).execute();
+                    InputStream is  = res.body().byteStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    return bitmap;
+
+                } catch (IOException ie) {
+
+                    ie.printStackTrace();
+                    return null;
+
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+
+                imageView.setImageBitmap(bitmap);
+            }
+        }.execute();
+    }
+
+    /**
+     * 사용자가 멤버거나 오너라면 그룹 탈퇴 버튼, 아니라면 그룹 참가 버튼을 보여준다
+     */
+    private void toggleBtnIfJoined() {
+        switch (status) {
+            case "\"owner\"":
+                btnEnterGroup.setVisibility(View.GONE);
+                btnExitGroup.setVisibility(View.GONE);
+                break;
+            case "\"member\"":
+                btnEnterGroup.setVisibility(View.GONE);
+                btnExitGroup.setVisibility(View.VISIBLE);
+                break;
+            default:
+                btnEnterGroup.setVisibility(View.VISIBLE);
+                btnExitGroup.setVisibility(View.GONE);
+                break;
+        }
+    }
+
     // 탭에 모델 추가
     private void addModels(int drawable, String color, String title) {
         models.add(
@@ -359,7 +550,7 @@ public class TabsActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressBar.setVisibility(View.VISIBLE);
+                loadingDialog.show();
             }
 
             @Override
@@ -369,7 +560,7 @@ public class TabsActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_SOL_SERVER + "/list_announce/" + groupId + "/" + page)
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/list_announce/" + groupId + "/" + page)
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -407,7 +598,7 @@ public class TabsActivity extends AppCompatActivity {
                     adapterNotice.notifyDataSetChanged();
                     Log.d("adapters", adapterNotice.getItemCount() + "");
                     firstIndex++;
-                    progressBar.setVisibility(View.GONE);
+                    loadingDialog.dismiss();
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
@@ -426,10 +617,10 @@ public class TabsActivity extends AppCompatActivity {
 
                     // 리퀘스트 생성
                     Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_SOL_SERVER + "/schedule/" + groupId)
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/schedule/" + groupId)
                             .build();
 
-                    Log.d("schedule", Environments.LARAVEL_SOL_SERVER + "/schedule/" + groupId);
+                    Log.d("schedule", Environments.LARAVEL_HIKONNECT_IP + "/api/schedule/" + groupId);
 
                     // 결과 받아오기
                     Response response = client.newCall(request).execute();
@@ -460,7 +651,7 @@ public class TabsActivity extends AppCompatActivity {
                                 jsonObject.getString("leader"),
                                 jsonObject.getDouble("mnt_id"),
                                 jsonObject.getString("start_date"),
-                                new JSONArray(jsonObject.get("route").toString()),
+                                jsonObject.getString("route"),
                                 getBaseContext()
                         ));
                     }
@@ -480,7 +671,7 @@ public class TabsActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressBar.setVisibility(View.VISIBLE);
+                loadingDialog.show();
             }
 
             @Override
@@ -490,7 +681,7 @@ public class TabsActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_SOL_SERVER + "/list_member/" + groupId)
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/list_member/" + groupId)
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -553,12 +744,60 @@ public class TabsActivity extends AppCompatActivity {
                     adapterMember.notifyDataSetChanged();
                     adapterMemberJoined.notifyDataSetChanged();
 
-                    progressBar.setVisibility(View.GONE);
+                    loadingDialog.dismiss();
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
             }
         }.execute();
+    }
+
+
+    // -----------------------------------------------------------------------------------
+
+    // 오버라이딩 Drawer
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.groups) {
+            startActivity(new Intent(this, groups_list_main.class));
+        } /*else if (id == R.id.my_groups) {
+            startActivity(new Intent(this, UserGroupActivity.class));
+        }*/ else if (id == R.id.my_profile) {
+            startActivity(new Intent(this, UserProfileActivity.class));
+        } else if (id == R.id.log_out) {
+//            session.logOutUser();
+            //startActivity(new Intent(this, PreActivity.class));
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+        return true;
     }
 
 }

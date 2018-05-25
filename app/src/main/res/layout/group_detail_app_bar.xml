@@ -19,11 +19,20 @@
             android:background="@color/transparent"
             app:contentInsetStartWithNavigation="0dp">
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/hikonnect_logo_toolbar"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="32dp"/>
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main_designed"
+    <include
+        layout="@layout/group_detail_home"
         android:id="@+id/layout_content_main"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,6 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.schedule_detail;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,7 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,30 +50,41 @@ import okhttp3.Response;
  */
 public class ScheduleDetailActivity extends FragmentActivity implements OnMapReadyCallback {
     // UI 변수
-    private TextView        tvScheduleTitle;    // 툴바 제목
-    private ViewPager       viewPager;          // 뷰페이저
-    private TabLayout       tabLayout;
+    private TextView            tvScheduleTitle;    // 툴바 제목
+    private ViewPager           viewPager;          // 뷰페이저
+    private TabLayout           tabLayout;
+    private ImageButton         btnGoBack;
 
     // 데이터 변수
-    private String          status;             // 그룹의 손님/참가자/오너
-    private double          mntId;              // 산 코드
-    private String          content;            // 내용
-    private String          startDate;          // 시작일
-    private String          groupId;            // 그룹 아이디
-    private int             scheduleNo;         // 스케줄 번호
-    private String          scheduleTitle;      // 스케줄 제목
+    private String              status;             // 그룹의 손님/참가자/오너
+    private double              mntId;              // 산 코드
+    private String              content;            // 내용
+    private String              startDate;          // 시작일
+    private String              groupId;            // 그룹 아이디
+    private int                 scheduleNo;         // 스케줄 번호
+    private String              scheduleTitle;      // 스케줄 제목
+    private ArrayList<Integer>  fidList;            // 경로(FID) 배열
+    private ArrayList<LatLng>   routeList;          // 경로 좌표 배열
 
+    // 스케줄 유저 리사이클러 뷰 관련
     private ArrayList<GroupUserInfoBean>    dataList;
     private MemberListAdapter               adapter;
 
+    // 구글 맵 관련
+    private GoogleMap           googleMap;          // 지도 객체
+    private PolylineOptions     polylineOptions;    // 지도에 찍어 낼 PolyLineOption
+
+    // OkHttp
+    private OkHttpClient    client;
+
     // 상수
-    private final int       PAGE_COUNT = 2;
+    private final int       PAGE_COUNT  = 2;
+    private final String    LOG_TAG     = "SCH_DETAIL";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule_detail);
-
+        setContentView(R.layout.activity_schedule_detail_app_bar);
 
         initData();
         initUI();
@@ -79,30 +92,24 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng SEOUL = new LatLng(37.56, 126.97);
+        this.googleMap = googleMap;
 
+        Intent intent   = getIntent();
+        mntId           = intent.getDoubleExtra("mntId", 0);
 
-        MarkerOptions markerOptions = new MarkerOptions();
-
-        markerOptions.position(SEOUL);
-
-        markerOptions.title("서울");
-
-        markerOptions.snippet("한국의 수도");
-
-        googleMap.addMarker(markerOptions);
-
-
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        getMntRouteWithMntId(mntId);
     }
 
     /**
      * 데이터 초기화
      */
     private void initData() {
-        Intent intent = getIntent();
+        // OkHttp
+        client          = new OkHttpClient();
+        // GoogleMaps
+        polylineOptions = new PolylineOptions();
+
+        Intent intent   = getIntent();
         status          = intent.getStringExtra("status");
         mntId           = intent.getDoubleExtra("mntId", 0);
         content         = intent.getStringExtra("content");
@@ -110,6 +117,26 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
         groupId         = TabsActivity.groupId;
         scheduleNo      = intent.getIntExtra("scheduleNo", 0);
         scheduleTitle   = intent.getStringExtra("scheduleTitle");
+        routeList       = new ArrayList<>();
+
+        // FID 리스트 초기화
+        try {
+
+            // 받아온 String을 JSON 객체로 변환
+            JSONArray jArray    = new JSONArray(intent.getStringExtra("scheduleRoute"));
+            // fidList 초기화
+            fidList = new ArrayList<>();
+
+            // 값 초기화
+            for (int i = 0 ; i < jArray.length() ; i++) {
+                fidList.add(jArray.getInt(i));
+            }
+
+        } catch (JSONException je) {
+
+            Log.e(LOG_TAG, "JSONException was occured while initing routeArrString!!!!! \n" + je);
+        }
+
         dataList        = new ArrayList<>();
         adapter         = new MemberListAdapter(
                 R.layout.member_list_schedule,
@@ -128,6 +155,17 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
         tvScheduleTitle = (TextView)    findViewById(R.id.scheduleTitle);
         viewPager       = (ViewPager)   findViewById(R.id.viewPager);
         tabLayout       = (TabLayout)   findViewById(R.id.tabs);
+        btnGoBack       = (ImageButton) findViewById(R.id.btnGoBack);
+
+        // 버튼 초기화
+
+        // 뒤로가기 버튼에 리스너 장착
+        btnGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // 타이틀 지정
         tvScheduleTitle.setText(scheduleTitle);
@@ -210,6 +248,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
     /**
      * 산 코드로 산 이름 찾아서 반환
      * @param inputMntId    산 코드
+     * @param tv            산 이름 출력할 텍스트 뷰
      */
     private void getMntNameFromMntId(final double inputMntId, final TextView tv) {
         // http 리퀘스트로 산 이름 알아내기
@@ -220,7 +259,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_SOL_SERVER + "/mnt_name/" + inputMntId)
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/mnt_name/" + inputMntId)
                             .build();
 
                     Response response = client.newCall(request).execute();
@@ -237,9 +276,19 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
 
-                String string = s.replace('\"', ' ');
+                // 유니코드 디코딩
+                StringBuffer buffer = new StringBuffer();
+
+                for (int i = s.indexOf("\\u") ; i > -1 ; i = s.indexOf("\\u")) {
+                    buffer.append(s.substring(0, i));
+                    buffer.append(String.valueOf( (char) Integer.parseInt( s.substring(i + 2, i + 6), 16 ) ));
+                    s = s.substring(i + 6);
+                }
+
+                buffer.append( s );
+
                 // 변수에 넣기
-                tv.setText(string);
+                tv.setText( buffer.toString().replace("\"", "") );
             }
         }.execute();
     }
@@ -258,17 +307,20 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
             protected String doInBackground(Void... params) {
 
                 try {
+
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_SOL_SERVER + "/schedule_member/" + groupId + "/" + scheduleNo)
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/schedule_member/" + groupId + "/" + scheduleNo)
                             .build();
 
                     Response response = client.newCall(request).execute();
 
                     return response.body().string();
+
                 } catch (IOException ie) {
-                    ie.printStackTrace();
+
+                    Log.e(LOG_TAG, "IOException was occured in getScheduleMembers()!!!!! \n" + ie);
                     return null;
                 }
             }
@@ -277,7 +329,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
 
-                Log.d("SCHEDULE", s);
+                Log.d(LOG_TAG, s);
                 try {
 
                     JSONArray jsonArray = new JSONArray(s);
@@ -306,4 +358,99 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
         }.execute();
 
     }
+
+    /**
+     * 산 코드로 산 경로 배열 (lat, lng) 받아와 지도에 찍기
+     * @param inputMntId    산 코드
+     */
+    private void getMntRouteWithMntId(final double inputMntId) {
+
+        new AsyncTask<Double, Integer, String>() {
+
+            @Override
+            protected String doInBackground(Double... params) {
+
+                try {
+
+                    Request request = new Request.Builder()
+                            .url(Environments.NODE_HIKONNECT_IP + "/paths/" + params[0].intValue())
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+
+                } catch (IOException ie) {
+
+                    Log.e(LOG_TAG, "IOException was occured in getMntRouteWithMntId()!!!!\n" + ie);
+                    return null;
+
+                }
+
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+
+                // 값을 파싱하여 필요한 경로만 polyLineOptions 에 넣기
+                try {
+
+                    Log.d("TEST", s);
+
+                    // JSON parsing
+                    JSONArray routes = new JSONArray(s);
+
+                    for (int i = 0 ; i < routes.length() ; i++) {
+
+                        JSONObject jsonObject   = routes.getJSONObject(i);
+                        JSONObject infoObj      = jsonObject.getJSONObject("attributes");
+
+                        if (!fidList.contains(infoObj.getInt("FID"))) {
+                            continue;
+                        }
+
+                        JSONObject  geometryObj = jsonObject.getJSONObject("geometry");
+                        JSONArray   tempsArr    = geometryObj.getJSONArray("paths");
+                        JSONArray   pathsArr    = tempsArr.getJSONArray(0);
+
+                        routeList       = new ArrayList<>();
+                        polylineOptions = new PolylineOptions();
+
+                        for (int j = 0; j < pathsArr.length(); j++) {
+
+                            JSONObject pathObj = pathsArr.getJSONObject(j);
+
+                            double lat = pathObj.getDouble("lat");
+                            double lng = pathObj.getDouble("lng");
+
+                            // 폴리라인 옵션에 지점 추가
+                            LatLng latLng = new LatLng(lat, lng);
+
+                            if (infoObj.getInt("FID") == fidList.get(0) && j == 0) {
+                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+                            }
+
+                            routeList.add(latLng);
+                        }
+
+                        polylineOptions.addAll(routeList);
+                        polylineOptions.color(Color.RED);
+                        polylineOptions.width(13);
+                        googleMap.addPolyline(polylineOptions);
+                    }
+
+                } catch (JSONException je) {
+
+                    Log.e(LOG_TAG, "JSONException was occured in getMntRouteWithMntId()!!!!\n" + je);
+
+                }
+
+
+            }
+
+        }.execute(inputMntId);
+    }
+
+
 }

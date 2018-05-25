@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
+
+        <!--<TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="SIGN IN"
+            android:textColor="@color/black"
+            android:textSize="45dp"
+            android:textStyle="bold"/>-->
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/hikonnect_logo_black" />
+
+        <EditText
+            android:id="@+id/id_editText"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:hint="Enter ID*"
+            android:layout_centerVertical="true"
+            android:layout_below="@+id/logo"
+            android:inputType="text"
+            />
+
+        <EditText
+            android:id="@+id/pw_editText"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:hint="Enter password*"
+            android:layout_below="@id/id_editText"
+            android:inputType="textPassword"
+            />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ID와 비밀번호를 입력하세요."
+            android:textColor="@color/black"
+            android:layout_below="@+id/pw_editText"
+            android:textAlignment="center"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/signInBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/white"
+            android:text="SIGN IN"
+            android:layout_below="@id/progressBar"
+            android:backgroundTint="@color/blue_400"
+            />
+
+        <Button
+            android:id="@+id/cancelBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="SIGN UP"
+            android:backgroundTint="@color/grey_200"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_centerVertical="true"
+            android:layout_below="@id/signInBtn"/>
+
+</RelativeLayout>
