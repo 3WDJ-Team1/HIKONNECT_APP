@@ -74,13 +74,13 @@ public class UserProfileActivity extends AppCompatActivity
 
         userProfileImg = (ImageView) findViewById(R.id.user_profile_img);
 
-        idTxt       = (TextView) findViewById(R.id.user_id);
-        nicknameTxt = (TextView) findViewById(R.id.user_name);
-        phoneTxt    = (TextView) findViewById(R.id.user_phoneNum);
-        ageTxt      = (TextView) findViewById(R.id.user_age);
-        genderTxt   = (TextView) findViewById(R.id.user_gender);
+        idTxt       = (TextView) findViewById(R.id.user_id_txt);
+        nicknameTxt = (TextView) findViewById(R.id.user_nickname_txt);
+        phoneTxt    = (TextView) findViewById(R.id.user_phoneNum_txt);
+        ageTxt      = (TextView) findViewById(R.id.user_age_txt);
+        genderTxt   = (TextView) findViewById(R.id.user_gender_txt);
 
-        home        = (Button) findViewById(R.id.back_to_main);
+//        home        = (Button) findViewById(R.id.back_to_main_);
 
         // 세션의 id값으로 설정
         idTxt.setText(id);
@@ -90,13 +90,13 @@ public class UserProfileActivity extends AppCompatActivity
         ageTxt.setText("10대");
         genderTxt.setText("여자");*/
 
-        home.setOnClickListener(new View.OnClickListener() {
+        /*home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(UserProfileActivity.this, MainActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
     }
     public void loadRecyclerViewData() {
         contentValues.put("userid", id);

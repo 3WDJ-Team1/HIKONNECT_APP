@@ -30,13 +30,13 @@ import okhttp3.Response;
  * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-10
  */
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
 
-    private List<ListViewItem>  listItems;
+    private List<GroupListItem>  listItems;
     private String              status;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<ListViewItem> listItems) {
+    public GroupListAdapter(List<GroupListItem> listItems) {
         this.listItems = listItems;
     }
 
@@ -53,7 +53,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final ListViewItem listItem = listItems.get(position);
+        final GroupListItem listItem = listItems.get(position);
 
         // 값 설정
         holder.textViewHead.setText(listItem.getHead());

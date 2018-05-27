@@ -81,9 +81,15 @@
             android:screenOrientation="portrait" />
         <!--
                   android:theme="@style/SplashTheme"-->
-        <activity android:name=".activities.SplashActivity"
-                  android:theme="@style/SplashTheme"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".activities.myPage.UserRecordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.myPage.UserProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -110,8 +116,11 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.schedule_detail.ScheduleDetailActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.myPage.UserJoinedGroup"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.myPage.MyMenuActivity"
+            android:screenOrientation="portrait" />
         <!--Activities End-->
 
         <!--Camera Provider-->

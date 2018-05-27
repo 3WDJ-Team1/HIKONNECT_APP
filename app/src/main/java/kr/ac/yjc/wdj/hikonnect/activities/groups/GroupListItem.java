@@ -13,17 +13,14 @@ public class GroupListItem {
     String groupUuid;
 
     String getTitle() {
-        this.title = title;
         return this.title;
     }
 
     String getWriter() {
-        this.writer = writer;
         return this.writer;
     }
 
     String getGroupUuid() {
-        this.groupUuid =groupUuid;
         return this.groupUuid;
     }
 

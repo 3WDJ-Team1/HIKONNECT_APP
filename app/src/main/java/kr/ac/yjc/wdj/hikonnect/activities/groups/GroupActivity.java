@@ -1,8 +1,5 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groups;
 
-
-
-
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,8 +26,8 @@ import java.util.List;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
-import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 
 /**

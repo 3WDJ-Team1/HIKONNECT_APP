@@ -69,10 +69,10 @@ public class AfterHikingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_after_hiking);
 
         // UI 초기화
-        tvRemainMembers     = (TextView) findViewById(R.id.howManyNowHiking);
-        userName            = (TextView) findViewById(R.id.userName);
-        rvAfterHikingList   = (RecyclerView) findViewById(R.id.afterHikingList);
-        btnToOthersInfo     = (Button) findViewById(R.id.showMemberList);
+        tvRemainMembers     = (TextView)        findViewById(R.id.howManyNowHiking);
+        userName            = (TextView)        findViewById(R.id.userName);
+        rvAfterHikingList   = (RecyclerView)    findViewById(R.id.afterHikingList);
+        btnToOthersInfo     = (Button)          findViewById(R.id.showMemberList);
 
         // 데이터 초기화
         hikingMenus = new ArrayList<>();

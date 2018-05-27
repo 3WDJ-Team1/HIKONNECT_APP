@@ -12,37 +12,31 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
-import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.MyMenuActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
-import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
-import kr.ac.yjc.wdj.hikonnect.adapters.MainPageAdapter;
-import kr.ac.yjc.wdj.hikonnect.beans.Group;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -52,7 +46,8 @@ import okhttp3.Response;
 
 /**
  * The Activity used app's main page
- * @author  Areum Lee (leear5799@gmail.com), Sungeun Kang (kasueu0814@gmail.com)
+ * @author  Areum Lee (leear5799@gmail.com)         drawer
+ *          Sungeun Kang (kasueu0814@gmail.com)     툴바, 내부 페이지
  * @since   2018-04-24
  */
 public class MainActivity extends AppCompatActivity
@@ -60,21 +55,18 @@ public class MainActivity extends AppCompatActivity
     ActionBarDrawerToggle   toggle;
     NavigationView          navigationView;
     SessionManager          session;
-    LinearLayout            linearLayout;
     DrawerLayout            drawer;
     TextView                txtView;
     Toolbar                 toolbar;
-    String                  user;
     String                  id;
 
     // 내부
-    private TextView        nowScheduleTitle, NowScheduleContent; // 현재 산행 진행 중인 그룹 제목, 내용
-    private ImageView       nowScheduleImg; // 현재 산행 진행중인 그룹 사진
-    private Button          btnStartHiking, // 등산 시작 버튼
-                            btnToGroupMenu, // 그룹 메뉴 버튼
-                            btnToMyMenu;    // 마이 메뉴 버튼
-    private RecyclerView    rvNowJoined, rvNowRecruit;  // 현재 참여한 그룹, 현재 모집중인 그룹
-    private ProgressBar     progressBar;
+    private TextView        nowScheduleTitle,
+                            NowScheduleContent; // 현재 산행 진행 중인 그룹 제목, 내용
+    private ImageView       nowScheduleImg;     // 현재 산행 진행중인 그룹 사진
+    private Button          btnStartHiking,     // 등산 시작 버튼
+                            btnToGroupMenu,     // 그룹 메뉴 버튼
+                            btnToMyMenu;        // 마이 메뉴 버튼
 
     // HTTP request
     private OkHttpClient    client;
@@ -119,6 +111,7 @@ public class MainActivity extends AppCompatActivity
         // OKHttpClient 초기화
         client = new OkHttpClient();
 
+        // drawer에 있는 사진 받아오기
         new AsyncTask<Void, Integer, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... params) {
@@ -151,16 +144,9 @@ public class MainActivity extends AppCompatActivity
             }
         }.execute();
 
-        //changeTxtName(id);
-
         // 내부 페이지 UI 초기화
         initInnerPageUI();
     }
-
-   /* private void changeTxtName(String id) {
-        txtView = (TextView) findViewById(R.id.main_textview);
-        txtView.setText(id);
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -193,7 +179,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, groups_list_main.class));
         } /*else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
-        }*/ else if (id == R.id.my_profile) {
+        }*/ else if (id == R.id.my_records) {
+            startActivity(new Intent(this, UserRecordActivity.class));
+        } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
             session.logOutUser();
@@ -220,24 +208,6 @@ public class MainActivity extends AppCompatActivity
 
         loadingDialog       = new LoadingDialog(this);
 
-//        progressBar         = (ProgressBar)     contentMain.findViewById(R.id.startHikingProgressBar);
-
-        // 어댑터 붙이기
-        // TODO 데이터 http 로 받아와서 넣기
-        /*ArrayList<Group> dataList = new ArrayList<>();
-
-        getGroupsInfo(UsersData.USER_ID);
-
-        dataList.add(new Group("test1"));
-        dataList.add(new Group("test2"));
-        dataList.add(new Group("test3"));
-        dataList.add(new Group("test4"));
-        dataList.add(new Group("test5"));
-        dataList.add(new Group("test6"));
-
-        rvNowJoined.setAdapter(new MainPageAdapter(dataList, R.layout.main_list_item));
-        rvNowRecruit.setAdapter(new MainPageAdapter(dataList, R.layout.main_list_item));
-*/
         // 리스너 붙이기
         // 등산 시작 버튼 클릭 시 맵으로 이동
         btnStartHiking.setOnClickListener(new View.OnClickListener() {
@@ -261,7 +231,13 @@ public class MainActivity extends AppCompatActivity
         });
 
         // 마이 메뉴 버튼 누르면 마이 메뉴로 이동
-        btnToMyMenu.setOnClickListener(null);
+        btnToMyMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), MyMenuActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**

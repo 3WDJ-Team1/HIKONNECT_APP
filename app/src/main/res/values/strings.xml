@@ -21,6 +21,7 @@
     <string name="groups">Groups</string>
     <string name="nav_my_page">User</string>
     <string name="nav_my_groups">My Groups</string>
+    <string name="nav_my_records">My Records</string>
     <string name="nav_my_profile">My Profile</string>
     <string name="user_id"></string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

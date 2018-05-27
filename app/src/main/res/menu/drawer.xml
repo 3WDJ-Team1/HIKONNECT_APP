@@ -16,6 +16,14 @@
                 <!--android:title="@string/nav_my_groups" />-->
             <item
                 android:icon="@drawable/ic_person_black_36dp"
+                android:id="@+id/my_groups"
+                android:title="@string/nav_my_groups" />
+            <item
+                android:id="@+id/my_records"
+                android:icon="@drawable/ic_bar_chart_svgrepo_com"
+                android:title="@string/nav_my_records"/>
+            <item
+                android:icon="@drawable/ic_client_profile_svgrepo_com"
                 android:id="@+id/my_profile"
                 android:title="@string/nav_my_profile" />
             <!--<item

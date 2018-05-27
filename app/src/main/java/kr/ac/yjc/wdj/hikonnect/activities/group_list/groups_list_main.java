@@ -1,6 +1,5 @@
 package kr.ac.yjc.wdj.hikonnect.activities.group_list;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -52,7 +51,6 @@ import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -67,8 +65,8 @@ public class groups_list_main extends AppCompatActivity
                     NavigationView.OnNavigationItemSelectedListener {
     // UI 변수
     private RecyclerView            recyclerView;       // 그룹 리스트 출력
-    private MyAdapter               list_adapter;       // 어댑터
-    private List<ListViewItem>      listItems;          // 그룹 리스트 내용
+    private GroupListAdapter list_adapter;       // 어댑터
+    private List<GroupListItem>      listItems;          // 그룹 리스트 내용
     private LinearLayout            list, container;
     private EditText                searchInput;        // 검색 내용
     private Spinner                 spinner;            // 검색 옵션
@@ -221,7 +219,7 @@ public class groups_list_main extends AppCompatActivity
         recyclerView.setLayoutManager(manager);
         listItems = new ArrayList<>();
 
-        list_adapter = new MyAdapter(listItems);
+        list_adapter = new GroupListAdapter(listItems);
         recyclerView.setAdapter(list_adapter);
         loadRecyclerViewData();
 
@@ -308,7 +306,7 @@ public class groups_list_main extends AppCompatActivity
                     for (int i = 0 ; i < jsonArray.length() ; i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         // TODO  수정
-                        listItems.add(new ListViewItem(
+                        listItems.add(new GroupListItem(
                                 jsonObject.getString("uuid"),
                                 jsonObject.getString("title"),
                                 jsonObject.getString("nickname"),

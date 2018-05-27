@@ -6,7 +6,7 @@ import android.content.Context;
  * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-10
  */
-public class ListViewItem {
+public class GroupListItem {
 
     private String  groupId;    // group id
     private String  head;       // title
@@ -22,7 +22,7 @@ public class ListViewItem {
      * @param content   DB 에서 받아온 내용
      * @param parent    액티비티 Context 객체
      */
-    public ListViewItem(String groupId, String head, String writer, String content, Context parent){
+    public GroupListItem(String groupId, String head, String writer, String content, Context parent){
         this.groupId    = groupId;
         this.head       = head;
         this.writer     = writer;
