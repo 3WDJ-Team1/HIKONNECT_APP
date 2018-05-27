@@ -1,6 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groupDetail;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,8 +40,8 @@ import org.json.JSONObject;
 import devlight.io.library.ntb.NavigationTabBar;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
+import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
@@ -101,6 +103,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                                                 totalItems,
                                                 scrollOutItems;
 
+    //
+    private SharedPreferences                   pref;
+
     // OKHttp
     private OkHttpClient        client;
 
@@ -109,6 +114,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_detail_drawer);
+
+
+        pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         // [1] 변수 초기화
         // intent
@@ -191,7 +199,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                                 OkHttpClient client = new OkHttpClient();
 
                                 String sendData = "{" +
-                                            "\"userid\":\"" + UsersData.USER_ID + "\"," +
+                                            "\"userid\":\"" + pref.getString("user_id", "") + "\"," +
                                             "\"uuid\":\""   + groupId           + "\""  +
                                         "}";
 
@@ -233,7 +241,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
                         try {
                             RequestBody body = new FormBody.Builder()
-                                    .add("userid", UsersData.USER_ID)
+                                    .add("userid", pref.getString("user_id", ""))
                                     .add("uuid", groupId)
                                     .build();
 
@@ -473,7 +481,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
         // 프로필 이름 설정
         txtView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.main_textview);
-        txtView.setText(UsersData.USER_NAME);
+        txtView.setText(pref.getString("user_name", ""));
 
         // 프로필 사진
         final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
@@ -485,7 +493,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                 try {
 
                     HttpUrl httpUrl = HttpUrl
-                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + pref.getString("user_id", "") + ".jpg")
                             .newBuilder()
                             .build();
 
@@ -790,6 +798,8 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
+            Intent intent = new Intent(TabsActivity.this, LoginActivity.class);
+            startActivity(intent);
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }

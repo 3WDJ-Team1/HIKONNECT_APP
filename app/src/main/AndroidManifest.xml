@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.ac.yjc.wdj.hikonnect">
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
-    -->
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -37,9 +32,6 @@
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp"
             android:label="@string/title_activity_maps" />
         <activity android:name=".Othersinfo" />
-        <!--<activity-->
-        <!--android:name=".myinfo"-->
-        <!--android:theme="@android:style/Theme.Dialog" />-->
         <activity
             android:name=".HikingRecord"
             android:theme="@android:style/Theme.Dialog"
@@ -49,9 +41,6 @@
             android:theme="@android:style/Theme.Dialog" />
         <activity android:name="kr.ac.yjc.wdj.hikonnect.activities.LoginActivity"
             android:screenOrientation="portrait" />
-        <!-- Activities -->
-        <!--<activity android:name=".activities.MapsActivity1"-->
-            <!--android:label="@string/title_activity_maps" />-->
         <activity
             android:name=".activities.groupDetail.TabsActivity"
             android:screenOrientation="portrait" />
@@ -122,7 +111,6 @@
         <activity android:name=".activities.myPage.MyMenuActivity"
             android:screenOrientation="portrait" />
         <!--Activities End-->
-
         <!--Camera Provider-->
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -141,8 +129,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".apis.fcm_manager.MessageHandler">
+        <service android:name=".apis.fcm_manager.MessageHandler">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

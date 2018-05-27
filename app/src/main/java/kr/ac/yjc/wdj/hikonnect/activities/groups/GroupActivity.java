@@ -25,6 +25,7 @@ import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
@@ -189,7 +190,9 @@ public class GroupActivity extends AppCompatActivity
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
-            session.logOutUser();
+//            session.logOutUser();
+            Intent intent = new Intent(GroupActivity.this, LoginActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

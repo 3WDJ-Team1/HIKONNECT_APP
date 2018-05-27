@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect.activities.group_list;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,13 +19,14 @@ import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com)
@@ -35,9 +37,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
     private List<GroupListItem>  listItems;
     private String              status;
 
+    private SharedPreferences   pref;
+
     // Provide a suitable constructor (depends on the kind of dataset)
-    public GroupListAdapter(List<GroupListItem> listItems) {
-        this.listItems = listItems;
+    public GroupListAdapter(List<ListViewItem> listItems, SharedPreferences pref) {
+        this.listItems  = listItems;
+        this.pref       = pref;
     }
 
     // Create new views (invoked by the layout manager)
@@ -120,7 +125,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                         parent.startActivity(intent);
 
                     }
-                }.execute(listItem.getGroupId(), UsersData.USER_ID);
+                }.execute(listItem.getGroupId(), pref.getString("user_id", ""));
             }
         });
 
@@ -139,7 +144,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                             OkHttpClient client = new OkHttpClient();
 
                             String sendData = "{" +
-                                    "\"userid\":\"" + UsersData.USER_ID + "\"," +
+                                    "\"userid\":\"" + pref.getString("user_id", "") + "\"," +
                                     "\"uuid\":\""   + groupId           + "\""  +
                                     "}";
 
