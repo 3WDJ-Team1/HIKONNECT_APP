@@ -8,22 +8,16 @@
     android:background="@color/white"
     >
 
-        <!--<TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="SIGN IN"
-            android:textColor="@color/black"
-            android:textSize="45dp"
-            android:textStyle="bold"/>-->
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_marginTop="50dp"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/hikonnect_logo_black" />
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/hikonnect_logo_black" />
 
         <EditText
             android:id="@+id/id_editText"
@@ -76,7 +70,7 @@
             android:backgroundTint="@color/blue_400"
             />
 
-        <Button
+        <!--<Button
             android:id="@+id/cancelBtn"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -85,6 +79,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_centerVertical="true"
-            android:layout_below="@id/signInBtn"/>
+            android:layout_below="@id/signInBtn"/>-->
+
+    </RelativeLayout>
 
 </RelativeLayout>

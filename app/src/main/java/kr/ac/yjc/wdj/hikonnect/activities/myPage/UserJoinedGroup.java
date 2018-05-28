@@ -1,5 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect.activities.myPage;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.GroupListItem;
 import kr.ac.yjc.wdj.hikonnect.adapters.JoinedGroupListAdapter;
 import okhttp3.FormBody;
@@ -41,6 +41,9 @@ public class UserJoinedGroup extends AppCompatActivity {
 
     // 데이터 변수
     private         ArrayList<GroupListItem>    groupList;      // 사용자가 참여하고 있는 그룹 정보 리스트
+
+    // 세선
+    private         SharedPreferences           preferences;    // 사용자 정보를 가지고 있는 preference
 
     // 어댑터
     private         JoinedGroupListAdapter      adapter;        // 리사이클러 뷰에 연결될 어댑터
@@ -88,9 +91,10 @@ public class UserJoinedGroup extends AppCompatActivity {
      * 어댑터 및 데이터 변수 초기화
      */
     private void initData() {
+        preferences = getSharedPreferences("loginData", MODE_PRIVATE);
         client      = new OkHttpClient();
         groupList   = new ArrayList<>();
-        adapter     = new JoinedGroupListAdapter(groupList);
+        adapter     = new JoinedGroupListAdapter(groupList, preferences);
 
         getGroupsDataFromServer();
     }
@@ -104,7 +108,7 @@ public class UserJoinedGroup extends AppCompatActivity {
                 try {
 
                     RequestBody body = new FormBody.Builder()
-                            .add("userid", UsersData.USER_ID)
+                            .add("userid", preferences.getString("user_id", ""))
                             .build();
 
                     Request     request = new Request.Builder()

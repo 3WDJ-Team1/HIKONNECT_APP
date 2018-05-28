@@ -9,26 +9,17 @@ import kr.ac.yjc.wdj.hikonnect.R;
 
 /**
  * The Activity used when first app is run
- * @author  Areum Lee (leear5799@gmail.com)
+ * @author  Suneun Kang (kasueu0814@gmail.com) 수정, Areum Lee (leear5799@gmail.com)
  * @since   2018-04-24
  */
 public class SplashActivity extends Activity{
-    private final int DELAY = 3000;
+    private final int DELAY = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        /*try {
-            Thread.sleep(3000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        startActivity(new Intent(this, LoginActivity.class));
-        //startActivity(new Intent(this, PreActivity.class));
-        finish();*/
         startLoading();
     }
 

@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     // 로딩화면
     private LoadingDialog   loadingDialog;
 
+    // 세션 유지
     private SharedPreferences   pref;
 
     @Override

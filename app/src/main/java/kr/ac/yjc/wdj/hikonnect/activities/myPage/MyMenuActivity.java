@@ -1,6 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.myPage;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -19,7 +20,6 @@ import java.io.InputStream;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -39,6 +39,12 @@ public class MyMenuActivity extends AppCompatActivity {
                                 btnToRecord,        // 기록 보기로 이동하는 버튼
                                 btnToMyGroups;      // 내 그룹 보기로 이동하는 버튼
 
+    // 데이터 변수
+    private String              loginedUserId;      // 로그인 한 사용자 아이디
+
+    // 세션 유지
+    private SharedPreferences   preferences;
+
     // 상수
     private final String MY_MENU_LOG_TAG = "MYMENU";    // 로그캣 출력 태그
 
@@ -46,6 +52,9 @@ public class MyMenuActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_menu_app_bar);
+
+        preferences     = getSharedPreferences("loginData", MODE_PRIVATE);
+        loginedUserId   = preferences.getString("user_id", "");
 
         initUI();
     }
@@ -62,8 +71,8 @@ public class MyMenuActivity extends AppCompatActivity {
         btnToMyGroups   = (Button)              findViewById(R.id.btnToMyGroups);
 
         // 내부 데이터 초기화
-        userNickname.setText(UsersData.USER_NAME);
-        userId.setText(UsersData.USER_ID);
+        userNickname.setText(preferences.getString("user_name", ""));
+        userId.setText(loginedUserId);
 
         // 프로필 사진 받아오기
         getProfileImageFromServer();
@@ -87,7 +96,7 @@ public class MyMenuActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .url(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + UsersData.USER_ID + ".jpg")
+                            .url(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + loginedUserId + ".jpg")
                             .build();
 
                     Response response = client.newCall(request).execute();

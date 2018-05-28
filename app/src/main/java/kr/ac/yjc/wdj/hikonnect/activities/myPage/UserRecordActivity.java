@@ -1,6 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.myPage;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,12 +24,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
-import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -41,7 +39,6 @@ import okhttp3.Response;
  */
 
 public class UserRecordActivity extends AppCompatActivity{
-    private SessionManager              session;
     public  String                      id,
                                         mGrade,
                                         mHour,
@@ -61,15 +58,16 @@ public class UserRecordActivity extends AppCompatActivity{
 
     String[] data = new String[5];
 
+    // 세션
+    private SharedPreferences           preferences;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_records);
 
-        session = new SessionManager(getApplicationContext());
-
-        HashMap<String, String> userId = session.getUserId();
-        id = UsersData.USER_ID;
+        preferences = getSharedPreferences("loginData", MODE_PRIVATE);
+        id          = preferences.getString("user_id", "");
 
         adapter = new UserRecordListViewAdapter();
 

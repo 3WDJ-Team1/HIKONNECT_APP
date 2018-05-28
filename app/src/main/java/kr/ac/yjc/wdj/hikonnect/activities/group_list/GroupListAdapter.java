@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,13 +36,13 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
 
-    private List<GroupListItem>  listItems;
+    private List<GroupListItem> listItems;
     private String              status;
 
     private SharedPreferences   pref;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public GroupListAdapter(List<ListViewItem> listItems, SharedPreferences pref) {
+    public GroupListAdapter(List<GroupListItem> listItems, SharedPreferences pref) {
         this.listItems  = listItems;
         this.pref       = pref;
     }
@@ -129,7 +131,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
             }
         });
 
-        // 참가 버튼 누르면 참가신청
+        /*// 참가 버튼 누르면 참가신청
         holder.joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,7 +147,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
                             String sendData = "{" +
                                     "\"userid\":\"" + pref.getString("user_id", "") + "\"," +
-                                    "\"uuid\":\""   + groupId           + "\""  +
+                                    "\"uuid\":\""   + groupId                       + "\""  +
                                     "}";
 
                             RequestBody body = RequestBody.create(Environments.JSON, sendData);
@@ -172,7 +174,13 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                     }
                 }.execute();
             }
-        });
+        });*/
+
+        if (position % 2 == 1) {
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(listItem.getParent(), R.color.grey_100));
+        } else {
+            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(listItem.getParent(), R.color.white));
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -184,11 +192,11 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        private CardView        cardView;       // CardView
         private TextView        textViewHead;   // 제목
         private TextView        textViewWriter; // 작성자
         private TextView        textViewContent;// 내용
         private LinearLayout    linearLayout;   // 클릭하면 이동할 레이아웃
-        private Button          joinButton;     // 참가 버튼
 
         /**
          * 레이아웃과 연결
@@ -197,23 +205,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
 
+            cardView        = (CardView)        itemView.findViewById(R.id.cardView);
             textViewHead    = (TextView)        itemView.findViewById(R.id.textViewHead);
             textViewWriter  = (TextView)        itemView.findViewById(R.id.tvWriter);
             textViewContent = (TextView)        itemView.findViewById(R.id.tvContent);
             linearLayout    = (LinearLayout)    itemView.findViewById(R.id.linearLayout);
-            joinButton      = (Button)          itemView.findViewById(R.id.joinButton);
         }
     }
-
-    /**
-     * 사용자가 현재 그룹에 참가하고 있는 지 여부를 isJoined 에 넣음
-     * @param groupId   그룹 아이디
-     * @param userId    해당 사용자의 아이디
-     */
-    private void isUserJoined(final String groupId, String userId) {
-
-
-    }
-
 
 }

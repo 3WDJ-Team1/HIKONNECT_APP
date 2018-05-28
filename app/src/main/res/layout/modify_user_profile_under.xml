@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,43 +13,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="5">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
-
-            <ImageView
-                android:id="@+id/user_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_id" />
-
-            <EditText
-                android:id="@+id/user_id_mTxt"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_toEndOf="@id/user_id"
-                android:hint="Enter ID*"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#212121" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/user_nickname"
@@ -57,7 +31,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_nickname" />
+                android:src="@drawable/ic_client_profile_svgrepo_com" />
 
             <EditText
                 android:id="@+id/user_nickname_mTxt"
@@ -79,7 +53,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/user_phoneNum"
@@ -88,11 +63,11 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_phone" />
+                android:src="@drawable/ic_phone_svg" />
 
             <EditText
                 android:id="@+id/user_phoneNum_mTxt"
-                android:layout_width="300dp"
+                android:layout_width="170dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -104,55 +79,32 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
-
-            <ImageView
-                android:id="@+id/phoneNum_lock"
+            <Switch
+                android:id="@+id/phoneNum_lock_switch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_lock"/>
+                android:layout_height="50dp"
+                android:layout_toEndOf="@+id/user_phoneNum_mTxt"
+                android:gravity="center_vertical"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/phoneNum_lock"
-                android:layout_toRightOf="@id/phoneNum_lock">
-
-                <Switch
-                    android:id="@+id/phoneNum_lock_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:checked="true"
-                    android:textColor="#212121"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:textOn="show number public"
-                    android:textOff="private"/>
-
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/tvIsPhoneOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="공개"
+                android:textColor="@color/grey_500"
+                android:textSize="14sp"
+                android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
-
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/user_gender"
@@ -161,59 +113,35 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_gender"/>
+                android:src="@drawable/ic_genders_mono_svgrepo_com"/>
 
             <Spinner
                 android:id="@+id/gender_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="170dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_toEndOf="@id/user_gender"
                 android:layout_toRightOf="@id/user_gender"
                 android:ellipsize="end"
-                android:layout_weight="1"
                 android:entries="@array/gender" />
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
-
-            <ImageView
-                android:id="@+id/gender_lock"
+            <Switch
+                android:id="@+id/gender_lock_switch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_lock"/>
+                android:layout_height="50dp"
+                android:layout_toEndOf="@+id/gender_spinner"
+                android:gravity="center_vertical" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/gender_lock"
-                android:layout_toRightOf="@id/gender_lock">
-
-                <Switch
-                    android:id="@+id/gender_lock_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:checked="true"
-                    android:textColor="#212121"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:textOn="show gender public"
-                    android:textOff="private"/>
-
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/tvIsGenderOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="공개"
+                android:textColor="@color/grey_500"
+                android:textSize="14sp"
+                android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
 
@@ -222,7 +150,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/user_age"
@@ -231,58 +160,35 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_age" />
+                android:src="@drawable/ic_boy_face_svgrepo_com" />
 
             <Spinner
-                android:id="@+id/age_lock_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/age_spinner"
+                android:layout_width="170dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_toEndOf="@id/user_age"
                 android:layout_toRightOf="@id/user_age"
                 android:ellipsize="end"
-                android:layout_weight="1"
                 android:entries="@array/age_group" />
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
-
-            <ImageView
-                android:id="@+id/age_lock"
+            <Switch
+                android:id="@+id/age_lock_switch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_lock"/>
+                android:layout_height="50dp"
+                android:textColor="@color/grey_500"
+                android:layout_toEndOf="@+id/age_spinner"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/age_lock"
-                android:layout_toRightOf="@id/age_lock">
-
-                <Switch
-                    android:id="@+id/age_lock_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:checked="true"
-                    android:textColor="#212121"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:textOn="show gender public"
-                    android:textOff="private"/>
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/tvIsAgeOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="공개"
+                android:textColor="@color/grey_500"
+                android:textSize="14sp"
+                android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
 
@@ -291,7 +197,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:padding="@dimen/activity_horizontal_margin">
+            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/user_profile_range"
@@ -300,22 +207,46 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:src="@drawable/ic_range" />
+                android:src="@drawable/ic_lock" />
 
-            <TextView
+            <Spinner
+                android:id="@+id/range_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/user_profile_range"
                 android:layout_toRightOf="@id/user_profile_range"
-                android:text="all"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
+                android:ellipsize="end"
+                android:entries="@array/open_range" />
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" >
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="확인"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/cyan_500" />
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="취소"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/grey_400"
+                android:layout_toEndOf="@+id/btnSubmit"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"/>
+
+        </RelativeLayout>
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

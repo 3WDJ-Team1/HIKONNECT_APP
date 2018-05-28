@@ -14,120 +14,153 @@
     tools:showIn="@layout/app_bar_main"
     >
 
-    <ImageView
-        android:id="@+id/main_logo"
-        android:layout_marginTop="24dp"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:src="@drawable/hikonnect_logo_black"
-        />
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/mainCard"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_below="@+id/main_logo"
-        android:elevation="1dp"
-        app:cardCornerRadius="5dp">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/main_logo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="150dp"
+            android:src="@drawable/hikonnect_logo_black"
+            />
 
-            <ImageView
-                android:id="@+id/nowScheduleImg"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:srcCompat="@drawable/splash"
-                android:scaleType="fitXY"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:layout_alignParentEnd="true"/>
+        <android.support.v7.widget.CardView
+            android:id="@+id/mainCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@+id/main_logo"
+            android:elevation="0dp"
+            app:cardCornerRadius="5dp">
 
-            <TextView
-                android:id="@+id/nowScheduleTitle"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/nowScheduleTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="nowScheduleTitle!"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"
+                    />
+
+                <TextView
+                    android:id="@+id/groupName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="group"
+                    android:layout_below="@+id/nowScheduleTitle"
+                    android:textSize="14sp"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/dest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="목적지:"
+                    android:layout_below="@+id/groupName"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/grey_800"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/nowScheduleDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="소백산"
+                    android:layout_toEndOf="@+id/dest"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/grey_800"
+                    android:textSize="16sp"
+                    android:layout_below="@+id/groupName"
+                    />
+
+                <TextView
+                    android:id="@+id/nowScheduleDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2018년 5월 30일"
+                    android:layout_below="@+id/groupName"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/grey_800"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnStartHiking"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textSize="20sp"
+                    android:text="지도로 보기"
+                    android:textColor="@color/light_green_400"
+                    android:background="@drawable/start_hiking_btn_selector"
+                    android:layout_below="@+id/nowScheduleDate"
+                    android:layout_margin="8dp"
+                    android:drawableStart="@android:drawable/ic_dialog_map"
+                    android:drawableTint="@color/light_green_400"
+                    android:paddingStart="50dp"
+                    />
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mainCard"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <Button
+                android:id="@+id/btnToGroupMenu"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="nowScheduleTitle!"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/black"
-                android:textSize="20dp"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:text="Group\nMenu"
+                android:textSize="24sp"
+                android:textColor="@color/amber_500"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/main_groupmenu_btn_design"
                 android:textStyle="bold"
-                />
-
-            <TextView
-                android:id="@+id/nowScheduleContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="nowScheduleContent..."
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:textColor="@color/grey_600"
-                android:textSize="16dp"
-                android:layout_below="@+id/nowScheduleTitle"
+                android:drawableTop="@drawable/group_menu_xl"
+                android:drawableTint="@color/amber_500"
+                android:padding="8dp"
                 />
 
             <Button
-                android:id="@+id/btnStartHiking"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="등산하기"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/red_accent_400"
-                android:layout_below="@+id/nowScheduleImg"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="4dp"
+                android:id="@+id/btnToMyMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:text="My\nMenu"
+                android:textSize="24sp"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/cyan_500"
+                android:background="@drawable/main_mymenu_btn_selector"
+                android:textStyle="bold"
+                android:drawableTop="@drawable/my_menu_xl"
+                android:drawableTint="@color/cyan_500"
+                android:paddingTop="24dp"
                 />
 
+        </LinearLayout>
 
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mainCard"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
-
-        <Button
-            android:id="@+id/btnToGroupMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:layout_weight="1"
-            android:text="Group\nMenu"
-            android:textSize="24dp"
-            android:textColor="@color/white"
-            android:layout_marginEnd="4dp"
-            android:backgroundTint="@color/amber_500"
-            android:textStyle="bold"
-            />
-
-        <Button
-            android:id="@+id/btnToMyMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:layout_weight="1"
-            android:text="My\nMenu"
-            android:textSize="24dp"
-            android:layout_marginStart="4dp"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/brown_500"
-            android:textStyle="bold"
-            />
-
-    </LinearLayout>
-
+    </RelativeLayout>
 </RelativeLayout>

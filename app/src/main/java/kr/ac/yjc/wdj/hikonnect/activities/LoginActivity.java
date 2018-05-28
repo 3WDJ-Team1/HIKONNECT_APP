@@ -150,14 +150,6 @@ public class LoginActivity extends Activity {
                                     editor.putString("user_profile_url",    jObj.getString("profile"));
                                     editor.apply();
 
-                                    /*UsersData.USER_ID       = jObj.getString("userid");
-                                    UsersData.USER_PASSWORD = jObj.getString("password");
-                                    UsersData.USER_NAME     = jObj.getString("nickname");
-                                    UsersData.PHONE         = jObj.getString("phone");
-                                    UsersData.GENDER        = jObj.getInt("gender") == 0 ? "남자" : "여자";
-                                    UsersData.AGE_GROUP     = jObj.getInt("age_group");
-                                    UsersData.OPEN_SCOPE    = jObj.getInt("scope");
-                                    UsersData.PROFILE_URL   = jObj.getString("profile");*/
                                 } catch (JSONException je) {
                                     je.printStackTrace();
                                 }

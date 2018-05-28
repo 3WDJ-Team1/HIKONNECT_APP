@@ -106,6 +106,7 @@
                 android:textColor="#212121" />
 
             <TextView
+                android:id="@+id/phoneOpenRange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_phoneNum_txt"
@@ -151,6 +152,7 @@
                 android:textColor="#212121" />
 
             <TextView
+                android:id="@+id/genderOpenRange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_gender_txt"
@@ -196,6 +198,7 @@
                 android:textColor="#212121" />
 
             <TextView
+                android:id="@+id/ageOpenRange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/user_age_txt"
@@ -227,6 +230,7 @@
                 android:src="@drawable/ic_lock" />
 
             <TextView
+                android:id="@+id/user_open_range"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"

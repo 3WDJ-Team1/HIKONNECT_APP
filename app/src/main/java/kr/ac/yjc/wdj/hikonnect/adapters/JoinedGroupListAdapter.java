@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.UsersData;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.GroupListItem;
 import okhttp3.FormBody;
@@ -35,10 +34,12 @@ import okhttp3.Response;
 public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupListAdapter.JoinedGroupHolder> {
 
     private ArrayList<GroupListItem>    listItems;  // 그룹 리스트
+    private SharedPreferences           preferences;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public JoinedGroupListAdapter(ArrayList<GroupListItem> listItems) {
-        this.listItems = listItems;
+    public JoinedGroupListAdapter(ArrayList<GroupListItem> listItems, SharedPreferences prefreneces) {
+        this.listItems      = listItems;
+        this.preferences    = prefreneces;
     }
 
     // Create new views (invoked by the layout manager)
@@ -103,7 +104,7 @@ public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupList
                             OkHttpClient client = new OkHttpClient();
 
                             RequestBody body = new FormBody.Builder()
-                                    .add("userid", UsersData.USER_ID)
+                                    .add("userid", preferences.getString("user_id", ""))
                                     .add("uuid", listItem.getGroupId())
                                     .build();
 
