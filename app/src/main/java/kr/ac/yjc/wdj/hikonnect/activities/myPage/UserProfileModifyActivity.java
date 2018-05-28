@@ -1,5 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.myPage;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -226,11 +228,11 @@ public class UserProfileModifyActivity extends AppCompatActivity {
                         editor.putString("user_name", inputUserName);
                         editor.putString("user_phone", inputUserPhone);
                         editor.putString("user_gender", inputUserGender);
-                        editor.putString("user_age_group", inputUserAge);
+                        editor.putString("user_age_group", inputUserAge.replace("대", ""));
                         editor.putString("user_open_scope", makeOpenScope(isOpenPhone, isOpenGender, isOpenAge, openRange));
                         editor.apply();
 
-                        Toast.makeText(getBaseContext(), "성공적으로 수정하였습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "성공적으로 수정되었습니다.", Toast.LENGTH_SHORT).show();
 
                         toProfilePage();
                     }
@@ -333,5 +335,39 @@ public class UserProfileModifyActivity extends AppCompatActivity {
             result += "0";
 
         return result;
+    }
+
+    // 뒤로가기 버튼 실수로 눌렀을 경우를 대비해 다이얼로그 띄우기
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+
+        // 제목 세팅
+        builder.setTitle("수정 취소");
+
+        // 다이얼로그 세팅
+        builder .setMessage("수정을 취소하고 나가시겠습니까?")
+                .setPositiveButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                .setNegativeButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        });
+
+        // 다이얼로그 생성
+        AlertDialog dialog = builder.create();
+
+        // 보여주기
+        dialog.show();
     }
 }

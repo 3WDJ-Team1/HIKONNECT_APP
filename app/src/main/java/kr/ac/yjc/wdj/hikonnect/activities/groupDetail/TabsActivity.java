@@ -221,7 +221,11 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         protected void onPostExecute(String s) {
                             super.onPostExecute(s);
-                            Toast.makeText(getBaseContext(), "참가신청 되었습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(
+                                    getBaseContext(),
+                                    "참가신청 되었습니다.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
                             loadingDialog.dismiss();
                             btnEnterGroup.setVisibility(View.GONE);
                         }

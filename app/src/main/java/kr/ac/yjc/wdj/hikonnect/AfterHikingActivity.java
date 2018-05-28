@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -152,19 +153,19 @@ public class AfterHikingActivity extends AppCompatActivity {
 
 
         // 내용 초기화
-        images.add(getResources().getDrawable(R.drawable.ic_baseline_alarm_24px));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_alarm_24px));
         menuTitles.add("총 등산 시간");
         menuValues.add(String.valueOf(hikingTime));
 
-        images.add(getResources().getDrawable(R.drawable.ic_ranking_svgrepo_com));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_ranking_svgrepo_com));
         menuTitles.add("순위");
         menuValues.add(String.valueOf(hikingRank) + "등");
 
-        images.add(getResources().getDrawable(R.drawable.ic_mountain_svgrepo_com));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_mountain_svgrepo_com));
         menuTitles.add("완료한 산");
         menuValues.add(completedMountain);
 
-        images.add(getResources().getDrawable(R.drawable.ic_rating_svgrepo_com));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_rating_svgrepo_com));
         menuTitles.add("현재 등급");
         menuValues.add(hikingTear);
     }

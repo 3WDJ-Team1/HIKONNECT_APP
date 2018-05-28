@@ -93,6 +93,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+// walkietalkie
+import kr.ac.yjc.wdj.hikonnect.apis.walkietalkie.*;
+
 /*
  * Copyright 2013 Google Inc.
  *
