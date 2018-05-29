@@ -3,12 +3,15 @@ package kr.ac.yjc.wdj.hikonnect.beans;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
+import kr.ac.yjc.wdj.hikonnect.R;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -160,7 +163,16 @@ public class GroupUserInfoBean extends Bean {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                profilePic = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
+                if (bitmap != null)
+                    profilePic = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
+                else {
+
+                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(baseContext, R.drawable.ic_android_person_svg);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    profilePic = defaultImg;
+
+                }
             }
         }.execute();
     }
