@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect.activities.groups;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -56,11 +57,14 @@ public class GroupActivity extends AppCompatActivity
     String id;
     ContentValues contentValues = new ContentValues();
     int page;
+    SharedPreferences pref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_list_recyclerview);
+
+        pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         session = new SessionManager(getApplicationContext());
 
@@ -191,7 +195,14 @@ public class GroupActivity extends AppCompatActivity
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
 //            session.logOutUser();
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.apply();
+
             Intent intent = new Intent(GroupActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
 

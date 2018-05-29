@@ -10,6 +10,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -78,11 +82,11 @@ android {
 
                 // 아름
                 compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-                compile 'org.apache.httpcomponents:httpclient:4.5.5'
+//                compile 'org.apache.httpcomponents:httpclient:4.5.5'
 
                 provided 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
 
-                compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
+//                compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
 
             }
         }

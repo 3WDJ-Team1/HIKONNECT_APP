@@ -100,7 +100,7 @@
         android:id="@+id/write_location_memo_btn"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:src="@drawable/ic_bookmark_black_36dp"
+        android:src="@drawable/add_location_memo_icon_svg"
         android:layout_marginBottom="70dp"
         fab:menu_fab_size="normal"
         fab:fab_colorNormal="@color/white"

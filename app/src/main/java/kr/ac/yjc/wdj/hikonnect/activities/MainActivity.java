@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-         pref = getSharedPreferences("loginData", MODE_PRIVATE);
+        pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         // UI 초기화
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -191,6 +191,8 @@ public class MainActivity extends AppCompatActivity
             editor.apply();
 
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 
 //            session.logOutUser();

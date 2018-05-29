@@ -100,7 +100,7 @@ public class LoginActivity extends Activity {
 
                             // 전송
                             Response result = hrc.newCall(request).execute();
-//                            Log.d("HIKONNECT", "SIGN IN res: " + result.body().string());
+                            // Log.d("HIKONNECT", "SIGN IN res: " + result.body().string());
 
                             String resultJson = result.body().string();
 

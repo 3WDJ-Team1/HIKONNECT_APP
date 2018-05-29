@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.group_list.groups_list_main"
     android:layout_marginTop="56dp"
+    android:paddingEnd="4dp"
     android:paddingStart="4dp"
-    android:paddingEnd="4dp">
+    tools:context=".activities.group_list.groups_list_main">
 
     <LinearLayout
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="horizontal"
         android:weightSum="11">
 
@@ -21,8 +23,8 @@
             android:id="@+id/group_search_spinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:entries="@array/group_search_selector"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:entries="@array/group_search_selector" />
 
 
         <!--<LinearLayout-->
@@ -39,18 +41,18 @@
             android:layout_height="match_parent"
             android:layout_weight="9"
             android:hint="검색"
+            android:inputType="text"
             android:textColor="@color/black"
-            android:textSize="20sp"
-            android:inputType="text"/>
+            android:textSize="20sp" />
 
         <ImageButton
             android:id="@+id/btnSearchGroup"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/ic_search_svgrepo_com"
             android:backgroundTint="@color/grey_800"
-            android:tint="@color/white"/>
+            android:src="@drawable/ic_search_svgrepo_com"
+            android:tint="@color/white" />
 
     </LinearLayout>
 
@@ -58,9 +60,9 @@
         android:id="@+id/rvGroupList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/groups_list_item"
         android:layout_below="@+id/wrapper"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        tools:listitem="@layout/groups_list_item">
 
     </android.support.v7.widget.RecyclerView>
 

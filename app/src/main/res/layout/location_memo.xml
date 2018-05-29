@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="400dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="330dp"
+    android:layout_height="wrap_content"
+    android:background="@color/grey_50"
+    android:orientation="vertical">
 
+    <!-- 타이틀바 -->
     <LinearLayout
-        android:layout_width="330dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_50"
-        android:orientation="vertical">
+        android:background="@color/cyan_300"
+        android:orientation="horizontal">
 
-        <!-- 타이틀바 -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/txtLocationMemoTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/cyan_300"
-            android:orientation="horizontal">
+            android:layout_height="53dp"
+            android:gravity="center"
+            android:text="title"
+            android:textColor="@color/grey_900"
+            android:textSize="20sp" />
+    </LinearLayout>
+    <!-- //end 타이틀바 -->
 
-            <TextView
-                android:id="@+id/txtLocationMemoTitle"
-                android:layout_width="match_parent"
-                android:layout_height="53dp"
-                android:gravity="center"
-                android:text="title"
-                android:textColor="@color/grey_900"
-                android:textSize="20sp" />
-        </LinearLayout>
-        <!-- //end 타이틀바 -->
+    <!-- Notice -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
 
-        <!-- Notice -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -108,32 +108,32 @@
                 android:textColor="#000"
                 android:textSize="15sp" />
         </LinearLayout>
-        <!-- Notice -->
+    </ScrollView>
+    <!-- Notice -->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#66bdbdbd" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#66bdbdbd" />
 
-        <!-- 닫기 버튼 -->
-        <LinearLayout
+    <!-- 닫기 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cyan_100"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/cyan_100"
+            android:layout_height="53dp"
+            android:background="#00000000"
             android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="53dp"
-                android:background="#00000000"
-                android:gravity="center"
-                android:onClick="mOnClose2"
-                android:padding="16dp"
-                android:text="확인"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-        </LinearLayout>
-        <!--// 닫기 버튼 -->
+            android:onClick="mOnClose2"
+            android:padding="16dp"
+            android:text="확인"
+            android:textColor="@color/black"
+            android:textSize="15sp" />
     </LinearLayout>
-</ScrollView>
+    <!--// 닫기 버튼 -->
+</LinearLayout>

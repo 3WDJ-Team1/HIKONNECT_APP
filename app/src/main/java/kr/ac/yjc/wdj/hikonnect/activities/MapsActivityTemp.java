@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -408,7 +409,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         protected void onBeforeClusterItemRendered(MapItem item, MarkerOptions markerOptions) {
 
             if (item instanceof LocationMemo) {
-                mImageView.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_bookmarks_24px));
+                mImageView.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.location_memo_icon_svg));
                 Bitmap icon = mIconGenerator.makeIcon();
                 markerOptions
                         .icon(BitmapDescriptorFactory.fromBitmap(icon));
@@ -417,7 +418,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                 if (((Member) item).member_no == myMemberNo) {
                     markerOptions.visible(false);
-                } else {
+                } else{
                     if (((Member) item).profileImg == null) {
                         mImageView.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.default_profile));
                         Bitmap icon = mIconGenerator.makeIcon();
@@ -453,7 +454,6 @@ public class MapsActivityTemp extends FragmentActivity implements
         setContentView(R.layout.activity_maps_temp);
 
         Intent intent = getIntent();
-//        String userid = "admi";
         String userid = intent.getStringExtra("id");
         getMemberNoByUserID(userid);
 
@@ -551,8 +551,9 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                     nickname    = String.valueOf(result.get("nickname"));
                                     distance    = Double.valueOf(result.get("distance").toString());
-                                    distance    = Math.round(Math.abs(distance - hikedDistance) * 100d) / 100d;
+                                    distance    = Math.round(Math.abs(distance - hikedDistance) * 100) / 100;
                                     velocity    = Double.valueOf(result.get("velocity").toString());
+                                    velocity    = Math.round(Math.abs(velocity) * 100) / 100;
                                     rank        = Integer.valueOf(result.get("rank").toString());
 
                                     runOnUiThread(new Runnable() {
@@ -607,23 +608,21 @@ public class MapsActivityTemp extends FragmentActivity implements
                             try {
                                 switch (myHikingState) {
                                     case 0:
-                                        break;
                                     case 1:
+                                        if (getDisToStartPoint() < 50) {
+                                            btnChangeHikingState.setVisibility(View.VISIBLE);
+                                        } else {
+                                            btnChangeHikingState.setVisibility(View.GONE);
+                                        }
                                         break;
                                     case 2:
-                                        break;
-                                }
-                                if (getDisToStartPoint() < 50) {
-                                    if (myHikingState == 0 || myHikingState == 1)
                                         btnChangeHikingState.setVisibility(View.VISIBLE);
-                                } else {
-                                    btnChangeHikingState.setVisibility(View.GONE);
+                                        break;
                                 }
 
                                 if (myCurrentLocation != null) {
                                     myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
                                 }
-
                                 if (myHikingState != 0) {
                                     tvDistance.setText(String.valueOf(hikedDistance));
                                 }
@@ -645,7 +644,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     @Override
     public void onMapClick(LatLng latLng) {
-        if (isdataBoxVisible) {
+        if (isdataBoxVisible || myHikingState == 2) {
             userDataBox.setVisibility(View.GONE);
             isdataBoxVisible = false;
         } else {
@@ -709,9 +708,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 .url(reqUrl)
                 .build();
 
-        okHttpClient
-                .newCall(req)
-                .enqueue(new Callback() {
+        okHttpClient.newCall(req).enqueue(new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(TAG, "Request Hiking Route: ", e);
@@ -728,7 +725,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                         try {
                             JSONParser parser = new JSONParser();
                             String serverRes = response.body().string();
-
 
                             JSONArray routeSet = (JSONArray) parser.parse(serverRes);
                             wholeDistance = 0.0;
@@ -804,6 +800,23 @@ public class MapsActivityTemp extends FragmentActivity implements
                     myMemberNo = memNo;
                     myHikingState = hikingState;
 
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            switch (myHikingState) {
+                                case 0:
+                                    btnChangeHikingState.setText("등산 시작");
+                                    break;
+                                case 1:
+                                    btnChangeHikingState.setText("등산 종료");
+                                    break;
+                                case 2:
+                                    btnChangeHikingState.setText("결과 보기");
+                                    break;
+                            }
+                        }
+                    });
+
                 } catch (Exception e) {
                     Log.e(TAG, "onResponse: ", e);
                 }
@@ -847,7 +860,11 @@ public class MapsActivityTemp extends FragmentActivity implements
                     @Override
                     public void run() {
                         for (Marker marker : myClusterManager.getMarkerCollection().getMarkers()) {
-                            marker.setPosition(((MapItem)marker.getTag()).getPosition());
+                            MapItem item = (MapItem) marker.getTag();
+
+                            if (item instanceof Member) {
+                                marker.setPosition((item.getPosition()));
+                            }
                         }
 
                         myClusterManager.cluster();
@@ -928,6 +945,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                                     double  longitude       = Double.valueOf(((JSONObject) idx).get("longitude").toString());
                                     int     memberNo        = Integer.valueOf(((JSONObject) idx).get("member_no").toString());
                                     String  userID          = String.valueOf(((JSONObject) idx).get("userid").toString());
+                                    boolean exist           = false;
 
                                     if (mapItems.containsKey(memberNo)) {
                                         Member member = (Member) mapItems.get(memberNo);
@@ -951,6 +969,14 @@ public class MapsActivityTemp extends FragmentActivity implements
                                         member.profileImg = BitmapFactory.decodeStream(is);
 
                                         mapItems.put(memberNo, member);
+                                    }
+
+                                    for (Integer _idx : mapItems.keySet()) {
+                                        if (_idx == memberNo) exist = true;
+                                    }
+                                    if (!exist) {
+                                        mapItems.remove(memberNo);
+                                        break;
                                     }
                                 }
                             } catch (Exception e) {
@@ -1012,7 +1038,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         } catch (Exception e) {
             Log.e(TAG, "getDisToStartPoint: ", e);
         }
-        return 0.0d;
+        return Double.MAX_VALUE;
     }
 
     private void updateHikedDistance() {
@@ -1064,10 +1090,11 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     private void updateHikingState() {
         try {
+
             HttpUrl httpUrl = HttpUrl.parse(Environments.LARAVEL_HIKONNECT_IP + "/api/updateHikingState").newBuilder().build();
 
             RequestBody reqBody = new FormBody.Builder()
-                    .add("member_no", String.valueOf(myHikingState))
+                    .add("member_no", String.valueOf(myMemberNo))
                     .add("state", String.valueOf(myHikingState))
                     .build();
 
@@ -1282,16 +1309,16 @@ public class MapsActivityTemp extends FragmentActivity implements
             public void onClick(View v) {
                 switch (myHikingState) {
                     case 0:     // 등산 전
+                        updateHikingState();
                         myHikingState = 1;
                         btnChangeHikingState.setVisibility(View.GONE);
                         btnChangeHikingState.setText("산행 종료");
                         userDataBox.setVisibility(View.VISIBLE);
-                        updateHikingState();
                         break;
                     case 1:     // 등산 중
-                        myHikingState = 2;
                         updateHikingState();
-                        btnChangeHikingState.setText("산행!!");
+                        myHikingState = 2;
+                        btnChangeHikingState.setText("결과 보기");
                     case 2:     // 등산 후
                         Intent afterHikingIntent = new Intent(getBaseContext(), AfterHikingActivity.class);
                         afterHikingIntent.putExtra("member_no", myMemberNo);
