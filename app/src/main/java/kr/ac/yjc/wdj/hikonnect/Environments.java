@@ -14,8 +14,7 @@ public abstract class Environments {
     public  static final String NODE_HIKONNECT_IP       = HIKONNECT + ":3000";      // node
 
     // walkietalkie server(local)
-    public  static final String WALKIE_TALKIE_SERVER_IP = "172.26.2.114";
-    public  static final String WALKIE_TALKIE_HTTP_PORT = "8800";
+    public  static final String WALKIE_TALKIE_SERVER_IP = "35.200.23.60";
 
     // record
     public  static final String RECORD_FILE_ROUTE       = "/";

@@ -20,8 +20,8 @@ public class Record {
      * 테스트용
      */
     public Record() {
-        setUrl("http://" + Environments.WALKIE_TALKIE_SERVER_IP + ":"
-                + Environments.WALKIE_TALKIE_HTTP_PORT + Environments.RECORD_FILE_ROUTE + "test111.wav");
+//        setUrl("http://" + Environments.WALKIE_TALKIE_SERVER_IP + ":"
+//                + Environments.WALKIE_TALKIE_HTTP_PORT + Environments.RECORD_FILE_ROUTE + "test111.wav");
     }
 
     /**

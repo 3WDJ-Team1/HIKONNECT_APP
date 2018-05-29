@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect.apis.walkietalkie;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -14,9 +15,10 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
  */
 public class RecordPlayer {
     private         String serverURL;
-    private final   String PORT         = Environments.WALKIE_TALKIE_HTTP_PORT;
+    private final   String PORT         = "8800";
     private final   String FILE_ROUTE   = Environments.RECORD_FILE_ROUTE; // TODO 라우팅 경로 수정
-
+    private         int     count;
+    private         MediaPlayer player;
     /**
      * 초기화
      * @param url   서버 주소
@@ -31,13 +33,17 @@ public class RecordPlayer {
      */
     public void playRecords(String fileName) {
         try {
-            MediaPlayer player = new MediaPlayer();
+            player = new MediaPlayer();
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            player.setDataSource("http://" + serverURL + ":" + PORT + FILE_ROUTE + fileName);
+            player.setDataSource("http://" + serverURL + ":" + PORT + FILE_ROUTE + fileName + ".wav");
             player.prepare();
             player.start();
         } catch (IOException ie){
             ie.printStackTrace();
         }
+    }
+
+    public int getDuration() {
+        return player.getDuration();
     }
 }

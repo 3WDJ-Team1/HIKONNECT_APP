@@ -1,13 +1,16 @@
 package kr.ac.yjc.wdj.hikonnect.apis.walkietalkie;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.IOException;
 import java.net.Socket;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -17,24 +20,37 @@ import okhttp3.Response;
  */
 public class WalkieTalkie {
     // 변수
-    private AudioCall       audioCall;
-    private RecordPlayer    player;
-    private String          myIPAddress;    // 현재 디바이스의 IP 주소
+    private AudioCall           audioCall;
+    private RecordPlayer        player;
+    private String              myIPAddress;    // 현재 디바이스의 IP 주소
+    private String              myScheduleId;   // 스케줄 번호
+    private SharedPreferences   preferences;
 
     // 상수
     // TODO : 상수값 변경 필요
-    public  final String  SERVER_IP   = Environments.WALKIE_TALKIE_SERVER_IP;    // 데이터 보낼 서버 아이피
-    private final String  HTTP_PORT   = Environments.WALKIE_TALKIE_HTTP_PORT;    // 서버 http 포트 번호
     private final String  LOG_TAG     = "WalkTalk";
 
     /**
      * 초기화
      */
     public WalkieTalkie() {
-        audioCall   = new AudioCall(SERVER_IP);
-        player      = new RecordPlayer(SERVER_IP + ":" + HTTP_PORT);
+        audioCall   = new AudioCall(/*Environments.WALKIE_TALKIE_SERVER_IP*/ "172.26.4.121");
         myIPAddress = "";
+    }
 
+    public WalkieTalkie(SharedPreferences preferences) {
+        this();
+
+        this.preferences = preferences;
+        sendHttpToServer();
+        player = new RecordPlayer("172.26.4.121");
+    }
+
+    public WalkieTalkie(String scheduleId, SharedPreferences preferences) {
+        this();
+
+        myScheduleId        = scheduleId;
+        this.preferences    = preferences;
         sendHttpToServer();
     }
 
@@ -42,7 +58,26 @@ public class WalkieTalkie {
      * 수신 시작
      */
     public void receiveStart() {
-        audioCall.receiveStart();
+        /*audioCall.receiveStart();*/
+        Thread getRecord = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                player = new RecordPlayer("172.26.4.121");
+
+                while (true) {
+                    player.playRecords("test");
+
+                    try {
+                        Thread.sleep(player.getDuration());
+//                        player = new RecordPlayer("172.26.4.121");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        getRecord.start();
     }
 
     /**
@@ -62,7 +97,7 @@ public class WalkieTalkie {
     /**
      * 서버에 IP 주소를 보낸다
      */
-    private void sendHttpToServer() {
+    public void sendHttpToServer() {
         Thread httpThread = new Thread(new Runnable() {
 
             @Override
@@ -91,9 +126,16 @@ public class WalkieTalkie {
                             // 서버에 전송
                             OkHttpClient client = new OkHttpClient();
 
+                            RequestBody body = new FormBody.Builder()
+                                    /*.add("schedule", myScheduleId)*/
+                                    .add("userid", preferences.getString("user_id", ""))
+                                    .add("ip", myIPAddress)
+                                    .build();
+
                             // 리퀘스트 객체 생성
                             Request request = new Request.Builder()
-                                    .url("http://" + SERVER_IP + ":" + HTTP_PORT + "/walkietalkie.php?ipaddr=" + myIPAddress)
+                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/all_reg_ip")
+                                    .post(body)
                                     .build();
 
                             // 실행

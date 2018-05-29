@@ -30,7 +30,8 @@
 
         <activity
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait" />
         <activity android:name=".Othersinfo" />
         <activity
             android:name=".HikingRecord"

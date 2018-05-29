@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
@@ -166,16 +167,19 @@ public class AudioCall {
                         AudioTrack.MODE_STREAM          // 모드
                 );
 
-                DatagramSocket socket = null;
+                MulticastSocket socket = null;
                 // 실행
                 track.play();
                 try {
                     // 소켓 열기
-                    socket = new DatagramSocket(LISTENER_PORT);
+                    socket = new MulticastSocket(LISTENER_PORT);
+                    socket.joinGroup(InetAddress.getByName("238.146.242.255"));
+
                     // 버퍼 지정
                     byte[] buffer = new byte[BUFFER_SIZE];
 
                     while(isReceiving) {
+                        Log.d("shit", "shit@!!!!1");
                         // 패킷 생성
                         DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
                         // 받아오기
@@ -193,6 +197,11 @@ public class AudioCall {
                     if (ie instanceof SocketException) {
                         Log.e(RECEIVE_TAG, "SocketException with DatagramSocket!!!\n" + ((SocketException) ie).toString());
                         if (socket != null) {
+                            try {
+                                socket.leaveGroup(InetAddress.getByName("238.146.242.255"));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             socket.disconnect();
                             socket.close();
                         }
@@ -202,6 +211,11 @@ public class AudioCall {
                 } finally {
                     // 자원 해제
                     if (socket != null) {
+                        try {
+                            socket.leaveGroup(InetAddress.getByName("238.146.242.255"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         socket.disconnect();
                         socket.close();
                     }

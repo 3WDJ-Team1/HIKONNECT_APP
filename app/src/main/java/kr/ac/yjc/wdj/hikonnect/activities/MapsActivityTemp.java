@@ -24,13 +24,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -78,7 +76,6 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.Locationmemo;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
@@ -361,10 +358,14 @@ public class MapsActivityTemp extends FragmentActivity implements
     // [1.4] 그룹 맴버 리스트 버튼
     private FloatingActionButton    fabShowMemberList;
 
-    // [1.6] 무전
+    // [1.6] 무전 UI
     private LinearLayout    drawerLayout;       // 무전 버튼을 넣어둘 레이아웃
     private Button          btnSendRadio;       // 무전 시작 버튼
-    private ImageButton     showRecordList;     // 음성 녹음 리스트.
+//    private ImageButton     showRecordList;     // 음성 녹음 리스트.
+
+    // [1.6.1] 무전 기능 변수
+    private WalkieTalkie    walkieTalkie;   // 무전 객체
+    private boolean         isSendingNow;   // 현재 무전을 전송중인지
 
     // [1.7] 등산 상태 변경 버튼
     private Button          btnChangeHikingState;   // 등산 시작, 등산 끝 버튼.
@@ -471,6 +472,14 @@ public class MapsActivityTemp extends FragmentActivity implements
                 .writeTimeout(30, TimeUnit.SECONDS);
 
         okHttpClient = builder.build();
+
+        // [4] 무전 서비스 클래스 초기화
+        isSendingNow = false;
+
+        // 무전 객체 초기화
+//        walkieTalkie = new WalkieTalkie(getSharedPreferences("loginData", MODE_PRIVATE));
+        // 무전 받아오기 시작
+//        walkieTalkie.receiveStart();
 
         initializeUI();
     }
@@ -1123,7 +1132,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         // [1.5] 무전 레이아웃.
         drawerLayout                = (LinearLayout) findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
         btnSendRadio                = (Button) findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
-        showRecordList              = (ImageButton) findViewById(R.id.showRecordList);
+//        showRecordList              = (ImageButton) findViewById(R.id.showRecordList);
 
         // [1.6] 등산 상태 변경 버튼
         btnChangeHikingState        = (Button) findViewById(R.id.change_h_status_btn);
@@ -1267,13 +1276,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                 startActivityForResult(groupMemberList, HikingMemberListAdapter.REQUEST_CODE);
             }
         });
-        showRecordList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
-                startActivity(recordIntent);
-            }
-        });
         // [2.4] 등산 상태 변경 버튼
         btnChangeHikingState.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1299,15 +1301,16 @@ public class MapsActivityTemp extends FragmentActivity implements
             }
         });
         // [5] 무전 리스트
-        showRecordList.setOnClickListener(new View.OnClickListener() {
+        /*showRecordList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
                 startActivity(recordIntent);
             }
-        });
+        });*/
+
         // [4] drawerLayout 을 클릭하면 무전 버튼 가시화
-        drawerLayout.setOnClickListener(new View.OnClickListener() {
+        /*drawerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isRecBtnVisible) {
@@ -1317,7 +1320,27 @@ public class MapsActivityTemp extends FragmentActivity implements
                 }
                 isRecBtnVisible = !isRecBtnVisible;
             }
+        });*/
+        // 무전 버튼에 리스너 달기
+        /*btnSendRadio.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                isSendingNow = true;
+                walkieTalkie.sendStart();
+                Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
+                return false;
+            }
         });
+        btnSendRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isSendingNow) {
+                    isSendingNow = false;
+                    walkieTalkie.sendEnd();
+                    Toast.makeText(getBaseContext(), "무전 종료합니다", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });*/
 
     }
 
