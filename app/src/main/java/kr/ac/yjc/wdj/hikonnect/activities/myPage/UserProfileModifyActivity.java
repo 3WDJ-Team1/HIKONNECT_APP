@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -294,7 +296,16 @@ public class UserProfileModifyActivity extends AppCompatActivity {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                userProfilePic.setImageBitmap(bitmap);
+                if (bitmap != null)
+                    userProfilePic.setImageBitmap(bitmap);
+                else {
+
+                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    userProfilePic.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 200, 200, true));
+
+                }
             }
         }.execute(preferences.getString("user_id", ""));
     }
@@ -340,23 +351,21 @@ public class UserProfileModifyActivity extends AppCompatActivity {
     // 뒤로가기 버튼 실수로 눌렀을 경우를 대비해 다이얼로그 띄우기
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // 제목 세팅
         builder.setTitle("수정 취소");
 
         // 다이얼로그 세팅
         builder .setMessage("수정을 취소하고 나가시겠습니까?")
-                .setPositiveButton("취소",
+                .setNegativeButton("취소",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         })
-                .setNegativeButton("확인",
+                .setPositiveButton("확인",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -364,10 +373,12 @@ public class UserProfileModifyActivity extends AppCompatActivity {
                             }
                         });
 
-        // 다이얼로그 생성
-        AlertDialog dialog = builder.create();
+//        // 다이얼로그 생성
+//        AlertDialog dialog = builder.create();
+//
+//        // 보여주기
+//        dialog.show();
 
-        // 보여주기
-        dialog.show();
+        builder.show();
     }
 }

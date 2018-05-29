@@ -4,6 +4,6 @@
         android:drawable="@drawable/main_groupmenu_btn_design"
         android:state_pressed="false" />
     <item
-        android:drawable="@drawable/main_groupmenu_btn_design_pressed"
+        android:drawable="@drawable/main_groupmenu_btn_design_"
         android:state_pressed="true" />
 </selector>

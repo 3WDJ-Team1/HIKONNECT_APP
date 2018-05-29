@@ -41,6 +41,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_toEndOf="@id/user_nickname"
                 android:hint="Enter nickname*"
+                android:inputType="text"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />
 
@@ -74,7 +75,7 @@
                 android:layout_toEndOf="@id/user_phoneNum"
                 android:layout_toRightOf="@id/user_phoneNum"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:inputType="text"
                 android:hint="Enter phone number"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#212121" />

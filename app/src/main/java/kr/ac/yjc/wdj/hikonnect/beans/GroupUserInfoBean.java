@@ -167,10 +167,10 @@ public class GroupUserInfoBean extends Bean {
                     profilePic = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
                 else {
 
-                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(baseContext, R.drawable.ic_android_person_svg);
+                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(baseContext, R.drawable.circle_solid_profile_512px);
                     Bitmap          defaultImg  = drawable.getBitmap();
 
-                    profilePic = defaultImg;
+                    profilePic = Bitmap.createScaledBitmap(defaultImg, 50, 50, true);
 
                 }
             }

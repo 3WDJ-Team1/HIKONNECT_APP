@@ -35,6 +35,7 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
@@ -54,6 +55,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
     private ViewPager           viewPager;          // 뷰페이저
     private TabLayout           tabLayout;
     private ImageButton         btnGoBack;
+    private LoadingDialog       loadingDialog;
 
     // 데이터 변수
     private String              status;             // 그룹의 손님/참가자/오너
@@ -86,6 +88,8 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule_detail_app_bar);
 
+        loadingDialog = new LoadingDialog(this);
+
         initData();
         initUI();
     }
@@ -104,6 +108,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
      * 데이터 초기화
      */
     private void initData() {
+
         // OkHttp
         client          = new OkHttpClient();
         // GoogleMaps
@@ -243,6 +248,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
         tabLayout.setTabTextColors(R.color.black, R.color.cyan_500);
         tabLayout.getTabAt(0).setText("목적지 및 일정");
         tabLayout.getTabAt(1).setText("멤버");
+
     }
 
     /**
@@ -253,6 +259,13 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
     private void getMntNameFromMntId(final double inputMntId, final TextView tv) {
         // http 리퀘스트로 산 이름 알아내기
         new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                loadingDialog.show();
+            }
+
             @Override
             protected String doInBackground(Void... params) {
                 try {
@@ -289,6 +302,8 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
                 // 변수에 넣기
                 tv.setText( buffer.toString().replace("\"", "") );
+
+                loadingDialog.cancel();
             }
         }.execute();
     }
@@ -303,6 +318,13 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
         // http 리퀘스트로 스케줄 멤버 리스트 만들기
         new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                loadingDialog.show();
+            }
+
             @Override
             protected String doInBackground(Void... params) {
 
@@ -354,6 +376,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
+                loadingDialog.cancel();
             }
         }.execute();
 
@@ -366,6 +389,13 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
     private void getMntRouteWithMntId(final double inputMntId) {
 
         new AsyncTask<Double, Integer, String>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                loadingDialog.show();
+            }
 
             @Override
             protected String doInBackground(Double... params) {
@@ -440,6 +470,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                         googleMap.addPolyline(polylineOptions);
                     }
 
+                    loadingDialog.cancel();
                 } catch (JSONException je) {
 
                     Log.e(LOG_TAG, "JSONException was occured in getMntRouteWithMntId()!!!!\n" + je);

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -22,7 +24,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +44,8 @@ import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
-import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
 import kr.ac.yjc.wdj.hikonnect.beans.Bean;
@@ -380,6 +382,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
                         // 사이즈 고정
                         rvPlan.setHasFixedSize(true);
+                        rvPlan.setHasFixedSize(true);
                         // 레이아웃 매니저 설정
                         rvPlan.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
@@ -519,7 +522,19 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                imageView.setImageBitmap(bitmap);
+                if (bitmap != null) {
+
+                    imageView.setImageBitmap(bitmap);
+
+                } else {
+
+                    BitmapDrawable drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 50, 50, true));
+
+                }
+
             }
         }.execute();
     }
@@ -799,18 +814,20 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, groups_list_main.class));
         } /*else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
-        }*/ else if (id == R.id.my_profile) {
+        }*/ else if (id == R.id.my_records) {
+            startActivity(new Intent(this, UserRecordActivity.class));
+        } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
-
             SharedPreferences.Editor editor = pref.edit();
             editor.clear();
             editor.apply();
 
-            Intent intent = new Intent(TabsActivity.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }

@@ -8,9 +8,11 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -50,7 +52,9 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -189,7 +193,18 @@ public class groups_list_main extends AppCompatActivity
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                imageView.setImageBitmap(bitmap);
+                if (bitmap != null) {
+
+                    imageView.setImageBitmap(bitmap);
+
+                } else {
+
+                    BitmapDrawable drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 50, 50, true));
+
+                }
             }
         }.execute();
 
@@ -436,18 +451,20 @@ public class groups_list_main extends AppCompatActivity
             startActivity(new Intent(this, groups_list_main.class));
         } /*else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
-        }*/ else if (id == R.id.my_profile) {
+        }*/ else if (id == R.id.my_records) {
+            startActivity(new Intent(this, UserRecordActivity.class));
+        } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
-
             SharedPreferences.Editor editor = pref.edit();
             editor.clear();
             editor.apply();
 
-            Intent intent = new Intent(groups_list_main.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }

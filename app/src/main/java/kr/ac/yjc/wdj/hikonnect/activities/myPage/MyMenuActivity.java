@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -153,5 +154,16 @@ public class MyMenuActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    /**
+     * 뒤로가기 버튼 누를 경우 액티비티 다시 불러오기
+     */
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        overridePendingTransition(R.anim.hold, R.anim.fade);
+        startActivity(intent);
+        finish();
     }
 }

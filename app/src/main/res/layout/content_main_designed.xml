@@ -137,7 +137,7 @@
                 android:textSize="24sp"
                 android:textColor="@color/amber_500"
                 android:layout_marginEnd="4dp"
-                android:background="@drawable/main_groupmenu_btn_design"
+                android:background="@drawable/main_groupmenu_btn_selector"
                 android:textStyle="bold"
                 android:drawableTop="@drawable/group_menu_xl"
                 android:drawableTint="@color/amber_500"

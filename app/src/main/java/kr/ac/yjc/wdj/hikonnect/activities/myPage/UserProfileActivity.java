@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -92,6 +94,13 @@ public class UserProfileActivity extends AppCompatActivity{
             super.onPostExecute(bitmap);
             if (bitmap != null) {
                 userImg.setImageBitmap(bitmap);
+            } else {
+
+                BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                Bitmap          defaultImg  = drawable.getBitmap();
+
+                userImg.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 200, 200, true));
+
             }
         }
     }
@@ -160,7 +169,6 @@ public class UserProfileActivity extends AppCompatActivity{
                 intent.putExtra("ageOpen", openAge);
 
                 startActivity(intent);
-                finish();
             }
         });
     }

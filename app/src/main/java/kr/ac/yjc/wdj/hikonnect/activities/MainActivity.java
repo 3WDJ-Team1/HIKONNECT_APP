@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -142,7 +144,18 @@ public class MainActivity extends AppCompatActivity
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                imageView.setImageBitmap(bitmap);
+                if (bitmap != null) {
+
+                    imageView.setImageBitmap(bitmap);
+
+                } else {
+
+                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 50, 50, true));
+
+                }
             }
         }.execute();
 
@@ -177,6 +190,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
+        item.setEnabled(false);
+
         if (id == R.id.groups) {
             startActivity(new Intent(this, groups_list_main.class));
         } /*else if (id == R.id.my_groups) {
@@ -198,6 +213,8 @@ public class MainActivity extends AppCompatActivity
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));
         }
+
+        item.setEnabled(true);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -224,6 +241,8 @@ public class MainActivity extends AppCompatActivity
         btnStartHiking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnStartHiking.setClickable(false);
+
                 loadingDialog.show();
                 Intent intent = new Intent(getBaseContext(), MapsActivityTemp.class);
                 intent.putExtra("id", pref.getString("user_id", ""));
@@ -236,8 +255,10 @@ public class MainActivity extends AppCompatActivity
         btnToGroupMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnToGroupMenu.setClickable(false);
                 Intent intent = new Intent(getBaseContext(), groups_list_main.class);
                 startActivity(intent);
+                btnToGroupMenu.setClickable(true);
             }
         });
 
@@ -245,8 +266,10 @@ public class MainActivity extends AppCompatActivity
         btnToMyMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnToMyMenu.setClickable(false);
                 Intent intent = new Intent(getBaseContext(), MyMenuActivity.class);
                 startActivity(intent);
+                btnToMyMenu.setClickable(true);
             }
         });
     }
