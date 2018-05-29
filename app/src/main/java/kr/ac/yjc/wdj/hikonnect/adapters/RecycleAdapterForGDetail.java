@@ -111,6 +111,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                 @Override
                 public void onClick(View v) {
 
+                    ((ViewHolderSchedule) viewHolder).wrapper.setClickable(false);
+
                     Intent intent = new Intent(schedule.getBaseContext(), ScheduleDetailActivity.class);
                     // 데이터 이동
                     // 산 이름
@@ -132,6 +134,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
 
                     // 상세 페이지로 이동
                     schedule.getBaseContext().startActivity(intent);
+
+                    ((ViewHolderSchedule) viewHolder).wrapper.setClickable(true);
                 }
             });
 

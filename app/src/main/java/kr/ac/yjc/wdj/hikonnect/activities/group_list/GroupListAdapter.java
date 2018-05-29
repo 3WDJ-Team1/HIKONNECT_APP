@@ -76,6 +76,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
                 // 그룹 참가 여부 ( 불참, 참가자, 주최자 ) 확인
                 new AsyncTask<String, Integer, String>() {
+                    @Override
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+
+                        holder.linearLayout.setClickable(false);
+                    }
 
                     @Override
                     protected String doInBackground(String... params) {
@@ -126,6 +132,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                         // 액티비티 전환
                         parent.startActivity(intent);
 
+                        holder.linearLayout.setClickable(true);
                     }
                 }.execute(listItem.getGroupId(), pref.getString("user_id", ""));
             }

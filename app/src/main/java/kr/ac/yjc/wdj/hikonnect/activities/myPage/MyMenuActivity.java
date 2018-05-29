@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -118,7 +120,18 @@ public class MyMenuActivity extends AppCompatActivity {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                userProfilePic.setImageBitmap(bitmap);
+                if (bitmap != null)
+
+                    userProfilePic.setImageBitmap(bitmap);
+
+                else {
+
+                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    userProfilePic.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 100, 100, true));
+
+                }
             }
         }.execute();
 

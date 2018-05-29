@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.GroupListItem;
 import kr.ac.yjc.wdj.hikonnect.adapters.JoinedGroupListAdapter;
 import okhttp3.FormBody;
@@ -38,6 +39,7 @@ public class UserJoinedGroup extends AppCompatActivity {
     // UI 변수
     private         ImageButton                 btnGoBack;      // 툴바에 있는 뒤로가기 버튼
     private         RecyclerView                rvJoinedGroup;  // 참여한 그룹 리스트 리사이클러 뷰
+    private         LoadingDialog               loadingDialog;  // 로딩 다이얼로그
 
     // 데이터 변수
     private         ArrayList<GroupListItem>    groupList;      // 사용자가 참여하고 있는 그룹 정보 리스트
@@ -58,6 +60,8 @@ public class UserJoinedGroup extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joined_group_app_bar);
+
+        loadingDialog = new LoadingDialog(this);
 
         initData();
         initUI();
@@ -102,6 +106,13 @@ public class UserJoinedGroup extends AppCompatActivity {
     private void getGroupsDataFromServer() {
 
         new AsyncTask<Void, Integer, String>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                loadingDialog.show();
+            }
 
             @Override
             protected String doInBackground(Void... params) {
@@ -160,8 +171,9 @@ public class UserJoinedGroup extends AppCompatActivity {
 
                     Log.e(JOINED_GROUP_LOG_TAG, "JSONException was occurred while JSON parsing with group data!!!!\n" + je);
                 }
-            }
 
+                loadingDialog.cancel();
+            }
         }.execute();
     }
 }

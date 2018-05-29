@@ -303,7 +303,7 @@ public class UserProfileModifyActivity extends AppCompatActivity {
                     BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
                     Bitmap          defaultImg  = drawable.getBitmap();
 
-                    userProfilePic.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 200, 200, true));
+                    userProfilePic.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 90, 90, true));
 
                 }
             }

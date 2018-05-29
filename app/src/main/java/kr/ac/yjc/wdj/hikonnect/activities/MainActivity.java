@@ -33,6 +33,7 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.MyMenuActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserJoinedGroup;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
@@ -194,9 +195,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.groups) {
             startActivity(new Intent(this, groups_list_main.class));
-        } /*else if (id == R.id.my_groups) {
-            startActivity(new Intent(this, UserGroupActivity.class));
-        }*/ else if (id == R.id.my_records) {
+        } else if (id == R.id.my_groups) {
+            startActivity(new Intent(this, UserJoinedGroup.class));
+        } else if (id == R.id.my_records) {
             startActivity(new Intent(this, UserRecordActivity.class));
         } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
