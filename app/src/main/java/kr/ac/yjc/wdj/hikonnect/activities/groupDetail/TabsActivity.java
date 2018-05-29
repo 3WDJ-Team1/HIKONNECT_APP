@@ -802,7 +802,14 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.apply();
+
             Intent intent = new Intent(TabsActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));

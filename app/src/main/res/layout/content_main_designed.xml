@@ -47,7 +47,7 @@
                     android:id="@+id/nowScheduleTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="nowScheduleTitle!"
+                    android:text="소백산 MT"
                     android:layout_marginTop="16dp"
                     android:textColor="@color/black"
                     android:textSize="20dp"
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="group"
+                    android:text="3WD-J + 심화반"
                     android:layout_below="@+id/nowScheduleTitle"
                     android:textSize="14sp"
                     android:layout_marginEnd="8dp"/>

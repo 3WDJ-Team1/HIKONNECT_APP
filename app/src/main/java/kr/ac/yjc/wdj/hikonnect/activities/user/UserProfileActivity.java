@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect.activities.user;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,11 +47,14 @@ public class UserProfileActivity extends AppCompatActivity
     Handler handler;
     ContentValues contentValues = new ContentValues();
     Button home;
+    SharedPreferences pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile);
+
+        pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         /*toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
@@ -164,7 +168,14 @@ public class UserProfileActivity extends AppCompatActivity
         }*/ else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.apply();
+
             Intent intent = new Intent(UserProfileActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 //            session.logOutUser();
             //startActivity(new Intent(this, PreActivity.class));

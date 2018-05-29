@@ -19,7 +19,9 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import kr.ac.yjc.wdj.hikonnect.adapters.AfterHikingListAdapter;
@@ -61,11 +63,13 @@ public class AfterHikingActivity extends AppCompatActivity {
     private String                      hikingTear;         // 산행 등급.
 
     //
-    public SharedPreferences            pref = getSharedPreferences("loginData", MODE_PRIVATE);
+    public SharedPreferences            pref;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_hiking);
+
+        pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         // UI 초기화
         tvRemainMembers     = (TextView)        findViewById(R.id.howManyNowHiking);
@@ -116,7 +120,7 @@ public class AfterHikingActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpUrl httpUrl = HttpUrl.parse("http://172.26.2.140:8000/api/getHikingResult").newBuilder().build();
+                HttpUrl httpUrl = HttpUrl.parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getHikingResult").newBuilder().build();
 
                 RequestBody reqBody = new FormBody.Builder()
                         .add("member_no", String.valueOf(memberNum))
@@ -132,15 +136,28 @@ public class AfterHikingActivity extends AppCompatActivity {
 
                     JSONObject resObj = (JSONObject) ((JSONArray) parser.parse(result)).get(0);
 
-                    remainMembers       = Integer.valueOf(resObj.get("remain_member") != null ? resObj.get("remain_member").toString() : "0");
-                    hikingTime          = String.valueOf(resObj.get("hiking_time") != null ? resObj.get("hiking_time").toString() : "0");
-                    hikingRank          = Integer.valueOf(resObj.get("rank") != null ? resObj.get("rank").toString() : "0");
-                    completedMountain   = resObj.get("mountain") != null ? resObj.get("mountain").toString() : "No Data";
-                    hikingTear          = resObj.get("hiking_tear") != null ? resObj.get("hiking_tear").toString() : "No Data";
+                    Date date = new SimpleDateFormat("hhh:mm:ss").parse(resObj.get("hiking_time").toString());
+                    String parsedHikingTime = new SimpleDateFormat("hh시간 mm분 ss초").format(date);
+
+                    remainMembers       = Integer.valueOf(resObj.get("remain_member") != null
+                            ? resObj.get("remain_member").toString()
+                            : "0");
+                    hikingTime          = parsedHikingTime;
+                    hikingRank          = Integer.valueOf(resObj.get("rank") != null
+                            ? resObj.get("rank").toString()
+                            : "0");
+                    completedMountain   = resObj.get("mountain") != null
+                            ? resObj.get("mountain").toString()
+                            : "No Data";
+                    hikingTear          = resObj.get("hiking_tear") != null
+                            ? resObj.get("hiking_tear").toString()
+                            : "No Data";
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (ParseException pse) {
-                    pse.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } catch (java.text.ParseException e) {
+                    e.printStackTrace();
                 }
             }
         });
