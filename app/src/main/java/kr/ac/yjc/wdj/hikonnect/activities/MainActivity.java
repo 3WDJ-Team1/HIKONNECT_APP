@@ -259,6 +259,7 @@ public class MainActivity extends AppCompatActivity
                 btnToGroupMenu.setClickable(false);
                 Intent intent = new Intent(getBaseContext(), groups_list_main.class);
                 startActivity(intent);
+                finish();
                 btnToGroupMenu.setClickable(true);
             }
         });
@@ -270,6 +271,7 @@ public class MainActivity extends AppCompatActivity
                 btnToMyMenu.setClickable(false);
                 Intent intent = new Intent(getBaseContext(), MyMenuActivity.class);
                 startActivity(intent);
+                finish();
                 btnToMyMenu.setClickable(true);
             }
         });
