@@ -1,15 +1,20 @@
 package kr.ac.yjc.wdj.hikonnect;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -32,6 +37,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.activities.MapsActivity;
@@ -47,17 +54,22 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp.TAG;
+
 /**
  * Created by jungyu on 2018-05-02.
  */
 
 public class Othersinfo extends Activity {
 
+    public static final int                SHOW_ALL = 1001;
+
     // UI 변수
     private RecyclerView                    listView;   // 검색을 보여줄 리스트변수
     private ProgressBar                     progressBar;// 진행 상황을 표시할 ProgressBar
     private EditText                        editSearch; // 검색어를 입력할 Input 창
     private ImageButton                     btnGoBack;  // 뒤로가기 버튼
+    private Button                          showAllBtn; // 모두 보기 버튼
 
     // 데이터 변수
     private HikingMemberListAdapter         adapter;    // 리스트뷰에 연결할 아답터
@@ -66,10 +78,7 @@ public class Othersinfo extends Activity {
     private String                          groupId;
     private int                             scheduleNo;
 
-    // 18.05.23(Wed) bs Kwon
     private int                             memberNo;
-    // 18.05.23(Wed) bs Kwon
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +123,7 @@ public class Othersinfo extends Activity {
      * @param groupId       그룹 아이디
      * @param scheduleNo    스케줄 번호
      */
+    @SuppressLint("StaticFieldLeak")
     private void initMembersData(String groupId, int scheduleNo) {
 
         new AsyncTask<String, Integer, String>() {
@@ -122,25 +132,6 @@ public class Othersinfo extends Activity {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-                    /*  18.05.23(Wed) bs Kwon
-
-                        [1] Request URL changed.
-
-                            /api/getHikingMembers
-                            ->
-                            /api/getScheduleMembers
-
-                        [2] Request Method and Params changed.
-
-                            [Method] GET
-                            [Params]
-                            1, Group ID         user's group ID.
-                            2, Schedule NO      user's schedule ID.
-                            ->
-                            [Method] POST
-                            [Params]
-                            1. Member NO        user's member NO.
-                    */
                     HttpUrl httpUrl = HttpUrl
                             .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getScheduleMembers")
                             .newBuilder()
@@ -154,12 +145,6 @@ public class Othersinfo extends Activity {
                             .url(httpUrl)
                             .post(reqBody)
                             .build();
-
-                    // 18.05.23(Wed) bs Kwon
-
-                    /*Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_HIKONNECT_IP + "/getHikingMembers/" + params[0] + "/" + params[1])
-                            .build();*/
 
                     Response response = client.newCall(request).execute();
 
@@ -198,9 +183,24 @@ public class Othersinfo extends Activity {
 
                                     Response res = client.newCall(req).execute();
 
+                                    Bitmap userProfileImg = null;
+
                                     InputStream is = res.body().byteStream();
 
-                                    Bitmap userProfileImg = BitmapFactory.decodeStream(is);
+                                    userProfileImg = BitmapFactory.decodeStream(is);
+
+                                    if (res.code() == 404) {
+                                        // Resource에서 Drawable을 불러옴.
+                                        Drawable drawable = getResources().getDrawable(R.drawable.default_profile);
+                                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                                            drawable = (DrawableCompat.wrap(drawable)).mutate();
+                                        }
+                                        // Bitmap 포멧으로 변환.
+                                        userProfileImg = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                                        Canvas canvas = new Canvas(userProfileImg);
+                                        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                                        drawable.draw(canvas);
+                                    }
 
                                     HikingMemberListBean userInfo = new HikingMemberListBean(
                                             jsonObj.getInt("member_no"),
@@ -214,10 +214,8 @@ public class Othersinfo extends Activity {
 
                                     dataList.add(userInfo);
                                     tempList.add(userInfo);
-                                } catch (JSONException jse) {
+                                } catch (JSONException | IOException jse) {
                                     jse.printStackTrace();
-                                } catch (IOException ioe) {
-                                    ioe.printStackTrace();
                                 }
                                 return null;
                             }
@@ -225,6 +223,8 @@ public class Othersinfo extends Activity {
                             @Override
                             protected void onPostExecute(JSONObject jsonObject) {
                                 super.onPostExecute(jsonObject);
+                                Collections.sort(dataList, HikingMemberListBean.descending);
+                                Collections.sort(tempList, HikingMemberListBean.descending);
                                 adapter.notifyDataSetChanged();
                             }
                         }.execute(object);
@@ -250,10 +250,11 @@ public class Othersinfo extends Activity {
      * UI 초기화
      */
     private void initUI() {
-        editSearch  = (EditText)        findViewById(R.id.editSearch);
-        listView    = (RecyclerView)    findViewById(R.id.listView);
-        progressBar = (ProgressBar)     findViewById(R.id.otherInfoProgressBar);
-        btnGoBack   = (ImageButton)     findViewById(R.id.btnGoBack);
+        showAllBtn  = findViewById(R.id.other_info_show_all_btn);
+        editSearch  = findViewById(R.id.editSearch);
+        listView    = findViewById(R.id.listView);
+        progressBar = findViewById(R.id.otherInfoProgressBar);
+        btnGoBack   = findViewById(R.id.btnGoBack);
 
         // 뒤로가기 리스너 정의
         btnGoBack.setOnClickListener(new View.OnClickListener() {
@@ -263,6 +264,15 @@ public class Othersinfo extends Activity {
             }
         });
 
+        showAllBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+
+                setResult(SHOW_ALL, intent);
+                finish();
+            }
+        });
         // input창에 검색어를 입력시 "addTextChangedListener" 이벤트 리스너를 정의한다.
         editSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -299,7 +309,7 @@ public class Othersinfo extends Activity {
         tempList    = new ArrayList<>();
 
         // 리스트에 연동될 아답터를 생성한다.
-        adapter     = new HikingMemberListAdapter(R.layout.member_list_schedule, dataList, this);
+        adapter     = new HikingMemberListAdapter(R.layout.map_member_list, dataList, this);
 
         // 리스트뷰에 아답터를 연결한다.
         listView.setAdapter(adapter);

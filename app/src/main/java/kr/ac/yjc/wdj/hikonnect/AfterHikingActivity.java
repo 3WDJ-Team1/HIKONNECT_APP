@@ -136,13 +136,13 @@ public class AfterHikingActivity extends AppCompatActivity {
 
                     JSONObject resObj = (JSONObject) ((JSONArray) parser.parse(result)).get(0);
 
-                    Date date = new SimpleDateFormat("hhh:mm:ss").parse(resObj.get("hiking_time").toString());
+                    Date date = new SimpleDateFormat("hh:mm:ss").parse(resObj.get("hiking_time").toString());
                     String parsedHikingTime = new SimpleDateFormat("hh시간 mm분 ss초").format(date);
 
                     remainMembers       = Integer.valueOf(resObj.get("remain_member") != null
                             ? resObj.get("remain_member").toString()
                             : "0");
-                    hikingTime          = parsedHikingTime;
+                    hikingTime          = resObj.get("hiking_time").toString();
                     hikingRank          = Integer.valueOf(resObj.get("rank") != null
                             ? resObj.get("rank").toString()
                             : "0");

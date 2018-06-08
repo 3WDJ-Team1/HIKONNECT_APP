@@ -3,6 +3,8 @@ package kr.ac.yjc.wdj.hikonnect.beans;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
+import java.util.Comparator;
+
 /**
  * 등산 중인 멤버 데이터를 담아 둘 클래스
  * @author  Sungeun Kang (kasueu0814@gmail.com)
@@ -10,6 +12,13 @@ import android.support.annotation.Nullable;
  * @see     kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter
  */
 public class HikingMemberListBean {
+
+    public static Comparator descending = new Comparator<HikingMemberListBean>() {
+        @Override
+        public int compare(HikingMemberListBean o1, HikingMemberListBean o2) {
+            return o1.rank - o2.rank;
+        }
+    };
 
     private int     memberNo;   // 멤버 번호
     private String  nickname;   // 닉네임

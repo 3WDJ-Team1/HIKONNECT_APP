@@ -33,12 +33,18 @@
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
         <activity android:name=".Othersinfo" />
+        <activity android:name=".activities.ClusterDetailActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".HikingRecord"
             android:theme="@android:style/Theme.Dialog"
             android:screenOrientation="portrait" />
         <activity
-            android:name="kr.ac.yjc.wdj.hikonnect.Locationmemo"
+            android:name="kr.ac.yjc.wdj.hikonnect.LocationMemoActivity"
             android:theme="@android:style/Theme.Dialog" />
         <activity android:name="kr.ac.yjc.wdj.hikonnect.activities.LoginActivity"
             android:screenOrientation="portrait" />
@@ -113,6 +119,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activities.myPage.UserProfileModifyActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.BottomDrawerActivity" />
         <!--Activities End-->
         <!--Camera Provider-->
         <provider

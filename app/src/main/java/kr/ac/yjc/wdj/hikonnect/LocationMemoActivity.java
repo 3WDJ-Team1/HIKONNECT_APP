@@ -37,7 +37,7 @@ import okhttp3.Response;
  * @author  bs Kwon<rnjs9957@gmail.com>
  * @since   2018-04-11
  */
-public class  Locationmemo extends Activity {
+public class LocationMemoActivity extends Activity {
 
     int             memo_num;           // Location memo's number.
     String          memoTitleStr;       // Location memo's Title.
