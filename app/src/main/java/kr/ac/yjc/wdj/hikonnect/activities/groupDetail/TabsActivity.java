@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +71,7 @@ import java.util.ArrayList;
  */
 public class TabsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+
     // UI 변수
     private ViewPager                           viewPager;          // 전체 페이지
     private NavigationTabBar                    navigationTabBar;   // 네비게이션 탭 바
@@ -81,20 +83,24 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle               toggle;
     private NavigationView                      navigationView;
     private TextView                            txtView;
+    private LinearLayout                        linearLayout;
 
     // UI 내부 데이터 연결 객체
     private ArrayList<NavigationTabBar.Model>   models;             // 네비게이션 탭 안의 메뉴 구성을 위한 모델
     private static RecycleAdapterForGDetail     adapterNotice,      // rvNotice에 값을 연결할 어댑터
                                                 adapterMember,      // rvMember에 값을 연결할 어댑터
-                                                adapterSchedule;    // rvPlan 에 값을 연결할 어댑터
+                                                adapterSchedule,    // rvPlan 에 값을 연결할 어댑터
+                                                adapterNull;
     private MemberListAdapter                   adapterMemberJoined;// rvMemberJoined에 값을 연결할 어댑터
     private ArrayList<Bean>                     dataListNotice,     // notice URL 요청으로 받아온 값을 담아둘 곳
                                                 dataListMember,     // member URL 요청으로 받아온 값을 담아둘 곳
-                                                dataListSchedule;   // schedule URL 요청으로 받아온 값을 담아둘 곳
+                                                dataListSchedule,   // schedule URL 요청으로 받아온 값을 담아둘 곳
+                                                datanull;
     private ArrayList<GroupUserInfoBean>        dataListJoinedMember;
 
     // 데이터 담아둘 변수
     private static final    int                 PAGE_COUNT = 3;     // 총 페이지의 수
+    private                 AsyncTask           imageUpload;
     private static          String              status;             // 사용자가 해당 그룹에 참여하고 있는 지 여부
     public  static          String              groupId;            // 해당 그룹의 id
     private                 String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
@@ -142,6 +148,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         colors              = getResources().getStringArray(R.array.default_preview);
         isScrolling         = false;
         dataListNotice      = new ArrayList<>();
+        datanull            = new ArrayList<>();
         dataListMember      = new ArrayList<>();
         dataListJoinedMember= new ArrayList<>();
         dataListSchedule    = new ArrayList<>();
@@ -168,17 +175,19 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         // 툴바 초기화
         initToolbar();
 
-        // 페이지 불러오기
-        initUI();
 
-        // 공지사항 리스트 받아오기
-        datafetchForNotice(groupId, firstIndex);
+            // 페이지 불러오기
+            initUI();
 
-        // 참여자 값 받기
-        datafetchForMember(groupId);
+            // 공지사항 리스트 받아오기
+            datafetchForNotice(groupId, firstIndex);
 
-        // 버튼에 리스너 달기
-        setListenerToFloatingButton();
+            // 참여자 값 받기
+            datafetchForMember(groupId);
+
+            // 버튼에 리스너 달기
+            setListenerToFloatingButton();
+
     }
 
     /**
@@ -273,7 +282,8 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                     protected void onPostExecute(String s) {
                         super.onPostExecute(s);
 
-                        if (Boolean.parseBoolean(s)) {
+                        if (s.equals("\"true\"")) {
+                            Log.d("bool", s);
                             Toast.makeText(
                                     getBaseContext(),
                                     "성공적으로 탈퇴되었습니다.",
@@ -451,7 +461,6 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onPageSelected(final int position) {
-
             }
 
             @Override
@@ -494,16 +503,20 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         // 프로필 사진
         final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
 
+
         // 서버에서 사진 받아와 넣기
-        new AsyncTask<Void, Integer, Bitmap>() {
+       imageUpload = new AsyncTask<Void, Integer, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... params) {
+
+
                 try {
 
                     HttpUrl httpUrl = HttpUrl
                             .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + pref.getString("user_id", "") + ".jpg")
                             .newBuilder()
                             .build();
+
 
                     Request     req = new Request.Builder().url(httpUrl).build();
                     Response    res = client.newCall(req).execute();
@@ -609,29 +622,50 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                     JSONArray   jsonArray   = new JSONArray(s);
                     GroupNotice groupNotice = null;
                     // 결과 배열 값을
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        // 객체로 분해 해 Bean 객체에 삽입
+                    if (jsonArray.length() == 0) {
                         groupNotice = new GroupNotice(
-                                jsonObject.getString("writer"),
-                                jsonObject.getString("title"),
-                                jsonObject.getString("content"),
-                                jsonObject.getString("picture"),
-                                jsonObject.getString("created_at")
+                                "",
+                                "값이 없습니다",
+                                "",
+                                "",
+                                ""
                         );
-                        // dataList에 삽입
-                        dataListNotice.add(groupNotice);
-                    }
 
-                    adapterNotice.notifyDataSetChanged();
-                    Log.d("adapters", adapterNotice.getItemCount() + "");
-                    firstIndex++;
-                    loadingDialog.dismiss();
+
+                        dataListNotice.add(groupNotice);
+                        //Toast.makeText(getApplicationContext(),"값이 없습니다",Toast.LENGTH_LONG).show();
+                    }
+                    else
+                        {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                // 객체로 분해 해 Bean 객체에 삽입
+                                groupNotice = new GroupNotice(
+                                        jsonObject.getString("writer"),
+                                        jsonObject.getString("title"),
+                                        jsonObject.getString("content"),
+                                        jsonObject.getString("picture"),
+                                        jsonObject.getString("created_at")
+                                );
+                                // dataList에 삽입
+                                dataListNotice.add(groupNotice);
+                            }
+                        }
+
+
+                        adapterNotice.notifyDataSetChanged();
+                        Log.d("adapters", adapterNotice.getItemCount() + "");
+                        firstIndex++;
+                        loadingDialog.dismiss();
+
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
             }
         }.execute();
+
+
+
     }
 
     // 일정 리스트 받아오기
@@ -668,20 +702,25 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
                     // JSON  파싱 후
                     JSONArray   jsonArray   = new JSONArray(s);
-                    for (int i = 0 ; i < jsonArray.length() ; i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (jsonArray.length() == 0) {
 
-                        // 데이터 넣기
-                        dataListSchedule.add(new GroupSchedule(
-                                jsonObject.getInt("no"),
-                                jsonObject.getString("title"),
-                                jsonObject.getString("content"),
-                                jsonObject.getString("leader"),
-                                jsonObject.getDouble("mnt_id"),
-                                jsonObject.getString("start_date"),
-                                jsonObject.getString("route"),
-                                getBaseContext()
-                        ));
+                    }
+                    else {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            // 데이터 넣기
+                            dataListSchedule.add(new GroupSchedule(
+                                    jsonObject.getInt("no"),
+                                    jsonObject.getString("title"),
+                                    jsonObject.getString("content"),
+                                    jsonObject.getString("leader"),
+                                    jsonObject.getDouble("mnt_id"),
+                                    jsonObject.getString("start_date"),
+                                    jsonObject.getString("route"),
+                                    getBaseContext()
+                            ));
+                        }
                     }
                     // 데이터 변경 어댑터에 알리기
                     adapterSchedule.notifyDataSetChanged();
@@ -725,6 +764,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+
                 try {
                     // json 파싱
                     JSONArray           jsonArray       = new JSONArray(s);
@@ -778,6 +818,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         }.execute();
+
     }
 
 
