@@ -59,7 +59,7 @@ import kr.ac.yjc.wdj.hikonnect.AfterHikingActivity;
 import kr.ac.yjc.wdj.hikonnect.BackPressClosHandler;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.HikingRecord;
-import kr.ac.yjc.wdj.hikonnect.Locationmemo;
+import kr.ac.yjc.wdj.hikonnect.LocationMemoActivity;
 import kr.ac.yjc.wdj.hikonnect.Othersinfo;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.RecordListActivity;
@@ -890,7 +890,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             startActivity(intent1);
                                         }
                                         else if (marker.getSnippet().equals("locationmemo")) {
-                                            Intent intent1 = new Intent(MapsActivity.this, Locationmemo.class);
+                                            Intent intent1 = new Intent(MapsActivity.this, LocationMemoActivity.class);
                                             rlat = marker.getPosition().latitude;
                                             rlng = marker.getPosition().longitude;
                                             intent1.putExtra("location_no", location_no);

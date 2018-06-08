@@ -1,5 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -21,12 +22,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
@@ -61,12 +71,16 @@ public class MainActivity extends AppCompatActivity
     String                  id;
 
     // 내부
-    private TextView        nowScheduleTitle,
-                            NowScheduleContent; // 현재 산행 진행 중인 그룹 제목, 내용
-    private ImageView       nowScheduleImg;     // 현재 산행 진행중인 그룹 사진
+    private TextView        nowScheduleTitle,   // 현재 산행 진행 중인 그룹 제목
+                            nowscheduleGroupName, // 현재 산행 진행 중인 그룹 내용
+                            nowScheduleLeader,
+                            nowScheduleDate,
+                            nowScheduleDestination;
+    private ImageView       nowScheduleImg;     // 현재 산행 진행 중인 그룹 사진
     private Button          btnStartHiking,     // 등산 시작 버튼
                             btnToGroupMenu,     // 그룹 메뉴 버튼
-                            btnToMyMenu;        // 마이 메뉴 버튼
+                            btnToMyMenu,        // 마이 메뉴 버튼
+                            btnNowSchduleSearch;
 
     // HTTP request
     private OkHttpClient    client;
@@ -76,7 +90,10 @@ public class MainActivity extends AppCompatActivity
 
     // 세션 유지
     private SharedPreferences   pref;
+    // 가장 가까운 날짜의 일정 ID.
+    private String              scheduleNum;
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,18 +102,18 @@ public class MainActivity extends AppCompatActivity
         pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         // UI 초기화
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         session = new SessionManager(getApplicationContext());
@@ -107,11 +124,11 @@ public class MainActivity extends AppCompatActivity
         /*txtView = (TextView) findViewById(R.id.main_textview);
         txtView.setText(id);*/
 
-        txtView = (TextView) navigationView.getHeaderView(0).findViewById(R.id.main_textview);
+        txtView = navigationView.getHeaderView(0).findViewById(R.id.main_textview);
 
         txtView.setText(pref.getString("user_name", ""));
 
-        final CircularImageView imageView = (CircularImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
+        final CircularImageView imageView = navigationView.getHeaderView(0).findViewById(R.id.nav_imageView);
 
         // OKHttpClient 초기화
         client = new OkHttpClient();
@@ -132,9 +149,7 @@ public class MainActivity extends AppCompatActivity
 
                     InputStream is = res.body().byteStream();
 
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
-
-                    return bitmap;
+                    return BitmapFactory.decodeStream(is);
                 } catch (IOException ie) {
                     ie.printStackTrace();
                     return null;
@@ -151,10 +166,15 @@ public class MainActivity extends AppCompatActivity
 
                 } else {
 
-                    BitmapDrawable  drawable    = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
-                    Bitmap          defaultImg  = drawable.getBitmap();
+                    BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_solid_profile_512px);
+                    Bitmap defaultImg = null;
+                    if (drawable != null) {
+                        defaultImg = drawable.getBitmap();
+                    }
 
-                    imageView.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 50, 50, true));
+                    if (defaultImg != null) {
+                        imageView.setImageBitmap(Bitmap.createScaledBitmap(defaultImg, 50, 50, true));
+                    }
 
                 }
             }
@@ -165,8 +185,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+            loadingDialog = null;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (loadingDialog.isShowing()) {
@@ -180,11 +210,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -206,6 +233,8 @@ public class MainActivity extends AppCompatActivity
             editor.clear();
             editor.apply();
 
+            MapsActivityTemp.timer.cancel();
+
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -217,7 +246,7 @@ public class MainActivity extends AppCompatActivity
 
         item.setEnabled(true);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
         return true;
@@ -228,12 +257,16 @@ public class MainActivity extends AppCompatActivity
      */
     private void initInnerPageUI() {
         // 뷰 붙이기
-        nowScheduleImg      = (ImageView)   findViewById(R.id.nowScheduleImg);
-        nowScheduleTitle    = (TextView)    findViewById(R.id.nowScheduleTitle);
-        NowScheduleContent  = (TextView)    findViewById(R.id.nowScheduleContent);
-        btnStartHiking      = (Button)      findViewById(R.id.btnStartHiking);// 로딩 화면 초기화
-        btnToGroupMenu      = (Button)      findViewById(R.id.btnToGroupMenu);
-        btnToMyMenu         = (Button)      findViewById(R.id.btnToMyMenu);
+        nowScheduleImg          = findViewById(R.id.nowScheduleImg);
+        nowScheduleTitle        = findViewById(R.id.nowScheduleTitle);
+        nowscheduleGroupName    = findViewById(R.id.nowScheduleGroupName);
+        nowScheduleLeader       = findViewById(R.id.nowScheduleLeader);
+        nowScheduleDate         = findViewById(R.id.nowScheduleDate);
+        nowScheduleDestination  = findViewById(R.id.nowScheduleDestination);
+        btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
+        btnToGroupMenu          = findViewById(R.id.btnToGroupMenu);
+        btnToMyMenu             = findViewById(R.id.btnToMyMenu);
+        btnNowSchduleSearch     = findViewById(R.id.nowScheduleSearchGroup);
 
         loadingDialog       = new LoadingDialog(this);
 
@@ -246,7 +279,7 @@ public class MainActivity extends AppCompatActivity
 
                 loadingDialog.show();
                 Intent intent = new Intent(getBaseContext(), MapsActivityTemp.class);
-                intent.putExtra("id", pref.getString("user_id", ""));
+                intent.putExtra("schedule_no", scheduleNum);
                 startActivity(intent);
                 finish();
             }
@@ -264,6 +297,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        // 그룹 찾기 누르면 그룹 메뉴로 이동.
+        btnNowSchduleSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnToGroupMenu.setClickable(false);
+                Intent intent = new Intent(getBaseContext(), groups_list_main.class);
+                startActivity(intent);
+                btnToGroupMenu.setClickable(true);
+            }
+        });
+
         // 마이 메뉴 버튼 누르면 마이 메뉴로 이동
         btnToMyMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,12 +319,15 @@ public class MainActivity extends AppCompatActivity
                 btnToMyMenu.setClickable(true);
             }
         });
+
+        getGroupsInfo(pref.getString("user_id", "null"));
     }
 
     /**
      * 현재 유저가 참여하고 있는 그룹 찾기
      * @param userId    유저 아이디
      */
+    @SuppressLint("StaticFieldLeak")
     private void getGroupsInfo(String userId) {
         final String loginId = userId;
 
@@ -289,11 +336,12 @@ public class MainActivity extends AppCompatActivity
             protected String doInBackground(String... params) {
                 try {
                     RequestBody body = new FormBody.Builder()
-                            .add("userid", loginId)
+                            .add("user_id", loginId)
                             .build();
 
                     Request request = new Request.Builder()
-                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/my_group")
+//                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/my_group")
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/getNowSchedule")
                             .post(body)
                             .build();
 
@@ -302,15 +350,60 @@ public class MainActivity extends AppCompatActivity
                     return response.body().string();
                 } catch (IOException ie) {
                     Log.e("IOException", "IOException in MainActivity.getGroupsInfo()\n" + ie);
+                    getGroupsInfo(loginId);
                 }
 
                 return null;
             }
 
+            @SuppressLint("SimpleDateFormat")
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                // TODO 추가하기
+
+                LinearLayout    nowScheduleEmptyLayout  = findViewById(R.id.nowScheduleEmptyLayout);
+                RelativeLayout  nowScheduleLayout       = findViewById(R.id.nowScheduleLayout);
+                RelativeLayout  nowScheduleLoading      = findViewById(R.id.nowScheduleLoading);
+
+                nowScheduleLoading.setVisibility(View.GONE);
+
+                try {
+                    Log.d(MapsActivityTemp.TAG, "loginInfo: " + loginId);
+                    Log.d(MapsActivityTemp.TAG, "onPostExecute: " + s);
+
+                    JSONParser jsonParser = new JSONParser();
+
+                    JSONArray jsonArray = (JSONArray) jsonParser.parse(s);
+
+                    if(jsonArray.isEmpty()) {
+                        // 계획된 일정이 없다는 알림 표시.
+                        nowScheduleEmptyLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        // 가장 가까운 날짜의 일정을 표시함.
+                        Log.d(MapsActivityTemp.TAG, "res: " + jsonArray.get(0));
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(0);
+
+                        scheduleNum = String.valueOf(jsonObject.get("schedule_no"));
+                        String title = (String) jsonObject.get("title");
+                        String groupName = (String) jsonObject.get("group_name");
+                        String leader = (String) jsonObject.get("leader");
+                        String startDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse((String) jsonObject.get("start_date")));
+                        String mntName = (String) jsonObject.get("mnt_name");
+
+                        nowScheduleTitle.setText(title);
+                        nowscheduleGroupName.setText(groupName);
+                        nowScheduleLeader.setText(leader);
+                        nowScheduleDate.setText(startDate);
+                        nowScheduleDestination.setText(mntName);
+
+                        btnStartHiking.setClickable(true);
+                        nowScheduleLayout.setVisibility(View.VISIBLE);
+                    }
+                } catch (ParseException | NullPointerException pse) {
+                    Log.e(MapsActivityTemp.TAG, "onPostExecute: ", pse);
+                } catch (java.text.ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }.execute();
     }

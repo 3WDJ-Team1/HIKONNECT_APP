@@ -1,6 +1,12 @@
 package kr.ac.yjc.wdj.hikonnect.adapters;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,10 +20,17 @@ import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * 멤버 리스트 나열할 어댑터
@@ -50,7 +63,11 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
     @Override
     public void onBindViewHolder(final MemberHolder memberHolder, int i) {
         memberHolder.memberName.setText(dataList.get(i).getNickname());
-        memberHolder.profilePic.setImageBitmap(dataList.get(i).getProfilePic());
+
+        if (dataList.get(i).getProfilePic() == null)
+            initProfilePic(memberHolder.profilePic, dataList.get(i).getUserId(), dataList.get(i).getBaseContext(), i);
+        else
+            memberHolder.profilePic.setImageBitmap(dataList.get(i).getProfilePic());
 
         final int index = i;
         // TODO 생각 좀 해보고...
@@ -95,6 +112,62 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
             });
         }
     }
+
+    /**
+     * 유저 프로필 사진 등록
+     * @param imageView 유저 사진 나올 이미지 뷰
+     * @param id        아이디
+     */
+    private void initProfilePic(final CircularImageView imageView, final String id, final Context baseContext, final int position) {
+        new AsyncTask<Void, Integer, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                try {
+                    HttpUrl httpUrl = HttpUrl
+                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + id + ".jpg")
+                            .newBuilder()
+                            .build();
+
+                    Request req = new Request.Builder().url(httpUrl).build();
+
+                    Response res = new OkHttpClient().newCall(req).execute();
+
+                    InputStream is = res.body().byteStream();
+
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+                    return bitmap;
+                } catch (IOException ie) {
+
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+
+                if (bitmap != null) {
+
+                    Bitmap image = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
+                    imageView.setImageBitmap(image);
+                    dataList.get(position).setProfilePic(image);
+
+                } else {
+
+                    BitmapDrawable drawable    = (BitmapDrawable) ContextCompat.getDrawable(baseContext, R.drawable.circle_solid_profile_512px);
+                    Bitmap          defaultImg  = drawable.getBitmap();
+
+                    Bitmap          image2      = Bitmap.createScaledBitmap(defaultImg, 50, 50, true);
+
+                    imageView.setImageBitmap(image2);
+                    dataList.get(position).setProfilePic(image2);
+                }
+            }
+        }.execute();
+    }
+
 
     @Override
     public int getItemCount() {

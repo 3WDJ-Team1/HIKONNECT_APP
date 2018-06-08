@@ -61,11 +61,11 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
         final HikingMemberListBean bean = dataList.get(i);
 
         viewHolder.memberName.setText(dataList.get(i).getNickname());
+        viewHolder.memberRank.setText(String.valueOf(dataList.get(i).getRank()));
         viewHolder.cardWrapper.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Log.d("HIKONNECT", "recycler view Clicked!!");
                 Intent intent = new Intent();
                 intent.putExtra("user_number", bean.getMemberNo());
                 intent.putExtra("user_lat", bean.getLatitude());
@@ -96,12 +96,14 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
 
     class HikingMemberHolder extends RecyclerView.ViewHolder {
         private TextView            memberName;         // 멤버 이름
+        private TextView            memberRank;         // 맴버 등수
         private RelativeLayout      cardWrapper;
         private CircularImageView   userProfileImg;
 
         public HikingMemberHolder(View itemView) {
             super(itemView);
             memberName      = (TextView)            itemView.findViewById(R.id.memberName);
+            memberRank      = (TextView)            itemView.findViewById(R.id.memberRank);
             userProfileImg  = (CircularImageView)   itemView.findViewById(R.id.profilePic);
             cardWrapper     = (RelativeLayout)      itemView.findViewById(R.id.cardWrapper);
         }

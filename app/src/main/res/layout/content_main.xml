@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     @author Sungeun Kang (kasueu0814@gmail.com)
     @since  2018-05-14
 -->
@@ -10,8 +9,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.MainActivity"
-    tools:showIn="@layout/app_bar_main"
-    >
+    tools:showIn="@layout/app_bar_main">
 
     <ProgressBar
         android:id="@+id/startHikingProgressBar"
@@ -20,15 +18,14 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:indeterminate="false"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/mainCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_below="@+id/startHikingProgressBar">
+        android:layout_below="@+id/startHikingProgressBar"
+        android:layout_margin="8dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -38,46 +35,43 @@
                 android:id="@+id/nowScheduleImg"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                app:srcCompat="@drawable/splash"
-                android:scaleType="fitXY"
-                android:layout_marginEnd="16dp"
+                android:layout_alignParentEnd="true"
                 android:layout_marginBottom="8dp"
-                android:layout_alignParentEnd="true"/>
+                android:layout_marginEnd="16dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/splash" />
 
             <TextView
                 android:id="@+id/nowScheduleTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="nowScheduleTitle!"
                 android:layout_alignParentStart="true"
                 android:layout_margin="16dp"
+                android:text="nowScheduleTitle!"
                 android:textColor="@color/black"
                 android:textSize="24dp"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/nowScheduleContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="nowScheduleContent..."
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="16dp"
-                android:textColor="@color/grey_600"
-                android:textSize="16dp"
                 android:layout_below="@+id/nowScheduleTitle"
-                />
+                android:layout_marginStart="16dp"
+                android:text="nowScheduleContent..."
+                android:textColor="@color/grey_600"
+                android:textSize="16dp" />
 
             <Button
                 android:id="@+id/btnStartHiking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:layout_below="@+id/nowScheduleImg"
+                android:backgroundTint="@color/red_accent_400"
                 android:text="등산하기"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/red_accent_400"
-                android:layout_below="@+id/nowScheduleImg"
-                />
+                android:textSize="20dp" />
 
 
         </RelativeLayout>
@@ -87,39 +81,34 @@
         android:id="@+id/tvNowGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="참가 중인 그룹"
         android:layout_below="@+id/mainCard"
-        />
+        android:layout_marginStart="8dp"
+        android:text="참가 중인 그룹" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvNowJoined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_200"
         android:layout_below="@+id/tvNowGroup"
-        tools:listitem="@layout/main_list_item"
-        >
-    </android.support.v7.widget.RecyclerView>
+        android:background="@color/grey_200"
+        tools:listitem="@layout/main_list_item"></android.support.v7.widget.RecyclerView>
 
     <TextView
         android:id="@+id/tvGroups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:text="모집 중인 그룹"
         android:layout_below="@+id/rvNowJoined"
-        />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="모집 중인 그룹" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvNowRecruit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:layout_below="@+id/tvGroups"
+        android:layout_marginTop="4dp"
         android:background="@color/grey_200"
-        tools:listitem="@layout/main_list_item">
-    </android.support.v7.widget.RecyclerView>
+        tools:listitem="@layout/main_list_item"></android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>
