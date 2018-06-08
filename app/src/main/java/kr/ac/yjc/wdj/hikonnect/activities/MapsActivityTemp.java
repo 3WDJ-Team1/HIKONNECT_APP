@@ -776,8 +776,10 @@ todo [2] FID 입력되는 순서로 출발지 부터 등산 올바르게 진행�
                             .width(10));
                 }
 
-                gMap.moveCamera(CameraUpdateFactory.newLatLng(allHikingRoute.get(0)));
-                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(allHikingRoute.get(0), 19));
+
+                LatLng latLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
+                gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 19));
             }
         });
     }
