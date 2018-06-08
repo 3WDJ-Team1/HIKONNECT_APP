@@ -124,11 +124,11 @@ public class MapsActivityTemp extends FragmentActivity implements
     private OkHttpClient                okHttpClient = new OkHttpClient();
 
     // 위치 메모
-    String mImageCaptureName;           //이미지 이름
+    private String                      mImageCaptureName;           //이미지 이름
 
     // 등산 데이터
     private ArrayList<HikingField>      hikingFields        = new ArrayList<>();
-    private int myHikingState = 0;
+    private int                         myHikingState = 0;
     private int                         currentFID          = 0;
     private int                         currentPointInFID   = 0;
     private double                      wholeDistance       = 0.0;
@@ -168,23 +168,23 @@ public class MapsActivityTemp extends FragmentActivity implements
     // 자기 위치 갱신 버튼.
     private FloatingActionButton    fabUpdateMyLocation;    // 위치 갱신 버튼.
 
-    // 그룹 맴버 리스트 버튼
+    // 그룹 맴버 리스트 버튼.
     private FloatingActionButton    fabShowMemberList;      // 그룹 맴버 리스트 버튼.
 
-    // 무전 UI
+    // 무전 UI.
     private LinearLayout    drawerLayout;       // 무전 버튼을 넣어둘 레이아웃
     private Button          btnSendRadio;       // 무전 시작 버튼
 //    private ImageButton     showRecordList;     // 음성 녹음 리스트.
 
-    // 무전 기능 변수
+    // 무전 기능 변수.
     private WalkieTalkie    walkieTalkie;   // 무전 객체
     private boolean         isSendingNow;   // 현재 무전을 전송중인지
 
-    // 등산 상태 변경 버튼
+    // 등산 상태 변경 버튼.
     private Button          btnChangeHikingState;   // 등산 시작, 등산 끝 버튼.
 
     // 상태 저장 변수.
-    private int         hikingProgress          = 0;    // 현재 등산 상태 (0 = 등산 전, 1 = 등산 중, 2 = 등산 끝)
+    private int             hikingProgress          = 0;    // 현재 등산 상태 (0 = 등산 전, 1 = 등산 중, 2 = 등산 끝)
 
     private SharedPreferences   pref;                   // 유저 로그인 데이터를 참조 변수.
 
@@ -202,7 +202,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         private Bitmap bitmap;
 
-        public MapItemRenderer() {
+        MapItemRenderer() {
             super(getApplicationContext(), gMap, myClusterManager);
 
             @SuppressLint("InflateParams")
@@ -517,7 +517,6 @@ public class MapsActivityTemp extends FragmentActivity implements
         }).start();
     }
 
-// todo [1] MainActivity에서 표시되는 일정의 등산경로 받아오는 구문 작성하기.
     private void requestHikingRoute() throws NullPointerException {
         Intent mainActivityIntent = getIntent();
         final String scheduleNum = mainActivityIntent.getStringExtra("schedule_no");
@@ -623,70 +622,6 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                     hikingFields.add(hikingField);
                                 }
-
-                                /*for (Object idx : routeSet) {
-                                    JSONObject attributes = (JSONObject) ((JSONObject) idx).get("attributes");
-                                    JSONArray paths = (JSONArray) ((JSONArray) ((JSONObject) ((JSONObject) idx).get("geometry")).get("paths")).get(0);
-
-                                    int fid = Integer.valueOf(attributes.get("FID").toString());
-                                    double fieldLength = Double.valueOf(attributes.get("PMNTN_LT").toString());
-
-                                    wholeDistance += fieldLength;
-
-                                    HikingField hikingField = new HikingField(fid, fieldLength);
-                                    for (Object _idx : paths) {
-                                        double lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
-                                        double lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
-
-                                        hikingField.addLatLng(new LatLng(lat, lng));
-
-                                        if (allHikingRoute.size() > 0) {
-                                            if (allHikingRoute.get(allHikingRoute.size() - 1).equals(new LatLng(lat, lng))) {
-                                                continue;
-                                            }
-                                        }
-                                        allHikingRoute.add(new LatLng(lat, lng));
-                                    }
-todo [2] FID 입력되는 순서로 출발지 부터 등산 올바르게 진행되게 수정하기.
-                                    // 하드 코딩 됨. 수정 할 것.===========================
-                                    if (fid == 2 || fid == 0) {
-                                        for (int _idx = paths.size() - 1; _idx >= 0; _idx--) {
-                                            Object __idx = paths.get(_idx);
-
-                                            double lat = Double.valueOf(((JSONObject) __idx).get("lat").toString());
-                                            double lng = Double.valueOf(((JSONObject) __idx).get("lng").toString());
-
-                                            hikingField.addLatLng(new LatLng(lat, lng));
-
-                                            if (allHikingRoute.size() > 0) {
-                                                if (allHikingRoute.get(allHikingRoute.size() - 1).equals(new LatLng(lat, lng))) {
-                                                    continue;
-                                                }
-                                            }
-                                            allHikingRoute.add(new LatLng(lat, lng));
-                                        }
-                                    } else {
-                                        for (Object _idx : paths) {
-                                            double lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
-                                            double lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
-
-                                            hikingField.addLatLng(new LatLng(lat, lng));
-
-                                            if (allHikingRoute.size() > 0) {
-                                                if (allHikingRoute.get(allHikingRoute.size() - 1).equals(new LatLng(lat, lng))) {
-                                                    continue;
-                                                }
-                                            }
-                                            allHikingRoute.add(new LatLng(lat, lng));
-                                        }
-                                    }
-                                    // 하드 코딩 됨. 수정 할 것.===========================*//*
-
-                                    hikingFields.add(hikingField);
-                                    for (HikingField field : hikingFields) {
-                                        Log.d(TAG, "fid: " + field.getFid());
-                                    }
-                                }*/
 
                                 paintHikingRoute();
                             } catch (NullPointerException npe) {
