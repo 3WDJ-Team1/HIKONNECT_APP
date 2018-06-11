@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -11,6 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />
+
+    <FrameLayout
+        android:id="@+id/map_touch_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/userDataBox"
+        android:layout_below="@+id/user_data_box_wrapper"
         android:alpha="0.7"
         android:src="@drawable/ic_people_black_36dp"
         fab:fab_colorNormal="@color/white"
@@ -114,6 +120,7 @@
 
     <!--나의 등산 정보-->
     <LinearLayout
+        android:id="@+id/user_data_box_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

@@ -30,9 +30,11 @@ import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -41,7 +43,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -90,6 +91,7 @@ import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.adapters.MyInfoWindowAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
+import kr.ac.yjc.wdj.hikonnect.fragments.StaticMapFragment;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -107,7 +109,7 @@ import kr.ac.yjc.wdj.hikonnect.apis.walkietalkie.*;
 public class MapsActivityTemp extends FragmentActivity implements
         OnMapReadyCallback,
         OnMapClickListener,
-        LocationListener {
+        LocationListener{
 
     public static final String          TAG                 = "HIKONNECT";
     public static final int             REQUEST_INTERVAL_TIME = 2000;
@@ -115,6 +117,13 @@ public class MapsActivityTemp extends FragmentActivity implements
     private final int                   GALLERY_CODE        = 1110;
     // private final int                   CAMERA_CODE         = 1111;
     private final int                   REQUEST_TAKE_PHOTO  = 1112;
+
+
+    private final int                   LOCATION_BTN_DISABLED = 0;
+    private final int                   LOCATION_BTN_MY_LOCATION = 1;
+    private final int                   LOCATION_BTN_DIRECTION = 2;
+
+    private final int                   MAP_DEFAULT_ZOOM_LEVEL = 18;
 
     private int                         myMemberNo;
 
@@ -180,7 +189,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     // 자기 위치 갱신 버튼.
     private FloatingActionButton    fabUpdateMyLocation;    // 위치 갱신 버튼.
-    private boolean                 isMyLocationBtnPressed;
+    private int                     myLocationBtnState;
 
     // 그룹 맴버 리스트 버튼.
     private FloatingActionButton    fabShowMemberList;      // 그룹 맴버 리스트 버튼.
@@ -434,22 +443,6 @@ public class MapsActivityTemp extends FragmentActivity implements
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
-                    LatLng latLng;
-
-                    if (myCurrentLocation == null) {
-                        latLng = new LatLng(133,33);
-                    }
-                    else
-                        latLng = new LatLng(myCurrentLocation.getLatitude(),myCurrentLocation.getLongitude());
-                    short bear = locbearing(direction_set_lat1,direction_set_lng1,direction_set_lat2,direction_set_lng2);
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(latLng)
-                            .bearing(bear)
-                            .zoom(19)
-                            .build();
-                    gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
                     try {
                         switch (myHikingState) {
                             case 0:
@@ -474,6 +467,20 @@ public class MapsActivityTemp extends FragmentActivity implements
                         if (myHikingState != 0) {
                             tvDistance.setText(String.valueOf(hikedDistance));
                         }
+
+                        if (myLocationBtnState == LOCATION_BTN_DIRECTION) {
+                            LatLng latLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
+
+                            short bear = locbearing(direction_set_lat1, direction_set_lng1, direction_set_lat2, direction_set_lng2);
+
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(latLng)
+                                    .zoom(gMap.getCameraPosition().zoom)    // 현재 사용자가 보고 있는 지도의 확대 비율
+                                    .bearing(bear)
+                                    .build();
+
+                            gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        }
                     } catch (Exception e) {
                         Log.e(TAG, "mainTimerTask: ", e);
                     }
@@ -497,10 +504,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                 marker.hideInfoWindow();
             }
         }
-
-        // 내 위치 추적 비활성화.
-        isMyLocationBtnPressed = false;
-        fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg));
     }
 
     private void requestMyHikingInfo() {
@@ -912,7 +915,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
             LatLng latLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
             gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, MAP_DEFAULT_ZOOM_LEVEL));
 
         } catch (NullPointerException npe) {
             Log.e(TAG, "moveToCurrentPosition: ", npe);
@@ -1170,7 +1173,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                 loc2.setLatitude(userIn.get(idx + 1).latitude);
                 loc2.setLongitude(userIn.get(idx + 1).longitude);
 
-
                 direction_set_lat1 = latLng.latitude;
                 direction_set_lng1 = latLng.longitude;
 
@@ -1259,6 +1261,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         return (short)true_bearing;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeUI() {
         // [1] Layout 초기화.
         noticeBar                   = findViewById(R.id.mapNoticeBar);
@@ -1435,15 +1438,49 @@ public class MapsActivityTemp extends FragmentActivity implements
         fabUpdateMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isMyLocationBtnPressed = !isMyLocationBtnPressed;
-                if (isMyLocationBtnPressed) {
-                    if (myCurrentLocation != null) {
+
+                Drawable drawable;
+
+                switch (myLocationBtnState) {
+                    case LOCATION_BTN_DIRECTION:
+                        // 버튼 상태 변경.
+                        myLocationBtnState = LOCATION_BTN_DISABLED;
+                        // 버튼 이미지 변경
+                        drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg);
+                        fabUpdateMyLocation.setImageDrawable(drawable);
+                        // 지도 방향 초기화
+                        CameraPosition zeroBearingPosition = CameraPosition.builder()
+                                .target(gMap.getCameraPosition().target)
+                                .bearing(0)
+                                .zoom(gMap.getCameraPosition().zoom)
+                                .build();
+
+                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(zeroBearingPosition));
+                        break;
+                    case LOCATION_BTN_DISABLED:
+                        // 버튼 상태 변경.
+                        myLocationBtnState = LOCATION_BTN_MY_LOCATION;
+                        // 버튼 이미지 변경
+                        drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_pressed_svg);
+                        fabUpdateMyLocation.setImageDrawable(drawable);
+                        // 현재 위치
                         LatLng myLocation = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
-                        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
-                    }
-                    fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_pressed_svg));
-                } else {
-                    fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg));
+                        // 현재 위치 지도 카메라 세팅
+                        CameraPosition curPosition = CameraPosition.builder()
+                                .target(myLocation)
+                                .bearing(0)
+                                .zoom(MAP_DEFAULT_ZOOM_LEVEL)
+                                .build();
+                        // 내 위치로 화면을 이동.
+                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(curPosition));
+                        break;
+                    case LOCATION_BTN_MY_LOCATION:
+                        // 버튼 상태 변경.
+                        myLocationBtnState = LOCATION_BTN_DIRECTION;
+                        // 버튼 이미지 변경
+                        drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_direction_svg);
+                        fabUpdateMyLocation.setImageDrawable(drawable);
+                        break;
                 }
             }
         }); // fabUpdateMyLocation.setOnClickListener END
@@ -1523,6 +1560,30 @@ public class MapsActivityTemp extends FragmentActivity implements
             }
         }); // btnSendRadio.setOnClickListener END*/
 
+        // 지도 터치 이벤트 감지 레이어
+        FrameLayout mapTouchLayer = findViewById(R.id.map_touch_layer);
+        // 지도 터치 이벤트 리스너 등록
+        mapTouchLayer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:   // 터치 시작
+                        // 내 위치 버튼 비활성화.
+                        myLocationBtnState = LOCATION_BTN_DISABLED;
+                        fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg));
+                        // 지도 방향 초기화
+                        CameraPosition cameraPosition = CameraPosition.builder()
+                                .target(gMap.getCameraPosition().target)
+                                .bearing(0)
+                                .zoom(gMap.getCameraPosition().zoom)
+                                .build();
+
+                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        break;
+                }
+                return false;
+            }
+        });
     } // initializeUI END
 
     private void sendPicture(Uri imgUri) {
@@ -1611,7 +1672,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                             }
                         }
                     }
-                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posToMove, 18));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posToMove, MAP_DEFAULT_ZOOM_LEVEL));
                     break;
             }
         } else if (resultCode == Othersinfo.SHOW_ALL) {
@@ -1657,27 +1718,50 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         myCurrentLocation = location;
 
+        // userDataBox 내부 UI 변경
+        // 현재 속력
         double userSpeed = Math.round(location.getSpeed() * 36d) / 10d;
         tvUserSpeed.setText(String.valueOf(userSpeed));
 
-        double arriveWhen = (wholeDistance - hikedDistance) / userSpeed;
+        // 위치 오차 값이 10 미만일 때
+        if (location.getAccuracy() < 10) {
+            // 도착 시간 계산
+            // 계산 식: (전체 거리[km] - 걸어 온 거리[km]) / 현재 속도(km/h) * 60
+            double arriveWhen = Math.abs(wholeDistance - hikedDistance) / userSpeed * 60;
+            // 계산 된 값이 유효하지 않을 때
+            if (arriveWhen == Double.POSITIVE_INFINITY || arriveWhen == Double.NEGATIVE_INFINITY) {
+                // 도착 시간을 0으로 표시
+                tvArriveWhen.setText("00");
+            } else {
+                // 도착 시간을 분 단위로 표시
+                int arriveWhenFormatted = (int) arriveWhen;
+                tvArriveWhen.setText(String.valueOf(arriveWhenFormatted));
+            }
+        }
 
-        // 도착 시간 계산.
-        if (arriveWhen == Double.POSITIVE_INFINITY || arriveWhen == Double.NEGATIVE_INFINITY) {
-            tvArriveWhen.setText("0.0");
-        } else {
-            int arriveWhenFormatted = (int) arriveWhen * 100;
-            tvArriveWhen.setText(String.valueOf(arriveWhenFormatted));
+        // 지도를 띄운 후 처음 위치를 얻었을 때.
+        if (myCurrentLocation == null && gMap != null) {
+            // 현재 위치로 지도를 이동
+            LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, MAP_DEFAULT_ZOOM_LEVEL));
         }
 
         // 내 마커 움직이기.
-        myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
+        if (myMarker != null)
+            myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
 
-        // 내 위치 버튼이 눌러져 있으면.
-        if (isMyLocationBtnPressed) {
-            LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        // 내 위치 보기 버튼이 활성화 되어 있으면
+        if (myLocationBtnState == LOCATION_BTN_MY_LOCATION) {
+            // 현재 위치
+            LatLng myLocation = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
+            // 현재 위치 지도 카메라 세팅
+            CameraPosition cameraPosition = CameraPosition.builder()
+                    .target(myLocation)
+                    .bearing(0)
+                    .zoom(MAP_DEFAULT_ZOOM_LEVEL)
+                    .build();
             // 내 위치로 화면을 이동.
-            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+            gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     } // onLocationChanged END
 
