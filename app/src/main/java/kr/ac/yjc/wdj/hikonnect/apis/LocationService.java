@@ -17,8 +17,6 @@ import android.util.Log;
  */
 public class LocationService {
 
-    private final String TAG = "LocationService";
-
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 1;
 
     private static final long MIN_TIME_BW_UPDATES = 1000;

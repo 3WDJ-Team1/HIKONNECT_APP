@@ -11,8 +11,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +38,6 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
@@ -47,6 +48,7 @@ import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserJoinedGroup;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
+import kr.ac.yjc.wdj.hikonnect.adapters.MainActivityScheduleAdapter;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -62,6 +64,9 @@ import okhttp3.Response;
  */
 public class MainActivity extends AppCompatActivity
             implements NavigationView.OnNavigationItemSelectedListener{
+    // 보여지는 Fragment
+    private Fragment curFragment = new Fragment();
+
     ActionBarDrawerToggle   toggle;
     NavigationView          navigationView;
     SessionManager          session;
@@ -71,6 +76,10 @@ public class MainActivity extends AppCompatActivity
     String                  id;
 
     // 내부
+    private LinearLayout    nowScheduleEmptyLayout;
+    private RelativeLayout  nowScheduleLayout;
+    private RelativeLayout  nowScheduleLoading;
+
     private TextView        nowScheduleTitle,   // 현재 산행 진행 중인 그룹 제목
                             nowscheduleGroupName, // 현재 산행 진행 중인 그룹 내용
                             nowScheduleLeader,
@@ -180,6 +189,9 @@ public class MainActivity extends AppCompatActivity
             }
         }.execute();
 
+        // View Pager 초기화
+//        initViewPager();
+
         // 내부 페이지 UI 초기화
         initInnerPageUI();
     }
@@ -256,6 +268,11 @@ public class MainActivity extends AppCompatActivity
      * 내부 메인페이지 UI 초기화
      */
     private void initInnerPageUI() {
+
+        nowScheduleEmptyLayout  = findViewById(R.id.nowScheduleEmptyLayout);
+        nowScheduleLayout       = findViewById(R.id.nowScheduleLayout);
+        nowScheduleLoading      = findViewById(R.id.nowScheduleLoading);
+
         // 뷰 붙이기
         nowScheduleImg          = findViewById(R.id.nowScheduleImg);
         nowScheduleTitle        = findViewById(R.id.nowScheduleTitle);
@@ -296,14 +313,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        // 그룹 찾기 누르면 그룹 메뉴로 이동.
+        // 일정 조회 누르면 다시 일정 조회.
         btnNowSchduleSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnToGroupMenu.setClickable(false);
-                Intent intent = new Intent(getBaseContext(), groups_list_main.class);
-                startActivity(intent);
-                btnToGroupMenu.setClickable(true);
+                getGroupsInfo(pref.getString("user_id", "null"));
             }
         });
 
@@ -331,6 +345,15 @@ public class MainActivity extends AppCompatActivity
 
         new AsyncTask<String, Integer, String>() {
             @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                nowScheduleLoading.setVisibility(View.VISIBLE);
+                nowScheduleLayout.setVisibility(View.GONE);
+                nowScheduleEmptyLayout.setVisibility(View.GONE);
+            }
+
+            @Override
             protected String doInBackground(String... params) {
                 try {
                     RequestBody body = new FormBody.Builder()
@@ -338,7 +361,6 @@ public class MainActivity extends AppCompatActivity
                             .build();
 
                     Request request = new Request.Builder()
-//                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/my_group")
                             .url(Environments.LARAVEL_HIKONNECT_IP + "/api/getNowSchedule")
                             .post(body)
                             .build();
@@ -348,7 +370,6 @@ public class MainActivity extends AppCompatActivity
                     return response.body().string();
                 } catch (IOException ie) {
                     Log.e("IOException", "IOException in MainActivity.getGroupsInfo()\n" + ie);
-                    getGroupsInfo(loginId);
                 }
 
                 return null;
@@ -359,15 +380,9 @@ public class MainActivity extends AppCompatActivity
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
 
-                LinearLayout    nowScheduleEmptyLayout  = findViewById(R.id.nowScheduleEmptyLayout);
-                RelativeLayout  nowScheduleLayout       = findViewById(R.id.nowScheduleLayout);
-                RelativeLayout  nowScheduleLoading      = findViewById(R.id.nowScheduleLoading);
-
                 nowScheduleLoading.setVisibility(View.GONE);
 
                 try {
-                    Log.d(MapsActivityTemp.TAG, "loginInfo: " + loginId);
-                    Log.d(MapsActivityTemp.TAG, "onPostExecute: " + s);
 
                     JSONParser jsonParser = new JSONParser();
 
@@ -378,7 +393,7 @@ public class MainActivity extends AppCompatActivity
                         nowScheduleEmptyLayout.setVisibility(View.VISIBLE);
                     } else {
                         // 가장 가까운 날짜의 일정을 표시함.
-                        Log.d(MapsActivityTemp.TAG, "res: " + jsonArray.get(0));
+                        Log.d(Environments.APP_TAG, "res: " + jsonArray.get(0));
                         JSONObject jsonObject = (JSONObject) jsonArray.get(0);
 
                         scheduleNum = String.valueOf(jsonObject.get("schedule_no"));
@@ -398,12 +413,18 @@ public class MainActivity extends AppCompatActivity
                         nowScheduleLayout.setVisibility(View.VISIBLE);
                     }
                 } catch (ParseException | NullPointerException pse) {
-                    Log.e(MapsActivityTemp.TAG, "onPostExecute: ", pse);
+                    Log.e(Environments.APP_TAG, "onPostExecute: ", pse);
+                    nowScheduleEmptyLayout.setVisibility(View.VISIBLE);
                 } catch (java.text.ParseException e) {
                     e.printStackTrace();
                 }
             }
         }.execute();
     }
+
+    private void initViewPager() {
+        ViewPager viewPager = findViewById(R.id.nowScheduleViewPager);
+        viewPager.setAdapter(new MainActivityScheduleAdapter(getSupportFragmentManager(), pref));
+    } // initViewPager END
 }
 

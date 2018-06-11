@@ -1,6 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
 

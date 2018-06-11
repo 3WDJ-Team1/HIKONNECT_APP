@@ -168,7 +168,6 @@ public class AfterHikingActivity extends AppCompatActivity {
         //
         tvRemainMembers.setText(String.valueOf(remainMembers));
 
-
         // 내용 초기화
         images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_alarm_24px));
         menuTitles.add("총 등산 시간");

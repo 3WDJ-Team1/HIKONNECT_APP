@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,10 +24,12 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -138,7 +142,10 @@ public class MapsActivityTemp extends FragmentActivity implements
     private double                      direction_set_lat2                 = 0.0;
     private double                      direction_set_lng2                 = 0.0;
 
-    private ArrayList<LatLng>           allHikingRoute = new ArrayList<>();
+    private ArrayList<LatLng>   toPaintRouteSet = new ArrayList<>();
+    private JSONArray           scheduledFIDSet;
+    private long                mntID;
+
     @SuppressLint("UseSparseArrays")
     private HashMap<Integer, MapItem>   mapItems = new HashMap<>();
     private ClusterManager<MapItem>     myClusterManager;
@@ -149,7 +156,8 @@ public class MapsActivityTemp extends FragmentActivity implements
     // 현재 상태 표시
     // 위치 비활성화 알림 바
     private RelativeLayout      noticeBar;
-    private TextView            mapNoticeBarText;
+    private TextView            mapNoticeBarMainText;
+    private TextView            mapNoticeBarSubText;
 
     private CardView            userDataBox;            // 자신의 현재 정보를 보여줄 CardView.
     private TextView            tvUserSpeed;            // 현재 속도 TextView (값 -> km/h 기준).
@@ -172,6 +180,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     // 자기 위치 갱신 버튼.
     private FloatingActionButton    fabUpdateMyLocation;    // 위치 갱신 버튼.
+    private boolean                 isMyLocationBtnPressed;
 
     // 그룹 맴버 리스트 버튼.
     private FloatingActionButton    fabShowMemberList;      // 그룹 맴버 리스트 버튼.
@@ -462,10 +471,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 break;
                         }
 
-                        if (myCurrentLocation != null) {
-                            myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
-                        }
-
                         if (myHikingState != 0) {
                             tvDistance.setText(String.valueOf(hikedDistance));
                         }
@@ -492,6 +497,10 @@ public class MapsActivityTemp extends FragmentActivity implements
                 marker.hideInfoWindow();
             }
         }
+
+        // 내 위치 추적 비활성화.
+        isMyLocationBtnPressed = false;
+        fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg));
     }
 
     private void requestMyHikingInfo() {
@@ -549,7 +558,6 @@ public class MapsActivityTemp extends FragmentActivity implements
         final String scheduleNum = mainActivityIntent.getStringExtra("schedule_no");
 
         HttpUrl reqUrl = HttpUrl
-                // .parse(Environments.NODE_HIKONNECT_IP + "/dummy/school")
                 .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getNowScheduleDetail")
                 .newBuilder()
                 .build();
@@ -567,13 +575,13 @@ public class MapsActivityTemp extends FragmentActivity implements
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "Http updateHikingInfo: ", e);
-                setNoticeBar(View.VISIBLE, "연결 상태 불량.\n네트워크 상태를 확인해주세요.");
+                setNoticeBar(View.VISIBLE, "연결 상태 불량.", "네트워크 상태를 확인해주세요.");
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (noticeBar.getVisibility() == View.VISIBLE) {
-                    setNoticeBar(View.GONE, "");
+                    setNoticeBar(View.GONE, null, null);
                 }
                 String result = response.body().string();
 
@@ -583,11 +591,15 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                     JSONObject jsonObject = (JSONObject) ((JSONArray) jsonParser.parse(result)).get(0);
 
-                    final JSONArray scheduleRoutes    = (JSONArray) jsonParser.parse((String) jsonObject.get("route"));
-                    final long mntName        = (Long) jsonObject.get("mnt_id");
+                    // 그룹 리더가 계획한 FID 리스트.
+                    // Ex) [32, 10, 23, ...]
+                    scheduledFIDSet      = (JSONArray) jsonParser.parse((String) jsonObject.get("route"));
+                    // 그룹 리더가 계획한 산 이름.
+                    // Ex) 소백산.
+                    mntID                  = (Long) jsonObject.get("mnt_id");
 
                     HttpUrl reqUrl = HttpUrl
-                            .parse(Environments.NODE_HIKONNECT_IP + "/paths/" + mntName)
+                            .parse(Environments.NODE_HIKONNECT_IP + "/paths/" + mntID)
                             .newBuilder()
                             .build();
 
@@ -599,14 +611,11 @@ public class MapsActivityTemp extends FragmentActivity implements
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
                             Log.e(TAG, "Http updateHikingInfo: ", e);
-                            setNoticeBar(View.VISIBLE, "연결 상태 불량.\n네트워크 상태를 확인해주세요.");
+                            setNoticeBar(View.VISIBLE, "연결 상태 불량.", "네트워크 상태를 확인해주세요.");
                         }
 
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            if (noticeBar.getVisibility() == View.VISIBLE) {
-                                setNoticeBar(View.GONE, "");
-                            }
                             try {
                                 JSONParser parser = new JSONParser();
                                 String serverRes = response.body().string();
@@ -614,40 +623,135 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 JSONArray routeSet = (JSONArray) parser.parse(serverRes);
                                 wholeDistance = 0.0;
 
-                                for (Object scheduleRoute : scheduleRoutes) {
-                                    Object route = (JSONObject) routeSet.get(Integer.valueOf(scheduleRoute.toString()));
+                                boolean isCrntFIDForward = true;
+                                boolean isNextFIDForward = true;
 
-                                    JSONObject attributes = (JSONObject) ((JSONObject) route).get("attributes");
-                                    JSONArray paths = (JSONArray) ((JSONArray) ((JSONObject) ((JSONObject) route).get("geometry")).get("paths")).get(0);
+                                // 등산 경로 정방향, 역방향 판별 알고리즘.
+                                // [1] FID1과 FID2를 가져온다.
+                                // [2] FID1의 first와 last를 가져온다.
+                                // [3] FID2의 first와 last를 가져온다.
+                                // [4] 총 경우의 수는 4가지
+                                // [4-1] f1-first = f2-first.     => FID1는 역방향. FID2는 정방향.
+                                // [4-2] f1-last  = f2-first.     => FID1는 정방향. FID2는 정방향.
+                                // [4-3] f1-first = f2-last.      => FID1는 역방향. FID2는 역방향.
+                                // [4-4] f1-last  = f2-last.      => FID1는 정방향. FID2는 역방향.
+                                for (Object scheduleRoute : scheduledFIDSet) {
+                                    int locatedFID = scheduledFIDSet.indexOf(scheduleRoute);
 
-                                    int fid = Integer.valueOf(attributes.get("FID").toString());
-                                    double fieldLength = Double.valueOf(attributes.get("PMNTN_LT").toString());
+                                    JSONObject routes = (JSONObject) routeSet.get(Integer.valueOf(scheduleRoute.toString()));
+                                    JSONObject attributes = (JSONObject) routes.get("attributes");
+                                    JSONArray paths = (JSONArray) ((JSONArray) ((JSONObject) routes.get("geometry")).get("paths")).get(0);
+
+                                    int fid             = Integer.valueOf(attributes.get("FID").toString());
+                                    double fieldLength  = Double.valueOf(attributes.get("PMNTN_LT").toString());
 
                                     wholeDistance += fieldLength;
 
                                     HikingField hikingField = new HikingField(fid, fieldLength);
 
-                                    if (scheduleRoutes.indexOf(scheduleNum) == 0) {
+                                    // 일정의 마지막 Field(경로)이면.
+                                    if (locatedFID >= scheduledFIDSet.size() - 1) {
+                                        // 결과가 정방향이면.
+                                        if (isNextFIDForward) {
+                                            // 현재 FID를 정방향으로 입력.
+                                            for (Object _idx : paths) {
+                                                double _lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
+                                                double _lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
 
-                                    } else if (scheduleRoutes.indexOf(scheduleNum) == scheduleNum.length() - 1) {
+                                                hikingField.addLatLng(new LatLng(_lat, _lng));
 
-                                    }
+                                                if (toPaintRouteSet.size() > 0) {
+                                                    if (toPaintRouteSet.get(toPaintRouteSet.size() - 1).equals(new LatLng(_lat, _lng))) {
+                                                        continue;
+                                                    }
+                                                }
+                                                toPaintRouteSet.add(new LatLng(_lat, _lng));
+                                            }
+                                        } else {
+                                            // 현재 FID를 역방향으로 입력.
+                                            for (int _i = paths.size() - 1; _i >= 0; _i--) {
+                                                Object _idx = paths.get(_i);
 
-                                    for (Object _idx : paths) {
-                                        double lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
-                                        double lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
+                                                double _lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
+                                                double _lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
 
-                                        hikingField.addLatLng(new LatLng(lat, lng));
+                                                hikingField.addLatLng(new LatLng(_lat, _lng));
 
-                                        if (allHikingRoute.size() > 0) {
-                                            if (allHikingRoute.get(allHikingRoute.size() - 1).equals(new LatLng(lat, lng))) {
-                                                continue;
+                                                if (toPaintRouteSet.size() > 0) {
+                                                    if (toPaintRouteSet.get(toPaintRouteSet.size() - 1).equals(new LatLng(_lat, _lng))) {
+                                                        continue;
+                                                    }
+                                                }
+                                                toPaintRouteSet.add(new LatLng(_lat, _lng));
                                             }
                                         }
-                                        allHikingRoute.add(new LatLng(lat, lng));
-                                    }
+                                    } else {
+                                        int nextFID             = Integer.valueOf(scheduledFIDSet.get(locatedFID + 1).toString());
+                                        JSONObject nextRoute    = (JSONObject) routeSet.get(nextFID);
+                                        JSONArray nextPaths     = (JSONArray) ((JSONArray) ((JSONObject) nextRoute.get("geometry")).get("paths")).get(0);
 
-                                    hikingFields.add(hikingField);
+                                        if (paths.get(0).equals(nextPaths.get(0))) {
+                                            // 현재 FID의 처음과 다음 FID의 처음이 같을 때.
+                                            // 현재 FID는 역방향.
+                                            isCrntFIDForward = false;
+                                            // 다음 FID는 정방향.
+                                            isNextFIDForward = true;
+                                        } else if (paths.get(paths.size() - 1).equals(nextPaths.get(0))) {
+                                            // 현재 FID의 마지막과 다음 FID의 처음이 같을 때.
+                                            // 현재 FID는 정방향.
+                                            isCrntFIDForward = true;
+                                            // 다음 FID는 정방향.
+                                            isNextFIDForward = true;
+                                        } else if (paths.get(0).equals(nextPaths.get(nextPaths.size() - 1))) {
+                                            // 현재 FID의 처음과 다음 FID의 마지막이 같을 때.
+                                            // 현재 FID는 역방향.
+                                            isCrntFIDForward = false;
+                                            // 다음 FID는 역방향.
+                                            isNextFIDForward = false;
+                                        } else if (paths.get(paths.size() - 1).equals(nextPaths.get(nextPaths.size() - 1))) {
+                                            // 현재 FID의 마지막과 다음 FID의 마지막이 같을 때.
+                                            // 현재 FID는 정방향.
+                                            isCrntFIDForward = true;
+                                            // 다음 FID는 역방향.
+                                            isNextFIDForward = false;
+                                        }
+
+                                        // 현재 FID를 정방향으로 입력.
+                                        if (isCrntFIDForward) {
+                                            for (Object _idx : paths) {
+                                                double _lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
+                                                double _lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
+
+                                                hikingField.addLatLng(new LatLng(_lat, _lng));
+
+                                                if (toPaintRouteSet.size() > 0) {
+                                                    if (toPaintRouteSet.get(toPaintRouteSet.size() - 1).equals(new LatLng(_lat, _lng))) {
+                                                        continue;
+                                                    }
+                                                }
+                                                toPaintRouteSet.add(new LatLng(_lat, _lng));
+                                            }
+                                        } else {
+                                        // 현재 FID를 역방향으로 입력.
+                                            for (int _i = paths.size() - 1; _i >= 0; _i--) {
+                                                Object _idx = paths.get(_i);
+
+                                                double _lat = Double.valueOf(((JSONObject) _idx).get("lat").toString());
+                                                double _lng = Double.valueOf(((JSONObject) _idx).get("lng").toString());
+
+                                                hikingField.addLatLng(new LatLng(_lat, _lng));
+
+                                                if (toPaintRouteSet.size() > 0) {
+                                                    if (toPaintRouteSet.get(toPaintRouteSet.size() - 1).equals(new LatLng(_lat, _lng))) {
+                                                        continue;
+                                                    }
+                                                }
+                                                toPaintRouteSet.add(new LatLng(_lat, _lng));
+                                            }
+                                        }
+
+                                        hikingFields.add(hikingField);
+                                    }
                                 }
 
                                 paintHikingRoute();
@@ -727,24 +831,94 @@ public class MapsActivityTemp extends FragmentActivity implements
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for (LatLng position : allHikingRoute) {
-                    int idx = allHikingRoute.indexOf(position);
+                for (LatLng position : toPaintRouteSet) {
+                    int idx = toPaintRouteSet.indexOf(position);
 
-                    if (idx + 1 >= allHikingRoute.size()) break;
+                    if (idx + 1 >= toPaintRouteSet.size()) break;
 
                     gMap.addPolyline(new PolylineOptions()
-                            .add(allHikingRoute.get(idx), allHikingRoute.get(idx + 1))
+                            .add(toPaintRouteSet.get(idx), toPaintRouteSet.get(idx + 1))
                             .color(Color.RED)
                             .width(10));
+
                 }
-
-
-                LatLng latLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
-                gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 19));
+                setPointMarkers();
+                moveToCurrentPosition();
             }
         });
     }
+
+    private void setPointMarkers() {
+        // [1] 시작점과 도착점이 같을 때.
+        if (toPaintRouteSet.get(0).equals(toPaintRouteSet.get(toPaintRouteSet.size() - 1))) {
+            // [1-1] 반환점 표시.
+            // [1-1-1] 중복되지 않는 FID 찾기.
+            int notDuplicatedFID = 0;   // 중복되지 않는 FID
+
+            for (Object _o : scheduledFIDSet) {
+                for (Object __o : scheduledFIDSet) {
+                    if (!_o.equals(__o)) notDuplicatedFID = scheduledFIDSet.indexOf(__o);
+                }
+            }
+            // [1-1-2] 중복되지 않는 FID의 마지막 좌표 얻기.
+
+
+            // [1-2] 시/종점 표시.
+        } else {    // [2] 시작점과 도착점이 다를 때.
+            // [2-1] 시작점 표시.
+            // 가장 앞 좌표.
+            LatLng startPoint   = toPaintRouteSet.get(0);
+            Drawable startPointDrawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.start_point);
+            Bitmap startPointBitmap = createMapIcon(this, startPointDrawable);
+            // 시작점 마커 초기화
+            MarkerOptions startPointOpt = new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(startPointBitmap))
+                    .position(startPoint);
+            // 지도에 마커 등록
+            gMap.addMarker(startPointOpt);
+            // [2-2] 도착점 표시.
+            // 가장 마지막 좌표.
+            LatLng endPoint     = toPaintRouteSet.get(toPaintRouteSet.size() - 1);
+            Drawable endPointDrawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.end_point);
+            Bitmap endPointBitmap = createMapIcon(this, endPointDrawable);
+            // 도착점 마커 초기화
+            MarkerOptions endPointOpt = new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromBitmap(endPointBitmap))
+                    .position(endPoint);
+            // 지도에 마커 등록
+            gMap.addMarker(endPointOpt);
+        }
+    } // setPointMarkers END
+
+    private Bitmap createMapIcon(Context context, Drawable drawable) {
+        IconGenerator iconGenerator = new IconGenerator(context);
+
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.multi_profile, null, false);
+
+        ImageView imageView = view.findViewById(R.id.marker_img);
+        imageView.setMaxWidth(24);
+        imageView.setMaxHeight(24);
+        imageView.setImageDrawable(drawable);
+
+        iconGenerator.setContentView(view);
+        iconGenerator.setContentPadding(5, 2, 5, 2);
+
+        return iconGenerator.makeIcon();
+    }
+
+    private void moveToCurrentPosition() {
+        try {
+
+            LatLng latLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "moveToCurrentPosition: ", npe);
+            setNoticeBar(View.VISIBLE, "위치 정보를 얻을 수 없습니다.", "GPS를 켜주세요");
+        }
+    } // moveToCurrentPosition END
 
     private void paintMarkers() {
         new Thread(new Runnable() {
@@ -779,145 +953,138 @@ public class MapsActivityTemp extends FragmentActivity implements
                 });
             }
         }).start();
-    }
+    } // paintMarkers END
 
     private void updateHikingInfo() {
-        if (noticeBar.getVisibility() == View.VISIBLE) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    noticeBar.setVisibility(View.GONE);
-                }
-            });
-        }
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (myCurrentLocation == null) {    // GPS 정보를 가져올 수 없을 때.
+                    setNoticeBar(View.VISIBLE, "위치 정보를 얻을 수 없습니다.", "GPS를 켜주세요");
+                    return;
+                } else if (myHikingState == 0) {    // 등산 전 상태일 때.
+                    setNoticeBar(View.VISIBLE, "등산을 시작해주세요.", "등산 시작 버튼은 계획한 일정의\n시작점 근처에서 활성화됩니다.");
+                    return;
+                }
+
                 final double _hikedDistance = hikedDistance;
 
-                setNoticeBar(View.GONE, "");
-                try {
-                    HttpUrl reqUrl = Objects.requireNonNull(HttpUrl
-                            .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/storesend"))
-                            .newBuilder()
-                            .build();
+                HttpUrl reqUrl = Objects.requireNonNull(HttpUrl
+                        .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/storesend"))
+                        .newBuilder()
+                        .build();
 
-                    String memberNo     = String.valueOf(myMemberNo);
-                    String latitude     = String.valueOf(0);
-                    String longitude    = String.valueOf(0);
-                    String velocity     = String.valueOf(0);
-                    String distance     = String.valueOf(0);
+                String memberNo     = String.valueOf(myMemberNo);
+                String latitude     = String.valueOf(myCurrentLocation.getLatitude());
+                String longitude    = String.valueOf(myCurrentLocation.getLongitude());
+                String velocity     = String.valueOf(myCurrentLocation.getSpeed() * 3.6);
+                String distance     = String.valueOf(_hikedDistance);
 
-                    if (myHikingState != 0) {
-                        latitude    = String.valueOf(myCurrentLocation.getLatitude());
-                        longitude   = String.valueOf(myCurrentLocation.getLongitude());
-                        velocity    = String.valueOf(myCurrentLocation.getSpeed() * 3.6);
-                        distance    = String.valueOf(_hikedDistance);
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("member_no", memberNo)
+                        .add("distance", distance)
+                        .add("latitude", latitude)
+                        .add("longitude", longitude)
+                        .add("velocity", velocity)
+                        .build();
+
+                Request req = new Request.Builder().url(reqUrl).post(requestBody).build();
+
+                okHttpClient.newCall(req).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e(TAG, "Http updateHikingInfo: ", e);
+                        setNoticeBar(View.VISIBLE, "위치 보내기 실패.", "네트워크 상태를 확인해주세요.");
                     }
 
-                    RequestBody requestBody = new FormBody.Builder()
-                            .add("member_no", memberNo)
-                            .add("distance", distance)
-                            .add("latitude", latitude)
-                            .add("longitude", longitude)
-                            .add("velocity", velocity)
-                            .build();
-
-                    Request req = new Request.Builder().url(reqUrl).post(requestBody).build();
-
-                    okHttpClient.newCall(req).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            Log.e(TAG, "Http updateHikingInfo: ", e);
-                            setNoticeBar(View.VISIBLE, "연결 상태 불량.\n네트워크 상태를 확인해주세요.");
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        if (noticeBar.getVisibility() == View.VISIBLE) {
+                            setNoticeBar(View.GONE, null, null);
                         }
+                        try {
+                            JSONParser parser = new JSONParser();
 
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            JSONObject result = (JSONObject) parser.parse(response.body().string());
+
+                            JSONArray locationMemos = (JSONArray) result.get("location_memos");
+                            JSONArray members = (JSONArray) result.get("members");
+
+                            for (Object idx : locationMemos) {
+                                double  latitude    = Double.valueOf(((JSONObject) idx).get("latitude").toString());
+                                double  longitude   = Double.valueOf(((JSONObject) idx).get("longitude").toString());
+                                int     no          = Integer.valueOf(((JSONObject) idx).get("no").toString());
+
+                                LocationMemo locationMemo = new LocationMemo(new LatLng(latitude, longitude), no);
+
+                                mapItems.put(no, locationMemo);
+                            }
+
+                            for (Object idx : members) {
+                                double  latitude        = Double.valueOf(((JSONObject) idx).get("latitude").toString());
+                                double  longitude       = Double.valueOf(((JSONObject) idx).get("longitude").toString());
+                                int     memberNo        = Integer.valueOf(((JSONObject) idx).get("member_no").toString());
+                                String  userID          = String.valueOf(((JSONObject) idx).get("userid").toString());
+                                boolean exist           = false;
+
+                                if (mapItems.containsKey(memberNo)) {
+                                    Member member = (Member) mapItems.get(memberNo);
+                                    member.setLocation(new LatLng(latitude, longitude));
+
+                                } else {
+                                    Member member = new Member(new LatLng(latitude, longitude), memberNo);
+                                    member.userID = userID;
+
+                                    HttpUrl httpUrl = HttpUrl
+                                            .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + userID + ".jpg")
+                                            .newBuilder()
+                                            .build();
+
+                                    Request req = new Request.Builder().url(httpUrl).build();
+
+                                    Response res = okHttpClient.newCall(req).execute();
+
+                                    InputStream is = res.body().byteStream();
+
+                                    member.profileImg = BitmapFactory.decodeStream(is);
+
+                                    mapItems.put(memberNo, member);
+                                }
+
+                                for (Integer _idx : mapItems.keySet()) {
+                                    if (_idx == memberNo) exist = true;
+                                }
+                                if (!exist) {
+                                    mapItems.remove(memberNo);
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Post Response: ", e);
+                        } finally {
                             if (noticeBar.getVisibility() == View.VISIBLE) {
-                                setNoticeBar(View.GONE, "");
-                            }
-                            try {
-                                JSONParser parser = new JSONParser();
-
-                                JSONObject result = (JSONObject) parser.parse(response.body().string());
-
-                                JSONArray locationMemos = (JSONArray) result.get("location_memos");
-                                JSONArray members = (JSONArray) result.get("members");
-
-                                for (Object idx : locationMemos) {
-                                    double  latitude    = Double.valueOf(((JSONObject) idx).get("latitude").toString());
-                                    double  longitude   = Double.valueOf(((JSONObject) idx).get("longitude").toString());
-                                    int     no          = Integer.valueOf(((JSONObject) idx).get("no").toString());
-
-                                    LocationMemo locationMemo = new LocationMemo(new LatLng(latitude, longitude), no);
-
-                                    mapItems.put(no, locationMemo);
-                                }
-
-                                for (Object idx : members) {
-                                    double  latitude        = Double.valueOf(((JSONObject) idx).get("latitude").toString());
-                                    double  longitude       = Double.valueOf(((JSONObject) idx).get("longitude").toString());
-                                    int     memberNo        = Integer.valueOf(((JSONObject) idx).get("member_no").toString());
-                                    String  userID          = String.valueOf(((JSONObject) idx).get("userid").toString());
-                                    boolean exist           = false;
-
-                                    if (mapItems.containsKey(memberNo)) {
-                                        Member member = (Member) mapItems.get(memberNo);
-                                        member.setLocation(new LatLng(latitude, longitude));
-
-                                    } else {
-                                        Member member = new Member(new LatLng(latitude, longitude), memberNo);
-                                        member.userID = userID;
-
-                                        HttpUrl httpUrl = HttpUrl
-                                                .parse(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + userID + ".jpg")
-                                                .newBuilder()
-                                                .build();
-
-                                        Request req = new Request.Builder().url(httpUrl).build();
-
-                                        Response res = okHttpClient.newCall(req).execute();
-
-                                        InputStream is = res.body().byteStream();
-
-                                        member.profileImg = BitmapFactory.decodeStream(is);
-
-                                        mapItems.put(memberNo, member);
-                                    }
-
-                                    for (Integer _idx : mapItems.keySet()) {
-                                        if (_idx == memberNo) exist = true;
-                                    }
-                                    if (!exist) {
-                                        mapItems.remove(memberNo);
-                                        break;
-                                    }
-                                }
-                            } catch (Exception e) {
-                                Log.e(TAG, "Post Response: ", e);
+                                setNoticeBar(View.GONE, null, null);
                             }
                         }
-                    });
-                } catch (NullPointerException npe) {
-                    Log.e(TAG, "Post request: ", npe);
-                    setNoticeBar(View.VISIBLE, "위치 정보를 얻을 수 없습니다.\nGPS를 켜주세요");
-                }
+                    }
+                });
             }
         }).start();
-    }
+    } // updateHikingInfo END
 
     // 상단 알림 메시지 바 컨트롤러.
-    private void setNoticeBar(final int visibility, final String message) {
+    private void setNoticeBar(final int visibility, final String main, @Nullable final String sub) {
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 noticeBar.setVisibility(visibility);
-                mapNoticeBarText.setText(message);
+                mapNoticeBarMainText.setText(main);
+                mapNoticeBarSubText.setText(sub);
             }
         });
-    }
+    } // setNoticeBar END
 
     private void updateCurrentFID() {
         try {
@@ -945,16 +1112,17 @@ public class MapsActivityTemp extends FragmentActivity implements
             }
         } catch (Exception e) {
             Log.e(TAG, "updateCurrentFID: ", e);
+
         }
-    }
+    } // updateCurrentFID END
 
     private double getDisToStartPoint() {
         try {
             LatLng startPoint = null;
             if (myHikingState == 0 ) {
-                startPoint = allHikingRoute.get(0);
+                startPoint = toPaintRouteSet.get(0);
             } else if (myHikingState == 1){
-                startPoint = allHikingRoute.get(allHikingRoute.size() -1 );
+                startPoint = toPaintRouteSet.get(toPaintRouteSet.size() -1 );
             }
 
            Location startPointLoc = new Location("startPoint");
@@ -967,7 +1135,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             Log.e(TAG, "getDisToStartPoint: ", e);
         }
         return Double.MAX_VALUE;
-    }
+    } // getDisToStartPoint END
 
     private void updateHikedDistance() {
         if (hikingFields.size() == 0) {
@@ -1026,7 +1194,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         } catch (Exception e) {
             Log.e(TAG, "updateHikedDistance: ", e);
         }
-    }
+    } // updateHikedDistance END
 
     private void updateHikingState() {
         try {
@@ -1059,7 +1227,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         } catch (Exception e) {
             Log.e(TAG, "updateHikingState: ", e);
         }
-    }
+    } // updateHikingState END
 
     private short locbearing(double lat1,double lng1, double lat2, double lng2) {
         double Cur_Lat_radian = lat1 * (3.141592 / 180);
@@ -1094,7 +1262,8 @@ public class MapsActivityTemp extends FragmentActivity implements
     private void initializeUI() {
         // [1] Layout 초기화.
         noticeBar                   = findViewById(R.id.mapNoticeBar);
-        mapNoticeBarText            = findViewById(R.id.mapNoticeBarText);
+        mapNoticeBarMainText        = findViewById(R.id.mapNoticeBarMainText);
+        mapNoticeBarSubText         = findViewById(R.id.mapNoticeBarSubText);
         // [1.1] 상태 표시 레이아웃.
         userDataBox                 = findViewById(R.id.userDataBox);     // Text View를 담을 부모 레이아웃.
         tvUserSpeed                 = findViewById(R.id.userSpeed);       // 유저의 현재 속도.
@@ -1249,7 +1418,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                     }
                 });
             }
-        });
+        }); // btnLMemoSendReq.setOnClickListener END
         btnLMemoCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1261,20 +1430,23 @@ public class MapsActivityTemp extends FragmentActivity implements
                 imgViewLMemoImg.setImageBitmap(bitmap);
                 linearLayoutLocationMemo.setVisibility(View.INVISIBLE);
             }
-        });
+        }); // btnLMemoCancel.setOnClickListener END
         // [2.2] 자기 위치 갱신 버튼
         fabUpdateMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    LatLng currentLatLng = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
-
-                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 19));
-                } catch (Exception e) {
-                    Log.e(TAG, "onClick: ", e);
+                isMyLocationBtnPressed = !isMyLocationBtnPressed;
+                if (isMyLocationBtnPressed) {
+                    if (myCurrentLocation != null) {
+                        LatLng myLocation = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
+                        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+                    }
+                    fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_pressed_svg));
+                } else {
+                    fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg));
                 }
             }
-        });
+        }); // fabUpdateMyLocation.setOnClickListener END
         // [2.3] 그룹 맴버 리스트 버튼
         fabShowMemberList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1283,7 +1455,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 groupMemberList.putExtra("member_no", myMemberNo);
                 startActivityForResult(groupMemberList, HikingMemberListAdapter.REQUEST_CODE);
             }
-        });
+        }); // fabShowMemberList.setOnClickListener END
         // [2.4] 등산 상태 변경 버튼
         btnChangeHikingState.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1308,7 +1480,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                         break;
                 }
             }
-        });
+        }); // btnChangeHikingState.setOnClickListener END
         // [5] 무전 리스트
         /*showRecordList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1316,7 +1488,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
                 startActivity(recordIntent);
             }
-        });*/
+        }); // showRecordList.setOnClickListener END*/
 
         // [4] drawerLayout 을 클릭하면 무전 버튼 가시화
         /*drawerLayout.setOnClickListener(new View.OnClickListener() {
@@ -1329,7 +1501,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 }
                 isRecBtnVisible = !isRecBtnVisible;
             }
-        });*/
+        }); // drawerLayout.setOnClickListener END*/
         // 무전 버튼에 리스너 달기
         /*btnSendRadio.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -1339,7 +1511,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
                 return false;
             }
-        });
+        }); // btnSendRadio.setOnLongClickListener END
         btnSendRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1349,9 +1521,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                     Toast.makeText(getBaseContext(), "무전 종료합니다", Toast.LENGTH_SHORT).show();
                 }
             }
-        });*/
+        }); // btnSendRadio.setOnClickListener END*/
 
-    }
+    } // initializeUI END
 
     private void sendPicture(Uri imgUri) {
 
@@ -1362,7 +1534,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
         imgViewLMemoImg.setImageBitmap(bitmap);//이미지 뷰에 비트맵 넣기
 
-    }
+    } // sendPicture END
 
     private int exifOrientationToDegrees(int exifOrientation) {
         if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
@@ -1373,7 +1545,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             return 270;
         }
         return 0;
-    }
+    } // exifOrientationToDegrees END
 
     private String getRealPathFromURI(Uri contentUri) {
 
@@ -1386,7 +1558,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         }
 
         return cursor != null ? cursor.getString(column_index) : null;
-    }
+    } // getRealPathFromURI END
 
     private void getPictureForPhoto(Intent intent) {
 
@@ -1397,7 +1569,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
         }
         imgViewLMemoImg.setImageBitmap(bitmap);//이미지 뷰에 비트맵 넣기
-    }
+    } // getPictureForPhoto END
 
     private File createImageFile() throws IOException {
         File dir = new File(Environment.getExternalStorageDirectory() + "/path/");
@@ -1411,7 +1583,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         mImageCaptureName = timeStamp + ".png";
 
         return new File(Environment.getExternalStorageDirectory().getAbsoluteFile() + "/path/" + mImageCaptureName);
-    }
+    } // createImageFile END
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1439,7 +1611,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                             }
                         }
                     }
-                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posToMove, 19));
+                    gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posToMove, 18));
                     break;
             }
         } else if (resultCode == Othersinfo.SHOW_ALL) {
@@ -1478,7 +1650,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
             gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(center, _v));
         }
-    }
+    } // onActivityResult END
 
     @Override
     public void onLocationChanged(Location location) {
@@ -1490,13 +1662,24 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         double arriveWhen = (wholeDistance - hikedDistance) / userSpeed;
 
+        // 도착 시간 계산.
         if (arriveWhen == Double.POSITIVE_INFINITY || arriveWhen == Double.NEGATIVE_INFINITY) {
             tvArriveWhen.setText("0.0");
         } else {
-            double arriveWhenFormatted = Math.round(arriveWhen * 100d) / 100d;
+            int arriveWhenFormatted = (int) arriveWhen * 100;
             tvArriveWhen.setText(String.valueOf(arriveWhenFormatted));
         }
-    }
+
+        // 내 마커 움직이기.
+        myMarker.setPosition(new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude()));
+
+        // 내 위치 버튼이 눌러져 있으면.
+        if (isMyLocationBtnPressed) {
+            LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            // 내 위치로 화면을 이동.
+            gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 18));
+        }
+    } // onLocationChanged END
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

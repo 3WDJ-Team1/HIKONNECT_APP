@@ -54,8 +54,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp.TAG;
-
 /**
  * Created by jungyu on 2018-05-02.
  */

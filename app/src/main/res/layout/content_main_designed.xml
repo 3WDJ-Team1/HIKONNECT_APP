@@ -38,7 +38,8 @@
             <RelativeLayout
                 android:id="@+id/nowScheduleLoading"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="visible">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,12 +83,17 @@
                     android:drawableTint="@color/light_green_500"
                     android:drawableTop="@drawable/ic_search_svgrepo_com"
                     android:padding="8dp"
-                    android:text="Search\nGroup"
+                    android:text="Search\nSchedule"
                     android:textColor="@color/light_green_500"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <android.support.v4.view.ViewPager
+                android:id="@+id/nowScheduleViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.v4.view.ViewPager>
             <RelativeLayout
                 android:id="@+id/nowScheduleLayout"
                 android:layout_width="match_parent"

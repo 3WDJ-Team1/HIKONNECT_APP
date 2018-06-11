@@ -10,8 +10,6 @@ import java.util.Map;
 
 public class PermissionManager {
 
-    private static String TAG = "PermissionManager";
-
     public static final int PERMISSIONS_REQUEST_CODE = 1;
 
     private FragmentActivity mActivity;
