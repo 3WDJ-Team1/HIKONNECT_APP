@@ -45,6 +45,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -117,7 +118,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     // 지도, 위치
     private GoogleMap                   gMap;
-    private Location                    myCurrentLocation;
+    private Location                    myCurrentLocation   =   null;
     public double                       hikedDistance = 0.0;
 
     // HTTP 통신
@@ -132,6 +133,10 @@ public class MapsActivityTemp extends FragmentActivity implements
     private int                         currentFID          = 0;
     private int                         currentPointInFID   = 0;
     private double                      wholeDistance       = 0.0;
+    private double                      direction_set_lat1                 = 0.0;
+    private double                      direction_set_lng1                 = 0.0;
+    private double                      direction_set_lat2                 = 0.0;
+    private double                      direction_set_lng2                 = 0.0;
 
     private ArrayList<LatLng>           allHikingRoute = new ArrayList<>();
     @SuppressLint("UseSparseArrays")
@@ -420,11 +425,33 @@ public class MapsActivityTemp extends FragmentActivity implements
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    LatLng latLng;
+
+                    if (myCurrentLocation == null) {
+                        latLng = new LatLng(133,33);
+                    }
+                    else
+                        latLng = new LatLng(myCurrentLocation.getLatitude(),myCurrentLocation.getLongitude());
+                    short bear = locbearing(direction_set_lat1,direction_set_lng1,direction_set_lat2,direction_set_lng2);
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(latLng)
+                            .bearing(bear)
+                            .zoom(19)
+                            .build();
+                    gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
                     try {
                         switch (myHikingState) {
                             case 0:
-                            case 1:
                                 if (getDisToStartPoint() < 100) {
+                                    btnChangeHikingState.setVisibility(View.VISIBLE);
+                                } else {
+                                    btnChangeHikingState.setVisibility(View.GONE);
+                                }
+                                break;
+                            case 1:
+                                if (getDisToStartPoint() < 100 && pgbarHikingProgress.getProgress()> 90) {
                                     btnChangeHikingState.setVisibility(View.VISIBLE);
                                 } else {
                                     btnChangeHikingState.setVisibility(View.GONE);
@@ -975,6 +1002,13 @@ public class MapsActivityTemp extends FragmentActivity implements
                 loc2.setLatitude(userIn.get(idx + 1).latitude);
                 loc2.setLongitude(userIn.get(idx + 1).longitude);
 
+
+                direction_set_lat1 = latLng.latitude;
+                direction_set_lng1 = latLng.longitude;
+
+                direction_set_lat2 = userIn.get(idx+ 1).latitude;
+                direction_set_lng2 = userIn.get(idx + 1).longitude;
+
                 hikedDistance += loc1.distanceTo(loc2) / 10;
             }
 
@@ -1025,6 +1059,36 @@ public class MapsActivityTemp extends FragmentActivity implements
         } catch (Exception e) {
             Log.e(TAG, "updateHikingState: ", e);
         }
+    }
+
+    private short locbearing(double lat1,double lng1, double lat2, double lng2) {
+        double Cur_Lat_radian = lat1 * (3.141592 / 180);
+        double Cur_Lon_radian = lng1 * (3.141592 / 180);
+
+        double Dest_Lat_radian = lat2 * (3.141592 / 180);
+        double Dest_Lon_radian = lng2 * (3.141592 / 180);
+
+        double radian_distance = 0;
+        radian_distance = Math.acos(Math.sin(Cur_Lat_radian) * Math.sin(Dest_Lat_radian)
+                + Math.cos(Cur_Lat_radian) * Math.cos(Dest_Lat_radian)
+                * Math.cos(Cur_Lon_radian - Dest_Lon_radian));
+
+        double radian_bearing = Math.acos((Math.sin(Dest_Lat_radian) - Math.sin(Cur_Lat_radian)
+                * Math.cos(radian_distance)) / (Math.cos(Cur_Lat_radian)
+                * Math.sin(radian_distance)));
+
+        double true_bearing = 0;
+        if (Math.sin(Dest_Lon_radian - Cur_Lon_radian) < 0)
+        {
+            true_bearing = radian_bearing * (180 / 3.141592);
+            true_bearing = 360 - true_bearing;
+        }
+        else
+        {
+            true_bearing = radian_bearing * (180 / 3.141592);
+        }
+
+        return (short)true_bearing;
     }
 
     private void initializeUI() {
