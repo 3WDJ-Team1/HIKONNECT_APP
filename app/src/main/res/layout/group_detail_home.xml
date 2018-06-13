@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
@@ -21,43 +21,70 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         app:ntb_bg_color="@color/black"
         app:ntb_active_color="@color/white"
         app:ntb_inactive_color="@color/lightGrey"
         app:ntb_badge_size="12sp"
         app:ntb_badge_bg_color="#ffff0000"
         app:ntb_badge_gravity="top"
-        app:ntb_badge_position="left"
+        app:ntb_badge_position="right"
         app:ntb_badge_title_color="#ffffffff"
         app:ntb_badge_use_typeface="true"
-        app:ntb_badged="true" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btnEnterGroup"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:tint="@color/white"
-            android:backgroundTint="@color/light_green_500"
-            android:src="@drawable/ic_person_add_white_24px"
-            app:fabSize="normal"
-            app:borderWidth="0dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="76dp"
-            android:layout_marginEnd="16dp"
-            />
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btnExitGroup"
-        android:layout_height="wrap_content"
+        app:ntb_badged="true"
+        app:ntb_titled="true"
+        app:ntb_title_mode="all"/>
+    
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/btnEnterGroup"
         android:layout_width="wrap_content"
-        android:tint="@color/white"
-        android:backgroundTint="@color/red_500"
-        android:src="@drawable/ic_emergency_exit_svgrepo_com"
-        app:fabSize="normal"
-        app:borderWidth="0dp"
+        android:layout_height="wrap_content"
+        app:floating_background_color="@color/light_green_500"
+        app:floating_icon="@drawable/ic_person_add_white_24px"
+        app:floating_title="그룹참여"
+        app:floating_title_color="@color/white"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="76dp"
+        android:layout_marginEnd="16dp"/>
+
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/btnExitGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:floating_background_color="@color/red_500"
+        app:floating_icon="@drawable/ic_emergency_exit_svgrepo_com"
+        app:floating_title="그룹탈퇴"
+        app:floating_title_color="@color/black"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="76dp"
         android:layout_marginEnd="16dp"
-        android:visibility="gone"
-        />
+        android:visibility="gone"/>
 
-</android.support.design.widget.CoordinatorLayout>
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/btnMakeNotice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:floating_background_color="@color/blue_accent_700"
+        app:floating_icon="@drawable/ic_create"
+        app:floating_title="공지사항 작성"
+        app:floating_title_color="@color/white"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="76dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"/>
+
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/btnMakeSchedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:floating_background_color="@color/pink_accent_400"
+        app:floating_icon="@drawable/ic_create"
+        app:floating_title="일정 작성"
+        app:floating_title_color="@color/white"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="76dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"/>
+
+</FrameLayout>

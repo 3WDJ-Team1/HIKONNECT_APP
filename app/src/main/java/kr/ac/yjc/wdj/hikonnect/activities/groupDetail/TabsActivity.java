@@ -1,5 +1,7 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groupDetail;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -17,6 +19,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +31,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +47,7 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
@@ -56,13 +62,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @author  Sungeun Kang (kasueu0814@gmail.com), Areum Lee (leear5799@gmail.com)
  * @since   2018-04-10
  */
 public class TabsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -70,32 +77,42 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     // UI 변수
     private ViewPager                           viewPager;          // 전체 페이지
     private NavigationTabBar                    navigationTabBar;   // 네비게이션 탭 바
-    private FloatingActionButton                btnEnterGroup;      // 그룹 참가 버튼
-    private FloatingActionButton                btnExitGroup;       // 그룹 탈퇴 버튼
+    private FloatingTextButton                  btnEnterGroup,      // 그룹 참가 버튼
+                                                btnExitGroup,       // 그룹 탈퇴 버튼
+                                                btnMakeNotice,      // 공지사항 작성 버튼
+                                                btnMakeSchedule;    // 일정 작성 버튼
     private LoadingDialog                       loadingDialog;      // 로딩 화면
     private DrawerLayout                        drawer;             // drawer
     private Toolbar                             toolbar;
     private ActionBarDrawerToggle               toggle;
     private NavigationView                      navigationView;
-    private TextView                            txtView;
+    private TextView                            txtView,
+                                                scheduleTxtView;
 
     // UI 내부 데이터 연결 객체
     private ArrayList<NavigationTabBar.Model>   models;             // 네비게이션 탭 안의 메뉴 구성을 위한 모델
     private static RecycleAdapterForGDetail     adapterNotice,      // rvNotice에 값을 연결할 어댑터
                                                 adapterMember,      // rvMember에 값을 연결할 어댑터
-                                                adapterSchedule;    // rvPlan 에 값을 연결할 어댑터
+                                                adapterSchedule,    // rvPlan 에 값을 연결할 어댑터
+                                                adapterWarning;     // rvWarning에 값을 연결할 어댑터
     private MemberListAdapter                   adapterMemberJoined;// rvMemberJoined에 값을 연결할 어댑터
     private ArrayList<Bean>                     dataListNotice,     // notice URL 요청으로 받아온 값을 담아둘 곳
                                                 dataListMember,     // member URL 요청으로 받아온 값을 담아둘 곳
-                                                dataListSchedule;   // schedule URL 요청으로 받아온 값을 담아둘 곳
+                                                dataListSchedule,   // schedule URL 요청으로 받아온 값을 담아둘 곳
+                                                dataListWarning;    // notice, member, schedule URl 요청으로 받아온 값이
+                                                                    // 없을 경우, 데이터가 없는 공간의 이름을 담아둘 곳
     private ArrayList<GroupUserInfoBean>        dataListJoinedMember;
 
     // 데이터 담아둘 변수
     private static final    int                 PAGE_COUNT = 3;     // 총 페이지의 수
     private static          String              status;             // 사용자가 해당 그룹에 참여하고 있는 지 여부
-    public  static          String              groupId;            // 해당 그룹의 id
+    public  static          String              groupId,            // 해당 그룹의 id
+                                                userId;             // 현재 사용자의 id
     private                 String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
-    private                 int                 firstIndex;         // 요청 공지사항 데이터 시작 인덱스
+    private                 boolean             result;             // 데이터의 존재 유무
+    private                 int                 firstIndex,         // 요청 공지사항 데이터 시작 인덱스
+                                                Ncount,             // 공지사항 데이터가 있는지 확인하기 위한 변수
+                                                Scount;             // 일정 데이터가 있는지 확인하기 위한 변수
 
     // 무한 스크롤
     private                 boolean             isScrolling;        // 현재 스크롤 되고 있는지 확인
@@ -103,18 +120,17 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                                                 totalItems,
                                                 scrollOutItems;
 
-    //
+    // Session
     private SharedPreferences                   pref;
 
     // OKHttp
-    private OkHttpClient        client;
+    private OkHttpClient                        client;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_detail_drawer);
-
 
         pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
@@ -125,8 +141,10 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         status              = intent.getStringExtra("status");
 
         // UI 변수
-        btnEnterGroup       = (FloatingActionButton)    findViewById(R.id.btnEnterGroup);
-        btnExitGroup        = (FloatingActionButton)    findViewById(R.id.btnExitGroup);
+        btnEnterGroup       = (FloatingTextButton)      findViewById(R.id.btnEnterGroup);
+        btnExitGroup        = (FloatingTextButton)      findViewById(R.id.btnExitGroup);
+        btnMakeNotice       = (FloatingTextButton)      findViewById(R.id.btnMakeNotice);
+        btnMakeSchedule     = (FloatingTextButton)      findViewById(R.id.btnMakeSchedule);
         viewPager           = (ViewPager)               findViewById(R.id.vp_horizontal_ntb);
         navigationTabBar    = (NavigationTabBar)        findViewById(R.id.ntb_horizontal);
         toolbar             = (Toolbar)                 findViewById(R.id.toolbar);
@@ -145,9 +163,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         firstIndex          = 0;
 
         // 어댑터 변수
-        adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice);
-        adapterSchedule     = new RecycleAdapterForGDetail(R.layout.schedule_item_cardview_, dataListSchedule);
-        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember, status);
+        adapterNotice       = new RecycleAdapterForGDetail(R.layout.notice_item, dataListNotice, TabsActivity.this);
+        adapterSchedule     = new RecycleAdapterForGDetail(R.layout.schedule_item_cardview_, dataListSchedule, TabsActivity.this);
+        adapterMember       = new RecycleAdapterForGDetail(R.layout.member_list, dataListMember, status, TabsActivity.this);
         adapterMemberJoined = new MemberListAdapter(R.layout.member_list_schedule, dataListJoinedMember, status);
 
         // OKHttp
@@ -195,15 +213,15 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
                         @Override
                         protected String doInBackground(Void... params) {
+                            userId = pref.getString("user_id", "");
+
                             try {
                                 OkHttpClient client = new OkHttpClient();
 
-                                String sendData = "{" +
-                                            "\"userid\":\"" + pref.getString("user_id", "") + "\"," +
-                                            "\"uuid\":\""   + groupId           + "\""  +
-                                        "}";
-
-                                RequestBody body = RequestBody.create(Environments.JSON, sendData);
+                                RequestBody body = new FormBody.Builder()
+                                        .add("userid", userId)
+                                        .add("uuid", groupId)
+                                        .build();
 
                                 Request request = new Request.Builder()
                                         .url(Environments.LARAVEL_HIKONNECT_IP + "/api/member")
@@ -237,58 +255,101 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         btnExitGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder exitAd = new AlertDialog.Builder(TabsActivity.this);
 
-                new AsyncTask<Void, Integer, String>() {
+                exitAd.setTitle("그룹 탈퇴 확인");
+                exitAd.setMessage("그룹을 탈퇴하시겠습니까?");
 
+                // 확인 버튼 설정
+                exitAd.setPositiveButton("예", new DialogInterface.OnClickListener() {
                     @Override
-                    protected String doInBackground(Void... params) {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Event
+                        new AsyncTask<Void, Integer, String>() {
 
-                        try {
-                            RequestBody body = new FormBody.Builder()
-                                    .add("userid", pref.getString("user_id", ""))
-                                    .add("uuid", groupId)
-                                    .build();
+                            @Override
+                            protected String doInBackground(Void... params) {
+                                userId = pref.getString("user_id", "");
 
-                            Request request = new Request.Builder()
-                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/out_group")
-                                    .post(body)
-                                    .build();
+                                try {
+                                    RequestBody body = new FormBody.Builder()
+                                            .add("userid", userId)
+                                            .add("uuid", groupId)
+                                            .build();
 
-                            Response response = client.newCall(request).execute();
+                                    Request request = new Request.Builder()
+                                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/out_group")
+                                            .post(body)
+                                            .build();
 
-                            return response.body().string();
+                                    Response response = client.newCall(request).execute();
 
-                        } catch (IOException ie) {
+                                    return response.body().string();
 
-                            Log.e("IOExcept", "IOException at btnExitGroup.setOnClickListener!!\n" + ie);
-                            return null;
+                                } catch (IOException ie) {
 
-                        }
+                                    Log.e("IOExcept", "IOException at btnExitGroup.setOnClickListener!!\n" + ie);
+                                    return null;
+
+                                }
+                            }
+
+                            @Override
+                            protected void onPostExecute(String s) {
+                                super.onPostExecute(s);
+
+                                if (s == "false") {
+                                    Toast.makeText(
+                                            getBaseContext(),
+                                            "오류로 인해 탈퇴하지 못했습니다.",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                } else {
+                                    Toast.makeText(
+                                            getBaseContext(),
+                                            "성공적으로 탈퇴되었습니다.",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+
+                                    status = "guest";
+                                    toggleBtnIfJoined();
+                                }
+                            }
+
+                        }.execute();
+
+                        // dialog 닫기
+                        dialog.dismiss();
                     }
+                });
 
+                // 취소 버튼 설정
+                exitAd.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
                     @Override
-                    protected void onPostExecute(String s) {
-                        super.onPostExecute(s);
-
-                        if (Boolean.parseBoolean(s)) {
-                            Toast.makeText(
-                                    getBaseContext(),
-                                    "성공적으로 탈퇴되었습니다.",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-
-                            status = "guest";
-                            toggleBtnIfJoined();
-                        } else {
-                            Toast.makeText(
-                                    getBaseContext(),
-                                    "오류로 인해 탈퇴하지 못했습니다.",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                        }
+                    public void onClick(DialogInterface dialog, int which) {
+                        // dialog 닫기
+                        dialog.dismiss();
                     }
+                });
 
-                }.execute();
+                // 탈퇴 안내 창 출력
+                exitAd.show();
+            }
+        });
+
+        // 공지사항 작성
+        btnMakeNotice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //
+            }
+        });
+
+        // 일정 작성
+        btnMakeSchedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //
             }
         });
     }
@@ -326,13 +387,14 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
              */
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
-                View view  = null; // 페이지에 넣을 View
+                View view       = null; // 페이지에 넣을 View
 
                 switch (position) {
                     // 그룹 공지사항 페이지
                     case 0:
                         // group_detail_notice의 view 객체를 받아옴
                         view = LayoutInflater.from(getBaseContext()).inflate(R.layout.group_detail_notice, null, false);
+
                         // 해당 view의 RecyclerView 찾아옴
                         RecyclerView rvNotice = (RecyclerView) view.findViewById(R.id.groupNoticeList);
                         rvNotice.setAdapter(adapterNotice);
@@ -358,13 +420,12 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                                 currentItems    = recyclerView.getLayoutManager().getChildCount();
                                 totalItems      = recyclerView.getLayoutManager().getItemCount();
                                 scrollOutItems  = ((LinearLayoutManager)recyclerView.getLayoutManager())
-                                                    .findFirstVisibleItemPosition();
+                                        .findFirstVisibleItemPosition();
 
                                 if (isScrolling && (currentItems + scrollOutItems > totalItems)) {
                                     isScrolling = false;
                                     // data fetch
-                                    datafetchForNotice(TabsActivity.groupId, firstIndex);
-                                }
+                                    datafetchForNotice(TabsActivity.groupId, firstIndex);}
                             }
                         });
                         // 총 컨테이너 페이저에 삽입
@@ -416,15 +477,17 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         });
 
         // 탭에 메뉴 추가 (사진, 색상, 타이틀)
-        addModels(R.drawable.ic_notifications_white_24px, colors[0], "Notice");
-        addModels(R.drawable.ic_event_white_24px, colors[1], "Plan");
-        addModels(R.drawable.ic_group_white_24px, colors[2], "Members");
+        addModels(R.drawable.ic_notifications_white_24px, colors[0], "공지사항", "Notice");
+        addModels(R.drawable.ic_event_white_24px, colors[1], "일정", "Plan");
+        addModels(R.drawable.ic_group_white_24px, colors[2], "그룹멤버", "Members");
 
         // 탭 모델 설정
         navigationTabBar.setModels(models);
 
         // 뷰페이저 설정
         navigationTabBar.setViewPager(viewPager, 0);
+
+        navigationTabBar.setIsBadged(true);
 
         //IMPORTANT: ENABLE SCROLL BEHAVIOUR IN COORDINATOR LAYOUT
         navigationTabBar.setBehaviorEnabled(true);
@@ -447,7 +510,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onPageSelected(final int position) {
-
+                navigationTabBar.getModels().get(position).hideBadge();
             }
 
             @Override
@@ -532,25 +595,32 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
             case "\"owner\"":
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.GONE);
+                btnMakeNotice.setVisibility(View.VISIBLE);
+                //btnMakeSchedule.setVisibility(View.VISIBLE);
                 break;
             case "\"member\"":
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.VISIBLE);
+                btnMakeNotice.setVisibility(View.GONE);
+                btnMakeSchedule.setVisibility(View.GONE);
                 break;
             default:
                 btnEnterGroup.setVisibility(View.VISIBLE);
                 btnExitGroup.setVisibility(View.GONE);
+                btnMakeNotice.setVisibility(View.GONE);
+                btnMakeSchedule.setVisibility(View.GONE);
                 break;
         }
     }
 
     // 탭에 모델 추가
-    private void addModels(int drawable, String color, String title) {
+    private void addModels(int drawable, String color, String title, String bgTitle) {
         models.add(
                 new NavigationTabBar.Model.Builder(
                         getResources().getDrawable(drawable),
                         Color.parseColor(color))
                         .title(title)
+                        .badgeTitle(bgTitle)
                         .build()
         );
     }
@@ -592,25 +662,39 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                     // json 파싱
                     JSONArray   jsonArray   = new JSONArray(s);
                     GroupNotice groupNotice = null;
-                    // 결과 배열 값을
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        // 객체로 분해 해 Bean 객체에 삽입
-                        groupNotice = new GroupNotice(
-                                jsonObject.getString("writer"),
-                                jsonObject.getString("title"),
-                                jsonObject.getString("content"),
-                                jsonObject.getString("picture"),
-                                jsonObject.getString("created_at")
-                        );
+                    if (jsonArray.length() != 0) {
+                        // 공지사항 데이터가 있다면
+                        // 결과 배열 값을
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            // 객체로 분해 해 Bean 객체에 삽입
+                            groupNotice = new GroupNotice(
+                                    jsonObject.getString("writer"),
+                                    jsonObject.getString("title"),
+                                    jsonObject.getString("content"),
+                                    jsonObject.getString("picture"),
+                                    jsonObject.getString("created_at")
+                            );
+                            // dataList에 삽입
+                            dataListNotice.add(groupNotice);
+                        }
+
+                        // 데이터 변경 어댑터에 알리기
+                        adapterNotice.notifyDataSetChanged();
+                        Log.d("adapters", adapterNotice.getItemCount() + "");
+                        firstIndex++;
+
+                        loadingDialog.dismiss();
+                    } else {
+                        // 데이터가 없다면
+                        groupNotice = new GroupNotice("No Data In Notice List", "데이터가 없습니다.", "", "", "");
                         // dataList에 삽입
                         dataListNotice.add(groupNotice);
-                    }
+                        // 데이터 변경 어댑터에 알리기
+                        adapterNotice.notifyDataSetChanged();
 
-                    adapterNotice.notifyDataSetChanged();
-                    Log.d("adapters", adapterNotice.getItemCount() + "");
-                    firstIndex++;
-                    loadingDialog.dismiss();
+                        loadingDialog.dismiss();
+                    }
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
@@ -651,24 +735,40 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                 try {
 
                     // JSON  파싱 후
-                    JSONArray   jsonArray   = new JSONArray(s);
-                    for (int i = 0 ; i < jsonArray.length() ; i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    JSONArray jsonArray   = new JSONArray(s);
 
-                        // 데이터 넣기
-                        dataListSchedule.add(new GroupSchedule(
-                                jsonObject.getInt("no"),
-                                jsonObject.getString("title"),
-                                jsonObject.getString("content"),
-                                jsonObject.getString("leader"),
-                                jsonObject.getDouble("mnt_id"),
-                                jsonObject.getString("start_date"),
-                                jsonObject.getString("route"),
-                                getBaseContext()
-                        ));
+                    if (jsonArray.length() != 0) {
+                        // 스케줄 데이터가 있다면
+                        // 결과 배열 값을
+                        for (int i = 0 ; i < jsonArray.length() ; i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            Log.d("mnt_id", Integer.toString(jsonObject.getInt("no")));
+
+                            // 데이터 넣기
+                            dataListSchedule.add(new GroupSchedule(
+                                    jsonObject.getInt("no"),
+                                    jsonObject.getString("title"),
+                                    jsonObject.getString("content"),
+                                    jsonObject.getString("leader"),
+                                    jsonObject.getDouble("mnt_id"),
+                                    jsonObject.getString("start_date"),
+                                    jsonObject.getString("route"),
+                                    getBaseContext()
+                            ));
+                        }
+                        // 데이터 변경 어댑터에 알리기
+                        adapterSchedule.notifyDataSetChanged();
+
+                        loadingDialog.dismiss();
+                    } else {
+                        // 데이터가 없다면
+                        dataListSchedule.add(new GroupSchedule(0 , "데이터가 없습니다.", "", "No Data In Schedule List", 000000000, "", "", getBaseContext()));
+                        // 데이터 변경 어댑터에 알리기
+                        adapterSchedule.notifyDataSetChanged();
+
+                        loadingDialog.dismiss();
                     }
-                    // 데이터 변경 어댑터에 알리기
-                    adapterSchedule.notifyDataSetChanged();
                 } catch (JSONException je) {
                     je.printStackTrace();
                 }
@@ -764,7 +864,92 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         }.execute();
     }
 
+    // get data from server for notice list
+    // data가 있는지 없는지 체크
+    private int ckNresult(final String groupId, final int page) {
+        // 비동기
+        new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                try {
+                    // http 리퀘스트
+                    OkHttpClient client = new OkHttpClient();
 
+                    Request request = new Request.Builder()
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/list_announce/" + groupId + "/" + page)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Log.d("Notice", s);
+
+                try {
+                    // JSON  파싱
+                    JSONArray   jsonArray   = new JSONArray(s);
+
+                    Ncount = jsonArray.length();
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
+            }
+        }.execute();
+
+        return Ncount;
+    }
+
+    private int ckSresult (final String groupId) {
+        new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                try {
+                    // 클라이언트 객체
+                    OkHttpClient client = new OkHttpClient();
+
+                    // 리퀘스트 생성
+                    Request request = new Request.Builder()
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/schedule/" + groupId)
+                            .build();
+
+                    Log.d("schedule", Environments.LARAVEL_HIKONNECT_IP + "/api/schedule/" + groupId);
+
+                    // 결과 받아오기
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Log.d("#schedule#", s);
+
+                try {
+                    // JSON  파싱
+                    JSONArray   jsonArray   = new JSONArray(s);
+
+                    Scount = jsonArray.length();
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
+            }
+        }.execute();
+
+        return Scount;
+    }
     // -----------------------------------------------------------------------------------
 
     // 오버라이딩 Drawer

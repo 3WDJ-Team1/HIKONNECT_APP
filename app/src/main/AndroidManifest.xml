@@ -90,13 +90,14 @@
         <activity
             android:name=".AfterHikingActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.group.GroupActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.MainActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.groups.GroupActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".activities.group_list.GroupMenuActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity"
             android:screenOrientation="portrait" />

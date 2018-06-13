@@ -23,7 +23,7 @@ import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 
 /**
  * 유저 상세 프로필 액티비티
- * @author  Sungeun Kang (kasueu0814@gmail.com), Areum Lee
+ * @author  Sungeun Kang (kasueu0814@gmail.com), Areum Lee (leear5799@gmail.com)
  * @since   2018-05-17
  */
 public class UserProfileActivity extends AppCompatActivity{
@@ -59,7 +59,7 @@ public class UserProfileActivity extends AppCompatActivity{
         init();
     }
 
-    /**
+    /**]
      * 프로필 이미지 다운로드 받아올 AsyncTask 상속 객체
      */
     public class DownloadImage extends AsyncTask<Void, Void, Bitmap> {

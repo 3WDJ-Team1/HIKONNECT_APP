@@ -319,7 +319,6 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                     return response.body().string();
 
                 } catch (IOException ie) {
-
                     Log.e(LOG_TAG, "IOException was occured in getScheduleMembers()!!!!! \n" + ie);
                     return null;
                 }
@@ -451,6 +450,4 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
         }.execute(inputMntId);
     }
-
-
 }

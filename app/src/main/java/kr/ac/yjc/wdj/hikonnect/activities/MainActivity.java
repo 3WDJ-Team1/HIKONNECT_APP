@@ -29,8 +29,11 @@ import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.group_list.GroupMenuActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.MyMenuActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserJoinedGroup;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
@@ -43,8 +46,7 @@ import okhttp3.Response;
 
 /**
  * The Activity used app's main page
- * @author  Areum Lee (leear5799@gmail.com)         drawer
- *          Sungeun Kang (kasueu0814@gmail.com)     툴바, 내부 페이지
+ * @author  Areum Lee (leear5799@gmail.com), Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-24
  */
 public class MainActivity extends AppCompatActivity
@@ -179,9 +181,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.groups) {
             startActivity(new Intent(this, groups_list_main.class));
-        } /*else if (id == R.id.my_groups) {
-            startActivity(new Intent(this, UserGroupActivity.class));
-        }*/ else if (id == R.id.my_records) {
+        } else if (id == R.id.my_groups) {
+            startActivity(new Intent(this, UserJoinedGroup.class));
+        } else if (id == R.id.my_records) {
             startActivity(new Intent(this, UserRecordActivity.class));
         } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
@@ -234,7 +236,7 @@ public class MainActivity extends AppCompatActivity
         btnToGroupMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), groups_list_main.class);
+                Intent intent = new Intent(getBaseContext(), GroupMenuActivity.class);
                 startActivity(intent);
             }
         });
@@ -287,4 +289,3 @@ public class MainActivity extends AppCompatActivity
         }.execute();
     }
 }
-

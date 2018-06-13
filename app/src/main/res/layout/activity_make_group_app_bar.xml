@@ -20,33 +20,19 @@
             android:background="@color/transparent"
             app:contentInsetStartWithNavigation="0dp">
 
-            <ImageButton
-                android:id="@+id/btnGoBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="24dp"
-                android:background="@color/transparent"
-                android:src="@drawable/ic_left_arrow_angle_svgrepo_com"
-                android:tint="@color/grey_300"
-                android:visibility="visible"/>
-
-            <TextView
-                android:id="@+id/joinedGroupToolbarTitle"
-                android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:src="@drawable/hikonnect_logo_toolbar"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="30dp"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="내 기록 보기"/>
+                android:layout_marginEnd="32dp"/>
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/user_record"
-        android:id="@+id/layout_my_record" />
+    <include layout="@layout/activity_make_group"
+        android:id="@+id/layout_group_making_main" />
 
 </android.support.design.widget.CoordinatorLayout>

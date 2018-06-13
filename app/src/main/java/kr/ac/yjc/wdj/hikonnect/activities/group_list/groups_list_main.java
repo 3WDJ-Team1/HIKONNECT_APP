@@ -50,7 +50,8 @@ import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserJoinedGroup;
+import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -58,7 +59,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com)
+ * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com), Areum
  * @since   2018-04-10
  */
 public class groups_list_main extends AppCompatActivity
@@ -434,9 +435,9 @@ public class groups_list_main extends AppCompatActivity
 
         if (id == R.id.groups) {
             startActivity(new Intent(this, groups_list_main.class));
-        } /*else if (id == R.id.my_groups) {
-            startActivity(new Intent(this, UserGroupActivity.class));
-        }*/ else if (id == R.id.my_profile) {
+        } else if (id == R.id.my_groups) {
+            startActivity(new Intent(this, UserJoinedGroup.class));
+        } else if (id == R.id.my_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else if (id == R.id.log_out) {
 

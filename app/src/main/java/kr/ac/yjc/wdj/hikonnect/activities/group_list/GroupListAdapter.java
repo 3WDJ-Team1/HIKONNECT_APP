@@ -32,6 +32,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 /**
  * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com)
+ *          , Areum Lee (leear5799@gamil.com)
  * @since   2018-04-10
  */
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
@@ -68,7 +69,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         holder.textViewContent.setText(listItem.getContent());
 
         // 리스너 장착
-        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+        holder.moveToGroupDetailBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 부모 액티비티의 Context 객체 받아오기
@@ -192,11 +193,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private CardView        cardView;       // CardView
-        private TextView        textViewHead;   // 제목
-        private TextView        textViewWriter; // 작성자
-        private TextView        textViewContent;// 내용
-        private LinearLayout    linearLayout;   // 클릭하면 이동할 레이아웃
+        private CardView        cardView;               // CardView
+        private TextView        textViewHead;           // 제목
+        private TextView        textViewWriter;         // 작성자
+        private TextView        textViewContent;        // 내용
+        private Button          moveToGroupDetailBtn;   // 클릭하면 TabsActivity로 이동할 버튼
+        private LinearLayout    linearLayout;           // 클릭하면 이동할 레이아웃
 
         /**
          * 레이아웃과 연결
@@ -205,11 +207,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
 
-            cardView        = (CardView)        itemView.findViewById(R.id.cardView);
-            textViewHead    = (TextView)        itemView.findViewById(R.id.textViewHead);
-            textViewWriter  = (TextView)        itemView.findViewById(R.id.tvWriter);
-            textViewContent = (TextView)        itemView.findViewById(R.id.tvContent);
-            linearLayout    = (LinearLayout)    itemView.findViewById(R.id.linearLayout);
+            cardView                = (CardView)        itemView.findViewById(R.id.cardView);
+            textViewHead            = (TextView)        itemView.findViewById(R.id.textViewHead);
+            textViewWriter          = (TextView)        itemView.findViewById(R.id.tvWriter);
+            textViewContent         = (TextView)        itemView.findViewById(R.id.tvContent);
+            moveToGroupDetailBtn    = (Button)          itemView.findViewById(R.id.MoveToGroupDetailBtn);
+            linearLayout            = (LinearLayout)    itemView.findViewById(R.id.linearLayout);
         }
     }
 

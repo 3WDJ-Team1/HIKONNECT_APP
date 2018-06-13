@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,7 +161,7 @@ public class GroupUserInfoBean extends Bean {
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
 
-                profilePic = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
+                //profilePic = Bitmap.createScaledBitmap(bitmap, 50, 50, true);
             }
         }.execute();
     }
