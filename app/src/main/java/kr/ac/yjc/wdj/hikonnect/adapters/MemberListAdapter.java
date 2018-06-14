@@ -53,7 +53,7 @@ public class MemberListAdapter extends RecyclerView.Adapter<MemberListAdapter.Me
         memberHolder.profilePic.setImageBitmap(dataList.get(i).getProfilePic());
 
         final int index = i;
-        // TODO 생각 좀 해보고...
+
         if (status != null && !status.equals("\"guest\"")) {
             memberHolder.cardWrapper.setOnClickListener(new View.OnClickListener() {
                 @Override

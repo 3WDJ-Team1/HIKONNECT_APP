@@ -249,13 +249,78 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                 }
             });
         } else if (viewHolder instanceof ViewHolderMember) {
+            final Button btnAcceptUser = ((ViewHolderMember) viewHolder).btnAcceptUser;         // 그룹 참가 수락 버튼
+            final Button btnRejectUser = ((ViewHolderMember) viewHolder).btnRejectUser;         // 그룹 참가 거절 버튼
+            final String memberId = ((GroupUserInfoBean) dataList.get(index)).getNickname();    // 참가 신청한 멤버의 ID                                                  // 참가 신청한 멤버의 Id
+
             // 그룹 멤버일 때
             // TODO Image 변경되게 바꿀 것
-//            ((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
+            //((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
             ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) dataList.get(index)).getNickname());
             ((ViewHolderMember) viewHolder).profilePic.setImageBitmap(((GroupUserInfoBean) dataList.get(index)).getProfilePic());
 
             // TODO 그룹 참가 수락 리스너
+            btnAcceptUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    new AsyncTask<Void, Integer, String>() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            loadingDialog.show();
+                        }
+
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            try {
+                                OkHttpClient client = new OkHttpClient();
+
+                                RequestBody body = new FormBody.Builder()
+                                        .add("userid", memberId)
+                                        .add("uuid", TabsActivity.groupId)
+                                        .build();
+
+                                Request request = new Request.Builder()
+                                        .url(Environments.LARAVEL_HIKONNECT_IP + "/api/member/true")
+                                        .put(body)
+                                        .build();
+
+                                Response response = client.newCall(request).execute();
+                                return response.body().string();
+                            } catch (IOException ie) {
+                                ie.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            super.onPostExecute(s);
+
+                            Log.d("result", s);
+
+                            if (s == "false") {
+                                Toast.makeText(
+                                        context,
+                                        "참가 신청이 거절되었습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            } else {
+                                Toast.makeText(
+                                        context,
+                                        "참가 신청이 수락되었습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                final int position = viewHolder.getAdapterPosition();
+                                dataList.remove(position);
+                                notifyItemRemoved(position);
+                            }
+                            loadingDialog.dismiss();
+                        }
+                    }.execute();
+                }
+            });
 
             // TODO 그룹 참가 거절 리스너
 

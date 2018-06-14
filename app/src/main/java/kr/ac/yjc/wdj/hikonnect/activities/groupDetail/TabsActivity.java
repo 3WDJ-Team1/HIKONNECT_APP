@@ -1,5 +1,6 @@
 package kr.ac.yjc.wdj.hikonnect.activities.groupDetail;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -25,17 +25,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionMenu;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.mikephil.charting.data.LineData;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.json.JSONArray;
@@ -48,7 +51,9 @@ import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.group.GroupNoticeActiviry;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
+import kr.ac.yjc.wdj.hikonnect.activities.groups.NoticeActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.adapters.MemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.adapters.RecycleAdapterForGDetail;
@@ -77,10 +82,13 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     // UI 변수
     private ViewPager                           viewPager;          // 전체 페이지
     private NavigationTabBar                    navigationTabBar;   // 네비게이션 탭 바
-    private FloatingTextButton                  btnEnterGroup,      // 그룹 참가 버튼
+    private FloatingActionButton                btnEnterGroup,      // 그룹 참가 버튼
                                                 btnExitGroup,       // 그룹 탈퇴 버튼
                                                 btnMakeNotice,      // 공지사항 작성 버튼
                                                 btnMakeSchedule;    // 일정 작성 버튼
+    private Button                              btnAcceptUser,
+                                                btnRejectUser;
+    private FloatingActionMenu                  mainBtn;            // 플로팅 버튼들을 포괄하는 메인 플로팅 버튼
     private LoadingDialog                       loadingDialog;      // 로딩 화면
     private DrawerLayout                        drawer;             // drawer
     private Toolbar                             toolbar;
@@ -107,9 +115,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     private static final    int                 PAGE_COUNT = 3;     // 총 페이지의 수
     private static          String              status;             // 사용자가 해당 그룹에 참여하고 있는 지 여부
     public  static          String              groupId,            // 해당 그룹의 id
-                                                userId;             // 현재 사용자의 id
+                                                userId,             // 현재 사용자의 id
+                                                memberId;           // 참가 신청한 사용자의 id
     private                 String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
-    private                 boolean             result;             // 데이터의 존재 유무
     private                 int                 firstIndex,         // 요청 공지사항 데이터 시작 인덱스
                                                 Ncount,             // 공지사항 데이터가 있는지 확인하기 위한 변수
                                                 Scount;             // 일정 데이터가 있는지 확인하기 위한 변수
@@ -126,6 +134,11 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     // OKHttp
     private OkHttpClient                        client;
 
+    // Floating Button
+    private boolean                             isFABOpen = false;
+    private View                                fabBGLayout;
+    private LinearLayout                        fabLayout1, fabLayout2, fabLayout3, fabLayout4;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -141,15 +154,16 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         status              = intent.getStringExtra("status");
 
         // UI 변수
-        btnEnterGroup       = (FloatingTextButton)      findViewById(R.id.btnEnterGroup);
-        btnExitGroup        = (FloatingTextButton)      findViewById(R.id.btnExitGroup);
-        btnMakeNotice       = (FloatingTextButton)      findViewById(R.id.btnMakeNotice);
-        btnMakeSchedule     = (FloatingTextButton)      findViewById(R.id.btnMakeSchedule);
-        viewPager           = (ViewPager)               findViewById(R.id.vp_horizontal_ntb);
-        navigationTabBar    = (NavigationTabBar)        findViewById(R.id.ntb_horizontal);
-        toolbar             = (Toolbar)                 findViewById(R.id.toolbar);
-        drawer              = (DrawerLayout)            findViewById(R.id.drawer_layout);
-        navigationView      = (NavigationView)          findViewById(R.id.nav_view);
+        btnEnterGroup       = (FloatingActionButton)        findViewById(R.id.btnEnterGroup);
+        btnExitGroup        = (FloatingActionButton)        findViewById(R.id.btnExitGroup);
+        btnMakeNotice       = (FloatingActionButton)        findViewById(R.id.btnMakeNotice);
+        btnMakeSchedule     = (FloatingActionButton)        findViewById(R.id.btnMakeSchedule);
+        mainBtn             = (FloatingActionMenu)          findViewById(R.id.floating_actiong_btn_menu);
+        viewPager           = (ViewPager)                   findViewById(R.id.vp_horizontal_ntb);
+        navigationTabBar    = (NavigationTabBar)            findViewById(R.id.ntb_horizontal);
+        toolbar             = (Toolbar)                     findViewById(R.id.toolbar);
+        drawer              = (DrawerLayout)                findViewById(R.id.drawer_layout);
+        navigationView      = (NavigationView)              findViewById(R.id.nav_view);
         loadingDialog       = new LoadingDialog(this);
 
         // 데이터 변수
@@ -171,13 +185,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         // OKHttp
         client = new OkHttpClient();
 
-        //TODO
-        // 이 사람이 그룹에 있으면 그룹 참가 버튼 -> 그룹 탈퇴 버튼
-
-//        initVarisJoined("", "");
-        // 플로팅 버튼 누르면 그룹 참가
-//        setListenerToFloatingButton();
-
+        // 사용자의 권한 파악
         toggleBtnIfJoined();
 
         // 툴바 초기화
@@ -341,15 +349,11 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         btnMakeNotice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
-            }
-        });
-
-        // 일정 작성
-        btnMakeSchedule.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //
+                // 공지사항 작성 페이지로 이동
+                // 공지사항 페이지로 그룹id 전달
+                Intent intent = new Intent(getBaseContext(), GroupNoticeActiviry.class);
+                intent.putExtra("groupId", TabsActivity.groupId);
+                startActivity(intent);
             }
         });
     }
@@ -588,7 +592,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * 사용자가 멤버거나 오너라면 그룹 탈퇴 버튼, 아니라면 그룹 참가 버튼을 보여준다
+     * 1. 사용자가 오너라면, 공지사항 작성 버튼 & 일정 작성 버튼을 보여준다.
+     * 2. 사용자가 멤버라면, 그룹 탈퇴 버튼 & 공지사항 작성 버튼 & 일정 작성 버튼을 보여준다.
+     * 3. 사용자가 오너도 멤버도 아니라면, 그룹 참가 버튼을 보여준다.
      */
     private void toggleBtnIfJoined() {
         switch (status) {
@@ -596,13 +602,13 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.GONE);
                 btnMakeNotice.setVisibility(View.VISIBLE);
-                //btnMakeSchedule.setVisibility(View.VISIBLE);
+                btnMakeSchedule.setVisibility(View.VISIBLE);
                 break;
             case "\"member\"":
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.VISIBLE);
-                btnMakeNotice.setVisibility(View.GONE);
-                btnMakeSchedule.setVisibility(View.GONE);
+                btnMakeNotice.setVisibility(View.VISIBLE);
+                btnMakeSchedule.setVisibility(View.VISIBLE);
                 break;
             default:
                 btnEnterGroup.setVisibility(View.VISIBLE);
@@ -956,6 +962,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (loadingDialog.isShowing()) {

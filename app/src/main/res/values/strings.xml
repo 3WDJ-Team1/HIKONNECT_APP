@@ -19,10 +19,12 @@
     <string name="sign_up">회원가입</string>
     <string name="log_out">로그아웃</string>
     <string name="groupName">그룹명</string>
+    <string name="title">제목</string>
     <string name="content">내용</string>
     <string name="min">최소 모집 인원</string>
     <string name="max">최대 모집 인원</string>
     <string name="makeGroup">그룹 생성</string>
+    <string name="makeNotice">공지사항 작성</string>
     <string name="groups">모집 중인 그룹</string>
     <string name="nav_my_page">마이페이지</string>
     <string name="nav_my_groups">나의 그룹</string>

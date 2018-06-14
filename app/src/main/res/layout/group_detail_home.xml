@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -35,56 +35,88 @@
         app:ntb_badged="true"
         app:ntb_titled="true"
         app:ntb_title_mode="all"/>
-    
-    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/floating_actiong_btn_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="5dp"
+        app:menu_animationDelayPerItem="55"
+        app:menu_backgroundColor="@android:color/transparent"
+        app:menu_buttonSpacing="0dp"
+        app:menu_colorNormal="@color/pink_accent_400"
+        app:menu_colorPressed="@color/pink_200"
+        app:menu_colorRipple="@color/grey_500"
+        app:menu_fab_label="닫기"
+        app:menu_fab_size="normal"
+        app:menu_icon="@drawable/ic_add_white_24px"
+        app:menu_labels_colorNormal="#333"
+        app:menu_labels_colorPressed="#444"
+        app:menu_labels_colorRipple="#66efecec"
+        app:menu_labels_cornerRadius="3dp"
+        app:menu_labels_ellipsize="none"
+        app:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+        app:menu_labels_margin="0dp"
+        app:menu_labels_maxLines="-1"
+        app:menu_labels_padding="8dp"
+        app:menu_labels_position="left"
+        app:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+        app:menu_labels_showShadow="true"
+        app:menu_labels_singleLine="false"
+        app:menu_labels_textColor="@color/white"
+        app:menu_labels_textSize="15dp"
+        app:menu_openDirection="up"
+        app:menu_shadowColor="#66aff198"
+        app:menu_shadowRadius="4dp"
+        app:menu_shadowXOffset="1dp"
+        app:menu_shadowYOffset="4dp"
+        app:menu_showShadow="true"
+        >
+
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/btnEnterGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:floating_background_color="@color/light_green_500"
-        app:floating_icon="@drawable/ic_person_add_white_24px"
-        app:floating_title="그룹참여"
-        app:floating_title_color="@color/white"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="76dp"
-        android:layout_marginEnd="16dp"/>
+        android:src="@drawable/ic_person_add_white_24px"
+        app:fab_colorNormal="@color/light_green_accent_700"
+        app:fab_colorPressed="@color/yellow_500"
+        app:fab_label="그룹참가"
+        app:fab_size="mini"/>
 
-    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/btnExitGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:floating_background_color="@color/red_500"
-        app:floating_icon="@drawable/ic_emergency_exit_svgrepo_com"
-        app:floating_title="그룹탈퇴"
-        app:floating_title_color="@color/black"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="76dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_emergency_exit_svgrepo_com"
+        app:fab_colorNormal="#FF4500"
+        app:fab_colorPressed="@color/yellow_500"
+        app:fab_label="그룹탈퇴"
+        app:fab_size="mini"
+        />
 
-    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/btnMakeNotice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:floating_background_color="@color/blue_accent_700"
-        app:floating_icon="@drawable/ic_create"
-        app:floating_title="공지사항 작성"
-        app:floating_title_color="@color/white"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="76dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_notifications_white_24px"
+        app:fab_colorNormal="@color/light_green_accent_700"
+        app:fab_colorPressed="@color/yellow_500"
+        app:fab_label="공지사항 작성"
+        app:fab_size="mini"
+        />
 
-    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/btnMakeSchedule"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:floating_background_color="@color/pink_accent_400"
-        app:floating_icon="@drawable/ic_create"
-        app:floating_title="일정 작성"
-        app:floating_title_color="@color/white"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="76dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone"/>
+        android:src="@drawable/ic_create_white_24px"
+        app:fab_colorNormal="@color/blue_accent_700"
+        app:fab_colorPressed="@color/pink_accent_400"
+        app:fab_label="일정 작성"
+        app:fab_size="mini"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </FrameLayout>

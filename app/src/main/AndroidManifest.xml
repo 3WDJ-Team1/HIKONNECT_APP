@@ -50,6 +50,8 @@
         <activity
             android:name=".activities.groups.NoticeActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.group.GroupNoticeActiviry"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.PreActivity"
             android:screenOrientation="portrait" />

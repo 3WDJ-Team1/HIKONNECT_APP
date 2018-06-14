@@ -28,7 +28,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @author  Sungeun Kang (kasueu0814@gmail.com), Areum Lee (leear5799@gmail.com)
  * @since   2018-05-26
  */
 public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupListAdapter.JoinedGroupHolder> {
@@ -127,10 +127,11 @@ public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupList
                     protected void onPostExecute(String s) {
                         super.onPostExecute(s);
 
-                        if (Boolean.parseBoolean(s))
-                            Toast.makeText(listItem.getParent(), "그룹 탈퇴 완료하였습니다.", Toast.LENGTH_SHORT).show();
-                        else
+                        if (s == "false") {
                             Toast.makeText(listItem.getParent(), "그룹 탈퇴 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(listItem.getParent(), "그룹 탈퇴 완료하였습니다.", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                 }.execute();

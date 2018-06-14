@@ -28,7 +28,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * @author  Jungyu Choi, Sungeun Kang (kasueu0814@gmail.com), Areum Lee
+ * @author  Jungyu Choi, Areum Lee (leear5799@gmail.com), Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-05
  */
 public class LoginActivity extends Activity {

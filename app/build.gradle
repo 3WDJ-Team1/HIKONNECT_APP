@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -83,6 +84,7 @@ android {
 
                 // 그룹 상세 페이지 플로팅 버튼
                 compile 'com.github.dimorinny:floating-text-button:0.0.2'
+                compile 'com.github.clans:fab:1.6.2'
 
                 provided 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
 

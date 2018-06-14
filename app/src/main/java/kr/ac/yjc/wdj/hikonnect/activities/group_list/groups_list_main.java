@@ -59,7 +59,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com), Areum
+ * @author  Jiyoon Lee, Sungeun Kang (kasueu0814@gmail.com), Areum Lee
  * @since   2018-04-10
  */
 public class groups_list_main extends AppCompatActivity
