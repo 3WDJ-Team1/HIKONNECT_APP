@@ -58,7 +58,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/GroupContetns"
+        android:id="@+id/noticeContents"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:hint="내용을 입력하세요*"
