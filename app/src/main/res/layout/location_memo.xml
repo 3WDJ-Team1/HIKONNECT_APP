@@ -2,14 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="330dp"
     android:layout_height="wrap_content"
-    android:background="@color/grey_50"
     android:orientation="vertical">
 
     <!-- 타이틀바 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cyan_300"
+        android:background="@drawable/location_memo_title_background_shape"
         android:orientation="horizontal">
 
         <TextView
@@ -17,20 +16,23 @@
             android:layout_width="match_parent"
             android:layout_height="53dp"
             android:gravity="center"
-            android:text="title"
-            android:textColor="@color/grey_900"
-            android:textSize="20sp" />
+            android:text="Title"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
     <!-- //end 타이틀바 -->
 
     <!-- Notice -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/grey_100"
+            android:minHeight="300dp"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -48,15 +50,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="3dp"
                         android:text="작성자"
-                        android:textAlignment="textEnd"
                         android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/txtLocationMemoWriter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right"
                         android:text="유저 아이디"
+                        android:textColor="@color/grey_800"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -70,24 +71,25 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="3dp"
                         android:text="작성 시간"
-                        android:textAlignment="textEnd"
                         android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/txtMemoCreatedTime"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_gravity="right"
                         android:text="00년 00월 00일 00시 00분"
+                        android:textColor="@color/grey_800"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/imgViewLocationMemoPic"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:minHeight="200dp"
+                android:minWidth="200dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -100,40 +102,35 @@
                 android:id="@+id/txtLocationMemoContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:alpha="0.87"
+                android:layout_marginBottom="4dp"
                 android:gravity="center"
                 android:scrollbars="vertical"
                 android:text="본문"
-                android:textColor="#000"
+                android:textColor="@color/grey_800"
                 android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>
     <!-- Notice -->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#66bdbdbd" />
-
     <!-- 닫기 버튼 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cyan_100"
+        android:background="@drawable/location_memo_footer_shape"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <Button
             android:layout_width="match_parent"
-            android:layout_height="53dp"
-            android:background="#00000000"
+            android:layout_height="40dp"
+            android:background="@drawable/map_button_selector"
             android:gravity="center"
             android:onClick="mOnClose2"
-            android:padding="16dp"
             android:text="확인"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
     </LinearLayout>
     <!--// 닫기 버튼 -->
 </LinearLayout>

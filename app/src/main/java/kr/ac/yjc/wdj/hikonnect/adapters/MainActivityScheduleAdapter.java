@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupSchedule;
 import kr.ac.yjc.wdj.hikonnect.beans.MainActivitySchedule;
+import kr.ac.yjc.wdj.hikonnect.fragments.ScheduleOnMainPage;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -46,7 +47,9 @@ public class MainActivityScheduleAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        return null;
+        ScheduleOnMainPage page = new ScheduleOnMainPage();
+        page.setData(schedules.get(i));
+        return page;
     }
 
     @Override
@@ -95,6 +98,8 @@ public class MainActivityScheduleAdapter extends FragmentPagerAdapter {
             try {
                 super.onPostExecute(s);
 
+                Log.d(APP_TAG, "onPostExecute: " + s);
+
                 JSONParser parser = new JSONParser();
 
                 JSONArray jsonArray = (JSONArray) parser.parse(s);
@@ -106,14 +111,16 @@ public class MainActivityScheduleAdapter extends FragmentPagerAdapter {
 
                     String mntName      = (String) _schedule.get("mnt_name");
                     String title        = (String) _schedule.get("title");
-                    int scheduleNum     = Integer.valueOf(_schedule.get("schedule_no").toString());
+                    String groupName    = (String) _schedule.get("group_name");
+                    String scheduleNum  = String.valueOf(_schedule.get("schedule_no"));
                     String startDate    = (String) _schedule.get("start_date");
                     String leader       = (String) _schedule.get("leader");
 
                     schedule = new MainActivitySchedule();
                     schedule.setMntName(mntName);
                     schedule.setTitle(title);
-                    schedule.setNum(scheduleNum);
+                    schedule.setGroupName(groupName);
+                    schedule.setScheduleNum(scheduleNum);
                     schedule.setStartDate(startDate);
                     schedule.setLeader(leader);
 
