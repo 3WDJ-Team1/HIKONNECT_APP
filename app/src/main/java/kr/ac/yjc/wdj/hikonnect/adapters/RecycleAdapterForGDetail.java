@@ -27,7 +27,7 @@ import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
 
 
 /**
- * RecycleAdapter for group detail page
+ * 그룹 상세보기 페이지에 사용될 어댑터
  * @author Sungeun Kang (kasueu0814@gmail.com)
  * @since  2018-04-06
  */
@@ -63,19 +63,18 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         View                    view       = LayoutInflater.from(viewGroup.getContext()).inflate(listLayout, viewGroup, false);
         RecyclerView.ViewHolder viewHolder = null;
 
-        // if list layout
+        // listLayout이
         switch (listLayout) {
-            // is notice_item
+            // notice_item 이라면
             case R.layout.notice_item:
                 viewHolder = new ViewHolderNotice(view);
                 break;
-            // is group_detail_plan
+            // schedule_item_cardview_ 라면
             case R.layout.schedule_item_cardview_:
                 viewHolder = new ViewHolderSchedule(view);
                 break;
-            // is member_list
+            // member_list 라면
             case R.layout.member_list:
-                // use object of ViewHolderMember
                 viewHolder = new ViewHolderMember(view);
                 break;
         }
@@ -93,17 +92,24 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         // 공지사항일 때
         if(viewHolder instanceof ViewHolderNotice) {
 
+            // 번호
             ((ViewHolderNotice) viewHolder).noticeNo.setText(i + 1 + "");
+            // 제목
             ((ViewHolderNotice) viewHolder).noticeTitle.setText(((GroupNotice) dataList.get(i)).getTitle());
+            // 작성자
             ((ViewHolderNotice) viewHolder).noticeWriter.setText(((GroupNotice) dataList.get(i)).getWriter());
+            // 내용
             ((ViewHolderNotice) viewHolder).noticeContent.setText(((GroupNotice) dataList.get(i)).getContent());
 
         } else if (viewHolder instanceof ViewHolderSchedule) {
             // 스케쥴일 때
             final GroupSchedule schedule = (GroupSchedule) dataList.get(i);
 
+            // 스케줄 번호
             ((ViewHolderSchedule) viewHolder).scheduleNo.setText(i + 1 + "");
+            // 스케줄 제목
             ((ViewHolderSchedule) viewHolder).scheduleTitle.setText(schedule.getTitle());
+            // 스케줄 주최자
             ((ViewHolderSchedule) viewHolder).scheduleLeader.setText(schedule.getLeader());
 
             // 스케줄 레이아웃에 클릭리스너
@@ -141,8 +147,6 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
 
         } else if (viewHolder instanceof ViewHolderMember) {
             // 그룹 멤버일 때
-            // TODO Image 변경되게 바꿀 것
-//            ((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
             ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) dataList.get(index)).getNickname());
             ((ViewHolderMember) viewHolder).profilePic.setImageBitmap(((GroupUserInfoBean) dataList.get(index)).getProfilePic());
 

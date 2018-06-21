@@ -1,20 +1,26 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
 /**
- * The bean class to store group notice
+ * 그룹 공지사항 객체
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-06
- * @see     Bean
  */
 public class GroupNotice extends Bean{
 
-    private String  writer;     // writer of notice
-    private String  title;      // title of notice
-    private String  content;    // content of notice
-    private String  picture;    // picture of notice
-    private String  createdAt;  // created date of notice
+    private String  writer;     // 공지사항 작성자
+    private String  title;      // 공지사항 제목
+    private String  content;    // 공지사항 내용
+    private String  picture;    // 공지사항 사진 (option)
+    private String  createdAt;  // 생성 일자
 
-    // init member variables
+    /**
+     * 객체 초기화
+     * @param writer    String    작성자
+     * @param title     String    제목
+     * @param content   String    내용
+     * @param picture   String    사진 경로
+     * @param createdAt String    생성일자
+     */
     public GroupNotice(String   writer,
                        String   title,
                        String   content,
@@ -29,7 +35,6 @@ public class GroupNotice extends Bean{
     }
 
     // getters and setters
-
     public String getWriter() {
         return writer;
     }

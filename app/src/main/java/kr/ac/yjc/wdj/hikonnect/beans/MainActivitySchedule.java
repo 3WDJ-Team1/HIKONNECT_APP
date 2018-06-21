@@ -1,13 +1,15 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
-import android.content.Context;
-
+/**
+ * 메인액티비티에 보여질 스케줄
+ * @author  Beomsu Kwon (rnjs9957@gmail.com)
+ */
 public class MainActivitySchedule {
-    private int num;
-    private String title;
-    private String mntName;
-    private String leader;
-    private String startDate;
+    private int     num;
+    private String  title;
+    private String  mntName;
+    private String  leader;
+    private String  startDate;
 
     public void setNum(int num) {
         this.num = num;

@@ -3,7 +3,7 @@ package kr.ac.yjc.wdj.hikonnect.beans;
 import kr.ac.yjc.wdj.hikonnect.Environments;
 
 /**
- * 녹음 파일 관련 정보 Db로 부터 받아와 저장할 객체
+ * 녹음 파일 관련 정보 Db로 부터 받아와 저장할 객체 (현재 사용 x)
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-10
  */

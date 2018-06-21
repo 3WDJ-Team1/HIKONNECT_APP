@@ -6,8 +6,8 @@ import android.support.annotation.Nullable;
 import org.json.JSONArray;
 
 /**
- * 그룹 스케줄 정보 저장할 bean 객체
- * @author  Sungeun Kang (kasueu0814@gmail.com
+ * 그룹 스케줄 정보 저장할 객체
+ * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-15
  */
 public class GroupSchedule extends Bean {

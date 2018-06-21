@@ -32,6 +32,11 @@ import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 
+/**
+ * 유저 프로필 액티비티
+ * @author  Areum Lee (leear5799@gmail.com)     기본 틀
+ * @author  Sungeun Kang (kasueu0814@gmail.com) 데이터 바인딩
+ */
 public class UserProfileActivity extends AppCompatActivity
             implements NavigationView.OnNavigationItemSelectedListener{
     ActionBarDrawerToggle   toggle;
@@ -42,12 +47,12 @@ public class UserProfileActivity extends AppCompatActivity
     TextView                idTxt, nicknameTxt, phoneTxt, ageTxt, genderTxt;
     SessionManager          session;
     String                  id, nickname, phoneNum, age, gender;
-    HttpRequestConnection hrc = new HttpRequestConnection();
-    String result;
-    Handler handler;
-    ContentValues contentValues = new ContentValues();
-    Button home;
-    SharedPreferences pref = getSharedPreferences("loginData", MODE_PRIVATE);
+    HttpRequestConnection   hrc = new HttpRequestConnection();
+    String                  result;
+    Handler                 handler;
+    ContentValues           contentValues = new ContentValues();
+    Button                  home;
+    SharedPreferences       pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

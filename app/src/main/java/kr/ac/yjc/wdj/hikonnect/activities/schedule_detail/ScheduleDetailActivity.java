@@ -139,7 +139,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
         } catch (JSONException je) {
 
-            Log.e(LOG_TAG, "JSONException was occured while initing routeArrString!!!!! \n" + je);
+            Log.e(LOG_TAG, "JSONException was occurred while initing routeArrString!!!!! \n" + je);
         }
 
         dataList        = new ArrayList<>();
@@ -473,7 +473,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                     loadingDialog.cancel();
                 } catch (JSONException je) {
 
-                    Log.e(LOG_TAG, "JSONException was occured in getMntRouteWithMntId()!!!!\n" + je);
+                    Log.e(LOG_TAG, "JSONException was occurred in getMntRouteWithMntId()!!!!\n" + je);
 
                 }
 
