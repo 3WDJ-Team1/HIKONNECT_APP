@@ -62,7 +62,6 @@ public class AfterHikingActivity extends AppCompatActivity {
     private String                      completedMountain;  // 완료한 산 이름.
     private String                      hikingTear;         // 산행 등급.
 
-    //
     public SharedPreferences            pref;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,10 +71,10 @@ public class AfterHikingActivity extends AppCompatActivity {
         pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         // UI 초기화
-        tvRemainMembers     = (TextView)        findViewById(R.id.howManyNowHiking);
-        userName            = (TextView)        findViewById(R.id.userName);
-        rvAfterHikingList   = (RecyclerView)    findViewById(R.id.afterHikingList);
-        btnToOthersInfo     = (Button)          findViewById(R.id.showMemberList);
+        tvRemainMembers     = findViewById(R.id.howManyNowHiking);
+        userName            = findViewById(R.id.userName);
+        rvAfterHikingList   = findViewById(R.id.afterHikingList);
+        btnToOthersInfo     = findViewById(R.id.showMemberList);
 
         // 데이터 초기화
         hikingMenus = new ArrayList<>();
@@ -112,8 +111,6 @@ public class AfterHikingActivity extends AppCompatActivity {
      * menus, images 초기화 --> 메뉴 추가 시 이곳에 적용
      */
     private void initData() throws InterruptedException {
-        // TODO : intent로 받아오도록 변경하기
-        // TODO : 데이터 DB 에서 받아올 수 있도록 하기
         Intent intent = getIntent();
         memberNum = intent.getIntExtra("member_no", 1);
 

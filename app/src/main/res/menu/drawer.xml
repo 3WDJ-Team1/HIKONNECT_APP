@@ -30,6 +30,14 @@
                 android:icon="@drawable/ic_emoticon"
                 android:id="@+id/my_profile"
                 android:title="My Profile"/>-->
+        </menu>
+    </item>
+
+    <item android:title="">
+        <menu>
+
+            <item android:title=""></item>
+
             <item
                 android:icon="@android:drawable/ic_lock_idle_lock"
                 android:id="@+id/log_out"

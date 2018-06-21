@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.ac.yjc.wdj.hikonnect">
+
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -15,6 +16,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
     <uses-feature android:name="android.hardware.Camera" />
 
     <application
@@ -33,20 +35,21 @@
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
         <activity android:name=".Othersinfo" />
-        <activity android:name=".activities.ClusterDetailActivity"
+        <activity
+            android:name=".activities.ClusterDetailActivity"
             android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light"
             android:screenOrientation="portrait"
-            />
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light" />
         <activity
             android:name=".HikingRecord"
-            android:theme="@android:style/Theme.Dialog"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog" />
         <activity
             android:name="kr.ac.yjc.wdj.hikonnect.LocationMemoActivity"
             android:theme="@android:style/Theme.Dialog" />
-        <activity android:name="kr.ac.yjc.wdj.hikonnect.activities.LoginActivity"
+        <activity
+            android:name="kr.ac.yjc.wdj.hikonnect.activities.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.groupDetail.TabsActivity"
@@ -56,6 +59,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.groups.NoticeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.group.GroupNoticeActiviry"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.PreActivity"
@@ -93,16 +99,19 @@
         </activity>
         <activity
             android:name=".RecordListActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AfterHikingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.MainActivity"
-            android:theme="@style/AppTheme"
+            android:name=".activities.group.GroupActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.groups.GroupActivity"
+            android:name=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.group_list.GroupMenuActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.wifi_p2p_test.WifiP2pTestingActivity"
@@ -113,11 +122,14 @@
         <activity
             android:name=".activities.schedule_detail.ScheduleDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.myPage.UserJoinedGroup"
+        <activity
+            android:name=".activities.myPage.UserJoinedGroup"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.myPage.MyMenuActivity"
+        <activity
+            android:name=".activities.myPage.MyMenuActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.myPage.UserProfileModifyActivity"
+        <activity
+            android:name=".activities.myPage.UserProfileModifyActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activities.BottomDrawerActivity" />
         <!--Activities End-->
@@ -129,21 +141,30 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
 
         </provider>
         <!--Camera Provider End-->
         <!-- Services -->
-        <service android:name=".apis.fcm_manager.TokenManager">
+        <service
+            android:name=".apis.fcm_manager.TokenManager"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".apis.fcm_manager.MessageHandler">
+        <service
+            android:name=".apis.fcm_manager.MessageHandler"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <meta-data
+            android:name="firebase.messaging_auto_init_enabled"
+            android:value="true" />
         <!--Services End-->
     </application>
 </manifest>

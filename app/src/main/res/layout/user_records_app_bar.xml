@@ -46,7 +46,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/user_records"
+    <include layout="@layout/user_record"
         android:id="@+id/layout_my_record" />
 
 </android.support.design.widget.CoordinatorLayout>

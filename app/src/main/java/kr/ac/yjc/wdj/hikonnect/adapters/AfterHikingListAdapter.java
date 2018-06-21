@@ -78,7 +78,7 @@ public class AfterHikingListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         private AfterHikingListViewHolder(View itemView) {
             super(itemView);
 
-            itemImage = (ImageView) itemView.findViewById(R.id.itemImage);
+            itemImage = (ImageView) itemView.findViewById(R.id.item_image);
             itemTitle = (TextView) itemView.findViewById(R.id.itemTitle);
             itemValue = (TextView) itemView.findViewById(R.id.itemValue);
         }

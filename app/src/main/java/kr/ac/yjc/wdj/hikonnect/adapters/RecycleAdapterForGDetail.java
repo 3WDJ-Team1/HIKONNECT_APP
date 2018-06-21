@@ -1,11 +1,16 @@
 package kr.ac.yjc.wdj.hikonnect.adapters;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,44 +18,70 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
+import kr.ac.yjc.wdj.hikonnect.activities.groupDetail.TabsActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.schedule_detail.ScheduleDetailActivity;
 import kr.ac.yjc.wdj.hikonnect.beans.Bean;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupSchedule;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
  * RecycleAdapter for group detail page
- * @author Sungeun Kang (kasueu0814@gmail.com)
+ * @author Sungeun Kang (kasueu0814@gmail.com), Areum Lee (leear5799@gmail.com)
  * @since  2018-04-06
  */
 public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private LoadingDialog loadingDialog;      // 로딩 화면
+
     private int             listLayout;
     private ArrayList<Bean> dataList;
+    private Context         context;
 
     // for member
     private String          status;
     private int             index;
 
+    // 참가신청
+    private String          userId,
+                            schedule_no;
+
+    // Session
+    private SharedPreferences pref;
+
     /**
      * @param listLayout    layout to be used
      */
-    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList) {
+    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, Context context) {
         this.listLayout = listLayout;
         this.dataList   = dataList;
+        this.context    = context;
+        loadingDialog   = new LoadingDialog(context);
+        pref            = context.getSharedPreferences("loginData", Context.MODE_PRIVATE);
     }
 
-    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, String status) {
+    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, String status, Context context) {
         this.listLayout = listLayout;
         this.dataList   = dataList;
         this.status     = status;
+        this.context    = context;
+        loadingDialog   = new LoadingDialog(context);
+        pref            = context.getSharedPreferences("loginData", Context.MODE_PRIVATE);
     }
 
     /**
@@ -93,26 +124,41 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         // 공지사항일 때
         if(viewHolder instanceof ViewHolderNotice) {
 
-            ((ViewHolderNotice) viewHolder).noticeNo.setText(i + 1 + "");
+            // 공지사항 데이터가 없을 경우
+            if (((GroupNotice) dataList.get(i)).getTitle() == "데이터가 없습니다.") {
+                ((ViewHolderNotice) viewHolder).noticeNo.setText("");
+            } else {
+                // 공지사항 데이터가 있을 경우
+                ((ViewHolderNotice) viewHolder).noticeNo.setText(i + 1 + "");
+            }
             ((ViewHolderNotice) viewHolder).noticeTitle.setText(((GroupNotice) dataList.get(i)).getTitle());
             ((ViewHolderNotice) viewHolder).noticeWriter.setText(((GroupNotice) dataList.get(i)).getWriter());
             ((ViewHolderNotice) viewHolder).noticeContent.setText(((GroupNotice) dataList.get(i)).getContent());
 
         } else if (viewHolder instanceof ViewHolderSchedule) {
-            // 스케쥴일 때
+            // 스케줄일 때
             final GroupSchedule schedule = (GroupSchedule) dataList.get(i);
 
-            ((ViewHolderSchedule) viewHolder).scheduleNo.setText(i + 1 + "");
+            final Button    btnShowScheduleDetail       = ((ViewHolderSchedule) viewHolder).btnShowScheduleDetail;
+            final Button    btnJoin                     = ((ViewHolderSchedule) viewHolder).btnJoin;
+
+            // 스케줄 데이터가 없을 경우
+            if (schedule.getTitle() == "데이터가 없습니다.") {
+                ((ViewHolderSchedule) viewHolder).scheduleNo.setText("");
+                btnShowScheduleDetail.setVisibility(View.GONE);
+                btnJoin.setVisibility(View.GONE);
+            } else {
+                // 스케줄 데이터가 있을 경우
+                ((ViewHolderSchedule) viewHolder).scheduleNo.setText(i + 1 + "");
+            }
+
             ((ViewHolderSchedule) viewHolder).scheduleTitle.setText(schedule.getTitle());
             ((ViewHolderSchedule) viewHolder).scheduleLeader.setText(schedule.getLeader());
 
-            // 스케줄 레이아웃에 클릭리스너
-            ((ViewHolderSchedule) viewHolder).wrapper.setOnClickListener(new View.OnClickListener() {
+            // 상세보기 버튼 클릭리스너
+            btnShowScheduleDetail.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-
-                    ((ViewHolderSchedule) viewHolder).wrapper.setClickable(false);
-
+                public void onClick(View view) {
                     Intent intent = new Intent(schedule.getBaseContext(), ScheduleDetailActivity.class);
                     // 데이터 이동
                     // 산 이름
@@ -139,14 +185,143 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                 }
             });
 
+            // 참가신청 버튼 클릭리스너
+            btnJoin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new AsyncTask<Void, Integer, String>() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            loadingDialog.show();
+                        }
+
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            userId = pref.getString("user_id", "");
+                            schedule_no = String.valueOf(schedule.getNo());
+
+                            try {
+                                OkHttpClient client = new OkHttpClient();
+
+                                RequestBody body = new FormBody.Builder()
+                                        .add("userid", userId)
+                                        .add("uuid", TabsActivity.groupId)
+                                        .add("schedule_no", schedule_no)
+                                        .build();
+
+                                Request request = new Request.Builder()
+                                        .url(Environments.LARAVEL_HIKONNECT_IP + "/api/enter_schedule")
+                                        .post(body)
+                                        .build();
+
+                                Response response = client.newCall(request).execute();
+                                return response.body().string();
+                            } catch (IOException ie) {
+                                ie.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            super.onPostExecute(s);
+
+                            Log.d("result", s);
+
+                            if (s == "false") {
+                                Toast.makeText(
+                                        context,
+                                        "오류로 인해 참가신청에 실패했습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            } else {
+                                Toast.makeText(
+                                        context,
+                                        "일정에 참가신청 되었습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                            loadingDialog.dismiss();
+
+                            btnJoin.setVisibility(View.GONE);
+                        }
+                    }.execute();
+                }
+            });
         } else if (viewHolder instanceof ViewHolderMember) {
+            final Button btnAcceptUser = ((ViewHolderMember) viewHolder).btnAcceptUser;         // 그룹 참가 수락 버튼
+            final Button btnRejectUser = ((ViewHolderMember) viewHolder).btnRejectUser;         // 그룹 참가 거절 버튼
+            final String memberId = ((GroupUserInfoBean) dataList.get(index)).getNickname();    // 참가 신청한 멤버의 ID                                                  // 참가 신청한 멤버의 Id
+
             // 그룹 멤버일 때
             // TODO Image 변경되게 바꿀 것
-//            ((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
+            //((ViewHolderMember) viewHolder).profilePic.setImageDrawable(null);
             ((ViewHolderMember) viewHolder).memberName.setText(((GroupUserInfoBean) dataList.get(index)).getNickname());
             ((ViewHolderMember) viewHolder).profilePic.setImageBitmap(((GroupUserInfoBean) dataList.get(index)).getProfilePic());
 
             // TODO 그룹 참가 수락 리스너
+            btnAcceptUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    new AsyncTask<Void, Integer, String>() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            loadingDialog.show();
+                        }
+
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            try {
+                                OkHttpClient client = new OkHttpClient();
+
+                                RequestBody body = new FormBody.Builder()
+                                        .add("userid", memberId)
+                                        .add("uuid", TabsActivity.groupId)
+                                        .build();
+
+                                Request request = new Request.Builder()
+                                        .url(Environments.LARAVEL_HIKONNECT_IP + "/api/member/true")
+                                        .put(body)
+                                        .build();
+
+                                Response response = client.newCall(request).execute();
+                                return response.body().string();
+                            } catch (IOException ie) {
+                                ie.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            super.onPostExecute(s);
+
+                            Log.d("result", s);
+
+                            if (s == "false") {
+                                Toast.makeText(
+                                        context,
+                                        "참가 신청이 거절되었습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            } else {
+                                Toast.makeText(
+                                        context,
+                                        "참가 신청이 수락되었습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                final int position = viewHolder.getAdapterPosition();
+                                dataList.remove(position);
+                                notifyItemRemoved(position);
+                            }
+                            loadingDialog.dismiss();
+                        }
+                    }.execute();
+                }
+            });
 
             // TODO 그룹 참가 거절 리스너
 
@@ -201,21 +376,22 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     public int getItemCount() {
         return dataList.size();
     }
+}
 
     /**
      * ViewHolder for noitce list up
      */
-    private static class ViewHolderNotice extends RecyclerView.ViewHolder {
-        private TextView    noticeNo;       // 공지사항 번호
-        private TextView    noticeTitle;    // 공지사항 제목
-        private TextView    noticeWriter;   // 공지사항 작성자
-        private TextView    noticeContent;  // 내용
+    class ViewHolderNotice extends RecyclerView.ViewHolder {
+        public TextView    noticeNo;       // 공지사항 번호
+        public TextView    noticeTitle;    // 공지사항 제목
+        public TextView    noticeWriter;   // 공지사항 작성자
+        public TextView    noticeContent;  // 내용
 
         /**
          * 초기화
          * @param itemView 재사용될 레이아웃
          */
-        private ViewHolderNotice (View itemView) {
+        public ViewHolderNotice (View itemView) {
             super(itemView);
             this.noticeNo       = (TextView) itemView.findViewById(R.id.noticeNo);
             this.noticeTitle    = (TextView) itemView.findViewById(R.id.noticeTitle);
@@ -227,23 +403,23 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     /**
      * ViewHolder for member list up
      */
-    private static class ViewHolderMember extends RecyclerView.ViewHolder {
+    class ViewHolderMember extends RecyclerView.ViewHolder {
 
-        private CircularImageView   profilePic;         // 멤버 프로필 사진
-        private TextView            memberName;         // 멤버 이름
-        private RelativeLayout      cardWrapper;        // 전체 카드의 wrapper
-        private LinearLayout        detailWrapper;      // 상세 정보 나열 wrapper
-        private RecyclerView        rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
+        public CircularImageView   profilePic;         // 멤버 프로필 사진
+        public TextView            memberName;         // 멤버 이름
+        public RelativeLayout      cardWrapper;        // 전체 카드의 wrapper
+        public LinearLayout        detailWrapper;      // 상세 정보 나열 wrapper
+        public RecyclerView        rvMemberInfoDetail; // 멤버 상세 정보 나열할 RecyclerView
 
         // buttons
-        private Button              btnAcceptUser,      // 멤버 참가 수락 버튼
+        public Button               btnAcceptUser,      // 멤버 참가 수락 버튼
                                     btnRejectUser;      // 멤버 참가 거절 버튼
 
         /**
          * 초기화
          * @param itemView 재사용될 레이아웃
          */
-        private ViewHolderMember (View itemView) {
+        public ViewHolderMember (View itemView) {
             super(itemView);
             profilePic          = (CircularImageView)   itemView.findViewById(R.id.profilePic);
             memberName          = (TextView)            itemView.findViewById(R.id.memberName);
@@ -256,31 +432,29 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     }
 
     /**
-     * 스케줄 뷰홀더
-     * @author  Sungeun Kang (kasueu0814@gmail.com)
-     * @since   2018-05-15
+     * ViewHolder for schedule list up
      */
-    private static class ViewHolderSchedule extends RecyclerView.ViewHolder {
+    class ViewHolderSchedule extends RecyclerView.ViewHolder {
 
-        private TextView    scheduleNo,     // 스케줄 번호
-                            scheduleTitle,  // 스케줄 제목
-                            scheduleLeader; // 스케줄 주최자
-        private Button      btnJoin;        // 참가 버튼
-        private CardView    wrapper;        // 카드 뷰 ; wrapper
+        public TextView         scheduleNo,             // 스케줄 번호
+                                scheduleTitle,          // 스케줄 제목
+                                scheduleLeader;         // 스케줄 주최자
+        public Button           btnShowScheduleDetail,  // 스케줄 상세보기 버튼
+                                btnJoin;                // 참가 버튼
+        public CardView         wrapper;                // 카드 뷰 ; wrapper
 
         /**
          * 초기화
          * @param itemView  재사용될 레이아웃
          */
-        private ViewHolderSchedule(View itemView) {
+        public ViewHolderSchedule(View itemView) {
             super(itemView);
 
-            scheduleNo      = (TextView) itemView.findViewById(R.id.tvScheduleNo);
-            scheduleTitle   = (TextView) itemView.findViewById(R.id.tvScheduleTitle);
-            scheduleLeader  = (TextView) itemView.findViewById(R.id.tvScheduleLeader);
-            btnJoin         = (Button)   itemView.findViewById(R.id.btnJoinSchedule);
-            wrapper         = (CardView) itemView.findViewById(R.id.cvBackground);
-
+            scheduleNo              = (TextView)        itemView.findViewById(R.id.tvScheduleNo);
+            scheduleTitle           = (TextView)        itemView.findViewById(R.id.tvScheduleTitle);
+            scheduleLeader          = (TextView)        itemView.findViewById(R.id.tvScheduleLeader);
+            btnShowScheduleDetail   = (Button)          itemView.findViewById(R.id.btnShowScheduleDetail);
+            btnJoin                 = (Button)          itemView.findViewById(R.id.btnJoinSchedule);
+            wrapper                 = (CardView)        itemView.findViewById(R.id.cvBackground);
         }
     }
-}

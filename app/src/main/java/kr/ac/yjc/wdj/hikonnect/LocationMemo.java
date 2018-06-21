@@ -13,6 +13,7 @@ public class LocationMemo extends MapItem implements ClusterItem {
     public String title;
     public String contents;
     public Bitmap picture;
+    public boolean wasShown;
 
     public LocationMemo(LatLng location, int no) {
         super(location);

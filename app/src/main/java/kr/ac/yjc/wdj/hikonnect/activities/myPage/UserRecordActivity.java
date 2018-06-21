@@ -8,21 +8,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
@@ -35,23 +43,34 @@ import okhttp3.Response;
 
 /**
  * 유저 등산 기록 보기 액티비티
- * @author  Areum Lee, Sungeun Kang (kasueu0814@gmail.com)
+ * @author  Areum Lee (leear5799@gmail.com),
+ *          Sungeun Kang (kasueu0814@gmail.com)  세션, 앱바
  * @since   2018-05-03
  */
 public class UserRecordActivity extends AppCompatActivity {
-    private ImageButton                 btnGoBack;
-    public  String                      id, year, mGrade, mHour, mMinute, mSeconds, mDistance, responseText, result;
-    private ListView                    listView;
-    private LineChart                   chart;
-    private UserRecordListViewAdapter   adapter;
+    // UI 변수
+    private ImageButton btnGoBack;              // 뒤로가기 버튼
 
-    private static String LOG_TAG       = "result";
+    // 데이터를 담기 위한 변수
+    public  String      id,                     // 사용자 ID
+                        year,                   // 올해 년도
+                        result;                 // 월 별 등산횟수
+    private ImageView   gradeImgView,           // 등산 등급 아이콘
+                        timeImgView,            // 총 등산 시간 아이콘
+                        distanceImgView;        // 총 등산 거리 아이콘
+    private TextView    user_grade,             // 등산 등급
+                        user_hiking_time,       // 총 등산 시간
+                        user_hiking_distance;   // 총 등산 거리
 
-    ArrayList<Entry>    yValues         = new ArrayList<>();
-    String[]            resultArray;
+    private static String LOG_TAG = "result";
+
+    // 차트 변수
+    private LineChart           chart;
+    private ArrayList<Entry>    yValues = new ArrayList<>();
+    private String[]            resultArray;
 
     // 세션
-    private SharedPreferences           preferences;
+    private SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +80,16 @@ public class UserRecordActivity extends AppCompatActivity {
         preferences = getSharedPreferences("loginData", MODE_PRIVATE);
         id          = preferences.getString("user_id", "");
 
-        adapter = new UserRecordListViewAdapter();
+        gradeImgView            = (ImageView) findViewById(R.id.gradeImg);
 
-        listView = (ListView) findViewById(R.id.listview1);
+        user_grade              = (TextView) findViewById(R.id.user_grade);
+        user_hiking_time        = (TextView) findViewById(R.id.user_hiking_time);
+        user_hiking_distance    = (TextView) findViewById(R.id.user_hiking_distance);
 
-        chart = (LineChart) findViewById(R.id.chart);
-        chart.setDragEnabled(true);
-        chart.setScaleEnabled(false);
+        chart = (LineChart) findViewById(R.id.myLineChart);
+        chart.getDescription().setEnabled(false);               // description label 제거
+
+        //gradeImgView.setColorFilter(R.color.blue_200);
 
         // 뒤로가기 버튼
         btnGoBack = (ImageButton) findViewById(R.id.btnGoBack);
@@ -78,7 +100,15 @@ public class UserRecordActivity extends AppCompatActivity {
             }
         });
 
-        // 등급, 총 등산 시간, 총 등산 거리 데이터 수신 및 세팅
+        // 사용자의 등급, 총 등산 시간, 총 등산 거리 데이터 수신 및 셋팅
+        getUserHikingData();
+
+        // 사용자의 각 월별 등산 횟수 수신 및 그래프 생성
+        getUserHikingDetailData();
+    }
+
+    // 등급, 총 등산 시간, 총 등산 거리 데이터 수신
+    private void getUserHikingData() {
         new AsyncTask<Void, Integer, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -108,34 +138,29 @@ public class UserRecordActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, s);
 
                 try {
+                    // 데이터 수신
                     JSONObject json = new JSONObject(s);
 
+                    // 나의 등급
                     JSONObject gradeJson = json.getJSONObject("0");
-                    mGrade = gradeJson.getString("grade");
-                    adapter.addItem(ContextCompat.getDrawable(UserRecordActivity.this, R.drawable.ic_rating_svgrepo_com),
-                            "나의 등급", mGrade);
+                    user_grade.setText(gradeJson.getString("grade"));
 
-                    mDistance = json.getString("total_distance");
-                    adapter.addItem(ContextCompat.getDrawable(UserRecordActivity.this, R.drawable.ic_mountain_svgrepo_com),
-                            "총 등산 거리", mDistance + "km");
+                    // 총 등산 거리
+                    user_hiking_distance.setText(json.getString("total_distance") + "km");
 
+                    // 총 등산 시간
                     JSONObject timeJson = json.getJSONObject("total_hiking_time");
-                    mHour       = timeJson.getString("hour");
-                    mMinute     = timeJson.getString("minute");
-                    mSeconds    = timeJson.getString("second");
-                    adapter.addItem(ContextCompat.getDrawable(UserRecordActivity.this, R.drawable.ic_baseline_alarm_24px),
-                            "총 등산 시간", mHour + "시간" + mMinute + "분" + mSeconds + "초");
-
-                    listView.setAdapter(adapter);
+                    user_hiking_time.setText(timeJson.getString("hour") + "시간" + timeJson.getString("minute") + "분"
+                                            + timeJson.getString("second") + "초");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }.execute();
+    }
 
-
-        // 각 월별 등산 횟수 그래프
-        // 각 월별 등산 횟수 데이터 가져오기
+    // 각 월별 등산 횟수 데이터 가져오기
+    private void getUserHikingDetailData() {
         year = "2018";
         new AsyncTask<Void, Integer, String>() {
             @Override
@@ -174,7 +199,10 @@ public class UserRecordActivity extends AppCompatActivity {
 
                 // '[,]' 기호 제거
                 result = s.substring(1,25);
-                Log.i(LOG_TAG, result);
+                Log.i("result1", result);
+
+                result = s.substring(1,24);
+                Log.i("result2", result);
 
                 // ','를 기준으로 문자열 분리
                 makeGraph(result);
@@ -182,47 +210,13 @@ public class UserRecordActivity extends AppCompatActivity {
         }.execute();
     }
 
-    // 등산횟수 그래프 생성
-    public void makeGraph(String rs) {
+    // (월별)등산 횟수 그래프 생성
+    private void makeGraph(String rs) {
 
         resultArray = rs.split(",");
 
         for (int count = 0 ; count < resultArray.length ; count++) {
-            switch (resultArray[count]) {
-                case "0":
-                    yValues.add(new Entry(count, 0f));
-                    break;
-                case "1":
-                    yValues.add(new Entry(count, 1f));
-                    break;
-                case "2":
-                    yValues.add(new Entry(count, 2f));
-                    break;
-                case "3":
-                    yValues.add(new Entry(count, 3f));
-                    break;
-                case "4":
-                    yValues.add(new Entry(count, 4f));
-                    break;
-                case "5":
-                    yValues.add(new Entry(count, 5f));
-                    break;
-                case "6":
-                    yValues.add(new Entry(count, 6f));
-                    break;
-                case "7":
-                    yValues.add(new Entry(count, 7f));
-                    break;
-                case "8":
-                    yValues.add(new Entry(count, 8f));
-                    break;
-                case "9":
-                    yValues.add(new Entry(count, 9f));
-                    break;
-                case "10":
-                    yValues.add(new Entry(count, 10f));
-                    break;
-            }
+            yValues.add(new Entry(count, Integer.parseInt(resultArray[count])));
         }
 
         // X축 세부설정
@@ -231,30 +225,20 @@ public class UserRecordActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
         // Y축 세부설정
-        // Y축 왼쪽에만 보여지게 설정
+        // 왼쪽에만 숫자가 보여지게 설정
         YAxis yAxis = chart.getAxisRight();
         yAxis.setDrawLabels(false);
         yAxis.setDrawAxisLine(false);
         yAxis.setDrawGridLines(false);
 
-        /*yValues.add(new Entry(0, 60f));
-        yValues.add(new Entry(1, 50f));
-        yValues.add(new Entry(2, 70f));
-        yValues.add(new Entry(3, 30f));
-        yValues.add(new Entry(4, 50f));
-        yValues.add(new Entry(5, 60f));
-        yValues.add(new Entry(6, 65f));*/
-
-        LineDataSet set1 = new LineDataSet(yValues, "등산횟수");
-        set1.setFillAlpha(110);
-        set1.setLineWidth(2f);
+        LineDataSet set1 = new LineDataSet(yValues, "등산횟수(소수점으로 표시될 경우, Y축 소수점 X 10)");
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
         // X축 월 지정
-        final String[] xValues = {"1월", "2월", "3월", "4월", "5월", "6월",
-                                    "7월", "8월", "9월", "10월", "11월", "12월"};
+        final String[] xValues = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
         xAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -266,5 +250,6 @@ public class UserRecordActivity extends AppCompatActivity {
         LineData data = new LineData(dataSets);
 
         chart.setData(data);
+        chart.animateY(4000);
     }
 }

@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.group.GroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.user.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserRegisterActivity;
 
@@ -79,9 +79,9 @@ public class PreActivity extends AppCompatActivity
             startActivity(new Intent(PreActivity.this, LoginActivity.class));
         } else if (id == R.id.sign_Up_Btn) {
             startActivity(new Intent(PreActivity.this, UserRegisterActivity.class));
-        } else if (id == R.id.groups_Btn) {
+        }/* else if (id == R.id.groups_Btn) {
             startActivity(new Intent(PreActivity.this, GroupActivity.class));
-        }
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
