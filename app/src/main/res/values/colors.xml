@@ -8,6 +8,11 @@
     <color name="lime">#CDDC39</color>
     <color name="lightGrey">#AAAAAA</color>
 
+    <color name="mapColorPrimary">#42dd8f</color>
+    <color name="mapColorPrimaryDark">#23b574</color>
+    <color name="mapColorPrimaryLight">#2bcabb</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+
     <!-- teal -->
     <color name="teal_50">#E0F2F1</color>
     <color name="teal_100">#B2DFDB</color>

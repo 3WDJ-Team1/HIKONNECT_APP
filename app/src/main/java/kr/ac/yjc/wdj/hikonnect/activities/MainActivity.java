@@ -75,16 +75,18 @@ public class MainActivity extends AppCompatActivity
     Toolbar                 toolbar;
     String                  id;
 
+    private static int      nowScheduleIndex;
     // 내부
     private LinearLayout    nowScheduleEmptyLayout;
-    private RelativeLayout  nowScheduleLayout;
     private RelativeLayout  nowScheduleLoading;
 
-    private TextView        nowScheduleTitle,   // 현재 산행 진행 중인 그룹 제목
-                            nowscheduleGroupName, // 현재 산행 진행 중인 그룹 내용
-                            nowScheduleLeader,
-                            nowScheduleDate,
-                            nowScheduleDestination;
+    private RelativeLayout                  nowScheduleViewPagerWrapper;
+    private ViewPager                       scheduleViewPager;
+    private MainActivityScheduleAdapter     scheduleAdapter;
+
+    private Button          nowSchedulePrevBtn;
+    private Button          nowScheduleNextBtn;
+
     private ImageView       nowScheduleImg;     // 현재 산행 진행 중인 그룹 사진
     private Button          btnStartHiking,     // 등산 시작 버튼
                             btnToGroupMenu,     // 그룹 메뉴 버튼
@@ -189,9 +191,6 @@ public class MainActivity extends AppCompatActivity
             }
         }.execute();
 
-        // View Pager 초기화
-//        initViewPager();
-
         // 내부 페이지 UI 초기화
         initInnerPageUI();
     }
@@ -270,24 +269,24 @@ public class MainActivity extends AppCompatActivity
     private void initInnerPageUI() {
 
         nowScheduleEmptyLayout  = findViewById(R.id.nowScheduleEmptyLayout);
-        nowScheduleLayout       = findViewById(R.id.nowScheduleLayout);
         nowScheduleLoading      = findViewById(R.id.nowScheduleLoading);
 
-        // 뷰 붙이기
-        nowScheduleImg          = findViewById(R.id.nowScheduleImg);
-        nowScheduleTitle        = findViewById(R.id.nowScheduleTitle);
-        nowscheduleGroupName    = findViewById(R.id.nowScheduleGroupName);
-        nowScheduleLeader       = findViewById(R.id.nowScheduleLeader);
-        nowScheduleDate         = findViewById(R.id.nowScheduleDate);
-        nowScheduleDestination  = findViewById(R.id.nowScheduleDestination);
-        btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
+        nowScheduleViewPagerWrapper = findViewById(R.id.nowScheduleViewPagerWrapper);
+        scheduleViewPager = findViewById(R.id.nowScheduleViewPager);
+        scheduleAdapter = new MainActivityScheduleAdapter(getSupportFragmentManager(), pref);
+        scheduleViewPager.setAdapter(scheduleAdapter);
+
+        nowSchedulePrevBtn = findViewById(R.id.nowSchedulePrevBtn);
+        nowScheduleNextBtn = findViewById(R.id.nowScheduleNextBtn);
+
+//        btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
         btnToGroupMenu          = findViewById(R.id.btnToGroupMenu);
         btnToMyMenu             = findViewById(R.id.btnToMyMenu);
         btnNowSchduleSearch     = findViewById(R.id.nowScheduleSearchGroup);
 
         loadingDialog       = new LoadingDialog(this);
 
-        // 리스너 붙이기
+        /*// 리스너 붙이기
         // 등산 시작 버튼 클릭 시 맵으로 이동
         btnStartHiking.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,7 +299,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 finish();
             }
-        });
+        });*/
 
         // 그룹 메뉴 버튼 누르면 그룹 메뉴로 이동
         btnToGroupMenu.setOnClickListener(new View.OnClickListener() {
@@ -332,6 +331,23 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        nowSchedulePrevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (nowScheduleIndex > 0) {
+                    scheduleViewPager.setCurrentItem(--nowScheduleIndex, true);
+                }
+            }
+        });
+        nowScheduleNextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (nowScheduleIndex < scheduleAdapter.getCount()) {
+                    scheduleViewPager.setCurrentItem(++nowScheduleIndex, true);
+                }
+            }
+        });
+
         getGroupsInfo(pref.getString("user_id", "null"));
     }
 
@@ -349,7 +365,7 @@ public class MainActivity extends AppCompatActivity
                 super.onPreExecute();
 
                 nowScheduleLoading.setVisibility(View.VISIBLE);
-                nowScheduleLayout.setVisibility(View.GONE);
+//                nowScheduleLayout.setVisibility(View.GONE);
                 nowScheduleEmptyLayout.setVisibility(View.GONE);
             }
 
@@ -392,39 +408,16 @@ public class MainActivity extends AppCompatActivity
                         // 계획된 일정이 없다는 알림 표시.
                         nowScheduleEmptyLayout.setVisibility(View.VISIBLE);
                     } else {
-                        // 가장 가까운 날짜의 일정을 표시함.
-                        Log.d(Environments.APP_TAG, "res: " + jsonArray.get(0));
-                        JSONObject jsonObject = (JSONObject) jsonArray.get(0);
-
-                        scheduleNum = String.valueOf(jsonObject.get("schedule_no"));
-                        String title = (String) jsonObject.get("title");
-                        String groupName = (String) jsonObject.get("group_name");
-                        String leader = (String) jsonObject.get("leader");
-                        String startDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse((String) jsonObject.get("start_date")));
-                        String mntName = (String) jsonObject.get("mnt_name");
-
-                        nowScheduleTitle.setText(title);
-                        nowscheduleGroupName.setText(groupName);
-                        nowScheduleLeader.setText(leader);
-                        nowScheduleDate.setText(startDate);
-                        nowScheduleDestination.setText(mntName);
-
-                        btnStartHiking.setClickable(true);
-                        nowScheduleLayout.setVisibility(View.VISIBLE);
+                        nowScheduleViewPagerWrapper.setVisibility(View.VISIBLE);
                     }
                 } catch (ParseException | NullPointerException pse) {
                     Log.e(Environments.APP_TAG, "onPostExecute: ", pse);
                     nowScheduleEmptyLayout.setVisibility(View.VISIBLE);
-                } catch (java.text.ParseException e) {
+                }/* catch (java.text.ParseException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
         }.execute();
     }
-
-    private void initViewPager() {
-        ViewPager viewPager = findViewById(R.id.nowScheduleViewPager);
-        viewPager.setAdapter(new MainActivityScheduleAdapter(getSupportFragmentManager(), pref));
-    } // initViewPager END
 }
 

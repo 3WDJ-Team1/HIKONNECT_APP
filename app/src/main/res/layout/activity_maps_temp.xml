@@ -1,142 +1,112 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />
-
-    <FrameLayout
-        android:id="@+id/map_touch_layer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/change_h_status_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="60dp"
-            android:layout_marginEnd="72dp"
-            android:layout_marginStart="72dp"
-            android:backgroundTint="@color/light_blue_500"
-            android:text="등산시작"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:visibility="visible" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/drawer"
-        android:layout_width="50dp"
-        android:layout_height="10dp"
-        android:layout_above="@+id/recordBox"
-        android:layout_centerHorizontal="true"
-        android:alpha="0.7"
-        android:background="@color/white">
-
-        <TextView
-            android:id="@+id/openDrawer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="▲"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="10dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/recordBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:alpha="0.7"
-        android:background="@color/white"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/sendRecordData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_500"
-            android:text="무전 시작"
-            android:textColor="@color/white"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/show_member_list_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/user_data_box_wrapper"
-        android:alpha="0.7"
-        android:src="@drawable/ic_people_black_36dp"
-        fab:fab_colorNormal="@color/white"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="@color/colorPrimary"
-        fab:menu_fab_size="normal" />
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/update_loc_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/drawer"
-        android:layout_alignParentEnd="true"
-        android:alpha="0.7"
-        android:src="@drawable/my_position_btn_svg"
-        fab:fab_colorNormal="@color/white"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="@color/colorPrimary"
-        fab:menu_fab_size="normal" />
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/write_location_memo_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/show_member_list_btn"
-        android:layout_marginBottom="70dp"
-        android:alpha="0.7"
-        android:src="@drawable/add_location_memo_icon_svg"
-        fab:fab_colorNormal="@color/white"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="@color/colorPrimary"
-        fab:menu_fab_size="normal" />
-
-    <!--나의 등산 정보-->
-    <LinearLayout
-        android:id="@+id/user_data_box_wrapper"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/userDataBox"
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />
+
+        <FrameLayout
+            android:id="@+id/map_touch_layer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:alpha="0.8"
-            android:elevation="5dp"
-            android:visibility="gone">
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/change_h_status_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                android:layout_marginEnd="72dp"
+                android:layout_marginStart="72dp"
+                android:background="@drawable/map_change_hiking_state_button"
+                android:text="등산시작"
+                android:textColor="@color/mapColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/drawer"
+            android:layout_width="50dp"
+            android:layout_height="10dp"
+            android:layout_above="@+id/recordBox"
+            android:layout_centerHorizontal="true"
+            android:alpha="0.7"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/openDrawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="▲"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/recordBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:alpha="0.7"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/sendRecordData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/red_500"
+                android:text="무전 시작"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/update_loc_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/drawer"
+            android:layout_alignParentEnd="true"
+            android:alpha="0.7"
+            android:src="@drawable/my_position_btn_svg"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/mapColorPrimary"
+            fab:fab_colorRipple="@color/mapColorPrimaryDark"
+            fab:menu_fab_size="normal" />
+
+        <!--나의 등산 정보-->
+        <LinearLayout
+            android:id="@+id/userDataBox"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/user_data_box_background_svg"
+            android:visibility="visible">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -144,149 +114,180 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingEnd="20dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="현재 속력"
-                            android:textAlignment="center"
-                            android:textColor="@color/grey_800" />
+                        <!--<TextView-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="현재 속력"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:textColor="@color/grey_800" />-->
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
+                            android:gravity="center"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/userSpeed"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
                                 android:gravity="bottom"
                                 android:text="0.0"
                                 android:textAlignment="center"
                                 android:textColor="@color/red_400"
-                                android:textSize="20dp"
-                                android:textStyle="bold" />
+                                android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
                                 android:gravity="bottom"
                                 android:text="km/h"
                                 android:textColor="@color/black"
-                                android:textSize="18dp"
-                                android:textStyle="bold" />
+                                android:textSize="14sp" />
 
                         </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="총 이동 거리"
-                            android:textAlignment="center"
-                            android:textColor="@color/grey_800" />
+                        <!--<TextView-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="총 이동 거리"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:textColor="@color/grey_800" />-->
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
+                            android:gravity="center"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/distance"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
                                 android:gravity="bottom"
                                 android:text="0.0"
                                 android:textAlignment="center"
                                 android:textColor="@color/cyan_500"
-                                android:textSize="20dp"
-                                android:textStyle="bold" />
+                                android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
                                 android:gravity="bottom"
                                 android:text="km"
                                 android:textColor="@color/black"
-                                android:textSize="18dp"
-                                android:textStyle="bold" />
+                                android:textSize="14sp" />
 
                         </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="도착 예상 시간"
-                            android:textAlignment="center"
-                            android:textColor="@color/grey_800" />
+                        <!--<TextView-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="도착 예상 시간"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:textColor="@color/grey_800"-->
+                            <!--android:textSize="14sp" />-->
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="2"
+                            android:gravity="center"
                             android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/arriveWhen"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
+                                android:gravity="bottom|end"
                                 android:text="00"
-                                android:textAlignment="center"
                                 android:textColor="@color/light_green_800"
-                                android:textSize="20dp"
-                                android:textStyle="bold" />
+                                android:textSize="14sp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
                                 android:gravity="bottom"
                                 android:text="분"
                                 android:textColor="@color/black"
-                                android:textSize="18dp"
-                                android:textStyle="bold" />
+                                android:textSize="14sp" />
 
                         </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="4dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:gravity="center">
+
+                        <ProgressBar
+                            android:id="@+id/seekBar"
+                            style="@android:style/Widget.ProgressBar.Horizontal"
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:progress="0"
+                            android:progressDrawable="@drawable/my_progressbar" />
+
+                        <TextView
+                            android:id="@+id/seekBarProgress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:textColor="@color/cyan_accent_700"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/textView5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="%"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            android:textSize="20sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="4dp"
+                        android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
@@ -297,8 +298,7 @@
                             android:gravity="end|center"
                             android:text="0"
                             android:textColor="@color/pink_accent_400"
-                            android:textSize="24dp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -307,173 +307,189 @@
                             android:gravity="start|center"
                             android:text="등"
                             android:textColor="@color/black"
-                            android:textSize="24dp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp" />
 
                     </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:orientation="horizontal"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp">
-
-                    <ProgressBar
-                        android:id="@+id/seekBar"
-                        style="@android:style/Widget.ProgressBar.Horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="50"
-                        android:progress="0"
-                        android:progressDrawable="@drawable/my_progressbar" />
-
-                    <TextView
-                        android:id="@+id/seekBarProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:enabled="false"
-                        android:text="0"
-                        android:textAlignment="center"
-                        android:textColor="@color/cyan_accent_700"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="%"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
-        </android.support.v7.widget.CardView>
-    </LinearLayout>
-    <!--나의 등산 정보 끝-->
-    <!--무전 리스트 버튼-->
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/drawer">
-
-        <ImageButton
-            android:id="@+id/showRecordList"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/pink_accent_400"
-            android:src="@android:drawable/ic_btn_speak_now" />
-    </LinearLayout>
-    <!--무전 리스트 버튼 끝-->
-    <!-- 위치메모 -->
-    <LinearLayout
-        android:id="@+id/imagelayout"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:alpha=".9"
-        android:background="@color/colorPrimary"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="위치 메모 작성"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="25sp" />
-
-        <EditText
-            android:id="@+id/l_memo_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="제목 입력"
-            android:textColorHint="@color/grey_500" />
-
-        <ImageView
-            android:id="@+id/l_memo_img"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:src="@drawable/location_memo_img_view_txt" />
-
-        <EditText
-            android:id="@+id/l_memo_contnets_edttxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:hint="내용"
-            android:textColorHint="@color/grey_500" />
-
+        </LinearLayout>
+        <!--나의 등산 정보 끝-->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/map_button_background_svg"
+            android:gravity="end"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/loc_memo_store_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="@color/cyan_500"
-                android:text="전송" />
+            <ImageButton
+                android:id="@+id/show_member_list_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/map_button_selector"
+                android:src="@drawable/ic_people_black_36dp"
+                android:tint="@color/white" />
 
-            <Button
-                android:id="@+id/l_memo_cancel_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="취소" />
+            <ImageButton
+                android:id="@+id/write_location_memo_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/map_button_selector"
+                android:src="@drawable/add_location_memo_icon_svg"
+                android:tint="@color/white" />
         </LinearLayout>
-    </LinearLayout>
-    <!--위치메모 끝 -->
-    <!--알림 바-->
-    <RelativeLayout
-        android:id="@+id/mapNoticeBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:alpha=".8"
-        android:background="@color/grey_500">
-
-        <TextView
-            android:id="@+id/mapNoticeBarMainText"
+        <!--무전 리스트 버튼-->
+        <LinearLayout
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/drawer">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/showRecordList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:alpha="0.7"
+                android:src="@drawable/speak_now_svg"
+                fab:fab_colorNormal="@color/white"
+                fab:fab_colorPressed="@color/mapColorPrimary"
+                fab:fab_colorRipple="@color/mapColorPrimaryDark"
+                fab:menu_fab_size="normal" />
+        </LinearLayout>
+        <!--무전 리스트 버튼 끝-->
+        <!-- 위치메모 -->
+        <LinearLayout
+            android:id="@+id/imagelayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="36dp"
+            android:layout_marginStart="36dp"
+            android:alpha=".95"
+            android:background="#00000000"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/location_memo_title_background_shape"
+                android:gravity="center"
+                android:text="위치 메모 작성"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/grey_50"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp">
+
+                <EditText
+                    android:id="@+id/l_memo_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:hint="제목 입력"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColorHint="@color/grey_500" />
+
+                <ImageView
+                    android:id="@+id/l_memo_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@+id/l_memo_title"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:background="@color/grey_200"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/location_memo_img_view_txt" />
+
+                <EditText
+                    android:id="@+id/l_memo_contnets_edttxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/l_memo_img"
+                    android:gravity="top"
+                    android:hint="내용 입력"
+                    android:maxLines="2"
+                    android:textColorHint="@color/grey_500" />
+            </RelativeLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/location_memo_footer_shape"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <Button
+                    android:id="@+id/loc_memo_store_btn"
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/map_button_selector_light"
+                    android:text="전송"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    fab:layout_constraintEnd_toStartOf="@+id/l_memo_cancel_btn"
+                    fab:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/l_memo_cancel_btn"
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/map_button_selector"
+                    android:text="취소"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    fab:layout_constraintEnd_toEndOf="parent"
+                    fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn" />
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+        <!--위치메모 끝 -->
+        <!--알림 바-->
+        <RelativeLayout
+            android:id="@+id/mapNoticeBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:lines="1"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:alpha=".8"
+            android:background="@color/grey_500"
+            android:visibility="invisible">
 
-        <TextView
-            android:id="@+id/mapNoticeBarSubText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/mapNoticeBarMainText"
-            android:layout_centerInParent="true"
-            android:lines="2"
-            android:textAlignment="center"
-            android:textColor="@color/grey_200"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/mapNoticeBarMainText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:lines="1"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/mapNoticeBarSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/mapNoticeBarMainText"
+                android:layout_centerInParent="true"
+                android:lines="2"
+                android:textAlignment="center"
+                android:textColor="@color/grey_200"
+                android:textSize="12sp" />
+        </RelativeLayout>
+        <!--알림 바 끝-->
     </RelativeLayout>
-    <!--알림 바 끝-->
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

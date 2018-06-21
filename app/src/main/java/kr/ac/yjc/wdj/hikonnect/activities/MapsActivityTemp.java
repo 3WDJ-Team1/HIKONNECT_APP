@@ -11,6 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -26,15 +30,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -73,6 +78,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -91,7 +97,6 @@ import kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter;
 import kr.ac.yjc.wdj.hikonnect.adapters.MyInfoWindowAdapter;
 import kr.ac.yjc.wdj.hikonnect.apis.LocationService;
 import kr.ac.yjc.wdj.hikonnect.apis.PermissionManager;
-import kr.ac.yjc.wdj.hikonnect.fragments.StaticMapFragment;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -168,7 +173,7 @@ public class MapsActivityTemp extends FragmentActivity implements
     private TextView            mapNoticeBarMainText;
     private TextView            mapNoticeBarSubText;
 
-    private CardView            userDataBox;            // 자신의 현재 정보를 보여줄 CardView.
+    private LinearLayout        userDataBox;            // 자신의 현재 정보를 보여줄 CardView.
     private TextView            tvUserSpeed;            // 현재 속도 TextView (값 -> km/h 기준).
     private TextView            tvDistance;             // 총 이동 거리 TextView (값 -> km 기준).
     private TextView            tvArriveWhen;           // 예상 도착 시간 TextView (값 -> 시간 기준).
@@ -176,8 +181,8 @@ public class MapsActivityTemp extends FragmentActivity implements
     private ProgressBar         pgbarHikingProgress;    // 등산 진행도 ProgressBar (값 -> 현재 등산 거리 / 총 경로 거리).
     private TextView            tvHikingProgress;       // 등산 진행도 TextView.
 
-    // 위치 메모.
-    private FloatingActionButton    fabWriteLocationMemo;   // 위치 메모 작성 버튼.
+    private ImageButton         fabShowMemberList;      // 그룹 맴버 리스트 버튼.
+    private ImageButton         fabWriteLocationMemo;   // 위치 메모 작성 버튼.
 
     // 위치 메모 작성 팝업.
     private LinearLayout    linearLayoutLocationMemo;       // 위치 메모 작성 팝업 창 LinearLayout.
@@ -189,10 +194,8 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     // 자기 위치 갱신 버튼.
     private FloatingActionButton    fabUpdateMyLocation;    // 위치 갱신 버튼.
-    private int                     myLocationBtnState;
 
-    // 그룹 맴버 리스트 버튼.
-    private FloatingActionButton    fabShowMemberList;      // 그룹 맴버 리스트 버튼.
+    private int                     myLocationBtnState;
 
     // 무전 UI.
     private LinearLayout    drawerLayout;       // 무전 버튼을 넣어둘 레이아웃
@@ -220,7 +223,9 @@ public class MapsActivityTemp extends FragmentActivity implements
         private final IconGenerator mIconGenerator          = new IconGenerator(getApplicationContext());
         private final IconGenerator mClusterIconGenerator   = new IconGenerator(getApplicationContext());
         private final ImageView mImageView;
-        private final ImageView mClusterImageView;
+        private final ImageView mClusterImageView1;
+        private final ImageView mClusterImageView2;
+        private final TextView mClusterRemainItemsTxtView;
         private final int mDimension;
 
         private Bitmap bitmap;
@@ -228,16 +233,110 @@ public class MapsActivityTemp extends FragmentActivity implements
         MapItemRenderer() {
             super(getApplicationContext(), gMap, myClusterManager);
 
-            @SuppressLint("InflateParams")
-            View multiProfile = getLayoutInflater().inflate(R.layout.multi_profile, null);
-            mClusterIconGenerator.setContentView(multiProfile);
-            mClusterImageView = (ImageView) multiProfile.findViewById(R.id.marker_img);
-
-            mImageView = new ImageView(getApplicationContext());
             mDimension = 5;
-            int padding = 5;
-            mImageView.setPadding(padding, padding, padding, padding);
-            mIconGenerator.setContentView(mImageView);
+            int padding = 30;
+
+            // 클러스터 레이아웃
+            View clusterView = getLayoutInflater().inflate(R.layout.map_cluster_layout,  null);
+
+            // 클러스터 아이콘 생성자
+            mClusterIconGenerator.setContentView(clusterView);
+            // 클러스터 배경 지정
+            mClusterIconGenerator.setBackground(getResources().getDrawable(R.drawable.map_cluster_background_shape));
+            // 클러스터 내부 여백 지정
+            mClusterIconGenerator.setContentPadding(padding, padding, padding, padding);
+
+            // 클러스터 레이아웃 내부 UI
+            mClusterImageView1          = clusterView.findViewById(R.id.cluster_img_1);
+            mClusterImageView2          = clusterView.findViewById(R.id.cluster_img_2);
+            mClusterRemainItemsTxtView  = clusterView.findViewById(R.id.cluster_img_3);
+
+            // 마커 레이아웃
+            View markerView = getLayoutInflater().inflate(R.layout.map_marker_layout,  null);
+
+            // 마커 아이콘 생성자
+            mIconGenerator.setContentView(markerView);
+            // 마커 내부 여백 지정
+            mIconGenerator.setContentPadding(padding, padding, padding, padding);
+            // 마커 배경 지정
+            mIconGenerator.setBackground(getResources().getDrawable(R.drawable.map_marker_background_shape));
+
+            // 마커 레이아웃 내부 UI
+            mImageView  = markerView.findViewById(R.id.marker_img);
+        }
+
+        @Override
+        protected void onBeforeClusterRendered(Cluster<MapItem> cluster, MarkerOptions markerOptions) {
+
+            ArrayList<MapItem> mapItems = (ArrayList<MapItem>) cluster.getItems();
+
+            Drawable drawable = null;
+
+            if (mapItems.size() > 4) {
+                for(ListIterator<MapItem> lt = mapItems.listIterator(); lt.hasNext();) {
+                    MapItem value = lt.next();
+                    // 클러스터 아이템에 나의 마커가 포함되어 있으면
+                    if (value instanceof Member && ((Member) value).userID.equals(pref.getString("user_id", null)))
+                        // 클러스터에서 나의 마커를 제거
+                        lt.remove();
+                }
+
+                for (int _i = 0; _i < 3 && mapItems.size() >= 3; _i++) {
+                    Bitmap bitmap;
+                    MapItem mapItem = mapItems.get(_i);
+
+                    if (mapItem instanceof Member) {
+                    // 클러스터의 아이템이 등산 맴버(Member)일 때
+
+                        // 맴버 이미지를 원형으로 변경
+                        bitmap = ((Member) mapItem).profileImg;
+                        Bitmap output = null;
+                        if (bitmap != null) {
+                            output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(output);
+                            final Paint paint = new Paint();
+                            final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+                            paint.setAntiAlias(true);
+                            canvas.drawARGB(0, 0, 0, 0);
+                            canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2, bitmap.getWidth() / 2, paint);
+                            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                            canvas.drawBitmap(bitmap, rect, rect, paint);
+                            // Bitmap을 Drawable로 변환
+                            drawable = new BitmapDrawable(output);
+                        } else {
+                            // Resource에서 Drawable을 불러옴.
+                            drawable = getResources().getDrawable(R.drawable.default_profile);
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                                drawable = (DrawableCompat.wrap(drawable)).mutate();
+                            }
+                            // Bitmap 포멧으로 변환.
+                            bitmap = Bitmap.createBitmap(BIT_MAP_SIZE, BIT_MAP_SIZE, Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(bitmap);
+                            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                            drawable.draw(canvas);
+                        }
+                    } else if (mapItem instanceof LocationMemo) {
+                    // 클러스터의 아이템이 위치 메모(LocationMemo)일 때
+                        drawable = getResources().getDrawable(R.drawable.location_memo_icon_svg);
+                    }
+
+                    switch (_i) {
+                        case 0:
+                            mClusterImageView1.setImageDrawable(drawable);
+                            break;
+                        case 1:
+                            mClusterImageView2.setImageDrawable(drawable);
+                            break;
+                    }
+                }
+
+                mClusterRemainItemsTxtView.setText(String.valueOf(mapItems.size() - 2));
+                if (mapItems.size() > 9) mClusterRemainItemsTxtView.setText("+9");
+
+                Bitmap icon = mClusterIconGenerator.makeIcon();
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+           }
         }
 
         @Override
@@ -266,7 +365,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                             drawable = (DrawableCompat.wrap(drawable)).mutate();
                         }
                         // Bitmap 포멧으로 변환.
-                        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                        Bitmap bitmap = Bitmap.createBitmap(BIT_MAP_SIZE, BIT_MAP_SIZE, Bitmap.Config.ARGB_8888);
                         Canvas canvas = new Canvas(bitmap);
                         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                         drawable.draw(canvas);
@@ -306,6 +405,12 @@ public class MapsActivityTemp extends FragmentActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 상태바 색상 변경
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(getResources().getColor(R.color.mapColorPrimaryDark));
+        }
 
         timer = new Timer();
 
@@ -413,16 +518,23 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                     // 액티비티를 시작.
                     startActivity(locationMemoIntent);
-
+                    return true;
                 }
 
                 return false;
             }
         });
 
+        Drawable myMarkerDrawable = getResources().getDrawable(R.drawable.map_my_marker_shape);
+        Bitmap mutableBitmap = Bitmap.createBitmap(myMarkerDrawable.getIntrinsicWidth(), myMarkerDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mutableBitmap);
+        myMarkerDrawable.setBounds(0, 0, myMarkerDrawable.getIntrinsicWidth(), myMarkerDrawable.getIntrinsicHeight());
+        myMarkerDrawable.draw(canvas);
+
         myMarker = gMap.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)/*R.drawable.baseline_fiber_manual_record_black_18dp*/)
+//                .icon(BitmapDescriptorFactory.fromBitmap(myMarkerBitmap))
+                .icon(BitmapDescriptorFactory.fromBitmap(mutableBitmap))
                 .alpha(0.8f)
                 .zIndex(1.0f));
 
@@ -719,6 +831,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                                             isNextFIDForward = false;
                                         }
 
+//                                        Log.d(TAG, "fid: " + fid + ", first: " + paths.get(0) + ", last: " + paths.get(paths.size() - 1));
+//                                        Log.d(TAG, "isForward: " + isCrntFIDForward);
+
                                         // 현재 FID를 정방향으로 입력.
                                         if (isCrntFIDForward) {
                                             for (Object _idx : paths) {
@@ -729,6 +844,9 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                                 if (toPaintRouteSet.size() > 0) {
                                                     if (toPaintRouteSet.get(toPaintRouteSet.size() - 1).equals(new LatLng(_lat, _lng))) {
+
+//                                                        Log.d(TAG, "Equal");
+
                                                         continue;
                                                     }
                                                 }
@@ -746,6 +864,9 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                                 if (toPaintRouteSet.size() > 0) {
                                                     if (toPaintRouteSet.get(toPaintRouteSet.size() - 1).equals(new LatLng(_lat, _lng))) {
+
+//                                                        Log.d(TAG, "Equal");
+
                                                         continue;
                                                     }
                                                 }
@@ -870,23 +991,29 @@ public class MapsActivityTemp extends FragmentActivity implements
         } else {    // [2] 시작점과 도착점이 다를 때.
             // [2-1] 시작점 표시.
             // 가장 앞 좌표.
+            View markerView = getLayoutInflater().inflate(R.layout.map_marker_layout, null);
+
+            IconGenerator iconGenerator = new IconGenerator(getApplicationContext());
+            iconGenerator.setContentView(markerView);
+            iconGenerator.setContentPadding(30, 30, 30, 30);
+            iconGenerator.setBackground(getResources().getDrawable(R.drawable.map_marker_background_shape));
+
             LatLng startPoint   = toPaintRouteSet.get(0);
-            Drawable startPointDrawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.start_point);
-            Bitmap startPointBitmap = createMapIcon(this, startPointDrawable);
+            ImageView imageView = markerView.findViewById(R.id.marker_img);
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.start_point));
             // 시작점 마커 초기화
             MarkerOptions startPointOpt = new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(startPointBitmap))
+                    .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                     .position(startPoint);
             // 지도에 마커 등록
             gMap.addMarker(startPointOpt);
             // [2-2] 도착점 표시.
             // 가장 마지막 좌표.
             LatLng endPoint     = toPaintRouteSet.get(toPaintRouteSet.size() - 1);
-            Drawable endPointDrawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.end_point);
-            Bitmap endPointBitmap = createMapIcon(this, endPointDrawable);
+            imageView.setImageDrawable(getResources().getDrawable(R.drawable.end_point));
             // 도착점 마커 초기화
             MarkerOptions endPointOpt = new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(endPointBitmap))
+                    .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                     .position(endPoint);
             // 지도에 마커 등록
             gMap.addMarker(endPointOpt);
@@ -897,7 +1024,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         IconGenerator iconGenerator = new IconGenerator(context);
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.multi_profile, null, false);
+        View view = layoutInflater.inflate(R.layout.map_marker_layout, null, false);
 
         ImageView imageView = view.findViewById(R.id.marker_img);
         imageView.setMaxWidth(24);
@@ -1438,49 +1565,52 @@ public class MapsActivityTemp extends FragmentActivity implements
         fabUpdateMyLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    Drawable drawable;
 
-                Drawable drawable;
+                    switch (myLocationBtnState) {
+                        case LOCATION_BTN_DIRECTION:
+                            // 버튼 상태 변경.
+                            myLocationBtnState = LOCATION_BTN_DISABLED;
+                            // 버튼 이미지 변경
+                            drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg);
+                            fabUpdateMyLocation.setImageDrawable(drawable);
+                            // 지도 방향 초기화
+                            CameraPosition zeroBearingPosition = CameraPosition.builder()
+                                    .target(gMap.getCameraPosition().target)
+                                    .bearing(0)
+                                    .zoom(gMap.getCameraPosition().zoom)
+                                    .build();
 
-                switch (myLocationBtnState) {
-                    case LOCATION_BTN_DIRECTION:
-                        // 버튼 상태 변경.
-                        myLocationBtnState = LOCATION_BTN_DISABLED;
-                        // 버튼 이미지 변경
-                        drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg);
-                        fabUpdateMyLocation.setImageDrawable(drawable);
-                        // 지도 방향 초기화
-                        CameraPosition zeroBearingPosition = CameraPosition.builder()
-                                .target(gMap.getCameraPosition().target)
-                                .bearing(0)
-                                .zoom(gMap.getCameraPosition().zoom)
-                                .build();
-
-                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(zeroBearingPosition));
-                        break;
-                    case LOCATION_BTN_DISABLED:
-                        // 버튼 상태 변경.
-                        myLocationBtnState = LOCATION_BTN_MY_LOCATION;
-                        // 버튼 이미지 변경
-                        drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_pressed_svg);
-                        fabUpdateMyLocation.setImageDrawable(drawable);
-                        // 현재 위치
-                        LatLng myLocation = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
-                        // 현재 위치 지도 카메라 세팅
-                        CameraPosition curPosition = CameraPosition.builder()
-                                .target(myLocation)
-                                .bearing(0)
-                                .zoom(MAP_DEFAULT_ZOOM_LEVEL)
-                                .build();
-                        // 내 위치로 화면을 이동.
-                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(curPosition));
-                        break;
-                    case LOCATION_BTN_MY_LOCATION:
-                        // 버튼 상태 변경.
-                        myLocationBtnState = LOCATION_BTN_DIRECTION;
-                        // 버튼 이미지 변경
-                        drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_direction_svg);
-                        fabUpdateMyLocation.setImageDrawable(drawable);
-                        break;
+                            gMap.animateCamera(CameraUpdateFactory.newCameraPosition(zeroBearingPosition));
+                            break;
+                        case LOCATION_BTN_DISABLED:
+                            // 버튼 상태 변경.
+                            myLocationBtnState = LOCATION_BTN_MY_LOCATION;
+                            // 버튼 이미지 변경
+                            drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_pressed_svg);
+                            fabUpdateMyLocation.setImageDrawable(drawable);
+                            // 현재 위치
+                            LatLng myLocation = new LatLng(myCurrentLocation.getLatitude(), myCurrentLocation.getLongitude());
+                            // 현재 위치 지도 카메라 세팅
+                            CameraPosition curPosition = CameraPosition.builder()
+                                    .target(myLocation)
+                                    .bearing(0)
+                                    .zoom(MAP_DEFAULT_ZOOM_LEVEL)
+                                    .build();
+                            // 내 위치로 화면을 이동.
+                            gMap.animateCamera(CameraUpdateFactory.newCameraPosition(curPosition));
+                            break;
+                        case LOCATION_BTN_MY_LOCATION:
+                            // 버튼 상태 변경.
+                            myLocationBtnState = LOCATION_BTN_DIRECTION;
+                            // 버튼 이미지 변경
+                            drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_direction_svg);
+                            fabUpdateMyLocation.setImageDrawable(drawable);
+                            break;
+                    }
+                } catch (NullPointerException npe) {
+                    Log.e(TAG, "onClick: ", npe);
                 }
             }
         }); // fabUpdateMyLocation.setOnClickListener END
@@ -1590,7 +1720,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         String imagePath = getRealPathFromURI(imgUri); // path 경로
 
-        Log.d(TAG, "sendPicture: imagePath: " + imagePath);
+//        Log.d(TAG, "sendPicture: imagePath: " + imagePath);
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);//경로를 통해 비트맵으로 전환
         bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
         imgViewLMemoImg.setImageBitmap(bitmap);//이미지 뷰에 비트맵 넣기
