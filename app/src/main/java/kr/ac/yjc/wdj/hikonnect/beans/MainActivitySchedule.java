@@ -1,7 +1,9 @@
 package kr.ac.yjc.wdj.hikonnect.beans;
 
-import android.content.Context;
-
+/**
+ * 메인액티비티에 보여질 스케줄
+ * @author  Beomsu Kwon (rnjs9957@gmail.com)
+ */
 public class MainActivitySchedule {
     private String groupName;
     private String title;

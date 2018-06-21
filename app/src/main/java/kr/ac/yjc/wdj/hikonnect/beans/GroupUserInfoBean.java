@@ -16,39 +16,40 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * store group user's information
+ * 그룹 멤버 정보 저장할 객체
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-04-06
  * @see     Bean
  */
 public class GroupUserInfoBean extends Bean {
-    private String  userId;         // user's id
-    private String  nickname;       // user's nickname
-    private String  grade;
-    private String  phone;          // user's phone number
-    private String  gender;         // user's gender
-    private String  ageGroup;       // user's age group
+    private String  userId;         // 유저 아이디
+    private String  nickname;       // 유저 닉네임
+    private String  grade;          // 등급
+    private String  phone;          // 전화번호
+    private String  gender;         // 성별
+    private String  ageGroup;       // 연령대
     private String  enterDate;
 
-    private boolean isPhoneOpen;    // open user's phone number public
-    private boolean isGenderOpen;   // open user's gender public
-    private boolean isAgeGroupOpen; // open user's age group public
-    private boolean openGroup;
-    private boolean openAll;
+    private boolean isPhoneOpen;    // 휴대전화 번호 공개 여부
+    private boolean isGenderOpen;   // 성별 공개 여부
+    private boolean isAgeGroupOpen; // 연령대 공개 여부
+    private boolean openGroup;      // 공개 범위 (그룹)
+    private boolean openAll;        // 공개 범위 (전체)
 
     private Context baseContext;
-    private Bitmap  profilePic;
+    private Bitmap  profilePic;     // 프로필 사진 비트맵
 
 
     /**
      * 스케줄 내부 멤버 볼 때 사용할 생성자
-     * @param userId        유저 아이디
-     * @param nickname      유저 닉네임
-     * @param gender        성별
-     * @param age_group     연령대
-     * @param scope         공개범위
-     * @param phone         휴대전화 번호
-     * @param grade         등급
+     * @param userId        String  유저 아이디
+     * @param nickname      String  유저 닉네임
+     * @param gender        int     성별
+     * @param age_group     int     연령대
+     * @param scope         int     공개범위
+     * @param phone         String  휴대전화 번호
+     * @param grade         String  등급
+     * @param baseContext   Context 해당 액티비티의 baseContext
      */
     public GroupUserInfoBean(
                                 String  userId,
@@ -66,15 +67,15 @@ public class GroupUserInfoBean extends Bean {
 
     /**
      * 초기화
-     * @param userId    String  유저 아이디
-     * @param nickname  String  유저 닉네임
-     * @param grade     String  유저 등급
-     * @param phone     String  유저 핸드폰 번호
-     * @param enterDate String  유저 들어온 날짜
-     * @param gender    int     유저 성별
-     * @param ageGroup  int     유저 연령대
-     * @param scope     int     정보 공개 설정
-     * @param baseContext
+     * @param userId        String  유저 아이디
+     * @param nickname      String  유저 닉네임
+     * @param grade         String  유저 등급
+     * @param phone         String  유저 핸드폰 번호
+     * @param enterDate     String  유저 들어온 날짜
+     * @param gender        int     유저 성별
+     * @param ageGroup      int     유저 연령대
+     * @param scope         int     정보 공개 설정
+     * @param baseContext   Context 해당 액티비티의 baseContext
      */
     public GroupUserInfoBean(
                              String     userId,
@@ -98,6 +99,7 @@ public class GroupUserInfoBean extends Bean {
 
         String strScope = scope + "";
 
+        // 공개여부 문자열 길이에 따라 값 조정
         switch (strScope.length()) {
             case 3:
                 openGroup   = false;
@@ -121,6 +123,11 @@ public class GroupUserInfoBean extends Bean {
         }
     }
 
+    /**
+     * 공개여부 초기화 --> 최소 3자리, 최대 5자리 숫자(Type String)를 이용해 공개여부 초기화
+     * @param strScope  String  공개여부를 표시하는 문자열
+     * @param length    int     strScope의 길이
+     */
     private void initOpenSettings(String strScope, int length) {
         this.isPhoneOpen    = (strScope.charAt(length - 3) == '1') ? true : false;
         this.isGenderOpen   = (strScope.charAt(length - 2) == '1') ? true : false;

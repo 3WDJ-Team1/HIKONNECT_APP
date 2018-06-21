@@ -7,7 +7,8 @@ import java.util.Comparator;
 
 /**
  * 등산 중인 멤버 데이터를 담아 둘 클래스
- * @author  Sungeun Kang (kasueu0814@gmail.com)
+ * @author  Sungeun Kang (kasueu0814@gmail.com) 기본 데이터 초기화
+ * @author  Beomsu Kwon (rnjs9957@gmail.com)    Comparator 추가
  * @since   2018-05-18
  * @see     kr.ac.yjc.wdj.hikonnect.adapters.HikingMemberListAdapter
  */

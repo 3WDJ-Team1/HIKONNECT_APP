@@ -16,30 +16,31 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
- * 무전 연결, 받기
+ * 무전 연결, 받기 (현재 사용 x)
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-06
  */
 public class AudioCall {
     // 상수
-    private final int       SENDER_PORT     = 11111;            // 전송 시 이용할 포트 번호
-    private final int       LISTENER_PORT   = 50003;            // 수신 시 이용할 포트 번호
-    private final int       RATE            = 8000;             // 진동수 헤르츠
+    private final int       SENDER_PORT     = 11111;    // 전송 시 이용할 포트 번호
+    private final int       LISTENER_PORT   = 50003;    // 수신 시 이용할 포트 번호
+    private final int       RATE            = 8000;     // 진동수 헤르츠
     private final int       INTERVAL        = 20;
     private final int       SIZE            = 2;
     private final int       BUFFER_SIZE     = INTERVAL * INTERVAL * SIZE * 2; // 버퍼 크기
 
     // 로그캣 출력 태그
-    private final String    SEND_TAG    = "SENDING";
-    private final String    RECEIVE_TAG = "RECEIVING";
+    private final String    SEND_TAG        = "SENDING";
+    private final String    RECEIVE_TAG     = "RECEIVING";
 
     // 변수
-    private InetAddress     serverAddress;          // 서버 주소
-    private boolean         isSending   = false;    // 데이터 전송을 지속하고 있는지
-    private boolean         isReceiving = false;    // 데이터 수신을 지속하고 있는지
+    private InetAddress     serverAddress;              // 서버 주소
+    private boolean         isSending       = false;    // 데이터 전송을 지속하고 있는지
+    private boolean         isReceiving     = false;    // 데이터 수신을 지속하고 있는지
 
     /**
-     * serverAdderess 초기화
+     * 서버 어드레스 초기화
+     * @param serverIP  String  서버 IP
      */
     public AudioCall(String serverIP) {
         try {
@@ -53,14 +54,16 @@ public class AudioCall {
      * 데이터 전송 시작
      */
     public void sendStart() {
-        // Log.d(SEND_TAG, "Sending start!!!!\n To: " + serverAddress.getHostName() + ":" + SENDER_PORT);
+        Log.d(SEND_TAG, "Sending start!!!!\n To: " + serverAddress.getHostName() + ":" + SENDER_PORT);
         isSending   = true;
 
         // 스레드 생성
         Thread sendThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                // UDP 소켓 생성
                 DatagramSocket  socket = null;
+                // 오디오 녹음
                 AudioRecord     record = null;
                 try {
                     // 소켓 생성
@@ -112,14 +115,14 @@ public class AudioCall {
                     }
                 } catch (IOException ie) {
                     if (ie instanceof  SocketException) {
-                        Log.e(SEND_TAG, "while sending, SocketException was occured.\n" + ie.toString());
+                        Log.e(SEND_TAG, "while sending, SocketException was occurred.\n" + ie.toString());
                         isSending = false;
                     } else {
-                        Log.e(SEND_TAG, "while sending, IOException was occured. socket.send(packet);\n" + ie.toString());
+                        Log.e(SEND_TAG, "while sending, IOException was occurred. socket.send(packet);\n" + ie.toString());
                         isSending = false;
                     }
                 } catch (InterruptedException ire) {
-                    Log.e(SEND_TAG, "while sendiong, InterruptedException was occurd. Thread.sleep\n" + ire.toString());
+                    Log.e(SEND_TAG, "while sendiong, InterruptedException was occurred. Thread.sleep\n" + ire.toString());
                     isSending = false;
                 } finally {
                     // 자원 반환
@@ -171,7 +174,7 @@ public class AudioCall {
                 // 실행
                 track.play();
                 try {
-                    // 소켓 열기
+                    // 소켓 열기 --> 멀티캐스트
                     socket = new MulticastSocket(LISTENER_PORT);
                     socket.joinGroup(InetAddress.getByName("238.146.242.255"));
 
@@ -179,7 +182,6 @@ public class AudioCall {
                     byte[] buffer = new byte[BUFFER_SIZE];
 
                     while(isReceiving) {
-                        Log.d("shit", "shit@!!!!1");
                         // 패킷 생성
                         DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
                         // 받아오기

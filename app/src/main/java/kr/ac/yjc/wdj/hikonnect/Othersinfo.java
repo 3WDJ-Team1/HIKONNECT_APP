@@ -58,7 +58,9 @@ import okhttp3.Response;
 import static kr.ac.yjc.wdj.hikonnect.Environments.APP_TAG;
 
 /**
- * Created by jungyu on 2018-05-02.
+ * 현재 등산중인 다른 사람들 정보 보여주는 액티비티
+ * @author  Jungyu Choi
+ * @since   2018-05-02
  */
 
 public class Othersinfo extends Activity {

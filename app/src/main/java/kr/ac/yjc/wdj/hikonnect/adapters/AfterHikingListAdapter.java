@@ -13,17 +13,18 @@ import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.beans.AfterHikingMenu;
 
 /**
+ * 등산 완료 후 리스트 어댑터
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-12
  */
-public class AfterHikingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AfterHikingListAdapter extends RecyclerView.Adapter<AfterHikingListAdapter.AfterHikingListViewHolder> {
     private int                         layout;     // 재사용될 레이아웃
     private ArrayList<AfterHikingMenu>  menuList;   // 값을 바꿀 리스트
 
     /**
      * 초기화
-     * @param menuList  값을 넣을 ArrayList
-     * @param layout    재사용될 레이아웃
+     * @param menuList  ArrayList   값을 넣을 ArrayList
+     * @param layout    int         재사용될 레이아웃
      */
     public AfterHikingListAdapter(ArrayList<AfterHikingMenu> menuList, int layout) {
         this.menuList   = menuList;
@@ -31,27 +32,27 @@ public class AfterHikingListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     /**
-     * 뷰홀더 생성
-     * @param parent    현재 어댑터를 만드는 위치
-     * @param viewType  뷰홀더에 넣을 레이아웃
+     * 뷰홀더 생성 (콜백)
+     * @param parent    ViewGroup   현재 어댑터를 만드는 위치
+     * @param viewType  int         뷰홀더에 넣을 레이아웃
      * @return          뷰홀더 객체
      */
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AfterHikingListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         return new AfterHikingListViewHolder(view);
     }
 
     /**
-     * 레이아웃과 연결된 뷰홀더를 이용해 데이터 값 조정
-     * @param holder
-     * @param position
+     * 레이아웃과 연결된 뷰홀더를 이용해 데이터 값 조정 (콜백)
+     * @param holder    AfterHikingListViewHolder 레이아웃에 연결시킬 뷰홀더
+     * @param position  int                     몇 번 째 리스트인지
      */
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((AfterHikingListViewHolder) holder).itemImage.setImageDrawable(menuList.get(position).getImageDrawable());
-        ((AfterHikingListViewHolder) holder).itemTitle.setText(menuList.get(position).getMenuTitle());
-        ((AfterHikingListViewHolder) holder).itemValue.setText(menuList.get(position).getMenuValue());
+    public void onBindViewHolder(AfterHikingListViewHolder holder, int position) {
+        holder.itemImage.setImageDrawable(menuList.get(position).getImageDrawable());
+        holder.itemTitle.setText(menuList.get(position).getMenuTitle());
+        holder.itemValue.setText(menuList.get(position).getMenuValue());
     }
 
     /**
@@ -66,7 +67,7 @@ public class AfterHikingListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     /**
      * 뷰홀더 --> 레이아웃과 데이터를 연결
      */
-    private class AfterHikingListViewHolder extends RecyclerView.ViewHolder {
+    class AfterHikingListViewHolder extends RecyclerView.ViewHolder {
         private ImageView   itemImage;  // 메뉴 이미지
         private TextView    itemTitle;  // 메뉴 제목
         private TextView    itemValue;  // 메뉴 내용
@@ -78,9 +79,9 @@ public class AfterHikingListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         private AfterHikingListViewHolder(View itemView) {
             super(itemView);
 
-            itemImage = (ImageView) itemView.findViewById(R.id.item_image);
-            itemTitle = (TextView) itemView.findViewById(R.id.itemTitle);
-            itemValue = (TextView) itemView.findViewById(R.id.itemValue);
+            itemImage = (ImageView) itemView.findViewById(R.id.itemImage);
+            itemTitle = (TextView)  itemView.findViewById(R.id.itemTitle);
+            itemValue = (TextView)  itemView.findViewById(R.id.itemValue);
         }
     }
 }

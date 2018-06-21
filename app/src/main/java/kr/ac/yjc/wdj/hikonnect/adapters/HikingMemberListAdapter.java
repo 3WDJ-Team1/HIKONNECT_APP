@@ -95,6 +95,9 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
 
     }
 
+    /**
+     * 어댑터 내에서 사용할 뷰홀더
+     */
     class HikingMemberHolder extends RecyclerView.ViewHolder {
         private TextView            memberName;         // 멤버 이름
         private TextView            memberRank;         // 맴버 등수

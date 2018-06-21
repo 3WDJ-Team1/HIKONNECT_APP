@@ -35,8 +35,8 @@ import okhttp3.Response;
 
 /**
  * 등산 직후 화면
- * @author  Sungeun Kang(kasueu0814@gmail.com)
- * @author  bs Kwon <rnjs9957@gmail.com>
+ * @author  Sungeun Kang(kasueu0814@gmail.com)  UI 작업
+ * @author  bs Kwon <rnjs9957@gmail.com>        데이터 바인딩
  * @since   2018-05-12
  */
 public class AfterHikingActivity extends AppCompatActivity {

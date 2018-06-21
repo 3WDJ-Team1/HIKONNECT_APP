@@ -17,7 +17,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * 녹음 리스트 보여주는 액티비티
+ * 녹음 리스트 보여주는 액티비티(현재 빠짐)
  * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-10
  */

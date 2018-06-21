@@ -28,7 +28,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * @author  Sungeun Kang (kasueu0814@gmail.com), Areum Lee (leear5799@gmail.com)
+ * 참여중인 그룹 리스트
+ * @author  Sungeun Kang (kasueu0814@gmail.com)
  * @since   2018-05-26
  */
 public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupListAdapter.JoinedGroupHolder> {
@@ -36,21 +37,22 @@ public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupList
     private ArrayList<GroupListItem>    listItems;  // 그룹 리스트
     private SharedPreferences           preferences;
 
-    // Provide a suitable constructor (depends on the kind of dataset)
+    /**
+     * 초기화
+     * @param listItems     순회할 데이터
+     * @param prefreneces   세션 값 가지는 SharedPreferences
+     */
     public JoinedGroupListAdapter(ArrayList<GroupListItem> listItems, SharedPreferences prefreneces) {
         this.listItems      = listItems;
         this.preferences    = prefreneces;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public JoinedGroupHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.joined_group_item_list, parent, false);
         return new JoinedGroupHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final JoinedGroupHolder holder, final int position) {
         final GroupListItem listItem = listItems.get(position);
@@ -169,7 +171,7 @@ public class JoinedGroupListAdapter extends RecyclerView.Adapter<JoinedGroupList
             groupWriter     = (TextView)        itemView.findViewById(R.id.groupWriter);
             groupDescrption = (TextView)        itemView.findViewById(R.id.groupDescription);
             relativeLayout  = (RelativeLayout)  itemView.findViewById(R.id.joinedGroupLayout);
-            btnExitGroup    = (Button)     itemView.findViewById(R.id.btnExitGroup);
+            btnExitGroup    = (Button)          itemView.findViewById(R.id.btnExitGroup);
 
         }
     }
