@@ -229,7 +229,7 @@
 
                     <Button
                         android:id="@+id/loc_memo_store_btn"
-                        android:layout_width="125dp"
+                        android:layout_width="88dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/map_button_selector_light"
                         android:text="전송"
@@ -237,11 +237,13 @@
                         android:textSize="20sp"
                         android:textStyle="bold"
                         fab:layout_constraintEnd_toStartOf="@+id/l_memo_cancel_btn"
-                        fab:layout_constraintStart_toStartOf="parent" />
+                        fab:layout_constraintStart_toStartOf="parent"
+                        tools:layout_editor_absoluteY="25dp"
+                        tools:layout_editor_absoluteX="0dp" />
 
                     <Button
                         android:id="@+id/l_memo_cancel_btn"
-                        android:layout_width="125dp"
+                        android:layout_width="88dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/map_button_selector"
                         android:text="취소"
@@ -249,7 +251,9 @@
                         android:textSize="20sp"
                         android:textStyle="bold"
                         fab:layout_constraintEnd_toEndOf="parent"
-                        fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn" />
+                        fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn"
+                        tools:layout_editor_absoluteY="25dp"
+                        tools:layout_editor_absoluteX="0dp" />
                 </android.support.constraint.ConstraintLayout>
             </LinearLayout>
             <!--위치메모 끝 -->
@@ -286,8 +290,39 @@
                     android:textSize="12sp" />
             </RelativeLayout>
             <!--알림 바 끝-->
+
+            <!-- 무전 WebView 띄우기 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="bottom"
+                >
+                <WebView
+                    android:id="@+id/radioWebView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    />
+                <Button
+                    android:id="@+id/connectRTCServer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="60dp"
+                    android:layout_marginEnd="72dp"
+                    android:layout_marginStart="72dp"
+                    android:background="@drawable/map_change_hiking_state_button"
+                    android:text="무전 서버 연결"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="@color/black"
+                    />
+            </LinearLayout>
+            <!-- 무전 WebView 띄우기 끝 -->
         </RelativeLayout>
     </LinearLayout>
+
     <!--하단 정보 창-->
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -303,7 +338,8 @@
             fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
             fab:layout_constraintEnd_toStartOf="@+id/user_hiked_distance_wrapper"
             fab:layout_constraintStart_toStartOf="parent"
-            fab:layout_constraintTop_toTopOf="parent">
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="27dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -329,47 +365,17 @@
         </LinearLayout>
         <!--무전 리스트 버튼 끝-->
 
-        <!-- 무전 WebView 띄우기 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
-            <WebView
-                android:id="@+id/radioWebView"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="64dp"
-                android:layout_marginStart="64dp"
-                android:layout_marginEnd="64dp"
-                android:visibility="gone"
-                />
-            <Button
-                android:id="@+id/connectRTCServer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="60dp"
-                android:layout_marginEnd="72dp"
-                android:layout_marginStart="72dp"
-                android:background="@drawable/map_change_hiking_state_button"
-                android:text="무전 서버 연결"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:backgroundTint="@color/black"
-                />
-        </LinearLayout>
-        <!-- 무전 WebView 띄우기 끝 -->
-
         <!-- 위치메모 -->
         <LinearLayout
             android:id="@+id/user_hiked_distance_wrapper"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            fab:layout_constraintBottom_toTopOf="@id/user_hiking_progress_wrapper"
+            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
             fab:layout_constraintEnd_toStartOf="@+id/user_remain_time_wrapper"
             fab:layout_constraintStart_toEndOf="@+id/user_speed_wrapper"
-            fab:layout_constraintTop_toTopOf="parent">
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="126dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -412,7 +418,8 @@
             fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
             fab:layout_constraintEnd_toStartOf="@+id/user_num_of_remain_member_wrapper"
             fab:layout_constraintStart_toEndOf="@+id/user_hiked_distance_wrapper"
-            fab:layout_constraintTop_toTopOf="parent">
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="230dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -456,7 +463,8 @@
             fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
             fab:layout_constraintEnd_toEndOf="parent"
             fab:layout_constraintStart_toEndOf="@+id/user_remain_time_wrapper"
-            fab:layout_constraintTop_toTopOf="parent">
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="311dp">
 
             <TextView
                 android:id="@+id/num_of_remain_members"
@@ -483,7 +491,8 @@
             fab:layout_constraintEnd_toStartOf="@+id/user_hiking_rank_wrapper"
             fab:layout_constraintHorizontal_weight="8"
             fab:layout_constraintStart_toStartOf="parent"
-            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper">
+            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper"
+            tools:layout_editor_absoluteX="0dp">
 
             <ProgressBar
                 android:id="@+id/seekBar"
@@ -523,7 +532,8 @@
             fab:layout_constraintEnd_toEndOf="parent"
             fab:layout_constraintHorizontal_weight="2"
             fab:layout_constraintStart_toEndOf="@+id/user_hiking_progress_wrapper"
-            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper">
+            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper"
+            tools:layout_editor_absoluteX="307dp">
 
             <TextView
                 android:id="@+id/userRank"

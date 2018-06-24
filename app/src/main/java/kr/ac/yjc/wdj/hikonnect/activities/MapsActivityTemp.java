@@ -1450,7 +1450,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         // [1.5] 무전 레이아웃.
 //        drawerLayout                = findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
 //        btnSendRadio                = findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
-        btnSendRadio                = (ImageButton) findViewById(R.id.showRecordBtn);
+        btnSendRadio                = (ImageButton) findViewById(R.id.showRecordList);
         btnConnectToRTC             = (Button)      findViewById(R.id.connectRTCServer);
 
         // [1.6] 등산 상태 변경 버튼.
@@ -1780,30 +1780,6 @@ public class MapsActivityTemp extends FragmentActivity implements
             }
         });
 
-        // 지도 터치 이벤트 감지 레이어
-        FrameLayout mapTouchLayer = findViewById(R.id.map_touch_layer);
-        // 지도 터치 이벤트 리스너 등록
-        mapTouchLayer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:   // 터치 시작
-                        // 내 위치 버튼 비활성화.
-                        myLocationBtnState = LOCATION_BTN_DISABLED;
-                        fabUpdateMyLocation.setImageDrawable(ContextCompat.getDrawable(getBaseContext(), R.drawable.my_position_btn_svg));
-                        // 지도 방향 초기화
-                        CameraPosition cameraPosition = CameraPosition.builder()
-                                .target(gMap.getCameraPosition().target)
-                                .bearing(0)
-                                .zoom(gMap.getCameraPosition().zoom)
-                                .build();
-
-                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        break;
-                }
-                return false;
-            }
-        });*/
     } // initializeUI END
 
     private void sendPicture(Uri imgUri) {
