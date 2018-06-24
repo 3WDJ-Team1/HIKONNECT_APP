@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.json.simple.JSONObject;
@@ -49,6 +51,7 @@ import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserRecordActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.adapters.MainActivityScheduleAdapter;
+import kr.ac.yjc.wdj.hikonnect.apis.fcm_manager.TokenManager;
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity
 
     // 세션 유지
     private SharedPreferences   pref;
+
     // 가장 가까운 날짜의 일정 ID.
     private String              scheduleNum;
 
@@ -193,6 +197,7 @@ public class MainActivity extends AppCompatActivity
 
         // 내부 페이지 UI 초기화
         initInnerPageUI();
+        initFCMService();
     }
 
     @Override
@@ -349,6 +354,11 @@ public class MainActivity extends AppCompatActivity
         });
 
         getGroupsInfo(pref.getString("user_id", "null"));
+    }
+
+    private void initFCMService() {
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        FirebaseInstanceId.getInstance().getToken();
     }
 
     /**

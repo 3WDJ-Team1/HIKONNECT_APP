@@ -44,13 +44,12 @@ public class MapsActivityTest extends FragmentActivity {
      * UI 초기화
      */
     private void initUI() {
-        userDataBox     = (CardView)        findViewById(R.id.userDataBox);
-        tvUserSpeed     = (TextView)        findViewById(R.id.userSpeed);
-        tvDistance      = (TextView)        findViewById(R.id.distance);
-        tvArriveWhen    = (TextView)        findViewById(R.id.arriveWhen);
+        tvUserSpeed     = findViewById(R.id.userSpeed);
+        tvDistance      = findViewById(R.id.distance);
+        tvArriveWhen    = findViewById(R.id.arriveWhen);
 //        layout          = (RelativeLayout)  findViewById(R.id.backGround);
-        drawerLayout    = (LinearLayout)    findViewById(R.id.drawer);
-        btnSendRecord   = (Button)          findViewById(R.id.sendRecordData);
+        drawerLayout    = findViewById(R.id.drawer);
+        btnSendRecord   = findViewById(R.id.sendRecordData);
 
         // 전체 레이아웃을 한 번 클릭하면 데이터 박스 가시화
        /* layout.setOnClickListener(new View.OnClickListener() {

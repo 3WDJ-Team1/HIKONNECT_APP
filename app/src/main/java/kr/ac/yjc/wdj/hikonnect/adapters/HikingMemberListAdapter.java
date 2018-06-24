@@ -87,6 +87,7 @@ public class HikingMemberListAdapter extends RecyclerView.Adapter<HikingMemberLi
     public int getItemCount() {
         return dataList.size();
     }
+
     /**
      * 클릭 시 데이터 전송
      */

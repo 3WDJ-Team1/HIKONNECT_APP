@@ -15,17 +15,26 @@
     <string name="nav_sub_menu_item01">Sub Menu Item 1</string>
     <string name="nav_sub_menu_item02">Sub Menu Item 2</string>
     <string name="drawer_header_text">Drawer Header</string>
-    <string name="sign_in">SIGN IN</string>
-    <string name="sign_up">SIGN UP</string>
-    <string name="log_out">LOGOUT</string>
-    <string name="groups">Groups</string>
-    <string name="nav_my_page">User</string>
-    <string name="nav_my_groups">My Groups</string>
-    <string name="nav_my_records">My Records</string>
-    <string name="nav_my_profile">My Profile</string>
+    <string name="sign_in">로그인</string>
+    <string name="sign_up">회원가입</string>
+    <string name="log_out">로그아웃</string>
+    <string name="groupName">그룹명</string>
+    <string name="title">제목</string>
+    <string name="content">내용</string>
+    <string name="min">최소 모집 인원</string>
+    <string name="max">최대 모집 인원</string>
+    <string name="makeGroup">그룹 생성</string>
+    <string name="makeNotice">공지사항 작성</string>
+    <string name="groups">모집 중인 그룹</string>
+    <string name="nav_my_page">마이페이지</string>
+    <string name="nav_my_groups">나의 그룹</string>
+    <string name="nav_my_records">나의 등산 기록</string>
+    <string name="nav_my_profile">나의 프로필</string>
     <string name="user_id"></string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="user_info_res_was_empty">현재 등산 중인 맴버가 없습니다</string>
+    <string name="user_info_search_hint">유저 아이디를 입력하세요.</string>
 
     <!-- 그룹 리스트 검색 선택 -->
     <string-array name="group_search_selector">

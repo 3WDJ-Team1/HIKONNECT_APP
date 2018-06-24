@@ -2,6 +2,7 @@ package kr.ac.yjc.wdj.hikonnect;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -54,6 +55,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static kr.ac.yjc.wdj.hikonnect.Environments.APP_TAG;
+
 /**
  * 현재 등산중인 다른 사람들 정보 보여주는 액티비티
  * @author  Jungyu Choi
@@ -65,11 +68,12 @@ public class Othersinfo extends Activity {
     public static final int                SHOW_ALL = 1001;
 
     // UI 변수
-    private RecyclerView                    listView;   // 검색을 보여줄 리스트변수
-    private ProgressBar                     progressBar;// 진행 상황을 표시할 ProgressBar
-    private EditText                        editSearch; // 검색어를 입력할 Input 창
-    private ImageButton                     btnGoBack;  // 뒤로가기 버튼
-    private Button                          showAllBtn; // 모두 보기 버튼
+    private RecyclerView                    listView;               // 검색을 보여줄 리스트변수
+    private ProgressBar                     progressBar;            // 진행 상황을 표시할 ProgressBar
+    private TextView                        textViewAlertEmpty;     // 검색 결과가 비었을 때 보여 줄 문장.
+    private EditText                        editSearch;             // 검색어를 입력할 Input 창
+    private ImageButton                     btnGoBack;              // 뒤로가기 버튼
+    private Button                          showAllBtn;             // 모두 보기 버튼
 
     // 데이터 변수
     private HikingMemberListAdapter         adapter;    // 리스트뷰에 연결할 아답터
@@ -164,6 +168,10 @@ public class Othersinfo extends Activity {
 
                     JSONArray jsonArray = new JSONArray(s);
 
+                    if (jsonArray.length() == 0) {
+                        publishProgress(0);
+                    }
+
                     for (int i = 0; i < jsonArray.length(); i++) {
 
                         JSONObject object = jsonArray.getJSONObject(i);
@@ -229,8 +237,8 @@ public class Othersinfo extends Activity {
                             }
                         }.execute(object);
                     }
-                } catch (JSONException je) {
-                    je.printStackTrace();
+                } catch (JSONException | NullPointerException e) {
+                    e.printStackTrace();
                 }
                 publishProgress(100);
             }
@@ -241,6 +249,9 @@ public class Othersinfo extends Activity {
 
                 if (values[0] == 100) {
                     progressBar.setVisibility(View.GONE);
+                } else if (values[0] == 0){
+                    progressBar.setVisibility(View.GONE);
+                    textViewAlertEmpty.setVisibility(View.VISIBLE);
                 }
             }
         }.execute(groupId, scheduleNo + "");
@@ -250,11 +261,12 @@ public class Othersinfo extends Activity {
      * UI 초기화
      */
     private void initUI() {
-        showAllBtn  = findViewById(R.id.other_info_show_all_btn);
-        editSearch  = findViewById(R.id.editSearch);
-        listView    = findViewById(R.id.listView);
-        progressBar = findViewById(R.id.otherInfoProgressBar);
-        btnGoBack   = findViewById(R.id.btnGoBack);
+        showAllBtn              = findViewById(R.id.other_info_show_all_btn);
+        editSearch              = findViewById(R.id.editSearch);
+        listView                = findViewById(R.id.listView);
+        progressBar             = findViewById(R.id.otherInfoProgressBar);
+        textViewAlertEmpty      = findViewById(R.id.otherInfoAlertEmpty);
+        btnGoBack               = findViewById(R.id.btnGoBack);
 
         // 뒤로가기 리스너 정의
         btnGoBack.setOnClickListener(new View.OnClickListener() {
@@ -302,9 +314,7 @@ public class Othersinfo extends Activity {
 
         groupId     = intent.getStringExtra("groupId");
         scheduleNo  = intent.getIntExtra("scheduleNo", 0);
-        // 18.05.23(Wed) bs Kwon
         memberNo    = intent.getIntExtra("member_no", 0);
-        // 18.05.23(Wed) bs Kwon
         dataList    = new ArrayList<>();
         tempList    = new ArrayList<>();
 

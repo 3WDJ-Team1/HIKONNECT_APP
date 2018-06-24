@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,9 +25,7 @@ import java.util.HashMap;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
 import kr.ac.yjc.wdj.hikonnect.R;
-import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.groups.GroupActivity;
-import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserGroupActivity;
+import kr.ac.yjc.wdj.hikonnect.activities.group.GroupActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.session.SessionManager;
 import kr.ac.yjc.wdj.hikonnect.apis.http_request.HttpRequestConnection;
 
@@ -167,7 +164,7 @@ public class UserProfileActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.groups) {
-            startActivity(new Intent(this, GroupActivity.class));
+            //startActivity(new Intent(this, GroupActivity.class));
         } /*else if (id == R.id.my_groups) {
             startActivity(new Intent(this, UserGroupActivity.class));
         }*/ else if (id == R.id.my_profile) {

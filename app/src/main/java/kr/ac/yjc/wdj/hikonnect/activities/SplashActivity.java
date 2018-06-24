@@ -9,7 +9,8 @@ import kr.ac.yjc.wdj.hikonnect.R;
 
 /**
  * The Activity used when first app is run
- * @author  Suneun Kang (kasueu0814@gmail.com) 수정, Areum Lee (leear5799@gmail.com)
+ * @author  Areum Lee (leear5799@gmail.com) 작성,
+ *          Suneun Kang (kasueu0814@gmail.com) 수정
  * @since   2018-04-24
  */
 public class SplashActivity extends Activity{
