@@ -1175,6 +1175,9 @@ public class MapsActivityTemp extends FragmentActivity implements
 
                                 LocationMemo locationMemo = new LocationMemo(new LatLng(latitude, longitude), no);
 
+                                if (mapItems.get(no) != null && ((LocationMemo) mapItems.get(no)).wasShown) {
+                                    locationMemo.wasShown = true;
+                                }
                                 mapItems.put(no, locationMemo);
                             }
 
@@ -1732,18 +1735,18 @@ public class MapsActivityTemp extends FragmentActivity implements
         mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onPermissionRequest(PermissionRequest request) {
-//                int version = 0;
-//                try {
-//                    PackageInfo i = getBaseContext().getPackageManager().getPackageInfo(getBaseContext().getPackageName(), 0);
-//                    version = i.versionCode;
-//                } catch (PackageManager.NameNotFoundException e) {}
-//
-//                if (version >= 21)
+                int version = 0;
+                try {
+                    PackageInfo i = getBaseContext().getPackageManager().getPackageInfo(getBaseContext().getPackageName(), 0);
+                    version = i.versionCode;
+                } catch (PackageManager.NameNotFoundException e) {}
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     request.grant(request.getResources());
-//                else
-//                    super.onPermissionRequest(request);
+                } else
+                super.onPermissionRequest(request);
             }
-        } );
+        });
 
         Log.d("sibal!!", "https://www.hikonnectrtc.ga/" + scheduleNum +  "/test");
         // url 지정
@@ -1779,7 +1782,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                 isSendingNow = !isSendingNow;
             }
         });
-
     } // initializeUI END
 
     private void sendPicture(Uri imgUri) {
@@ -1988,6 +1990,8 @@ public class MapsActivityTemp extends FragmentActivity implements
                 // 내 위치와 위치 메모 사이의 거리를 계산
                 double disToLMemo = userPosition.distanceTo(lMemoPosition);
 
+                Log.d(TAG, "No: " + ((LocationMemo) item).no + ", wasShown: " + ((LocationMemo) item).wasShown);
+
                 // 거리가 10M 이내이고 한번도 알람을 받지 않았을 때
                 if (disToLMemo < 10 && !((LocationMemo) item).wasShown) {
 
@@ -1996,25 +2000,23 @@ public class MapsActivityTemp extends FragmentActivity implements
                     intent.putExtra("schedule_no", scheduleNum);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                            PendingIntent.FLAG_ONE_SHOT);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
-                    Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSmallIcon(R.drawable.notification_icon)
                             .setContentTitle("HIKONNECT")
                             .setContentText("근처에 위치 메모가 있습니다")
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
-                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-                            .setAutoCancel(true)
+//                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
                             .setContentIntent(pendingIntent);
 
                     NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 
-                    LocationMemo newItem = ((LocationMemo) item);
+                    LocationMemo newItem = (LocationMemo) item;
                     newItem.wasShown = true;
 
                     mapItems.put(_index, newItem);

@@ -3,6 +3,9 @@ package kr.ac.yjc.wdj.hikonnect.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
@@ -35,6 +39,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp.TAG;
+
 public class ClusterDetailActivity extends SlidingActivity {
     public static final int CLUSTER_CLICKED = 1;
 
@@ -44,7 +50,8 @@ public class ClusterDetailActivity extends SlidingActivity {
     private ArrayList<Integer>                      lMemoIDs;
     private ArrayList<ClusterDetailRecyclerBean>    clusterBeans = new ArrayList<>();
 
-    private RecyclerView            recyclerView;
+    private RecyclerView                            recyclerView;
+    private ClusterDetailRecyclerViewAdapter        adapter;
 
     @Override
     public void init(Bundle bundle) {
@@ -69,15 +76,14 @@ public class ClusterDetailActivity extends SlidingActivity {
 
                 setContent(R.layout.cluster_detail_activity);
 
+                adapter = new ClusterDetailRecyclerViewAdapter(R.layout.cluster_detail_list_item, clusterBeans, this);
                 recyclerView = findViewById(R.id.cluster_items);
-                recyclerView.setAdapter(new ClusterDetailRecyclerViewAdapter(R.layout.cluster_detail_list_item, clusterBeans, this));
+                recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
 
                 final OkHttpClient client = new OkHttpClient();
 
-                for (Integer memberID : memberIDs) {
-                    Members member = new Members();
-                    member.setNo(memberID);
+                for (final Integer memberID : memberIDs) {
 
                     new AsyncTask<Integer, Integer, String>() {
 
@@ -110,7 +116,7 @@ public class ClusterDetailActivity extends SlidingActivity {
 
                                 Response response = client.newCall(request).execute();
 
-                                return response.body().toString();
+                                return response.body().string();
 
                             } catch (IOException e) {
                                 Log.e(TAG, "HTTP error: ", e);
@@ -119,14 +125,60 @@ public class ClusterDetailActivity extends SlidingActivity {
                         }
 
                         @Override
-                        protected void onPostExecute(String string) {
-                            super.onPostExecute(string);
+                        protected void onPostExecute(final String s) {
+                            try {
+                                super.onPostExecute(s);
 
-                            Log.d(TAG, "HTTP response: " + string);
+                                JSONObject jsonObject = (JSONObject) ((JSONArray) new JSONParser().parse(s)).get(0);
+
+                                final String nickname = jsonObject.get("nickname").toString();
+
+                                new AsyncTask<String, Void, Bitmap>() {
+
+                                    @Override
+                                    protected Bitmap doInBackground(String... strings) {
+                                        try {
+                                            String userID = strings[0];
+
+                                            Request req = new Request.Builder()
+                                                    .url(Environments.NODE_HIKONNECT_IP + "/images/UserProfile/" + userID + ".jpg")
+                                                    .build();
+
+                                            Response res = client.newCall(req).execute();
+
+                                            InputStream is = res.body().byteStream();
+
+                                            return BitmapFactory.decodeStream(is);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                            return null;
+                                        }
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Bitmap bitmap) {
+                                        super.onPostExecute(bitmap);
+
+                                        Members _member = new Members();
+                                        _member.setNo(memberID);
+                                        _member.setName(nickname);
+
+                                        if (bitmap == null) {
+                                            _member.setImage(getResources().getDrawable(R.drawable.default_profile_black_svg));
+                                        } else {
+                                            _member.setImage(new BitmapDrawable(getResources(), bitmap));
+                                        }
+
+                                        clusterBeans.add(_member);
+
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }.execute(jsonObject.get("user_id").toString());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }.execute(memberID);
-
-                    clusterBeans.add(member);
                 }
 
                 for (Integer lMemoID : lMemoIDs) {
@@ -166,17 +218,16 @@ public class ClusterDetailActivity extends SlidingActivity {
                         @Override
                         protected void onPostExecute(String s) {
                             try {
-
                                 super.onPostExecute(s);
 
                                 JSONObject jsonObject = (JSONObject) ((JSONArray) new JSONParser().parse(s)).get(0);
-
-                                Log.d(TAG, "array: " + jsonObject);
 
                                 LocationMemo locationMemo = new LocationMemo();
                                 locationMemo.setName(jsonObject.get("title").toString());
 
                                 clusterBeans.add(locationMemo);
+
+                                adapter.notifyDataSetChanged();
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -277,7 +328,7 @@ class ClusterDetailRecyclerViewAdapter extends RecyclerView.Adapter<ClusterDetai
             super(itemView);
 
             itemWrapper     = itemView.findViewById(R.id.item_wrapper);
-            itemImageView   = itemView.findViewById(R.id.item_image);
+            itemImageView   = itemView.findViewById(R.id.item_image_view);
             itemTextView    = itemView.findViewById(R.id.item_name);
         }
     }

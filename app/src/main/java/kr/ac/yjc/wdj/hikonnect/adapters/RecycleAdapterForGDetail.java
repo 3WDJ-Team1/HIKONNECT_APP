@@ -1,7 +1,9 @@
 package kr.ac.yjc.wdj.hikonnect.adapters;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.R;
+import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.schedule_detail.ScheduleDetailActivity;
 import kr.ac.yjc.wdj.hikonnect.beans.Bean;
 import kr.ac.yjc.wdj.hikonnect.beans.GroupNotice;
@@ -32,25 +35,41 @@ import kr.ac.yjc.wdj.hikonnect.beans.GroupUserInfoBean;
  * @since  2018-04-06
  */
 public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private LoadingDialog loadingDialog;      // 로딩 화면
+
     private int             listLayout;
     private ArrayList<Bean> dataList;
+    private Context         context;
 
     // for member
     private String          status;
     private int             index;
 
+    // 참가신청
+    private String          userId,
+                            schedule_no;
+
+    // Session
+    private SharedPreferences pref;
+
     /**
      * @param listLayout    layout to be used
      */
-    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList) {
+    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, Context context) {
         this.listLayout = listLayout;
         this.dataList   = dataList;
+        this.context    = context;
+        loadingDialog   = new LoadingDialog(context);
+        pref            = context.getSharedPreferences("loginData", Context.MODE_PRIVATE);
     }
 
-    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, String status) {
+    public RecycleAdapterForGDetail(int listLayout, ArrayList<Bean> dataList, String status, Context context) {
         this.listLayout = listLayout;
         this.dataList   = dataList;
         this.status     = status;
+        this.context    = context;
+        loadingDialog   = new LoadingDialog(context);
+        pref            = context.getSharedPreferences("loginData", Context.MODE_PRIVATE);
     }
 
     /**

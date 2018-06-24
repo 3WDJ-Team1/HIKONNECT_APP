@@ -418,6 +418,8 @@ public class MainActivity extends AppCompatActivity
                         // 계획된 일정이 없다는 알림 표시.
                         nowScheduleEmptyLayout.setVisibility(View.VISIBLE);
                     } else {
+                        scheduleAdapter = new MainActivityScheduleAdapter(getSupportFragmentManager(), pref);
+                        scheduleViewPager.setAdapter(scheduleAdapter);
                         nowScheduleViewPagerWrapper.setVisibility(View.VISIBLE);
                     }
                 } catch (ParseException | NullPointerException pse) {
