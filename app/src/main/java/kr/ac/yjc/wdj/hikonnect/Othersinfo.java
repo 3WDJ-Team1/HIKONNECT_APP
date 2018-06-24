@@ -56,6 +56,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static kr.ac.yjc.wdj.hikonnect.Environments.APP_TAG;
+import static kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp.TAG;
 
 /**
  * 현재 등산중인 다른 사람들 정보 보여주는 액티비티
@@ -170,6 +171,7 @@ public class Othersinfo extends Activity {
 
                     if (jsonArray.length() == 0) {
                         publishProgress(0);
+                        return;
                     }
 
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -249,6 +251,8 @@ public class Othersinfo extends Activity {
 
                 if (values[0] == 100) {
                     progressBar.setVisibility(View.GONE);
+                    textViewAlertEmpty.setVisibility(View.GONE);
+                    listView.setVisibility(View.VISIBLE);
                 } else if (values[0] == 0){
                     progressBar.setVisibility(View.GONE);
                     textViewAlertEmpty.setVisibility(View.VISIBLE);
