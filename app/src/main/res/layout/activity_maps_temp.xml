@@ -5,8 +5,10 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp">
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -346,7 +348,7 @@
             android:layout_above="@+id/drawer">
 
             <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/showRecordList"
+                android:id="@+id/showRecordBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -358,6 +360,38 @@
                 fab:menu_fab_size="normal" />
         </LinearLayout>
         <!--무전 리스트 버튼 끝-->
+
+        <!-- 무전 WebView 띄우기 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+            <WebView
+                android:id="@+id/radioWebView"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="64dp"
+                android:layout_marginStart="64dp"
+                android:layout_marginEnd="64dp"
+                android:visibility="gone"
+                />
+            <Button
+                android:id="@+id/connectRTCServer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                android:layout_marginEnd="72dp"
+                android:layout_marginStart="72dp"
+                android:background="@drawable/map_change_hiking_state_button"
+                android:text="무전 서버 연결"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/black"
+                />
+        </LinearLayout>
+        <!-- 무전 WebView 띄우기 끝 -->
+
         <!-- 위치메모 -->
         <LinearLayout
             android:id="@+id/imagelayout"
@@ -434,7 +468,7 @@
 
                 <Button
                     android:id="@+id/loc_memo_store_btn"
-                    android:layout_width="125dp"
+                    android:layout_width="88dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/map_button_selector_light"
                     android:text="전송"
@@ -442,11 +476,13 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     fab:layout_constraintEnd_toStartOf="@+id/l_memo_cancel_btn"
-                    fab:layout_constraintStart_toStartOf="parent" />
+                    fab:layout_constraintStart_toStartOf="parent"
+                    tools:layout_editor_absoluteY="25dp"
+                    tools:layout_editor_absoluteX="8dp" />
 
                 <Button
                     android:id="@+id/l_memo_cancel_btn"
-                    android:layout_width="125dp"
+                    android:layout_width="88dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/map_button_selector"
                     android:text="취소"
@@ -454,7 +490,9 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     fab:layout_constraintEnd_toEndOf="parent"
-                    fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn" />
+                    fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn"
+                    tools:layout_editor_absoluteY="25dp"
+                    tools:layout_editor_absoluteX="8dp" />
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
         <!--위치메모 끝 -->

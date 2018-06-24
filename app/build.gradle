@@ -98,6 +98,9 @@ android {
 apply plugin: 'com.google.gms.google-services'
 
 dependencies {
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
     compile files('libs/json-simple-1.1.jar')
     compile files('libs/android-async-http-1.4.9.jar')
+    compile 'com.android.support:exifinterface:26.1.0'
+    compile 'com.android.support:exifinterface:26.1.0'
 }
