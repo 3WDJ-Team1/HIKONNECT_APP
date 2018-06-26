@@ -4,6 +4,6 @@
 
 ## プロジェクト名 : HIKONNECT(ハイコネクト)
 
-### Repasitory : HIKONNECT WEB
+### Repasitory : HIKONNECT Android Application
 
 Application URL : https://play.google.com/store/apps/details?id=kr.ac.yjc.wdj.hikonnect
