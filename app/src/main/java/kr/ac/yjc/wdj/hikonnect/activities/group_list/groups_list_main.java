@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import kr.ac.yjc.wdj.hikonnect.Environments;
@@ -52,6 +53,7 @@ import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserJoinedGroup;
 import kr.ac.yjc.wdj.hikonnect.activities.myPage.UserProfileActivity;
+import kr.ac.yjc.wdj.hikonnect.adapters.GroupSearchSpinnerAdapter;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -128,11 +130,14 @@ public class groups_list_main extends AppCompatActivity
 
         ////////////////////////////////////////////////////스피너////////////////////////////////////////////////////
         // Create an ArrayAdapter using the string array and a default spinner layout
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.group_search_selector, android.R.layout.simple_spinner_item);
+//        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+//                R.array.group_search_selector, android.R.layout.simple_spinner_item);
+        String[] resArr = getResources().getStringArray(R.array.group_search_selector);
+        List<String> data = Arrays.asList(resArr);
 
+        GroupSearchSpinnerAdapter adapter = new GroupSearchSpinnerAdapter(this, data);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);

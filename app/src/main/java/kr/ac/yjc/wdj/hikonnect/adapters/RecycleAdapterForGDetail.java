@@ -111,58 +111,82 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         // 공지사항일 때
         if(viewHolder instanceof ViewHolderNotice) {
 
-            // 번호
-            ((ViewHolderNotice) viewHolder).noticeNo.setText(i + 1 + "");
-            // 제목
-            ((ViewHolderNotice) viewHolder).noticeTitle.setText(((GroupNotice) dataList.get(i)).getTitle());
-            // 작성자
-            ((ViewHolderNotice) viewHolder).noticeWriter.setText(((GroupNotice) dataList.get(i)).getWriter());
-            // 내용
-            ((ViewHolderNotice) viewHolder).noticeContent.setText(((GroupNotice) dataList.get(i)).getContent());
+            // 데이터가 없으면 데이터 없음 출력
+            if (((GroupNotice) dataList.get(i)).getTitle() == null) {
+
+                ((ViewHolderNotice) viewHolder).dataWrapper.setVisibility(View.GONE);
+                ((ViewHolderNotice) viewHolder).noticeContent.setVisibility(View.GONE);
+                ((ViewHolderNotice) viewHolder).wrapperCardView.setVisibility(View.GONE);
+                ((ViewHolderNotice) viewHolder).theresNoNotice.setVisibility(View.VISIBLE);
+
+            } else {
+
+                // 번호
+                ((ViewHolderNotice) viewHolder).noticeNo.setText(i + 1 + "");
+                // 제목
+                ((ViewHolderNotice) viewHolder).noticeTitle.setText(((GroupNotice) dataList.get(i)).getTitle());
+                // 작성자
+                ((ViewHolderNotice) viewHolder).noticeWriter.setText(((GroupNotice) dataList.get(i)).getWriter());
+                // 내용
+                ((ViewHolderNotice) viewHolder).noticeContent.setText(((GroupNotice) dataList.get(i)).getContent());
+            }
 
         } else if (viewHolder instanceof ViewHolderSchedule) {
             // 스케쥴일 때
             final GroupSchedule schedule = (GroupSchedule) dataList.get(i);
 
-            // 스케줄 번호
-            ((ViewHolderSchedule) viewHolder).scheduleNo.setText(i + 1 + "");
-            // 스케줄 제목
-            ((ViewHolderSchedule) viewHolder).scheduleTitle.setText(schedule.getTitle());
-            // 스케줄 주최자
-            ((ViewHolderSchedule) viewHolder).scheduleLeader.setText(schedule.getLeader());
+            if (schedule.getNo() == -1) {
 
-            // 스케줄 레이아웃에 클릭리스너
-            ((ViewHolderSchedule) viewHolder).wrapper.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                ((ViewHolderSchedule) viewHolder).scheduleNo.setVisibility(View.GONE);
+                ((ViewHolderSchedule) viewHolder).scheduleTitle.setVisibility(View.GONE);
+                ((ViewHolderSchedule) viewHolder).scheduleLeader.setVisibility(View.GONE);
+                ((ViewHolderSchedule) viewHolder).btnJoin.setVisibility(View.GONE);
+                ((ViewHolderSchedule) viewHolder).btnShowDetail.setVisibility(View.GONE);
+                ((ViewHolderSchedule) viewHolder).wrapper.setVisibility(View.GONE);
+                ((ViewHolderSchedule) viewHolder).theresNoSchedule.setVisibility(View.VISIBLE);
 
-                    ((ViewHolderSchedule) viewHolder).wrapper.setClickable(false);
+            } else {
 
-                    Intent intent = new Intent(schedule.getBaseContext(), ScheduleDetailActivity.class);
-                    // 데이터 이동
-                    // 산 이름
-                    intent.putExtra("mntId", schedule.getMntId());
-                    // 일자
-                    intent.putExtra("startDate", schedule.getStartDate());
-                    // 내용
-                    intent.putExtra("content", schedule.getContent());
-                    // 그룹의 손님/참가자/오너
-                    intent.putExtra("status", status);
-                    // 스케줄 번호
-                    intent.putExtra("scheduleNo", schedule.getNo());
-                    // 스케줄 제목
-                    intent.putExtra("scheduleTitle", schedule.getTitle());
-                    // 스케줄 경로 FID 배열(String)
-                    intent.putExtra("scheduleRoute", schedule.getRoute());
+                // 스케줄 번호
+                ((ViewHolderSchedule) viewHolder).scheduleNo.setText(i + 1 + "");
+                // 스케줄 제목
+                ((ViewHolderSchedule) viewHolder).scheduleTitle.setText(schedule.getTitle());
+                // 스케줄 주최자
+                ((ViewHolderSchedule) viewHolder).scheduleLeader.setText(schedule.getLeader());
 
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                // 스케줄 레이아웃에 클릭리스너
+                ((ViewHolderSchedule) viewHolder).btnShowDetail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                    // 상세 페이지로 이동
-                    schedule.getBaseContext().startActivity(intent);
+                        ((ViewHolderSchedule) viewHolder).wrapper.setClickable(false);
 
-                    ((ViewHolderSchedule) viewHolder).wrapper.setClickable(true);
-                }
-            });
+                        Intent intent = new Intent(schedule.getBaseContext(), ScheduleDetailActivity.class);
+                        // 데이터 이동
+                        // 산 이름
+                        intent.putExtra("mntId", schedule.getMntId());
+                        // 일자
+                        intent.putExtra("startDate", schedule.getStartDate());
+                        // 내용
+                        intent.putExtra("content", schedule.getContent());
+                        // 그룹의 손님/참가자/오너
+                        intent.putExtra("status", status);
+                        // 스케줄 번호
+                        intent.putExtra("scheduleNo", schedule.getNo());
+                        // 스케줄 제목
+                        intent.putExtra("scheduleTitle", schedule.getTitle());
+                        // 스케줄 경로 FID 배열(String)
+                        intent.putExtra("scheduleRoute", schedule.getRoute());
+
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        // 상세 페이지로 이동
+                        schedule.getBaseContext().startActivity(intent);
+
+                        ((ViewHolderSchedule) viewHolder).wrapper.setClickable(true);
+                    }
+                });
+            }
 
         } else if (viewHolder instanceof ViewHolderMember) {
             // 그룹 멤버일 때
@@ -229,10 +253,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
      * ViewHolder for noitce list up
      */
     private static class ViewHolderNotice extends RecyclerView.ViewHolder {
-        private TextView    noticeNo;       // 공지사항 번호
-        private TextView    noticeTitle;    // 공지사항 제목
-        private TextView    noticeWriter;   // 공지사항 작성자
-        private TextView    noticeContent;  // 내용
+        private TextView        noticeNo;       // 공지사항 번호
+        private TextView        noticeTitle;    // 공지사항 제목
+        private TextView        noticeWriter;   // 공지사항 작성자
+        private TextView        noticeContent;  // 내용
+        private CardView        theresNoNotice; // 공지사항 없을 경우 나올 대체 텍스트
+        private CardView        wrapperCardView;
+        private RelativeLayout  dataWrapper;
 
         /**
          * 초기화
@@ -240,10 +267,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
          */
         private ViewHolderNotice (View itemView) {
             super(itemView);
-            this.noticeNo       = (TextView) itemView.findViewById(R.id.noticeNo);
-            this.noticeTitle    = (TextView) itemView.findViewById(R.id.noticeTitle);
-            this.noticeWriter   = (TextView) itemView.findViewById(R.id.noticeWriter);
-            this.noticeContent  = (TextView) itemView.findViewById(R.id.groupNoticeContent);
+            this.noticeNo       = (TextView)        itemView.findViewById(R.id.noticeNo);
+            this.noticeTitle    = (TextView)        itemView.findViewById(R.id.noticeTitle);
+            this.noticeWriter   = (TextView)        itemView.findViewById(R.id.noticeWriter);
+            this.noticeContent  = (TextView)        itemView.findViewById(R.id.groupNoticeContent);
+            this.theresNoNotice = (CardView)        itemView.findViewById(R.id.theresNoNotice);
+            this.dataWrapper    = (RelativeLayout)  itemView.findViewById(R.id.dataWrapper);
+            this.wrapperCardView= (CardView)        itemView.findViewById(R.id.wrapperCardView);
         }
     }
 
@@ -285,11 +315,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
      */
     private static class ViewHolderSchedule extends RecyclerView.ViewHolder {
 
-        private TextView    scheduleNo,     // 스케줄 번호
-                            scheduleTitle,  // 스케줄 제목
-                            scheduleLeader; // 스케줄 주최자
-        private Button      btnJoin;        // 참가 버튼
-        private CardView    wrapper;        // 카드 뷰 ; wrapper
+        private TextView    scheduleNo,         // 스케줄 번호
+                            scheduleTitle,      // 스케줄 제목
+                            scheduleLeader;     // 스케줄 주최자
+        private Button      btnJoin;            // 참가 버튼
+        private Button      btnShowDetail;      // 상세보기 버튼
+        private CardView    wrapper;            // 카드 뷰 ; wrapper
+        private CardView    theresNoSchedule;   // 스케줄이 없을 경우 나올 대체텍스트
 
         /**
          * 초기화
@@ -298,11 +330,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
         private ViewHolderSchedule(View itemView) {
             super(itemView);
 
-            scheduleNo      = (TextView) itemView.findViewById(R.id.tvScheduleNo);
-            scheduleTitle   = (TextView) itemView.findViewById(R.id.tvScheduleTitle);
-            scheduleLeader  = (TextView) itemView.findViewById(R.id.tvScheduleLeader);
-            btnJoin         = (Button)   itemView.findViewById(R.id.btnJoinSchedule);
-            wrapper         = (CardView) itemView.findViewById(R.id.cvBackground);
+            scheduleNo          = (TextView)    itemView.findViewById(R.id.tvScheduleNo);
+            scheduleTitle       = (TextView)    itemView.findViewById(R.id.tvScheduleTitle);
+            scheduleLeader      = (TextView)    itemView.findViewById(R.id.tvScheduleLeader);
+            btnJoin             = (Button)      itemView.findViewById(R.id.btnJoinSchedule);
+            btnShowDetail       = (Button)      itemView.findViewById(R.id.btnShowScheduleDetail);
+            wrapper             = (CardView)    itemView.findViewById(R.id.cvBackground);
+            theresNoSchedule    = (CardView)    itemView.findViewById(R.id.theresNoSchedule);
 
         }
     }

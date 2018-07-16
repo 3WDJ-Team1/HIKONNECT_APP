@@ -9,7 +9,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:showIn="@layout/app_bar_main"
+    android:background="@color/mainColor">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,22 +19,40 @@
         android:layout_centerVertical="true">
 
         <ImageView
+            android:layout_width="@dimen/main_bg_image_size"
+            android:layout_height="@dimen/main_bg_image_size"
+            android:src="@drawable/main_bg_image"
+            android:layout_alignParentEnd="true" />
+
+        <ImageView
             android:id="@+id/main_logo"
+            android:layout_marginTop="200dp"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:src="@drawable/hikonnect_logo_black" />
+            android:layout_height="@dimen/logo_height"
+            android:src="@drawable/logo_black" />
+
+        <TextView
+            android:id="@+id/todaysHiking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="今日のハイキング"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_above="@+id/mainCard"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="4dp"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/mainCard"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_below="@+id/main_logo"
-            android:layout_marginBottom="4dp"
+            android:layout_above="@+id/menuButtons"
+            android:layout_marginBottom="24dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:elevation="0dp"
-            app:cardCornerRadius="5dp">
+            android:elevation="5dp"
+            app:cardCornerRadius="3dp">
 
             <RelativeLayout
                 android:id="@+id/nowScheduleLoading"
@@ -60,33 +79,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:weightSum="5">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:text="계획된 일정이 없습니다"
+                    android:layout_marginTop="16dp"
+                    android:text="参加した日程がありません。"
                     android:textAlignment="center"
                     android:textColor="@color/grey_800"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_weight="4"
+                    android:gravity="center"/>
 
                 <Button
-                    android:id="@+id/nowScheduleSearchGroup"
-                    android:layout_width="200dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
+                    android:id="@+id/nowScheduleSearchGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="@dimen/margin_md"
+                    android:layout_marginEnd="@dimen/margin_md"
                     android:background="@drawable/main_search_group_selector"
-                    android:drawableTint="@color/light_green_500"
-                    android:drawableTop="@drawable/ic_search_svgrepo_com"
                     android:padding="8dp"
-                    android:text="Search\nSchedule"
-                    android:textColor="@color/light_green_500"
+                    android:text="再建策"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -95,11 +115,11 @@
                 android:id="@+id/nowScheduleViewPagerWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <Button
                     android:id="@+id/nowSchedulePrevBtn"
-                    android:layout_width="30dp"
+                    android:layout_width="24dp"
                     android:layout_height="40dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
@@ -115,7 +135,7 @@
 
                 <Button
                     android:id="@+id/nowScheduleNextBtn"
-                    android:layout_width="30dp"
+                    android:layout_width="24dp"
                     android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
@@ -127,45 +147,40 @@
         </android.support.v7.widget.CardView>
 
         <LinearLayout
+            android:id="@+id/menuButtons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mainCard"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             android:weightSum="2">
 
             <Button
                 android:id="@+id/btnToGroupMenu"
                 android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:layout_marginEnd="4dp"
+                android:layout_height="@dimen/menu_height"
                 android:layout_weight="1"
-                android:background="@drawable/main_groupmenu_btn_selector"
-                android:drawableTint="@color/amber_500"
-                android:drawableTop="@drawable/group_menu_xl"
-                android:padding="8dp"
-                android:text="Group\nMenu"
-                android:textColor="@color/amber_500"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:background="@drawable/main_button_selector"
+                android:drawableTint="@color/mainColor"
+                android:drawableStart="@drawable/group_menu_xl"
+                android:paddingStart="@dimen/menu_padding_size"
+                android:paddingEnd="@dimen/menu_padding_size"
+                android:text="グループメニュー"
+                android:textColor="@color/mainColor"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btnToMyMenu"
                 android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:layout_marginStart="4dp"
+                android:layout_height="@dimen/menu_height"
                 android:layout_weight="1"
-                android:background="@drawable/main_mymenu_btn_selector"
-                android:drawableTint="@color/cyan_500"
-                android:drawableTop="@drawable/my_menu_xl"
-                android:paddingTop="24dp"
-                android:text="My\nMenu"
-                android:textColor="@color/cyan_500"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:background="@drawable/main_button_selector"
+                android:drawableTint="@color/mainColor"
+                android:drawableStart="@drawable/my_menu_xl"
+                android:paddingStart="@dimen/menu_padding_size_"
+                android:paddingEnd="@dimen/menu_padding_size_"
+                android:text="マイページ"
+                android:textColor="@color/mainColor"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

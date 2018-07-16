@@ -5,9 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="56dp"
-    android:paddingEnd="4dp"
-    android:paddingStart="4dp"
+    android:background="@color/grey_300"
     tools:context=".activities.group_list.groups_list_main">
+
+    <TextView
+        android:id="@+id/activityTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="グループリスト"
+        android:textSize="12sp"
+        android:textColor="@color/grey_700"
+        android:layout_alignParentTop="true"
+        android:background="@color/grey_50"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center"
+        />
 
     <LinearLayout
         android:id="@+id/wrapper"
@@ -16,8 +31,10 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="horizontal"
-        android:weightSum="11">
-
+        android:weightSum="11"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:layout_below="@+id/activityTitle">
 
         <Spinner
             android:id="@+id/group_search_spinner"
@@ -26,42 +43,60 @@
             android:layout_weight="1"
             android:entries="@array/group_search_selector" />
 
-
-        <!--<LinearLayout-->
-        <!--android:id="@+id/list"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_marginTop="52dp"-->
-        <!--android:orientation="vertical">-->
-        <!--</LinearLayout>-->
-
-        <EditText
-            android:id="@+id/tvSearchText"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="9"
-            android:hint="검색"
-            android:inputType="text"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/search_box"
+            android:layout_weight="10"
+            android:weightSum="10"
+            android:padding="10dp">
 
-        <ImageButton
-            android:id="@+id/btnSearchGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="@color/grey_800"
-            android:src="@drawable/ic_search_svgrepo_com"
-            android:tint="@color/white" />
+            <EditText
+                android:id="@+id/tvSearchText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="9"
+                android:hint="検索"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:paddingEnd="8dp"
+                android:background="@android:color/transparent"/>
+
+            <ImageButton
+                android:id="@+id/btnSearchGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_search_svgrepo_com" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/helpText"
+        android:layout_below="@+id/wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="カードのボタンを押すと詳細ページに移動できます。"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/grey_200"
+        android:textSize="14sp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvGroupList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/wrapper"
-        android:layout_marginTop="8dp"
+        android:layout_below="@+id/helpText"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         tools:listitem="@layout/groups_list_item">
 
     </android.support.v7.widget.RecyclerView>

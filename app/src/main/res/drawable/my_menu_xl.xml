@@ -4,8 +4,8 @@
 
     <item
         android:drawable="@drawable/ic_client_profile_svgrepo_com"
-        android:width="40dp"
-        android:height="40dp"
+        android:width="28dp"
+        android:height="28dp"
         />
 
 </layer-list>

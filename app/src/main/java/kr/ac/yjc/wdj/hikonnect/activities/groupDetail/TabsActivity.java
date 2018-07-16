@@ -717,7 +717,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         loadingDialog.dismiss();
                     } else {
                         // 데이터가 없다면
-                        groupNotice = new GroupNotice("No Data In Notice List", "데이터가 없습니다.", "", "", "");
+                        groupNotice = new GroupNotice(/*"No Data In Notice List"*/null, /*"데이터가 없습니다."*/null, null, null, null);
                         // dataList에 삽입
                         dataListNotice.add(groupNotice);
                         // 데이터 변경 어댑터에 알리기
@@ -796,7 +796,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         loadingDialog.dismiss();
                     } else {
                         // 데이터가 없다면
-                        dataListSchedule.add(new GroupSchedule(0 , "데이터가 없습니다.", "", "No Data In Schedule List", 000000000, "", "", getBaseContext()));
+                        dataListSchedule.add(new GroupSchedule(-1 , /*"데이터가 없습니다."*/null, null, /*"No Data In Schedule List"*/null, 000000000, null, null, getBaseContext()));
                         // 데이터 변경 어댑터에 알리기
                         adapterSchedule.notifyDataSetChanged();
 
