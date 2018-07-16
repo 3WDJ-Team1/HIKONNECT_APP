@@ -3,7 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
     >
+
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,41 +14,40 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:background="@color/white"
-            android:paddingStart="16dp"
+            android:orientation="horizontal"
+            android:paddingBottom="11dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="32dp"
-            android:paddingTop="32dp"
-            android:orientation="horizontal">
+            android:paddingStart="16dp"
+            android:paddingTop="11dp">
 
             <ImageView
                 android:id="@+id/item_image"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
+
             <TextView
                 android:id="@+id/itemTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="제목"
-                android:textSize="20dp"
-                android:textColor="@color/black"
-                android:layout_weight="3"
-                android:textAlignment="center"
                 android:layout_gravity="center"
-                />
+                android:layout_weight="3"
+                android:text="제목"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+
             <TextView
                 android:id="@+id/itemValue"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="내용"
-                android:textSize="20dp"
-                android:textColor="@color/black"
                 android:layout_weight="3"
+                android:text="내용"
                 android:textAlignment="viewEnd"
-                />
+                android:textColor="@color/black"
+                android:textSize="14dp" />
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
