@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/mainColor"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
@@ -14,102 +16,133 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         >
+
         <TextView
-            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24dp"
-            android:textColor="@color/black"
+            android:layout_marginLeft="6dp"
+            android:layout_weight="0"
+            android:gravity="center"
             android:text="등산 완료!"
             android:textAlignment="center"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_weight="2"/>
-
-        <TextView
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:text="남은 인원"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_weight="1"/>
-
+            android:textColor="@color/white"
+            android:textSize="34dp"
+            android:textStyle="bold" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="3"
-            android:layout_marginBottom="8dp">
-            <!--TODO 이곳에 사람 몇 명인지 넣습니다-->
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:text="남은 인원"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
             <TextView
                 android:id="@+id/howManyNowHiking"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="40sp"
-                android:textColor="@color/red_600"
-                android:text="24"
+                android:layout_height="wrap_content"
                 android:gravity="center|end"
-                android:textStyle="bold"
-                android:layout_weight="1" />
+                android:text="24"
+                android:textColor="@color/red_600"
+                android:textSize="25sp" />
+
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="32sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="center|start"
                 android:text="명"
-                android:layout_weight="1"/>
+                android:textColor="@color/white"
+                android:textSize="25sp" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_width="368dp"
+            android:layout_height="219dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:background="@drawable/img_tozankanryo">
 
-            <!--TODO 여기에 사람 이름이 들어가야 합니다-->
-            <TextView
-                android:id="@+id/userName"
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="최준규"
-                android:textAlignment="textEnd"
-                android:textColor="@color/black"
-                android:textSize="16dp"/>
+                android:gravity="center|bottom">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="의 등산 기록"
-                android:textAlignment="textStart"
-                android:textColor="@color/black"
-                android:textSize="16dp"/>
+                <!--TODO 여기에 사람 이름이 들어가야 합니다-->
+
+                <LinearLayout
+                    android:layout_width="261dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/rectangle">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/userName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="최준규"
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/white"
+                            android:textSize="24dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="의 등산 기록"
+                            android:textAlignment="textStart"
+                            android:textColor="@color/white"
+                            android:textSize="24dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/afterHikingList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:layout_weight="8"
-        android:layout_marginStart="8dp"
+        android:layout_height="122dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="8"
+        android:scrollbars="vertical"
         tools:listitem="@layout/after_hiking_list_item" />
 
-    <Button
-        android:id="@+id/showMemberList"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="현재 등산 중인 멤버 보기"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/cyan_500"
-        android:layout_weight="1"
-        />
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/showMemberList"
+                android:layout_width="346dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/img_button"
+                android:text="현재 등산 중인 멤버 보기"
+                android:textColor="@color/white"
+                android:textSize="17dp"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
