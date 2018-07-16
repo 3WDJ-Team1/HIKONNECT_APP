@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import kr.ac.yjc.wdj.hikonnect.R;
 import kr.ac.yjc.wdj.hikonnect.beans.AfterHikingMenu;
+import okhttp3.OkHttpClient;
 
 /**
  * 등산 완료 후 리스트 어댑터
@@ -20,6 +21,7 @@ import kr.ac.yjc.wdj.hikonnect.beans.AfterHikingMenu;
 public class AfterHikingListAdapter extends RecyclerView.Adapter<AfterHikingListAdapter.AfterHikingListViewHolder> {
     private int                         layout;     // 재사용될 레이아웃
     private ArrayList<AfterHikingMenu>  menuList;   // 값을 바꿀 리스트
+
 
     /**
      * 초기화
