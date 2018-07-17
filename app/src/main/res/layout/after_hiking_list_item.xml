@@ -17,10 +17,10 @@
             android:layout_marginTop="2dp"
             android:background="@drawable/img_cardview_back"
             android:orientation="horizontal"
-            android:paddingBottom="13dp"
+            android:paddingBottom="11dp"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:paddingTop="13dp">
+            android:paddingTop="15dp">
 
             <ImageView
                 android:id="@+id/item_image"
