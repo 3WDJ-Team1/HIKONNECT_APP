@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:background="@color/white"
+            android:background="@drawable/img_cardview_back"
             android:orientation="horizontal"
             android:paddingBottom="11dp"
             android:paddingEnd="16dp"
