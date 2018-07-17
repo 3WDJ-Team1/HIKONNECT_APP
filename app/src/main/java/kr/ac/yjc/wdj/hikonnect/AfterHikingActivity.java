@@ -72,11 +72,6 @@ public class AfterHikingActivity extends AppCompatActivity {
 
         pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getResources().getColor(R.color.mainColor));
-
 
         // UI 초기화
         tvRemainMembers     = findViewById(R.id.howManyNowHiking);
@@ -175,19 +170,19 @@ public class AfterHikingActivity extends AppCompatActivity {
 
         // 내용 초기화
         images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_alarm_24px));
-        menuTitles.add("총 등산 시간");
+        menuTitles.add("掛かった時間");
         menuValues.add(String.valueOf(hikingTime));
 
         images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_ranking_svgrepo_com));
-        menuTitles.add("순위");
-        menuValues.add(String.valueOf(hikingRank) + "등");
+        menuTitles.add("順位");
+        menuValues.add(String.valueOf(hikingRank) + "位");
 
         images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_mountain_svgrepo_com));
-        menuTitles.add("완료한 산");
+        menuTitles.add("登山した山");
         menuValues.add(completedMountain);
 
         images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_rating_svgrepo_com));
-        menuTitles.add("현재 등급");
+        menuTitles.add("現在の等級");
         menuValues.add(hikingTear);
     }
 
