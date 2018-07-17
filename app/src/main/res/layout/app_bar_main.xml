@@ -7,10 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
+    <include
+        layout="@layout/content_main_designed"
+        android:id="@+id/layout_content_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.AppCompat.Light">
+        android:theme="@style/Theme.AppCompat.Light"
+        android:background="@android:color/transparent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -22,9 +29,5 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
-    <include
-        layout="@layout/content_main_designed"
-        android:id="@+id/layout_content_main" />
 
 </android.support.design.widget.CoordinatorLayout>

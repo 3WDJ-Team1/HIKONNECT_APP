@@ -1,120 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nowScheduleLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
 
-    <TextView
-        android:id="@+id/nowScheduleTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:maxLength="20"
-        android:text="Schedule Name"
-        android:textColor="@color/grey_800"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/nowScheduleTitle"
-        android:layout_centerHorizontal="true"
+        android:id="@+id/titleAndLeader"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
         android:layout_marginTop="4dp">
 
         <TextView
-            android:id="@+id/staticText_in"
+            android:id="@+id/nowScheduleTitle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2sp"
-            android:text="그룹"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:maxLength="20"
+            android:text="スケジュール名"
             android:textColor="@color/grey_800"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/nowScheduleGroupName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@+id/staticText_in"
-            android:maxLength="12"
-            android:text="Group name"
-            android:textSize="14sp" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/staticText_by"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="2sp"
-            android:layout_toEndOf="@+id/nowScheduleGroupName"
-            android:text="리더"
-            android:textColor="@color/grey_800"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_toStartOf="@+id/nowScheduleLeader"
+            android:text="リーダー : "
+            android:textColor="@color/grey_600"
+            android:textSize="12sp"
+            android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/nowScheduleLeader"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/staticText_by"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
             android:maxLength="12"
-            android:text="Leader"
-            android:textSize="14sp" />
+            android:text="リーダー名"
+            android:textColor="@color/grey_800"
+            android:textSize="14sp"
+            android:gravity="center_vertical"/>
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/dest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnStartHiking"
-        android:layout_marginEnd="4dp"
-        android:layout_toStartOf="@+id/nowScheduleDestination"
-        android:text="목적지"
-        android:textColor="@color/grey_800"
-        android:textSize="14sp"
-        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/nowScheduleDestination"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnStartHiking"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="8dp"
-        android:maxLength="12"
-        android:text="소백산"
-        android:textSize="14sp" />
+        android:layout_below="@+id/titleAndLeader"
+        android:weightSum="2"
+        android:layout_marginTop="4dp">
 
-    <TextView
-        android:id="@+id/nowScheduleDate"
-        android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/staticText_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2sp"
+                android:text="グループ："
+                android:textColor="@color/grey_600"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/nowScheduleGroupName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@+id/staticText_in"
+                android:maxLength="12"
+                android:textColor="@color/grey_800"
+                android:text="グループ名"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/nowScheduleDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="4dp"
+                android:maxLength="12"
+                android:text="DEST"
+                android:textColor="@color/grey_800"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/dest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/nowScheduleDestination"
+                android:text="まで"
+                android:textColor="@color/grey_600"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnStartHiking"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:text="2018년 5월 30일"
-        android:textColor="@color/grey_800"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:background="@color/grey_200"
+        android:padding="4dp"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_marginStart="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_calendar_svgrepo_com"
+            android:layout_gravity="center_vertical"
+            android:background="@color/transparent"
+            android:tint="@color/grey_600"
+            />
+
+        <TextView
+            android:paddingStart="12dp"
+            android:id="@+id/nowScheduleDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2018年 5月 30日"
+            android:textColor="@color/grey_800"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnStartHiking"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:background="@drawable/start_hiking_btn_selector"
+        android:background="@drawable/main_search_group_selector"
+        android:drawableEnd="@drawable/main_start_btn_img"
+        android:gravity="center"
+        android:paddingEnd="64dp"
+        android:paddingStart="100dp"
         android:clickable="false"
-        android:drawableStart="@android:drawable/ic_dialog_map"
-        android:drawableTint="@color/light_green_400"
-        android:paddingStart="50dp"
-        android:text="지도로 보기"
-        android:textColor="@color/light_green_400"
+        android:text="スタート"
+        android:textColor="@color/white"
         android:textSize="20sp" />
 
 </RelativeLayout>

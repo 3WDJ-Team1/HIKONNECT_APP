@@ -80,8 +80,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
                     @Override
                     protected void onPreExecute() {
                         super.onPreExecute();
-
-                        holder.linearLayout.setClickable(false);
                     }
 
                     @Override
@@ -132,8 +130,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
 
                         // 액티비티 전환
                         parent.startActivity(intent);
-
-                        holder.linearLayout.setClickable(true);
                     }
                 }.execute(listItem.getGroupId(), pref.getString("user_id", ""));
             }
@@ -205,7 +201,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         private TextView        textViewWriter;         // 작성자
         private TextView        textViewContent;        // 내용
         private Button          moveToGroupDetailBtn;   // 클릭하면 TabsActivity로 이동할 버튼
-        private LinearLayout    linearLayout;           // 클릭하면 이동할 레이아웃
 
         /**
          * 레이아웃과 연결
@@ -219,7 +214,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
             textViewWriter          = (TextView)        itemView.findViewById(R.id.tvWriter);
             textViewContent         = (TextView)        itemView.findViewById(R.id.tvContent);
             moveToGroupDetailBtn    = (Button)          itemView.findViewById(R.id.MoveToGroupDetailBtn);
-            linearLayout            = (LinearLayout)    itemView.findViewById(R.id.linearLayout);
         }
     }
 

@@ -3,6 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="4dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/theresNoSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:elevation="2dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="スケジュールがありません。"/>
+
+    </android.support.v7.widget.CardView>
+
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -41,7 +58,7 @@
                         android:gravity="center"
                         android:textSize="24dp"
                         android:textStyle="bold"
-                        android:textColor="@color/light_green_300"/>
+                        android:textColor="@color/mainColor"/>
 
                     <LinearLayout
                         android:id="@+id/linearLayout"
@@ -51,7 +68,6 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/tvScheduleNo"
                         android:layout_marginStart="24dp"
-
                         >
 
                         <TextView
@@ -72,36 +88,32 @@
                             android:id="@+id/tvScheduleLeader"
                             android:textSize="14dp" />
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center|right"
-                        >
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/btnJoinSchedule"
-                            android:text="참가신청"
-                            android:textSize="12dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:textColor="@color/white"
-                            android:backgroundTint="@color/red_300"
-                            />
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnJoinSchedule"
+                        android:text="参入"
+                        android:textSize="14sp"
+                        android:layout_toStartOf="@+id/btnShowScheduleDetail"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/white"
+                        android:background="@drawable/btn_join_schedule"
+                        android:layout_marginEnd="4dp"
+                        />
 
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/btnShowScheduleDetail"
-                            android:text="상세보기"
-                            android:textSize="12dp"
-                            android:textColor="@color/white"
-                            android:backgroundTint="@color/light_green_500"
-                            />
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnShowScheduleDetail"
+                        android:text="詳細"
+                        android:textSize="14sp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/white"
+                        android:background="@drawable/btn_show_detail_schedule"
+                        />
 
-                    </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

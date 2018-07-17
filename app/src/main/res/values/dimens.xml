@@ -12,4 +12,19 @@
     <dimen name="standard_100">100dp</dimen>
     <dimen name="standard_105">105dp</dimen>
     <dimen name="standard_155">155dp</dimen>
+
+    <!-- spacing -->
+    <dimen name="margin_sm">8dp</dimen>
+    <dimen name="margin_md">16dp</dimen>
+
+    <!-- main menu -->
+    <dimen name="menu_text_size">12sp</dimen>
+    <dimen name="menu_padding_size">12dp</dimen>
+    <dimen name="menu_padding_size_">28dp</dimen>
+    <dimen name="menu_height">60dp</dimen>
+    <dimen name="main_bg_image_size">320dp</dimen>
+
+    <dimen name="logo_height">100dp</dimen>
+
+    <dimen name="drawer_btn_size">40dp</dimen>
 </resources>

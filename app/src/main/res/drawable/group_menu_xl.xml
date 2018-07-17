@@ -4,8 +4,8 @@
 
     <item
         android:drawable="@drawable/ic_group_svgrepo_com"
-        android:width="64dp"
-        android:height="64dp"
+        android:width="28dp"
+        android:height="28dp"
         />
 
 </layer-list>

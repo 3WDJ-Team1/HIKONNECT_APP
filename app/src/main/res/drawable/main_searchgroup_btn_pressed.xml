@@ -2,7 +2,9 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="@color/light_green_500"/>
-    <corners android:radius="5dp" />
+    <solid android:color="@color/main_hiking_schedule_btn_prs"/>
+    <corners
+        android:topLeftRadius="15dp"
+        android:topRightRadius="15dp" />
 
 </shape>

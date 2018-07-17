@@ -1735,16 +1735,16 @@ public class MapsActivityTemp extends FragmentActivity implements
         mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onPermissionRequest(PermissionRequest request) {
-                int version = 0;
-                try {
-                    PackageInfo i = getBaseContext().getPackageManager().getPackageInfo(getBaseContext().getPackageName(), 0);
-                    version = i.versionCode;
-                } catch (PackageManager.NameNotFoundException e) {}
+//                int version = 0;
+//                try {
+//                    PackageInfo i = getBaseContext().getPackageManager().getPackageInfo(getBaseContext().getPackageName(), 0);
+//                    version = i.versionCode;
+//                } catch (PackageManager.NameNotFoundException e) {}
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     request.grant(request.getResources());
-                } else
-                super.onPermissionRequest(request);
+//                } else
+//                super.onPermissionRequest(request);
             }
         });
 
