@@ -169,19 +169,19 @@ public class AfterHikingActivity extends AppCompatActivity {
         tvRemainMembers.setText(String.valueOf(remainMembers));
 
         // 내용 초기화
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_alarm_24px));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_clock_circular_outline));
         menuTitles.add("掛かった時間");
         menuValues.add(String.valueOf(hikingTime));
 
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_ranking_svgrepo_com));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_trophy));
         menuTitles.add("順位");
         menuValues.add(String.valueOf(hikingRank) + "位");
 
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_mountain_svgrepo_com));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_mountain_summit));
         menuTitles.add("登山した山");
         menuValues.add(completedMountain);
 
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_rating_svgrepo_com));
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_icon));
         menuTitles.add("現在の等級");
         menuValues.add(hikingTear);
     }

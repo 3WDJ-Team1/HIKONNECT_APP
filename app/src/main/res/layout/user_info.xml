@@ -33,7 +33,7 @@
         android:drawableRight="@drawable/ic_search"
         android:hint="@string/user_info_search_hint"
         android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textSize="10sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,11 +44,11 @@
 
         <Button
             android:id="@+id/other_info_show_all_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:backgroundTint="@color/mainColor"
-            android:text="みんなを見る"
+            android:text="みなを見る"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
