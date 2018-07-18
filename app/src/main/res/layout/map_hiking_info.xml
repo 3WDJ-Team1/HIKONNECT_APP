@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/close_button_svg" />
+
+    <LinearLayout
+        android:id="@+id/user_data_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <!--현재 속력-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/current_speed_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/current_speed_img" />
+
+            <TextView
+                android:id="@+id/current_speed_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="現在速力"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/current_speed_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textColor="@color/holo_orange_light"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/current_speed_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="km/h"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <!--현재 속력 END-->
+        <LinearLayout
+            android:id="@+id/vertical_divider_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_400"
+            android:orientation="horizontal" />
+        <!--이동 거리-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/hiked_distance_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/hiked_distance_img" />
+
+            <TextView
+                android:id="@+id/hiked_distance_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="移動距離"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/hiked_distance_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textColor="@color/blue_700"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/chiked_distance_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="km"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <!--이동 거리 END-->
+        <LinearLayout
+            android:id="@+id/vertical_divider_2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_400"
+            android:orientation="horizontal" />
+        <!--예상 시간-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/arrive_when_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrive_when_img" />
+
+            <TextView
+                android:id="@+id/arrive_when_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="予想時間"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/arrive_when_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00"
+                android:textColor="@color/holo_green_light"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/arrive_when_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="時間"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <!--예상 시간 END-->
+        <LinearLayout
+            android:id="@+id/vertical_divider_3"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_400"
+            android:orientation="horizontal" />
+        <!--총 인원수-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/num_of_members_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/num_of_members_img" />
+
+            <TextView
+                android:id="@+id/num_of_members_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="残留人数"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/num_of_members_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/pink_accent_400"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/num_of_members_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="名"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <!--총 인원수 END-->
+        <LinearLayout
+            android:id="@+id/vertical_divider_4"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/grey_400"
+            android:orientation="horizontal" />
+        <!--내 등수-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/user_rank_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/user_rank_img" />
+
+            <TextView
+                android:id="@+id/user_rank_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ランク"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/user_rank_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/holo_orange_light"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/user_rank_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textStyle="bold" />
+        </LinearLayout>
+        <!--내 등수 END-->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_data_box"
+        android:orientation="horizontal"
+        android:weightSum="100">
+
+        <ProgressBar
+            android:id="@+id/hiking_progress_bar"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_weight="96"
+            android:progress="50"
+            android:progressDrawable="@drawable/my_progressbar" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="4">
+
+            <TextView
+                android:id="@+id/hiking_progress_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00"
+                android:textColor="@color/blue_400" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="%" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout><!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/white">
+
+        &lt;!&ndash;현재 속도&ndash;&gt;
+        <LinearLayout
+            android:id="@+id/user_speed_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
+            fab:layout_constraintEnd_toStartOf="@+id/user_hiked_distance_wrapper"
+            fab:layout_constraintStart_toStartOf="parent"
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="27dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/speedometer_svg" />
+
+            <TextView
+                android:id="@+id/userSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0.0"
+                android:textColor="@color/red_400"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="km/h"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
+        &lt;!&ndash;무전 리스트 버튼 끝&ndash;&gt;
+
+        &lt;!&ndash; 위치메모 &ndash;&gt;
+        <LinearLayout
+            android:id="@+id/user_hiked_distance_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
+            fab:layout_constraintEnd_toStartOf="@+id/user_remain_time_wrapper"
+            fab:layout_constraintStart_toEndOf="@+id/user_speed_wrapper"
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="126dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/remain_distance_svg" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="0.0"
+                android:textAlignment="center"
+                android:textColor="@color/cyan_500"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="km"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="걸어옴"
+                android:textColor="@color/black" />
+        </LinearLayout>
+        &lt;!&ndash;걸어온 거리 끝&ndash;&gt;
+        &lt;!&ndash;소요 시간&ndash;&gt;
+        <LinearLayout
+            android:id="@+id/user_remain_time_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
+            fab:layout_constraintEnd_toStartOf="@+id/user_num_of_remain_member_wrapper"
+            fab:layout_constraintStart_toEndOf="@+id/user_hiked_distance_wrapper"
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="230dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/remain_time_svg" />
+
+            <TextView
+                android:id="@+id/arriveWhen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="@color/light_green_800"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="분"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="소요"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+        &lt;!&ndash;소요 시간 끝&ndash;&gt;
+        &lt;!&ndash;등산 중 맴버 수&ndash;&gt;
+        <LinearLayout
+            android:id="@+id/user_num_of_remain_member_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
+            fab:layout_constraintEnd_toEndOf="parent"
+            fab:layout_constraintStart_toEndOf="@+id/user_remain_time_wrapper"
+            fab:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="311dp">
+
+            <TextView
+                android:id="@+id/num_of_remain_members"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="명 등산 중"
+                android:textColor="@color/black" />
+        </LinearLayout>
+        &lt;!&ndash;등산 중 맴버 수&ndash;&gt;
+        &lt;!&ndash;등산 진행도&ndash;&gt;
+        <LinearLayout
+            android:id="@+id/user_hiking_progress_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:weightSum="10"
+            fab:layout_constraintBottom_toBottomOf="parent"
+            fab:layout_constraintEnd_toStartOf="@+id/user_hiking_rank_wrapper"
+            fab:layout_constraintHorizontal_weight="8"
+            fab:layout_constraintStart_toStartOf="parent"
+            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper"
+            tools:layout_editor_absoluteX="0dp">
+
+            <ProgressBar
+                android:id="@+id/seekBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="9"
+                android:progress="50"
+                android:progressDrawable="@drawable/map_progressbar_style" />
+
+            <TextView
+                android:id="@+id/seekBarProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="@color/blue_400"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="%"
+                android:textSize="16sp" />
+        </LinearLayout>
+        &lt;!&ndash;등산 진행도 끝&ndash;&gt;
+        &lt;!&ndash;현재 등수&ndash;&gt;
+        <LinearLayout
+            android:id="@+id/user_hiking_rank_wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            fab:layout_constraintBottom_toBottomOf="parent"
+            fab:layout_constraintEnd_toEndOf="parent"
+            fab:layout_constraintHorizontal_weight="2"
+            fab:layout_constraintStart_toEndOf="@+id/user_hiking_progress_wrapper"
+            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper"
+            tools:layout_editor_absoluteX="307dp">
+
+            <TextView
+                android:id="@+id/userRank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="00"
+                android:textColor="@color/pink_500"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="등"
+                android:textColor="@color/black" />
+        </LinearLayout>
+        &lt;!&ndash;현재 등수 끝&ndash;&gt;
+    </android.support.constraint.ConstraintLayout>
+</RelativeLayout>-->

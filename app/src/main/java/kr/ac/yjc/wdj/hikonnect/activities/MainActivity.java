@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +23,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -67,8 +70,13 @@ import okhttp3.Response;
  */
 public class MainActivity extends AppCompatActivity
             implements NavigationView.OnNavigationItemSelectedListener{
+
     // 보여지는 Fragment
     private Fragment curFragment = new Fragment();
+
+    // 지도 Loading 창
+    ConstraintLayout        loadingWindow;
+    ImageView               appLogo;
 
     ActionBarDrawerToggle   toggle;
     NavigationView          navigationView;
@@ -130,6 +138,13 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // 지도 Loading UI
+        loadingWindow   = findViewById(R.id.loading_window);
+        appLogo         = findViewById(R.id.app_logo);
+
+        Animation anim  = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+        appLogo.startAnimation(anim);
 
         session = new SessionManager(getApplicationContext());
 

@@ -36,7 +36,9 @@
             android:name="kr.ac.yjc.wdj.hikonnect.activities.MapsActivityTemp"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
-        <activity android:name=".Othersinfo" />
+        <activity android:name=".Othersinfo"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Dialog"/>
         <activity
             android:name=".activities.ClusterDetailActivity"
             android:excludeFromRecents="true"
@@ -134,6 +136,7 @@
             android:name=".activities.myPage.UserProfileModifyActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activities.BottomDrawerActivity" />
+        <activity android:name=".activities.SweetSheetTest" />
         <!--Activities End-->
         <!--Camera Provider-->
         <provider
@@ -164,6 +167,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="firebase.messaging_auto_init_enabled"
             android:value="true" />

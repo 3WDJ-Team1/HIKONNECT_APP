@@ -3,6 +3,7 @@ package kr.ac.yjc.wdj.hikonnect;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -71,6 +72,11 @@ public class AfterHikingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_after_hiking);
 
         pref = getSharedPreferences("loginData", MODE_PRIVATE);
+
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(getResources().getColor(R.color.mainColor));
+        }
 
 
         // UI 초기화

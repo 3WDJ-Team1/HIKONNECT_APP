@@ -96,90 +96,90 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private void requestOtherUserHikingInfo(final MapItem mapItem, final Marker marker) {
 
-            new Thread(new Runnable() {
-                String nickname;        // 맴버의 닉네임.
-                double distance;        // 맴버의 등산 거리.
-                double velocity;        // 맴버의 평균 속도.
-                int rank;               // 맴버의 등수.
+        new Thread(new Runnable() {
+            String nickname;        // 맴버의 닉네임.
+            double distance;        // 맴버의 등산 거리.
+            double velocity;        // 맴버의 평균 속도.
+            int rank;               // 맴버의 등수.
 
-                @Override
-                public void run() {
+            @Override
+            public void run() {
 
-                    try {
-                        // 타겟 URL 설정.
-                        HttpUrl reqUrl = HttpUrl
-                                .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getMemberDetail")
-                                .newBuilder()
-                                .build();
+                try {
+                    // 타겟 URL 설정.
+                    HttpUrl reqUrl = HttpUrl
+                            .parse(Environments.LARAVEL_HIKONNECT_IP + "/api/getMemberDetail")
+                            .newBuilder()
+                            .build();
 
-                        // 클릭 된 맴버의 ID값.
-                        String member_no = String.valueOf(((Member) mapItem).member_no);
+                    // 클릭 된 맴버의 ID값.
+                    String member_no = String.valueOf(((Member) mapItem).member_no);
 
-                        // Request Body에 From Data 입력.
-                        RequestBody reqBody = new FormBody.Builder()
-                                .add("member_no", member_no)    // 맴버의 ID값.
-                                .build();
+                    // Request Body에 From Data 입력.
+                    RequestBody reqBody = new FormBody.Builder()
+                            .add("member_no", member_no)    // 맴버의 ID값.
+                            .build();
 
-                        // Request 객체 생성.
-                        Request req = new Request.Builder()
-                                .url(reqUrl)
-                                .post(reqBody)
-                                .build();
+                    // Request 객체 생성.
+                    Request req = new Request.Builder()
+                            .url(reqUrl)
+                            .post(reqBody)
+                            .build();
 
-                        // 서버의 Response.
-                        Response response = new OkHttpClient().newCall(req).execute();
+                    // 서버의 Response.
+                    Response response = new OkHttpClient().newCall(req).execute();
 
-                        JSONParser parser = new JSONParser();
+                    JSONParser parser = new JSONParser();
 
-                        JSONObject result = (JSONObject) ((JSONArray) parser.parse(response.body().string())).get(0);
+                    JSONObject result = (JSONObject) ((JSONArray) parser.parse(response.body().string())).get(0);
 
-                        TextView txtViewDistance = fActivity.findViewById(R.id.distance);
-                        double hikedDistance = Double.valueOf((String) txtViewDistance.getText());
+                    TextView txtViewDistance = fActivity.getLayoutInflater().inflate(R.layout.map_hiking_info, null).findViewById(R.id.hiked_distance_value);
+                    double hikedDistance = Double.valueOf((String) txtViewDistance.getText());
 
-                        nickname = String.valueOf(result.get("nickname"));                          // 맴버의 닉네임.
-                        distance = Double.valueOf(result.get("distance").toString());               // 맴버가 걸어온 거리.
-                        distance = Math.abs(hikedDistance - distance);                              // 소수점 2자리에서 반올림.
-                        velocity = Double.valueOf(result.get("velocity").toString());               // 맴버의 평균 속도.
-                        velocity = Math.abs(velocity);                                              // 소수점 2자리에서 반올림.
-                        rank = Integer.valueOf(result.get("rank").toString());                      // 맴버의 등수.
+                    nickname = String.valueOf(result.get("nickname"));                          // 맴버의 닉네임.
+                    distance = Double.valueOf(result.get("distance").toString());               // 맴버가 걸어온 거리.
+                    distance = Math.abs(hikedDistance - distance);                              // 소수점 2자리에서 반올림.
+                    velocity = Double.valueOf(result.get("velocity").toString());               // 맴버의 평균 속도.
+                    velocity = Math.abs(velocity);                                              // 소수점 2자리에서 반올림.
+                    rank = Integer.valueOf(result.get("rank").toString());                      // 맴버의 등수.
 
-                        Thread.sleep(REQUEST_INTERVAL_TIME);
+                    Thread.sleep(REQUEST_INTERVAL_TIME);
 
-                    } catch (Exception e) {
-                        Log.e(TAG, "onClusterItemClick: ", e);
-                    }
-
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                isInfoWindowShown = marker.isInfoWindowShown();
-                                LatLng markerPos = ((MapItem) marker.getTag()).getPosition();
-
-                                if (marker.getTag() instanceof Member) {
-                                    ((Member) marker.getTag()).nickname = nickname;
-                                    ((Member) marker.getTag()).hikedDistance = distance;
-                                    ((Member) marker.getTag()).avgSpeed = velocity;
-                                    ((Member) marker.getTag()).rank = rank;
-                                }
-
-                                // 데이터를 UI에 적용.
-                                tvOtherUserNickname.setText(nickname);
-                                tvOtherUserSpeed.setText(String.valueOf(velocity));
-                                tvOtherUserDistance.setText(String.valueOf(distance));
-                                tvOtherUserRank.setText(String.valueOf(rank));
-
-                                // 다른 유저 정보 CardView가 보여질 때 지속적으로 값을 갱신.
-                                if (marker.isInfoWindowShown()) {
-                                    marker.showInfoWindow();
-                                }
-                            } catch (NullPointerException npe) {
-                                Log.e(TAG, "run: ", npe);
-                            }
-                        }
-                    });
+                } catch (Exception e) {
+                    Log.e(TAG, "onClusterItemClick: ", e);
                 }
-            }).start();
+
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            isInfoWindowShown = marker.isInfoWindowShown();
+                            LatLng markerPos = ((MapItem) marker.getTag()).getPosition();
+
+                            if (marker.getTag() instanceof Member) {
+                                ((Member) marker.getTag()).nickname = nickname;
+                                ((Member) marker.getTag()).hikedDistance = distance;
+                                ((Member) marker.getTag()).avgSpeed = velocity;
+                                ((Member) marker.getTag()).rank = rank;
+                            }
+
+                            // 데이터를 UI에 적용.
+                            tvOtherUserNickname.setText(nickname);
+                            tvOtherUserSpeed.setText(String.valueOf(velocity));
+                            tvOtherUserDistance.setText(String.valueOf(distance));
+                            tvOtherUserRank.setText(String.valueOf(rank));
+
+                            // 다른 유저 정보 CardView가 보여질 때 지속적으로 값을 갱신.
+                            if (marker.isInfoWindowShown()) {
+                                marker.showInfoWindow();
+                            }
+                        } catch (NullPointerException npe) {
+                            Log.e(TAG, "run: ", npe);
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 }

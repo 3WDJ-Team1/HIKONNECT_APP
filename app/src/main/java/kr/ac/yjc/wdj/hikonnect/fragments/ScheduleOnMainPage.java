@@ -60,7 +60,7 @@ public class ScheduleOnMainPage extends Fragment {
                 leaderTextView.setText(data.getLeader());
                 destMntTextView.setText(data.getMntName());
                 @SuppressLint("SimpleDateFormat")
-                String startDate = new SimpleDateFormat("yyyy년 MM월 dd일").format(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(data.getStartDate()));
+                String startDate = new SimpleDateFormat("yyyy年 MM月 dd日").format(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(data.getStartDate()));
                 startDateTextView.setText(startDate);
 
                 showOnMap.setOnClickListener(new View.OnClickListener() {

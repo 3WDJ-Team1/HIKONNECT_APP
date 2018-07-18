@@ -173,7 +173,7 @@ public class WifiP2pTestingActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_p2p_testing);
 
-        textView = findViewById(R.id.textView);
+        textView = findViewById(R.id.text_view);
 
         pManager = new PermissionManager(this);
 

@@ -111,7 +111,7 @@ public class LocationMemoActivity extends Activity {
 
                         String createdTime  = jsonObject.getString("created_at");
                         Date date           = new SimpleDateFormat("yy-mm-dd").parse(createdTime);
-                        memoCreatedTimeStr  = new SimpleDateFormat("yyyy년 mm월 dd일 E요일").format(date);
+                        memoCreatedTimeStr  = new SimpleDateFormat("yyyy.mm.dd(E)").format(date);
                     }
 
                     httpUrl = HttpUrl
