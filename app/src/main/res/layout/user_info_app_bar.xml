@@ -13,12 +13,13 @@
         android:theme="@style/Theme.AppCompat.Light">
 
         <android.support.v7.widget.Toolbar
-            android:paddingStart="100dp"
-            android:paddingEnd="75dp"
             android:id="@+id/toolbar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/transparent"
+            android:gravity="center"
+            android:paddingEnd="90dp"
+            android:paddingStart="140dp"
             app:contentInsetStartWithNavigation="0dp">
 
 
@@ -26,13 +27,13 @@
                 android:id="@+id/scheduleTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:textSize="20sp"
+                android:text="他のメンバー"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="他のメンバー"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </android.support.v7.widget.Toolbar>
     <!--<view
