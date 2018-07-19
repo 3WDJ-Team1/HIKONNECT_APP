@@ -493,7 +493,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         gMap.setOnCameraIdleListener(myClusterManager);
 
         // 마커 Info Window Adapter 등록
-        gMap.setInfoWindowAdapter(new MyInfoWindowAdapter(this, gMap, this));
+        gMap.setInfoWindowAdapter(new MyInfoWindowAdapter(this, gMap, this, wholeDistance));
 
         // 마커 클러스터 클릭 이벤트 등록
         myClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapItem>() {

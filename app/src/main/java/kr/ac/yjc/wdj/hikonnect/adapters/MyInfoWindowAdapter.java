@@ -46,6 +46,7 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private Context context;
     private GoogleMap gMap;
     private FragmentActivity fActivity;
+    private double wholeDistance;
 
     boolean isInfoWindowShown = false;
 
@@ -57,10 +58,11 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private TextView tvOtherUserArriveWhen;     // 예상 도착 시간 TextView (값 -> 시간 기준).
     private TextView tvOtherUserRank;           // 등수 TextView (값 -> 등산 거리 기준).
 
-    public MyInfoWindowAdapter(Context context, GoogleMap gMap, FragmentActivity fActivity) {
+    public MyInfoWindowAdapter(Context context, GoogleMap gMap, FragmentActivity fActivity, double wholeDistance) {
         this.context = context;
         this.gMap = gMap;
         this.fActivity = fActivity;
+        this.wholeDistance = wholeDistance;
     }
 
     @Override
@@ -83,14 +85,14 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
             Bitmap image        = ((Member) marker.getTag()).profileImg;
             String velocity     = String.format("%.2f", ((Member) marker.getTag()).avgSpeed);
             String distance     = String.format("%.2f", ((Member) marker.getTag()).hikedDistance);
-//            String arrvieWhen   = String.format("%.2f", ((Member) marker.getTag()).)
+            String arriveWhen   = String.format("%.2f", calcArriveWhen(((Member) marker.getTag()).hikedDistance, ((Member) marker.getTag()).avgSpeed));
             String rank = String.valueOf(((Member) marker.getTag()).rank);
 
             tvOtherUserNickname.setText(nickname);
             imgOtherUserImage.setImageBitmap(image);
             tvOtherUserSpeed.setText(velocity);
             tvOtherUserDistance.setText(distance);
-//            tvOtherUserArriveWhen.setText(arrvieWhen);
+            tvOtherUserArriveWhen.setText(arriveWhen);
             tvOtherUserRank.setText(rank);
         }
 
@@ -102,6 +104,19 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoContents(Marker marker) {
         return null;
+    }
+
+    private double calcArriveWhen(double hikedDistance, double userSpeed) {
+
+        double arriveWhen = Math.abs(wholeDistance - hikedDistance) / userSpeed * 60;
+
+        if (arriveWhen == Double.POSITIVE_INFINITY || arriveWhen == Double.NEGATIVE_INFINITY) {
+            // 도착 시간을 0으로 표시
+            return 0d;
+        } else {
+            // 도착 시간을 분 단위로 표시
+            return (int) arriveWhen;
+        }
     }
 
     private void requestOtherUserHikingInfo(final MapItem mapItem, final Marker marker) {
