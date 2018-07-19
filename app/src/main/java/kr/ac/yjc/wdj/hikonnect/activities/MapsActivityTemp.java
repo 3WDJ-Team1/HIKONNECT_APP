@@ -2,15 +2,12 @@ package kr.ac.yjc.wdj.hikonnect.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -74,6 +71,8 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
+import com.mingle.sweetpick.CustomDelegate;
+import com.mingle.sweetpick.SweetSheet;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -158,7 +157,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
     // 등산 데이터
     private ArrayList<HikingField>      hikingFields        = new ArrayList<>();
-    private int                         myHikingState = 0;
+    private int                         myHikingState       = 0;
     private int                         currentFID          = 0;
     private int                         currentPointInFID   = 0;
     private double                      wholeDistance       = 0.0;
@@ -200,8 +199,13 @@ public class MapsActivityTemp extends FragmentActivity implements
     private EditText        edtTextLMemoTitle;              // 위치 메모 제목 입력 칸 EditText.
     private EditText        edtTextLMemoContent;            // 위치 메모 내용 입력 칸 EditText.
     private ImageView       imgViewLMemoImg;                // 선택한 사진을 띄울 창 ImageView.
+    private TextView        txtViewInnerImage;
     private Button          btnLMemoSendReq;                // 위치 메모 작성 요청 전송 버튼.
     private Button          btnLMemoCancel;                 // 위치 메모 작성 취소 버튼.
+
+    // 하단 Drawer
+    private SweetSheet      bottomDrawer;                   // 하단 Drawer
+    private LinearLayout    handleBottomDrawer;             // 하단 Drawer 열기, 닫기 버튼
 
     // 자기 위치 갱신 버튼.
     private FloatingActionButton    fabUpdateMyLocation;    // 위치 갱신 버튼.
@@ -430,7 +434,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         String userid = pref.getString("user_id", "null");
         getMemberNoByUserID(userid);
 
-        // 지도 사요에 필요한 Permission 요청.
+        // 지도 사용에 필요한 Permission 요청.
         PermissionManager permissionManager = new PermissionManager(this);
         permissionManager.requestPermissions();
 
@@ -489,7 +493,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         gMap.setOnCameraIdleListener(myClusterManager);
 
         // 마커 Info Window Adapter 등록
-        gMap.setInfoWindowAdapter(new MyInfoWindowAdapter(this, gMap, this));
+        gMap.setInfoWindowAdapter(new MyInfoWindowAdapter(this, gMap, this, wholeDistance));
 
         // 마커 클러스터 클릭 이벤트 등록
         myClusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapItem>() {
@@ -565,10 +569,13 @@ public class MapsActivityTemp extends FragmentActivity implements
         public void run() {
             // 내 등산 정보 업데이트.
             updateHikingInfo();
+
             // 현재 위치한 FID 업데이트
             updateCurrentFID();
+
             // 마커 갱신
             paintMarkers();
+
             // 등산한 거리 갱신
             updateHikedDistance();
 
@@ -960,13 +967,13 @@ public class MapsActivityTemp extends FragmentActivity implements
                             public void run() {
                                 switch (myHikingState) {
                                     case 0:
-                                        btnChangeHikingState.setText("등산 시작");
+                                        btnChangeHikingState.setText("スタート");
                                         break;
                                     case 1:
-                                        btnChangeHikingState.setText("등산 종료");
+                                        btnChangeHikingState.setText("登山修了");
                                         break;
                                     case 2:
-                                        btnChangeHikingState.setText("결과 보기");
+                                        btnChangeHikingState.setText("結果照会");
                                         break;
                                 }
                             }
@@ -1026,8 +1033,10 @@ public class MapsActivityTemp extends FragmentActivity implements
             iconGenerator.setBackground(getResources().getDrawable(R.drawable.map_marker_background_shape));
 
             LatLng startPoint   = toPaintRouteSet.get(0);
-            ImageView imageView = markerView.findViewById(R.id.marker_img);
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.start_point));
+            TextView textView   = markerView.findViewById(R.id.marker_text);
+            textView.setText("Start");
+//            ImageView imageView = markerView.findViewById(R.id.marker_img);
+//            imageView.setImageDrawable(getResources().getDrawable(R.drawable.start_point));
             // 시작점 마커 초기화
             MarkerOptions startPointOpt = new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
@@ -1037,7 +1046,7 @@ public class MapsActivityTemp extends FragmentActivity implements
             // [2-2] 도착점 표시.
             // 가장 마지막 좌표.
             LatLng endPoint     = toPaintRouteSet.get(toPaintRouteSet.size() - 1);
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.end_point));
+            textView.setText("Finish");
             // 도착점 마커 초기화
             MarkerOptions endPointOpt = new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
@@ -1073,7 +1082,7 @@ public class MapsActivityTemp extends FragmentActivity implements
 
         } catch (NullPointerException npe) {
             Log.e(TAG, "moveToCurrentPosition: ", npe);
-            setNoticeBar(View.VISIBLE, "위치 정보를 얻을 수 없습니다.", "GPS를 켜주세요");
+            setNoticeBar(View.VISIBLE, "位置情報を得られません", "GPSを活性化に背ください");
         }
     } // moveToCurrentPosition END
 
@@ -1118,10 +1127,10 @@ public class MapsActivityTemp extends FragmentActivity implements
             @Override
             public void run() {
                 if (myCurrentLocation == null) {    // GPS 정보를 가져올 수 없을 때.
-                    setNoticeBar(View.VISIBLE, "위치 정보를 얻을 수 없습니다.", "GPS를 켜주세요");
+                    setNoticeBar(View.VISIBLE, "位置情報を得られません", "GPSを活性化に背ください");
                     return;
                 } else if (myHikingState == 0) {    // 등산 전 상태일 때.
-                    setNoticeBar(View.VISIBLE, "등산을 시작해주세요.", "등산 시작 버튼은 계획한 일정의\n시작점 근처에서 활성화됩니다.");
+                    setNoticeBar(View.VISIBLE, "登山を始めてください", "スタートボタンは計画したプランの\n出発地の周りで表視されます");
                     return;
                 }
 
@@ -1152,7 +1161,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(TAG, "Http updateHikingInfo: ", e);
-                        setNoticeBar(View.VISIBLE, "위치 보내기 실패.", "네트워크 상태를 확인해주세요.");
+                        setNoticeBar(View.VISIBLE, "位置送信失敗", "ネットワークをチェックしてください");
                     }
 
                     @Override
@@ -1247,32 +1256,33 @@ public class MapsActivityTemp extends FragmentActivity implements
     } // setNoticeBar END
 
     private void updateCurrentFID() {
-        try {
 
-            double distanceFromLoc = Double.POSITIVE_INFINITY;
+        if (myCurrentLocation == null) {
+            Log.e(TAG, "updateCurrentFID: user location is null");
+            return ;
+        }
 
-            Location pathStartPoint = new Location("pathStartPoint");
+        double distanceFromLoc = Double.POSITIVE_INFINITY;
 
-            for (HikingField field : hikingFields) {
-                int idx = hikingFields.indexOf(field);
+        Location pathStartPoint = new Location("pathStartPoint");
+
+        for (HikingField field : hikingFields) {
+            int idx = hikingFields.indexOf(field);
 
 //                if (idx == currentFID - 1 || idx == currentFID || idx == currentFID + 1) {
-                for (LatLng _loc : field.getRoutes()) {
-                    pathStartPoint.setLatitude(_loc.latitude);
-                    pathStartPoint.setLongitude(_loc.longitude);
+            for (LatLng _loc : field.getRoutes()) {
+                pathStartPoint.setLatitude(_loc.latitude);
+                pathStartPoint.setLongitude(_loc.longitude);
 
-                    double distance = pathStartPoint.distanceTo(myCurrentLocation);
-                    if (distance < distanceFromLoc) {
-                        distanceFromLoc     = distance;
-                        currentFID          = idx;
-                        currentPointInFID   = field.getRoutes().indexOf(_loc);
-                    }
+                double distance = pathStartPoint.distanceTo(myCurrentLocation);
+
+                if (distance < distanceFromLoc) {
+                    distanceFromLoc     = distance;
+                    currentFID          = idx;
+                    currentPointInFID   = field.getRoutes().indexOf(_loc);
                 }
-//                }
             }
-        } catch (Exception e) {
-            Log.e(TAG, "updateCurrentFID: ", e);
-
+//                }
         }
     } // updateCurrentFID END
 
@@ -1281,8 +1291,8 @@ public class MapsActivityTemp extends FragmentActivity implements
             LatLng startPoint = null;
             if (myHikingState == 0 ) {
                 startPoint = toPaintRouteSet.get(0);
-            } else if (myHikingState == 1){
-                startPoint = toPaintRouteSet.get(toPaintRouteSet.size() -1 );
+            } else if (myHikingState == 1 && toPaintRouteSet.size() > 0){
+                startPoint = toPaintRouteSet.get(toPaintRouteSet.size() - 1);
             }
 
            Location startPointLoc = new Location("startPoint");
@@ -1424,14 +1434,44 @@ public class MapsActivityTemp extends FragmentActivity implements
         noticeBar                   = findViewById(R.id.mapNoticeBar);
         mapNoticeBarMainText        = findViewById(R.id.mapNoticeBarMainText);
         mapNoticeBarSubText         = findViewById(R.id.mapNoticeBarSubText);
+
         // [1.1] 상태 표시 레이아웃.
-        tvUserSpeed                 = findViewById(R.id.userSpeed);       // 유저의 현재 속도.
-        tvDistance                  = findViewById(R.id.distance);        // 유저가 온 거리.
-        tvArriveWhen                = findViewById(R.id.arriveWhen);      // 유저의 예상 도착시간.
-        tvUserRank                  = findViewById(R.id.userRank);
-        tvNumOfRemainMembers        = findViewById(R.id.num_of_remain_members);
-        pgbarHikingProgress         = findViewById(R.id.seekBar);
-        tvHikingProgress            = findViewById(R.id.seekBarProgress);
+        View hikingStateInflater    = LayoutInflater.from(this).inflate(R.layout.map_hiking_info, null, false);
+
+        tvUserSpeed                 = hikingStateInflater.findViewById(R.id.current_speed_value);       // 유저의 현재 속도.
+        tvDistance                  = hikingStateInflater.findViewById(R.id.hiked_distance_value);        // 유저가 온 거리.
+        tvArriveWhen                = hikingStateInflater.findViewById(R.id.arrive_when_value);      // 유저의 예상 도착시간.
+        tvUserRank                  = hikingStateInflater.findViewById(R.id.user_rank_value);
+        tvNumOfRemainMembers        = hikingStateInflater.findViewById(R.id.num_of_members_value);
+        pgbarHikingProgress         = hikingStateInflater.findViewById(R.id.hiking_progress_bar);
+        tvHikingProgress            = hikingStateInflater.findViewById(R.id.hiking_progress_value);
+
+        // 하단 Drawer handle 버튼
+        handleBottomDrawer          = findViewById(R.id.drawer);
+
+        RelativeLayout rl = findViewById(R.id.parent_relative_layout);
+        bottomDrawer = new SweetSheet(rl);
+
+        final CustomDelegate customDelegate = new CustomDelegate(false, CustomDelegate.AnimationType.DuangLayoutAnimation, 700);
+        customDelegate.setCustomView(hikingStateInflater);
+
+        bottomDrawer.setDelegate(customDelegate);
+        bottomDrawer.setBackgroundClickEnable(false);
+
+        handleBottomDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomDrawer.show();
+            }
+        });
+
+        ImageButton closeButton = hikingStateInflater.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomDrawer.dismiss();
+            }
+        });
 
         // [1.2] 위치 메모.
         fabWriteLocationMemo        = findViewById(R.id.write_location_memo_btn);
@@ -1440,6 +1480,7 @@ public class MapsActivityTemp extends FragmentActivity implements
         linearLayoutLocationMemo    = findViewById(R.id.imagelayout);
         edtTextLMemoTitle           = findViewById(R.id.l_memo_title);
         edtTextLMemoContent         = findViewById(R.id.l_memo_contnets_edttxt);
+        txtViewInnerImage           = findViewById(R.id.image_inner_text);
         imgViewLMemoImg             = findViewById(R.id.l_memo_img);
         btnLMemoCancel              = findViewById(R.id.l_memo_cancel_btn);
         btnLMemoSendReq             = findViewById(R.id.loc_memo_store_btn);
@@ -1451,10 +1492,10 @@ public class MapsActivityTemp extends FragmentActivity implements
         fabShowMemberList           = findViewById(R.id.show_member_list_btn);
 
         // [1.5] 무전 레이아웃.
-//        drawerLayout                = findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
-//        btnSendRadio                = findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
-        btnSendRadio                = (ImageButton) findViewById(R.id.showRecordList);
-        btnConnectToRTC             = (Button)      findViewById(R.id.connectRTCServer);
+        // drawerLayout                = findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
+        // btnSendRadio                = findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
+        btnSendRadio                = findViewById(R.id.showRecordList);
+        btnConnectToRTC             = findViewById(R.id.connectRTCServer);
 
         // [1.6] 등산 상태 변경 버튼.
         btnChangeHikingState        = findViewById(R.id.change_h_status_btn);
@@ -1481,9 +1522,9 @@ public class MapsActivityTemp extends FragmentActivity implements
             public void onClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivityTemp.this);
-                builder.setTitle("사진 등록");
-                builder.setMessage("사진 등록 방법을 선택해주세요.");
-                builder.setPositiveButton("카메라", new DialogInterface.OnClickListener() {
+                builder.setTitle("写真登録");
+                builder.setMessage("写真登録方法を選んでください");
+                builder.setPositiveButton("カメラ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -1492,7 +1533,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                         startActivityForResult(takePhotoIntent, REQUEST_TAKE_PHOTO);
                     }
                 });
-                builder.setNegativeButton("갤러리", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("ギャラリー", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent getPhotoIntent = new Intent(Intent.ACTION_PICK);
@@ -1508,19 +1549,23 @@ public class MapsActivityTemp extends FragmentActivity implements
             @Override
             public void onClick(View v) {
 
+                boolean isPhotoRegistered = true;
+
                 String scheduleNum = getIntent().getStringExtra("schedule_no");
 
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) imgViewLMemoImg.getDrawable();
-                Bitmap bitmap = bitmapDrawable.getBitmap();
+                Bitmap bitmap;
+                byte[] bytesImg = null;
 
-                BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(R.drawable.location_memo_img_view_txt);
-                Bitmap noPhotoDrawable = drawable.getBitmap();
-
-                String isPhotoRegistered = String.valueOf(!bitmap.equals(noPhotoDrawable));
-
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                byte[] bytesImg = bos.toByteArray();
+                // 위치 메모에 사진이 포함되는지 확인
+                if (bitmapDrawable.getBitmap() == null) {
+                    isPhotoRegistered = false;
+                } else {
+                    bitmap = bitmapDrawable.getBitmap();
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bytesImg = bos.toByteArray();
+                }
 
                 HttpUrl httpUrl = Objects.requireNonNull(HttpUrl
                         .parse(Environments.NODE_HIKONNECT_IP + "/location/regLocation"))
@@ -1533,10 +1578,10 @@ public class MapsActivityTemp extends FragmentActivity implements
                         .addFormDataPart("title",           edtTextLMemoTitle.getText().toString())
                         .addFormDataPart("content",         edtTextLMemoContent.getText().toString())
                         .addFormDataPart("writer",          pref.getString("user_id", ""))
-                        .addFormDataPart("picture",         isPhotoRegistered)
+                        .addFormDataPart("picture",         String.valueOf(isPhotoRegistered))
                         .addFormDataPart("latitude",        String.valueOf(myCurrentLocation.getLatitude()))
                         .addFormDataPart("longitude",       String.valueOf(myCurrentLocation.getLongitude()))
-                        .addFormDataPart("location", "location.jpg", RequestBody.create(MediaType.parse("image/jpeg"), bytesImg))
+                        .addFormDataPart("location", "location.jpg", isPhotoRegistered ? RequestBody.create(MediaType.parse("image/jpeg"), bytesImg) : null)
                         .build();
 
                 Request request = new Request.Builder()
@@ -1551,7 +1596,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MapsActivityTemp.this, "메모 등록에 실패했습니다.\n다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MapsActivityTemp.this, "メモ登録に失敗しました\n再登録してください", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -1566,12 +1611,9 @@ public class MapsActivityTemp extends FragmentActivity implements
                                 public void run() {
                                     linearLayoutLocationMemo.setVisibility(View.GONE);
 
-                                    Drawable drawable = getResources().getDrawable(R.drawable.location_memo_img_view_txt);
-                                    Bitmap bitmap = Bitmap.createBitmap(((BitmapDrawable) drawable).getBitmap());
-
                                     edtTextLMemoTitle.setText("");
                                     edtTextLMemoContent.setText("");
-                                    imgViewLMemoImg.setImageBitmap(bitmap);
+                                    txtViewInnerImage.setText("タッチで写真登録");
                                 }
                             });
                         }
@@ -1583,12 +1625,11 @@ public class MapsActivityTemp extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 linearLayoutLocationMemo.setVisibility(View.GONE);
-                Drawable drawable = getResources().getDrawable(R.drawable.location_memo_img_view_txt);
-                Bitmap bitmap = Bitmap.createBitmap(((BitmapDrawable) drawable).getBitmap());
 
                 edtTextLMemoTitle.setText("");
                 edtTextLMemoContent.setText("");
-                imgViewLMemoImg.setImageBitmap(bitmap);
+                txtViewInnerImage.setText("タッチで写真登録");
+                imgViewLMemoImg.setImageBitmap(null);
             }
         }); // btnLMemoCancel.setOnClickListener END
         // [2.2] 자기 위치 갱신 버튼
@@ -1662,12 +1703,12 @@ public class MapsActivityTemp extends FragmentActivity implements
                         updateHikingState();
                         myHikingState = 1;
                         btnChangeHikingState.setVisibility(View.GONE);
-                        btnChangeHikingState.setText("산행 종료");
+                        btnChangeHikingState.setText("登山修了");
                         break;
                     case 1:     // 등산 중
                         updateHikingState();
                         myHikingState = 2;
-                        btnChangeHikingState.setText("결과 보기");
+                        btnChangeHikingState.setText("結果照会");
                         mWebView.setVisibility(View.VISIBLE);
                     case 2:     // 등산 후
                         Intent afterHikingIntent = new Intent(getBaseContext(), AfterHikingActivity.class);
@@ -1773,11 +1814,11 @@ public class MapsActivityTemp extends FragmentActivity implements
                 if (isSendingNow) {
                     // 보내고 있지 않았다면 음소거 해제
                     mWebView.loadUrl("javascript:unmuteAudio()");
-                    Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "音声通話を始めます", Toast.LENGTH_SHORT).show();
                 } else {
                     // 보내고 있었으면 음소거
                     mWebView.loadUrl("javascript:muteAudio()");
-                    Toast.makeText(getBaseContext(), "무전 종료합니다", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "音声通話を終了します", Toast.LENGTH_SHORT).show();
                 }
                 isSendingNow = !isSendingNow;
             }
@@ -1851,9 +1892,11 @@ public class MapsActivityTemp extends FragmentActivity implements
             switch (requestCode) {
                 case GALLERY_CODE:
                     sendPicture(data.getData()); //갤러리에서 사진 가져오기.
+                    txtViewInnerImage.setText("");
                     break;
                 case REQUEST_TAKE_PHOTO:
                     getPictureForPhoto(data); //카메라에서 사진 가져오기.
+                    txtViewInnerImage.setText("");
                     break;
                 case HikingMemberListAdapter.REQUEST_CODE:
 
@@ -2007,7 +2050,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                             .setSmallIcon(R.drawable.notification_icon)
                             .setContentTitle("HIKONNECT")
-                            .setContentText("근처에 위치 메모가 있습니다")
+                            .setContentText("周りに位置メモがあります")
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
 //                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
@@ -2024,7 +2067,7 @@ public class MapsActivityTemp extends FragmentActivity implements
                 }
             }
         }
-    }
+}
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {

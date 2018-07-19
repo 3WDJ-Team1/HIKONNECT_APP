@@ -44,9 +44,9 @@ public class MapsActivityTest extends FragmentActivity {
      * UI 초기화
      */
     private void initUI() {
-        tvUserSpeed     = findViewById(R.id.userSpeed);
-        tvDistance      = findViewById(R.id.distance);
-        tvArriveWhen    = findViewById(R.id.arriveWhen);
+//        tvUserSpeed     = findViewById(R.id.userSpeed);
+//        tvDistance      = findViewById(R.id.distance);
+//        tvArriveWhen    = findViewById(R.id.arriveWhen);
 //        layout          = (RelativeLayout)  findViewById(R.id.backGround);
         drawerLayout    = findViewById(R.id.drawer);
         btnSendRecord   = findViewById(R.id.sendRecordData);

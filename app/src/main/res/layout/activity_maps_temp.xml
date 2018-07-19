@@ -6,552 +6,326 @@
     android:orientation="vertical"
     android:weightSum="100">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/parent_relative_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="90"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <!--지도-->
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />     <!--지도-->
+        <FrameLayout
+            android:id="@+id/map_touch_layer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />                                                             <!--지도 Wrapper-->
+        <!--지도 끝-->
+        <!--등산 상태 변경 버튼-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
 
-            <!--지도-->
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:map="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
+            <Button
+                android:id="@+id/change_h_status_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
+                android:layout_marginEnd="72dp"
+                android:layout_marginStart="72dp"
+                android:background="@drawable/map_change_hiking_state_button"
+                android:text="등산시작"
+                android:textColor="@color/mapColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+        </LinearLayout>
+        <!--등산 상태 변경 버튼 끝-->
+        <!--무전 시작-->
+        <LinearLayout
+            android:id="@+id/drawer"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_above="@+id/recordBox"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/map_open_hiking_info_window">
+
+            <TextView
+                android:id="@+id/openDrawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="kr.ac.yjc.wdj.myapplication.MapsActivity" />     <!--지도-->
-            <FrameLayout
-                android:id="@+id/map_touch_layer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />                                                             <!--지도 Wrapper-->
-            <!--지도 끝-->
-            <!--등산 상태 변경 버튼-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                android:layout_marginStart="-10dp"
+                android:gravity="center"
+                android:rotation="-90"
+                android:text=">"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-                <Button
-                    android:id="@+id/change_h_status_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="60dp"
-                    android:layout_marginEnd="72dp"
-                    android:layout_marginStart="72dp"
-                    android:background="@drawable/map_change_hiking_state_button"
-                    android:text="등산시작"
-                    android:textColor="@color/mapColorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
-            </LinearLayout>
-            <!--등산 상태 변경 버튼 끝-->
-            <!--무전 시작-->
-            <LinearLayout
-                android:id="@+id/drawer"
-                android:layout_width="50dp"
-                android:layout_height="10dp"
-                android:layout_above="@+id/recordBox"
-                android:layout_centerHorizontal="true"
-                android:alpha="0.7"
-                android:background="@color/white">
+        <LinearLayout
+            android:id="@+id/recordBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:alpha="0.7"
+            android:background="@color/white"
+            android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/openDrawer"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="▲"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="10dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/recordBox"
+            <Button
+                android:id="@+id/sendRecordData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:alpha="0.7"
-                android:background="@color/white"
-                android:orientation="vertical">
+                android:backgroundTint="@color/red_500"
+                android:text="무전 시작"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+        <!--무전 시작 끝-->
+        <!--내 위치 버튼-->
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/update_loc_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/drawer"
+            android:layout_alignParentEnd="true"
+            android:alpha="0.7"
+            android:src="@drawable/my_position_btn_svg"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/mapColorPrimary"
+            fab:fab_colorRipple="@color/mapColorPrimaryDark"
+            fab:menu_fab_size="normal" />
+        <!--내 위치 버튼 끝-->
+        <!--상단 버튼-->
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/map_button_background_svg"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-                <Button
-                    android:id="@+id/sendRecordData"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/red_500"
-                    android:text="무전 시작"
-                    android:textColor="@color/white"
-                    android:textSize="18dp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-            </LinearLayout>
-            <!--무전 시작 끝-->
-            <!--내 위치 버튼-->
+            <ImageButton
+                android:id="@+id/show_member_list_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/map_button_selector"
+                android:src="@drawable/ic_people_black_36dp"
+                android:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/write_location_memo_btn"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/map_button_selector"
+                android:src="@drawable/add_location_memo_icon_svg"
+                android:tint="@color/white" />
+        </LinearLayout>
+        <!--상단 버튼-->
+        <!--무전 리스트 버튼-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/drawer">
+
             <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/update_loc_btn"
+                android:id="@+id/showRecordList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/drawer"
-                android:layout_alignParentEnd="true"
+                android:layout_marginTop="24dp"
                 android:alpha="0.7"
-                android:src="@drawable/my_position_btn_svg"
+                android:src="@drawable/speak_now_svg"
                 fab:fab_colorNormal="@color/white"
                 fab:fab_colorPressed="@color/mapColorPrimary"
                 fab:fab_colorRipple="@color/mapColorPrimaryDark"
                 fab:menu_fab_size="normal" />
-            <!--내 위치 버튼 끝-->
-            <!--상단 버튼-->
-            <LinearLayout
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/map_button_background_svg"
-                android:gravity="end"
-                android:orientation="horizontal"
-                android:visibility="visible">
+        </LinearLayout>
+        <!--무전 리스트 버튼 끝-->
+        <!-- 위치메모 -->
+        <LinearLayout
+            android:id="@+id/imagelayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="36dp"
+            android:layout_marginStart="36dp"
+            android:alpha=".95"
+            android:background="@drawable/location_memo_background_shape"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-                <ImageButton
-                    android:id="@+id/show_member_list_btn"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:background="@drawable/map_button_selector"
-                    android:src="@drawable/ic_people_black_36dp"
-                    android:tint="@color/white" />
-
-                <ImageButton
-                    android:id="@+id/write_location_memo_btn"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/map_button_selector"
-                    android:src="@drawable/add_location_memo_icon_svg"
-                    android:tint="@color/white" />
-            </LinearLayout>
-            <!--상단 버튼-->
-            <!--무전 리스트 버튼-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/drawer">
-
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/showRecordList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:alpha="0.7"
-                    android:src="@drawable/speak_now_svg"
-                    fab:fab_colorNormal="@color/white"
-                    fab:fab_colorPressed="@color/mapColorPrimary"
-                    fab:fab_colorRipple="@color/mapColorPrimaryDark"
-                    fab:menu_fab_size="normal" />
-            </LinearLayout>
-            <!--무전 리스트 버튼 끝-->
-            <!-- 위치메모 -->
-            <LinearLayout
-                android:id="@+id/imagelayout"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="36dp"
-                android:layout_marginStart="36dp"
-                android:alpha=".95"
-                android:background="#00000000"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="位置メモ登録"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
-                <TextView
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp">
+
+                <EditText
+                    android:id="@+id/l_memo_title"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/location_memo_title_background_shape"
-                    android:gravity="center"
-                    android:text="위치 메모 작성"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:hint="題名入力"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColorHint="@color/grey_500" />
 
                 <RelativeLayout
+                    android:id="@+id/image_view_wrapper"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:background="@color/grey_50"
-                    android:paddingEnd="12dp"
-                    android:paddingStart="12dp">
-
-                    <EditText
-                        android:id="@+id/l_memo_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:hint="제목 입력"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:textColorHint="@color/grey_500" />
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/l_memo_title"
+                    android:layout_centerHorizontal="true">
 
                     <ImageView
                         android:id="@+id/l_memo_img"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:layout_below="@+id/l_memo_title"
-                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
                         android:background="@color/grey_200"
                         android:paddingEnd="20dp"
                         android:paddingStart="20dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/location_memo_img_view_txt" />
+                        android:scaleType="fitCenter" />
 
-                    <EditText
-                        android:id="@+id/l_memo_contnets_edttxt"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/image_inner_text"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/l_memo_img"
-                        android:gravity="top"
-                        android:hint="내용 입력"
-                        android:maxLines="2"
-                        android:textColorHint="@color/grey_500" />
+                        android:layout_centerInParent="true"
+                        android:text="タッチで写真登録"
+                        android:textColor="@color/black"
+                        android:textSize="28sp" />
                 </RelativeLayout>
 
-                <android.support.constraint.ConstraintLayout
+                <EditText
+                    android:id="@+id/l_memo_contnets_edttxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/location_memo_footer_shape"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="6dp">
+                    android:layout_below="@+id/image_view_wrapper"
+                    android:gravity="top"
+                    android:hint="内容入力"
+                    android:maxLines="2"
+                    android:textColorHint="@color/grey_500" />
+            </RelativeLayout>
 
-                    <Button
-                        android:id="@+id/loc_memo_store_btn"
-                        android:layout_width="88dp"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/map_button_selector_light"
-                        android:text="전송"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        fab:layout_constraintEnd_toStartOf="@+id/l_memo_cancel_btn"
-                        fab:layout_constraintStart_toStartOf="parent"
-                        tools:layout_editor_absoluteY="25dp"
-                        tools:layout_editor_absoluteX="0dp" />
-
-                    <Button
-                        android:id="@+id/l_memo_cancel_btn"
-                        android:layout_width="88dp"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/map_button_selector"
-                        android:text="취소"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        fab:layout_constraintEnd_toEndOf="parent"
-                        fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn"
-                        tools:layout_editor_absoluteY="25dp"
-                        tools:layout_editor_absoluteX="0dp" />
-                </android.support.constraint.ConstraintLayout>
-            </LinearLayout>
-            <!--위치메모 끝 -->
-            <!--알림 바-->
-            <RelativeLayout
-                android:id="@+id/mapNoticeBar"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <Button
+                    android:id="@+id/loc_memo_store_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/map_button_selector_light"
+                    android:text="確認"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    fab:layout_constraintEnd_toStartOf="@+id/l_memo_cancel_btn"
+                    fab:layout_constraintStart_toStartOf="parent"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="25dp" />
+
+                <Button
+                    android:id="@+id/l_memo_cancel_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/map_button_selector"
+                    android:text="キャンセル"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    fab:layout_constraintEnd_toEndOf="parent"
+                    fab:layout_constraintStart_toEndOf="@+id/loc_memo_store_btn"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="25dp" />
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+        <!--위치메모 끝 -->
+        <!--알림 바-->
+        <RelativeLayout
+            android:id="@+id/mapNoticeBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:alpha=".8"
+            android:background="@color/grey_500"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/mapNoticeBarMainText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:alpha=".8"
-                android:background="@color/grey_500"
-                android:visibility="invisible">
-
-                <TextView
-                    android:id="@+id/mapNoticeBarMainText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:lines="1"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/mapNoticeBarSubText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/mapNoticeBarMainText"
-                    android:layout_centerInParent="true"
-                    android:lines="2"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_200"
-                    android:textSize="12sp" />
-            </RelativeLayout>
-            <!--알림 바 끝-->
-
-            <!-- 무전 WebView 띄우기 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="bottom"
-                >
-                <WebView
-                    android:id="@+id/radioWebView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    />
-                <Button
-                    android:id="@+id/connectRTCServer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="60dp"
-                    android:layout_marginEnd="72dp"
-                    android:layout_marginStart="72dp"
-                    android:background="@drawable/map_change_hiking_state_button"
-                    android:text="무전 서버 연결"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:backgroundTint="@color/black"
-                    />
-            </LinearLayout>
-            <!-- 무전 WebView 띄우기 끝 -->
-        </RelativeLayout>
-    </LinearLayout>
-
-    <!--하단 정보 창-->
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10">
-
-        <!--현재 속도-->
-        <LinearLayout
-            android:id="@+id/user_speed_wrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
-            fab:layout_constraintEnd_toStartOf="@+id/user_hiked_distance_wrapper"
-            fab:layout_constraintStart_toStartOf="parent"
-            fab:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="27dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/speedometer_svg" />
-
-            <TextView
-                android:id="@+id/userSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0.0"
-                android:textColor="@color/red_400"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="km/h"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-        </LinearLayout>
-        <!--무전 리스트 버튼 끝-->
-
-        <!-- 위치메모 -->
-        <LinearLayout
-            android:id="@+id/user_hiked_distance_wrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
-            fab:layout_constraintEnd_toStartOf="@+id/user_remain_time_wrapper"
-            fab:layout_constraintStart_toEndOf="@+id/user_speed_wrapper"
-            fab:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="126dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/remain_distance_svg" />
-
-            <TextView
-                android:id="@+id/distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0.0"
+                android:layout_centerInParent="true"
+                android:lines="1"
                 android:textAlignment="center"
-                android:textColor="@color/cyan_500"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="km"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="걸어옴"
-                android:textColor="@color/black" />
-        </LinearLayout>
-        <!--걸어온 거리 끝-->
-        <!--소요 시간-->
-        <LinearLayout
-            android:id="@+id/user_remain_time_wrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
-            fab:layout_constraintEnd_toStartOf="@+id/user_num_of_remain_member_wrapper"
-            fab:layout_constraintStart_toEndOf="@+id/user_hiked_distance_wrapper"
-            fab:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="230dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/remain_time_svg" />
-
-            <TextView
-                android:id="@+id/arriveWhen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/light_green_800"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="분"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="소요"
-                android:textColor="@color/black"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-        <!--소요 시간 끝-->
-        <!--등산 중 맴버 수-->
-        <LinearLayout
-            android:id="@+id/user_num_of_remain_member_wrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            fab:layout_constraintBottom_toTopOf="@+id/user_hiking_progress_wrapper"
-            fab:layout_constraintEnd_toEndOf="parent"
-            fab:layout_constraintStart_toEndOf="@+id/user_remain_time_wrapper"
-            fab:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="311dp">
-
-            <TextView
-                android:id="@+id/num_of_remain_members"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="명 등산 중"
-                android:textColor="@color/black" />
-        </LinearLayout>
-        <!--등산 중 맴버 수-->
-        <!--등산 진행도-->
-        <LinearLayout
-            android:id="@+id/user_hiking_progress_wrapper"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:weightSum="10"
-            fab:layout_constraintBottom_toBottomOf="parent"
-            fab:layout_constraintEnd_toStartOf="@+id/user_hiking_rank_wrapper"
-            fab:layout_constraintHorizontal_weight="8"
-            fab:layout_constraintStart_toStartOf="parent"
-            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper"
-            tools:layout_editor_absoluteX="0dp">
-
-            <ProgressBar
-                android:id="@+id/seekBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="9"
-                android:progress="50"
-                android:progressDrawable="@drawable/map_progressbar_style" />
-
-            <TextView
-                android:id="@+id/seekBarProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/blue_400"
+                android:textColor="@color/white"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/mapNoticeBarSubText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="%"
-                android:textSize="16sp" />
-        </LinearLayout>
-        <!--등산 진행도 끝-->
-        <!--현재 등수-->
+                android:layout_below="@+id/mapNoticeBarMainText"
+                android:layout_centerInParent="true"
+                android:lines="2"
+                android:textAlignment="center"
+                android:textColor="@color/grey_200"
+                android:textSize="12sp" />
+        </RelativeLayout>
+        <!--알림 바 끝-->
+
+        <!-- 무전 WebView 띄우기 -->
         <LinearLayout
-            android:id="@+id/user_hiking_rank_wrapper"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            fab:layout_constraintBottom_toBottomOf="parent"
-            fab:layout_constraintEnd_toEndOf="parent"
-            fab:layout_constraintHorizontal_weight="2"
-            fab:layout_constraintStart_toEndOf="@+id/user_hiking_progress_wrapper"
-            fab:layout_constraintTop_toBottomOf="@+id/user_speed_wrapper"
-            tools:layout_editor_absoluteX="307dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/userRank"
-                android:layout_width="wrap_content"
+            <WebView
+                android:id="@+id/radioWebView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="00"
-                android:textColor="@color/pink_500"
-                android:textSize="18sp" />
+                android:visibility="gone" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/connectRTCServer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="등"
-                android:textColor="@color/black" />
+                android:layout_marginBottom="60dp"
+                android:layout_marginEnd="72dp"
+                android:layout_marginStart="72dp"
+                android:background="@drawable/map_change_hiking_state_button"
+                android:backgroundTint="@color/black"
+                android:text="無線サーバ連結"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
-        <!--현재 등수 끝-->
-    </android.support.constraint.ConstraintLayout>
-    <!--하단 정보 창 끝-->
+        <!-- 무전 WebView 띄우기 끝 -->
+    </RelativeLayout>
 </LinearLayout>

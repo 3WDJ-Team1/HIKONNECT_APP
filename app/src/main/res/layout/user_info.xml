@@ -11,28 +11,58 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="3dp"
+        android:layout_marginTop="20dp">
+    <ImageButton
+        android:id="@+id/btnGoBack"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="14dp"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_left_arrow_angle_svgrepo_com"
+        android:tint="@color/grey_300"
+        android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/searchborder">
+
+            <EditText
+                android:id="@+id/editSearch"
+                android:layout_width="300dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/transparent"
+                android:drawableRight="@drawable/ic_search"
+                android:hint="@string/user_info_search_hint"
+                android:textColor="@color/black"
+                android:maxLines="1"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <Button
             android:id="@+id/other_info_show_all_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:backgroundTint="@color/light_green_500"
-            android:text="모두 보기"
+            android:backgroundTint="@color/mainColor"
+            android:text="みなを見る"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/editSearch"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/user_info_search_hint"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
 
     <ProgressBar
         android:id="@+id/otherInfoProgressBar"

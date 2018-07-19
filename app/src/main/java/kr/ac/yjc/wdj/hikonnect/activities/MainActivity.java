@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +23,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -67,6 +70,7 @@ import okhttp3.Response;
  */
 public class MainActivity extends AppCompatActivity
             implements NavigationView.OnNavigationItemSelectedListener{
+
     // 보여지는 Fragment
     private Fragment curFragment = new Fragment();
 
@@ -256,8 +260,8 @@ public class MainActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 
-//            session.logOutUser();
-            //startActivity(new Intent(this, PreActivity.class));
+            // session.logOutUser();
+            // startActivity(new Intent(this, PreActivity.class));
         }
 
         item.setEnabled(true);
@@ -284,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         nowSchedulePrevBtn = findViewById(R.id.nowSchedulePrevBtn);
         nowScheduleNextBtn = findViewById(R.id.nowScheduleNextBtn);
 
-//        btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
+        // btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
         btnToGroupMenu          = findViewById(R.id.btnToGroupMenu);
         btnToMyMenu             = findViewById(R.id.btnToMyMenu);
         btnNowSchduleSearch     = findViewById(R.id.nowScheduleSearchGroup);

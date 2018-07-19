@@ -33,8 +33,8 @@
     <string name="user_id"></string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="user_info_res_was_empty">현재 등산 중인 맴버가 없습니다</string>
-    <string name="user_info_search_hint">유저 아이디를 입력하세요.</string>
+    <string name="user_info_res_was_empty">現在登山しているメンバーがないです。</string>
+    <string name="user_info_search_hint">&#160;&#160;&#160;&#160;&#160;ユーザーのIDを入力してください.</string>
 
     <!-- 그룹 리스트 검색 선택 -->
     <string-array name="group_search_selector">

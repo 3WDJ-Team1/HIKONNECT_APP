@@ -3,6 +3,7 @@ package kr.ac.yjc.wdj.hikonnect;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -73,9 +74,9 @@ public class AfterHikingActivity extends AppCompatActivity {
         pref = getSharedPreferences("loginData", MODE_PRIVATE);
 
         Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(getResources().getColor(R.color.mainColor));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(getResources().getColor(R.color.mainColor));
+        }
 
 
         // UI 초기화
@@ -174,20 +175,20 @@ public class AfterHikingActivity extends AppCompatActivity {
         tvRemainMembers.setText(String.valueOf(remainMembers));
 
         // 내용 초기화
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_baseline_alarm_24px));
-        menuTitles.add("총 등산 시간");
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_clock_circular_outline));
+        menuTitles.add("掛かった時間");
         menuValues.add(String.valueOf(hikingTime));
 
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_ranking_svgrepo_com));
-        menuTitles.add("순위");
-        menuValues.add(String.valueOf(hikingRank) + "등");
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_trophy));
+        menuTitles.add("順位");
+        menuValues.add(String.valueOf(hikingRank) + "位");
 
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_mountain_svgrepo_com));
-        menuTitles.add("완료한 산");
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_mountain_summit));
+        menuTitles.add("登山した山");
         menuValues.add(completedMountain);
 
-        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_rating_svgrepo_com));
-        menuTitles.add("현재 등급");
+        images.add(ContextCompat.getDrawable(getBaseContext(), R.drawable.ic_icon));
+        menuTitles.add("現在の等級");
         menuValues.add(hikingTear);
     }
 

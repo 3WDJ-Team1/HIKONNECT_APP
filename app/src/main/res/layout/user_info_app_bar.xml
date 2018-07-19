@@ -14,20 +14,11 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/transparent"
             app:contentInsetStartWithNavigation="0dp">
 
-            <ImageButton
-                android:id="@+id/btnGoBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="24dp"
-                android:background="@color/transparent"
-                android:src="@drawable/ic_left_arrow_angle_svgrepo_com"
-                android:tint="@color/grey_300"
-                android:visibility="visible"/>
 
             <TextView
                 android:id="@+id/scheduleTitle"
@@ -35,11 +26,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="30dp"
-                android:textSize="20sp"
+                android:layout_gravity="center"
+                android:text="他のメンバー"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:text="다른 멤버 찾기"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -48,5 +39,6 @@
     <include
         layout="@layout/user_info"
         android:id="@+id/layout_content_main"/>
+
 
 </android.support.design.widget.CoordinatorLayout>
