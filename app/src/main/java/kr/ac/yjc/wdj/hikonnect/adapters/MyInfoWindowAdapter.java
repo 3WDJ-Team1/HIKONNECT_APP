@@ -2,12 +2,18 @@ package kr.ac.yjc.wdj.hikonnect.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -44,11 +50,12 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     boolean isInfoWindowShown = false;
 
     // 그룹 맴버 상태 표시
-    private TextView tvOtherUserNickname;    // 유저의 닉네임 TextView.
-    private TextView tvOtherUserSpeed;       // 현재 속도 TextView (값 -> km/h 기준).
-    private TextView tvOtherUserDistance;    // 총 이동 거리 TextView (값 -> km 기준).
-    private TextView tvOtherUserArriveWhen;  // 예상 도착 시간 TextView (값 -> 시간 기준).
-    private TextView tvOtherUserRank;        // 등수 TextView (값 -> 등산 거리 기준).
+    private TextView tvOtherUserNickname;       // 유저의 닉네임 TextView.
+    private ImageView imgOtherUserImage;        // 유저의 프로필 사진.
+    private TextView tvOtherUserSpeed;          // 현재 속도 TextView (값 -> km/h 기준).
+    private TextView tvOtherUserDistance;       // 총 이동 거리 TextView (값 -> km 기준).
+    private TextView tvOtherUserArriveWhen;     // 예상 도착 시간 TextView (값 -> 시간 기준).
+    private TextView tvOtherUserRank;           // 등수 TextView (값 -> 등산 거리 기준).
 
     public MyInfoWindowAdapter(Context context, GoogleMap gMap, FragmentActivity fActivity) {
         this.context = context;
@@ -58,40 +65,43 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     @Override
     public View getInfoWindow(Marker marker) {
-        return null;
-    }
-
-    @Override
-    public View getInfoContents(Marker marker) {
         if (marker.getTag() == null) return null;
 
         View view = ((Activity) context)
                 .getLayoutInflater()
                 .inflate(R.layout.layout_other_user_data_box, null);
 
-        tvOtherUserNickname = view.findViewById(R.id.otherUserNickname);
-        tvOtherUserSpeed = view.findViewById(R.id.otherUserSpeed);
-        tvOtherUserDistance = view.findViewById(R.id.otherUserDistance);
-        tvOtherUserArriveWhen = view.findViewById(R.id.otherUserArriveWhen);
-        tvOtherUserRank = view.findViewById(R.id.otherUserRank);
+        tvOtherUserNickname     = view.findViewById(R.id.user_nickname);
+        imgOtherUserImage       = view.findViewById(R.id.user_profile_img);
+        tvOtherUserSpeed        = view.findViewById(R.id.current_speed_value);
+        tvOtherUserDistance     = view.findViewById(R.id.distance_from_me_value);
+        tvOtherUserArriveWhen   = view.findViewById(R.id.arrive_when_value);
+        tvOtherUserRank         = view.findViewById(R.id.rank_value);
 
         if (marker.getTag() instanceof Member) {
-            String nickname = ((Member) marker.getTag()).nickname;
-            String velocity = String.format("%.2f", ((Member) marker.getTag()).avgSpeed);
-            String distance = String.format("%.2f", ((Member) marker.getTag()).hikedDistance);
-            // String arrvieWhen   = ((Member) marker.getTag()).nickname;
+            String nickname     = ((Member) marker.getTag()).nickname;
+            Bitmap image        = ((Member) marker.getTag()).profileImg;
+            String velocity     = String.format("%.2f", ((Member) marker.getTag()).avgSpeed);
+            String distance     = String.format("%.2f", ((Member) marker.getTag()).hikedDistance);
+//            String arrvieWhen   = String.format("%.2f", ((Member) marker.getTag()).)
             String rank = String.valueOf(((Member) marker.getTag()).rank);
 
             tvOtherUserNickname.setText(nickname);
+            imgOtherUserImage.setImageBitmap(image);
             tvOtherUserSpeed.setText(velocity);
             tvOtherUserDistance.setText(distance);
-            // tvOtherUserArriveWhen.setText(nickname);
+//            tvOtherUserArriveWhen.setText(arrvieWhen);
             tvOtherUserRank.setText(rank);
         }
 
         requestOtherUserHikingInfo((MapItem) marker.getTag(), marker);
 
         return view;
+    }
+
+    @Override
+    public View getInfoContents(Marker marker) {
+        return null;
     }
 
     private void requestOtherUserHikingInfo(final MapItem mapItem, final Marker marker) {

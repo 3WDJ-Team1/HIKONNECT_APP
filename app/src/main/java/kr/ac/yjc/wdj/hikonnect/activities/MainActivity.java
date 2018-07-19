@@ -74,10 +74,6 @@ public class MainActivity extends AppCompatActivity
     // 보여지는 Fragment
     private Fragment curFragment = new Fragment();
 
-    // 지도 Loading 창
-    ConstraintLayout        loadingWindow;
-    ImageView               appLogo;
-
     ActionBarDrawerToggle   toggle;
     NavigationView          navigationView;
     SessionManager          session;
@@ -138,13 +134,6 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        // 지도 Loading UI
-        loadingWindow   = findViewById(R.id.loading_window);
-        appLogo         = findViewById(R.id.app_logo);
-
-        Animation anim  = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
-        appLogo.startAnimation(anim);
 
         session = new SessionManager(getApplicationContext());
 
@@ -271,8 +260,8 @@ public class MainActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 
-//            session.logOutUser();
-            //startActivity(new Intent(this, PreActivity.class));
+            // session.logOutUser();
+            // startActivity(new Intent(this, PreActivity.class));
         }
 
         item.setEnabled(true);
@@ -299,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         nowSchedulePrevBtn = findViewById(R.id.nowSchedulePrevBtn);
         nowScheduleNextBtn = findViewById(R.id.nowScheduleNextBtn);
 
-//        btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
+        // btnStartHiking          = findViewById(R.id.btnStartHiking);      // 로딩 화면 초기화
         btnToGroupMenu          = findViewById(R.id.btnToGroupMenu);
         btnToMyMenu             = findViewById(R.id.btnToMyMenu);
         btnNowSchduleSearch     = findViewById(R.id.nowScheduleSearchGroup);

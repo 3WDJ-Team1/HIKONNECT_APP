@@ -37,8 +37,7 @@
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait" />
         <activity android:name=".Othersinfo"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Dialog"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ClusterDetailActivity"
             android:excludeFromRecents="true"

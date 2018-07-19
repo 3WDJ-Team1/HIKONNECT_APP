@@ -1,217 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/otherUserDataBox"
-        android:layout_width="200dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:alpha="0.8"
-        android:elevation="5dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        android:background="@drawable/map_marker_info_window">
+        <!--유저 프로필-->
+        <TextView
+            android:id="@+id/user_nickname"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="2dp"
-            android:baselineAligned="false">
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="ユーザ1"
+            app:layout_constraintBottom_toTopOf="@+id/user_profile_img"
+            app:layout_constraintEnd_toEndOf="@+id/user_profile_img"
+            app:layout_constraintStart_toStartOf="@+id/user_profile_img"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread" />
 
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
+        <ImageView
+            android:id="@+id/user_profile_img"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/user_nickname"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/default_profile_black_svg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/current_speed_header"
+            app:layout_constraintHorizontal_bias="0.21"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_nickname" />
+        <!--유저 프로필 END-->
+        <!--현재 속력-->
+        <TextView
+            android:id="@+id/current_speed_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="現在速力"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toTopOf="@+id/current_speed_value"
+            app:layout_constraintEnd_toStartOf="@+id/distance_from_me_header"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toEndOf="@+id/user_profile_img"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="닉네임"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:textSize="10sp" />
+        <TextView
+            android:id="@+id/current_speed_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/current_speed_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:text="0.0"
+            android:textColor="@color/holo_orange_light"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/arrive_when_header"
+            app:layout_constraintEnd_toStartOf="@+id/current_speed_unit"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/current_speed_header"
+            app:layout_constraintTop_toBottomOf="@+id/current_speed_header" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+        <TextView
+            android:id="@+id/current_speed_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/current_speed_value"
+            android:layout_centerHorizontal="true"
+            android:text="km/h"
+            app:layout_constraintBottom_toBottomOf="@+id/current_speed_value"
+            app:layout_constraintEnd_toEndOf="@+id/current_speed_header"
+            app:layout_constraintStart_toEndOf="@+id/current_speed_value"
+            app:layout_constraintTop_toTopOf="@+id/current_speed_value" />
+        <!--현재 속력 END-->
+        <!--나와의 거리-->
+        <TextView
+            android:id="@+id/distance_from_me_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="32dp"
+            android:text="私との距離"
+            android:textSize="8sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/current_speed_header"
+            app:layout_constraintTop_toTopOf="@+id/current_speed_header" />
 
-                    <TextView
-                        android:id="@+id/otherUserNickname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:maxLength="3"
-                        android:gravity="bottom"
-                        android:text="테스트"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="10sp" />
-                </LinearLayout>
-            </LinearLayout>
+        <TextView
+            android:id="@+id/distance_from_me_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/distance_from_me_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:text="0.0"
+            android:textColor="@color/blue_700"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/current_speed_value"
+            app:layout_constraintEnd_toStartOf="@+id/distance_from_me_unit"
+            app:layout_constraintStart_toStartOf="@+id/distance_from_me_header"
+            app:layout_constraintTop_toTopOf="@+id/current_speed_value" />
 
-            <LinearLayout
-                android:layout_weight="2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/distance_from_me_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/distance_from_me_value"
+            android:layout_centerHorizontal="true"
+            android:text="km"
+            app:layout_constraintBottom_toBottomOf="@+id/distance_from_me_value"
+            app:layout_constraintEnd_toEndOf="@+id/distance_from_me_header"
+            app:layout_constraintStart_toEndOf="@+id/distance_from_me_value"
+            app:layout_constraintTop_toTopOf="@+id/distance_from_me_value" />
+        <!--나와의 거리 END-->
+        <!--도착 예상 시간-->
+        <TextView
+            android:id="@+id/arrive_when_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="到着予想時間"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toTopOf="@+id/arrive_when_value"
+            app:layout_constraintEnd_toEndOf="@+id/current_speed_header"
+            app:layout_constraintStart_toStartOf="@+id/current_speed_header"
+            app:layout_constraintTop_toBottomOf="@+id/current_speed_value" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="현재 속력"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:textSize="10sp" />
+        <TextView
+            android:id="@+id/arrive_when_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/arrive_when_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:text="0.00"
+            android:textColor="@color/light_green_accent_400"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/arrive_when_unit"
+            app:layout_constraintStart_toStartOf="@+id/arrive_when_header"
+            app:layout_constraintTop_toBottomOf="@+id/arrive_when_header" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center">
+        <TextView
+            android:id="@+id/arrive_when_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/arrive_when_value"
+            android:layout_centerHorizontal="true"
+            android:text="時間"
+            app:layout_constraintBottom_toBottomOf="@+id/arrive_when_value"
+            app:layout_constraintEnd_toEndOf="@+id/arrive_when_header"
+            app:layout_constraintStart_toEndOf="@+id/arrive_when_value" />
+        <!--도착 예상 시간 END-->
+        <!--등수-->
+        <TextView
+            android:id="@+id/rank_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="現在速力"
+            android:textSize="8sp"
+            app:layout_constraintBottom_toBottomOf="@+id/arrive_when_header"
+            app:layout_constraintEnd_toEndOf="@+id/distance_from_me_header"
+            app:layout_constraintStart_toStartOf="@+id/distance_from_me_header"
+            app:layout_constraintTop_toTopOf="@+id/arrive_when_header" />
 
-                    <TextView
-                        android:id="@+id/otherUserSpeed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="bottom"
-                        android:text="0.00"
-                        android:textAlignment="center"
-                        android:textColor="@color/red_400"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/rank_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rank_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:text="00"
+            android:textColor="@color/pink_500"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/arrive_when_value"
+            app:layout_constraintEnd_toStartOf="@+id/rank_unit"
+            app:layout_constraintStart_toStartOf="@+id/rank_header"
+            app:layout_constraintTop_toTopOf="@+id/arrive_when_value" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="bottom"
-                        android:text="㎞/h"
-                        android:textColor="@color/black"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="나와의 거리"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:textSize="10sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/otherUserDistance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="bottom"
-                        android:text="0.0"
-                        android:textAlignment="center"
-                        android:textColor="@color/cyan_500"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="bottom"
-                        android:text="㎞"
-                        android:textColor="@color/black"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="도착 시간"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey_800"
-                    android:textSize="10sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/otherUserArriveWhen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="0.0"
-                        android:textAlignment="center"
-                        android:textColor="@color/light_green_800"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="bottom"
-                        android:text="시간"
-                        android:textColor="@color/black"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/otherUserRank"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="end|center"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textColor="@color/pink_accent_400"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="start|center"
-                    android:layout_weight="1"
-                    android:text="등"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-</LinearLayout>
+        <TextView
+            android:id="@+id/rank_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rank_value"
+            android:layout_centerHorizontal="true"
+            android:text="位"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/rank_value"
+            app:layout_constraintEnd_toEndOf="@+id/rank_header"
+            app:layout_constraintStart_toEndOf="@+id/rank_value"
+            app:layout_constraintTop_toTopOf="@+id/rank_value" />
+        <!--등수 END-->
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

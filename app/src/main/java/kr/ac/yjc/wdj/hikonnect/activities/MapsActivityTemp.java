@@ -1492,8 +1492,8 @@ public class MapsActivityTemp extends FragmentActivity implements
         fabShowMemberList           = findViewById(R.id.show_member_list_btn);
 
         // [1.5] 무전 레이아웃.
-//        drawerLayout                = findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
-//        btnSendRadio                = findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
+        // drawerLayout                = findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
+        // btnSendRadio                = findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
         btnSendRadio                = findViewById(R.id.showRecordList);
         btnConnectToRTC             = findViewById(R.id.connectRTCServer);
 
