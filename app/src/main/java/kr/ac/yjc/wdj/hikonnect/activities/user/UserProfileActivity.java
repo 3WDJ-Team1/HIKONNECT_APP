@@ -89,7 +89,7 @@ public class UserProfileActivity extends AppCompatActivity
 //        home        = (Button) findViewById(R.id.back_to_main_);
 
         // 세션의 id값으로 설정
-        idTxt.setText(id);
+        idTxt.setText("ID : " + id);
 
         /*nicknameTxt.setText("test");
         phoneTxt.setText("010-0000-0000");
@@ -126,7 +126,7 @@ public class UserProfileActivity extends AppCompatActivity
                     age      = obj.getString("age_group");
                     gender   = obj.getString("gender");
 
-                    nicknameTxt.setText(nickname);
+                    nicknameTxt.setText("NICKNAME : " + nickname);
                     phoneTxt.setText(phoneNum);
                     ageTxt.setText(age);
                     genderTxt.setText(gender);

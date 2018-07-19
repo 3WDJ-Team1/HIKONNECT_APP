@@ -17,22 +17,23 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:tabMode="scrollable"
             android:background="@color/white"
-            app:tabIndicatorColor="@color/cyan_500"
+            app:tabIndicatorColor="@color/mainColor"
+            app:tabIndicatorHeight="3dp"
             app:tabGravity="fill"
-            app:tabTextColor="@color/black"
-            app:tabSelectedTextColor="@color/cyan_500"
+            app:tabTextColor="@color/grey_700"
+            app:tabSelectedTextColor="@color/black"
             app:tabMinWidth="178dp"
             android:fitsSystemWindows="true">
 
             <android.support.design.widget.TabItem
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="목적지 및 일정" />
+                android:text="目的地や日程" />
 
             <android.support.design.widget.TabItem
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="참가자" />
+                android:text="参加者" />
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
 

@@ -2,99 +2,147 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/grey_100">
     <android.support.v7.widget.CardView
         android:id="@+id/cardView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="1dp">
+        android:elevation="0dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tvDestination"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="목적지"
-                android:textAlignment="center"
-                android:layout_marginTop="16dp"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"/>
-
-            <LinearLayout
-                android:id="@+id/routeTable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp"
-                android:layout_margin="8dp"
-                android:layout_below="@+id/tvDestination">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:text="목적지"
-                        android:textAlignment="center"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"/>
-                    <TextView
-                        android:id="@+id/mountainName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="Sobaek"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"/>
-                </LinearLayout>
-            </LinearLayout>
 
             <fragment
-                android:layout_below="@+id/routeTable"
                 android:id="@+id/scheduleMap"
                 xmlns:map="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
                 class="com.google.android.gms.maps.MapFragment"
                 tools:context="kr.ac.yjc.wdj.hikonnect.activities.schedule_detail.ScheduleDetailActivity"
                 />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
+
     <android.support.v7.widget.CardView
+        android:id="@+id/cardView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="1dp"
-        android:layout_below="@+id/cardView1">
-        <RelativeLayout
+        android:layout_below="@+id/cardView1"
+        android:elevation="0dp"
+        android:layout_marginTop="1dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="目的地"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+            <TextView
+                android:id="@+id/mountainName"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Mountain"
+                android:textSize="14sp"
+                android:textColor="@color/grey_800"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="0dp"
+        android:layout_below="@+id/cardView2"
+        android:layout_marginTop="1dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
             <TextView
                 android:id="@+id/tvSchedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="일정"
-                android:textAlignment="center"
-                android:textSize="20sp"
+                android:text="日程"
+                android:textSize="18sp"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_marginTop="8dp"
-                android:id="@+id/tvPlan"
-                android:layout_width="match_parent"
+                android:id="@+id/row1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="2018년 5월 30일"
-                android:textSize="16sp"
-                android:textColor="@color/black"
-                android:layout_below="@id/tvSchedule"/>
+                android:text="日時"
+                android:layout_below="@id/tvSchedule"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:textColor="@color/grey_600"/>
+
+            <LinearLayout
+                android:id="@+id/layoutDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toEndOf="@+id/row1"
+                android:layout_below="@+id/tvSchedule"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/tvPlan"
+                    android:layout_marginStart="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2018年 5月 30日"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_800"/>
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="18:00:00 出発"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_800"
+                    />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/row2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="内容"
+                android:layout_below="@id/layoutDate"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:textColor="@color/grey_600"/>
+
+            <TextView
+                android:layout_toEndOf="@+id/row2"
+                android:layout_alignBaseline="@+id/row2"
+                android:layout_marginStart="16dp"
+                android:id="@+id/tvContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="絶対行きたいと思います。"
+                android:textSize="14sp"
+                android:textColor="@color/grey_800"/>
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

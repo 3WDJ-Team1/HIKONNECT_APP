@@ -180,11 +180,8 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
             }
         });*/
 
-        if (position % 2 == 1) {
-            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(listItem.getParent(), R.color.grey_100));
-        } else {
-            holder.cardView.setCardBackgroundColor(ContextCompat.getColor(listItem.getParent(), R.color.white));
-        }
+        holder.cardView.setCardBackgroundColor(ContextCompat.getColor(listItem.getParent(), R.color.white));
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

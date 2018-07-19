@@ -109,7 +109,7 @@ public class LoginActivity extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv.setText("ID를 확인해주세요.");
+                                        tv.setText("IDを確認してください。");
                                         progressBar.setVisibility(View.GONE);
                                         login.setVisibility(View.VISIBLE);
                                     }
@@ -119,7 +119,7 @@ public class LoginActivity extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv.setText("비밀번호를 확인해주세요.");
+                                        tv.setText("PASSWORDを確認してください。");
                                         progressBar.setVisibility(View.GONE);
                                         login.setVisibility(View.VISIBLE);
                                     }
@@ -128,7 +128,7 @@ public class LoginActivity extends Activity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        tv.setText("로그인 성공");
+                                        tv.setText("ログイン中・・・");
                                     }
                                 });
 
@@ -144,7 +144,7 @@ public class LoginActivity extends Activity {
                                     editor.putString("user_password",       jObj.getString("password"));
                                     editor.putString("user_name",           jObj.getString("nickname"));
                                     editor.putString("user_phone",          jObj.getString("phone"));
-                                    editor.putString("user_gender",         jObj.getInt("gender") == 0 ? "남자" : "여자");
+                                    editor.putString("user_gender",         jObj.getInt("gender") == 0 ? "男性" : "女性");
                                     editor.putString("user_age_group",      jObj.getString("age_group"));
                                     editor.putString("user_open_scope",     jObj.getString("scope"));
                                     editor.putString("user_profile_url",    jObj.getString("profile"));

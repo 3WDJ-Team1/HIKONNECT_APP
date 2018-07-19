@@ -30,6 +30,8 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_android_person_svg" />
 
+
+
             <TextView
                 android:id="@+id/user_id_txt"
                 android:layout_width="wrap_content"

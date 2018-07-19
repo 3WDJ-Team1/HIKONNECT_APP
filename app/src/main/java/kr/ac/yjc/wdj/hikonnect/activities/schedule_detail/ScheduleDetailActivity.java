@@ -215,10 +215,17 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
                         TextView mountainName   = (TextView) view.findViewById(R.id.mountainName);
                         TextView tvPlan         = (TextView) view.findViewById(R.id.tvPlan);
+                        TextView tvTime         = (TextView) view.findViewById(R.id.tvTime);
+                        TextView tvContent      = (TextView) view.findViewById(R.id.tvContent);
 
                         // TODO 산 이름으로
                         getMntNameFromMntId(mntId, mountainName);
-                        tvPlan.setText(startDate + "\n\n" + content);
+
+                        String[] dates = startDate.split(" ");
+
+                        tvPlan.setText(dates[0]);
+                        tvTime.setText(dates[1] + " 出発");
+                        tvContent.setText(content);
 
                         container.addView(view);
                         break;
@@ -246,8 +253,8 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabTextColors(R.color.black, R.color.cyan_500);
-        tabLayout.getTabAt(0).setText("목적지 및 일정");
-        tabLayout.getTabAt(1).setText("멤버");
+        tabLayout.getTabAt(0).setText("目的地と日程");
+        tabLayout.getTabAt(1).setText("参加者");
 
     }
 

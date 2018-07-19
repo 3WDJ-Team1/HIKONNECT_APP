@@ -100,6 +100,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle               toggle;
     private NavigationView                      navigationView;
     private TextView                            txtView,
+                                                tvGroupName,        // 그룹 명
                                                 scheduleTxtView;
 
     // UI 내부 데이터 연결 객체
@@ -122,6 +123,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     private                 AsyncTask           imageUpload;
     private static          String              status;             // 사용자가 해당 그룹에 참여하고 있는 지 여부
     public  static          String              groupId,            // 해당 그룹의 id
+                                                groupName,          // 그룹명
                                                 userId,             // 현재 사용자의 id
                                                 memberId;           // 참가 신청한 사용자의 id
     private                 String[]            colors;             // 안드로이드 내장 색상을 불러올 배열
@@ -158,6 +160,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         // intent
         Intent intent       = getIntent();
         groupId             = intent.getStringExtra("groupId");
+        groupName           = intent.getStringExtra("groupName");
         status              = intent.getStringExtra("status");
 
         // UI 변수
@@ -172,6 +175,8 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         drawer              = (DrawerLayout)                findViewById(R.id.drawer_layout);
         navigationView      = (NavigationView)              findViewById(R.id.nav_view);
         loadingDialog       = new LoadingDialog(this);
+        tvGroupName         = (TextView)                    findViewById(R.id.tvGroupName);
+        tvGroupName.setText(groupName);
 
         // 데이터 변수
         models              = new ArrayList<>();
