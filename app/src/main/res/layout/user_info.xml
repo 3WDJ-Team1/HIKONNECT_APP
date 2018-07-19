@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:elevation="3dp"
         android:layout_marginTop="20dp">
-
     <ImageButton
         android:id="@+id/btnGoBack"
         android:layout_marginLeft="20dp"
@@ -25,23 +24,33 @@
         android:tint="@color/grey_300"
         android:visibility="visible" />
 
-    <EditText
-        android:id="@+id/editSearch"
-        android:layout_width="300dp"
-        android:layout_height="45dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/searchborder"
-        android:drawableRight="@drawable/ic_search"
-        android:hint="@string/user_info_search_hint"
-        android:textColor="@color/black"
-        android:textSize="10sp" />
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/searchborder">
+
+            <EditText
+                android:id="@+id/editSearch"
+                android:layout_width="300dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/transparent"
+                android:drawableRight="@drawable/ic_search"
+                android:hint="@string/user_info_search_hint"
+                android:textColor="@color/black"
+                android:maxLines="1"
+                android:textSize="10sp" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <Button
             android:id="@+id/other_info_show_all_btn"
