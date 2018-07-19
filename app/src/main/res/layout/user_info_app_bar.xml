@@ -40,4 +40,5 @@
         layout="@layout/user_info"
         android:id="@+id/layout_content_main"/>
 
+
 </android.support.design.widget.CoordinatorLayout>
