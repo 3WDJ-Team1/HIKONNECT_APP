@@ -599,35 +599,27 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void toggleBtnIfJoined() {
-        userId = pref.getString("user_id", "");
-
-        // 현재 유저가 그룹의 owner인 경우
-        if (status == "\"owner\"") {
-            btnEnterGroup.setVisibility(View.GONE);
-            btnExitGroup.setVisibility(View.GONE);
-        } else {
-            // 현재 유저의 상태 판별
-            // 멤버로서 신청 상태인지
-            // 해당 그룹의 멤버인지
-            checkUserStatus(userId);
-        }
-        /*switch (status) {
+        switch (status) {
+            // 그룹 owner인 경우 => 모든 버튼 표시 X
             case "\"owner\"":
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.GONE);
-            case "\"member\"":
-                btnEnterGroup.setVisibility(View.GONE);
-                btnExitGroup.setVisibility(View.VISIBLE);
                 break;
-            default:
+            // 그룹 member 여부 판별
+            case "\"member\"":
+                userId = pref.getString("user_id", "");
+                checkUserStatus(userId);
+                break;
+            // guest인 경우
+            case "\"guest\"":
                 btnEnterGroup.setVisibility(View.VISIBLE);
                 btnExitGroup.setVisibility(View.GONE);
                 break;
-        }*/
+        }
     }
 
     private void checkUserStatus(final String userId) {
-        String userStatus;
+        final String userid = userId;
 
         // 비동기
         new AsyncTask<Void, Integer, String>() {
@@ -672,12 +664,12 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                     for (int count = 0 ; count < NotEnter.length() ; count++) {
                         JSONObject object = NotEnter.getJSONObject(count);
 
-                        if (userId == object.getString("userid")) {
-                            Log.d("맞게 드러옴", "ㅇ");
+                        if (object.getString("userid").equals(userid)) {
+                            // 그룹에 가입 신청 상태인 경우
                             btnEnterGroup.setVisibility(View.GONE);
                             btnExitGroup.setVisibility(View.GONE);
                         } else {
-                            Log.d("안되노", "ㄴ");
+                            // 그룹 member인 경우
                             btnEnterGroup.setVisibility(View.GONE);
                             btnExitGroup.setVisibility(View.VISIBLE);
                         }

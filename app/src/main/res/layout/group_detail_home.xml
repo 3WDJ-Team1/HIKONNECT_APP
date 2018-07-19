@@ -36,26 +36,32 @@
         app:ntb_titled="true"
         app:ntb_title_mode="all"/>
 
-    <Button
-        android:id="@+id/btnEnterGroup"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/circle_enter_group"
-        android:drawableTop="@drawable/ic_person_add_white_24px"
-        android:padding="5dp"
-        android:text="그룹참가"
-        android:textSize="10dp"
-        android:textColor="@color/white"/>
+        <Button
+            android:id="@+id/btnEnterGroup"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="65dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/circle_enter_group"
+            android:drawableTop="@drawable/ic_person_add_white_24px"
+            android:padding="5dp"
+            android:text="그룹참가"
+            android:textSize="10dp"
+            android:textColor="@color/white"/>
 
-    <Button
-        android:id="@+id/btnExitGroup"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/circle_cancel_group"
-        android:drawableTop="@drawable/ic_person_cancel"
-        android:padding="5dp"
-        android:text="그룹탈퇴"
-        android:textSize="10dp"
-        android:textColor="@color/white"/>
+        <Button
+            android:id="@+id/btnExitGroup"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="65dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/circle_cancel_group"
+            android:drawableTop="@drawable/ic_person_cancel"
+            android:padding="5dp"
+            android:text="그룹탈퇴"
+            android:textSize="10dp"
+            android:textColor="@color/white"/>
 
 </FrameLayout>
