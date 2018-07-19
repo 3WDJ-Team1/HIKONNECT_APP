@@ -52,6 +52,7 @@ import kr.ac.yjc.wdj.hikonnect.activities.LoadingDialog;
 import kr.ac.yjc.wdj.hikonnect.activities.LoginActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.MainActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group.GroupNoticeActiviry;
+import kr.ac.yjc.wdj.hikonnect.activities.group.GroupScheduleActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.group_list.groups_list_main;
 import kr.ac.yjc.wdj.hikonnect.activities.groups.NoticeActivity;
 import kr.ac.yjc.wdj.hikonnect.activities.user.UserProfileActivity;
@@ -82,11 +83,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
     // UI 변수
     private ViewPager                           viewPager;          // 전체 페이지
     private NavigationTabBar                    navigationTabBar;   // 네비게이션 탭 바
-    private FloatingActionButton                btnEnterGroup,      // 그룹 참가 버튼
+    private Button                              btnEnterGroup,      // 그룹 참가 버튼
                                                 btnExitGroup,       // 그룹 탈퇴 버튼
-                                                btnMakeNotice,      // 공지사항 작성 버튼
-                                                btnMakeSchedule;    // 일정 작성 버튼
-    private Button                              btnAcceptUser,
+                                                btnAcceptUser,
                                                 btnRejectUser;
     private FloatingActionMenu                  mainBtn;            // 플로팅 버튼들을 포괄하는 메인 플로팅 버튼
     private LoadingDialog                       loadingDialog;      // 로딩 화면
@@ -150,15 +149,13 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         // [1] 변수 초기화
         // intent
         Intent intent       = getIntent();
+        userId              = intent.getStringExtra("userId");
         groupId             = intent.getStringExtra("groupId");
         status              = intent.getStringExtra("status");
 
         // UI 변수
-        btnEnterGroup       = (FloatingActionButton)        findViewById(R.id.btnEnterGroup);
-        btnExitGroup        = (FloatingActionButton)        findViewById(R.id.btnExitGroup);
-        btnMakeNotice       = (FloatingActionButton)        findViewById(R.id.btnMakeNotice);
-        btnMakeSchedule     = (FloatingActionButton)        findViewById(R.id.btnMakeSchedule);
-        mainBtn             = (FloatingActionMenu)          findViewById(R.id.floating_actiong_btn_menu);
+        btnEnterGroup       = (Button)                      findViewById(R.id.btnEnterGroup);
+        btnExitGroup        = (Button)                      findViewById(R.id.btnExitGroup);
         viewPager           = (ViewPager)                   findViewById(R.id.vp_horizontal_ntb);
         navigationTabBar    = (NavigationTabBar)            findViewById(R.id.ntb_horizontal);
         toolbar             = (Toolbar)                     findViewById(R.id.toolbar);
@@ -345,7 +342,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        // 공지사항 작성
+        /*// 공지사항 작성
         btnMakeNotice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -356,6 +353,16 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
+
+        // 일정 작성
+         btnMakeSchedule.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 // 일정 작성 페이지로 이동
+                 Intent intent = new Intent(getBaseContext(), GroupScheduleActivity.class);
+                 startActivity(intent);
+             }
+         });*/
     }
 
     /**
@@ -591,32 +598,95 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         }.execute();
     }
 
-    /**
-     * 1. 사용자가 오너라면, 공지사항 작성 버튼 & 일정 작성 버튼을 보여준다.
-     * 2. 사용자가 멤버라면, 그룹 탈퇴 버튼 & 공지사항 작성 버튼 & 일정 작성 버튼을 보여준다.
-     * 3. 사용자가 오너도 멤버도 아니라면, 그룹 참가 버튼을 보여준다.
-     */
     private void toggleBtnIfJoined() {
-        switch (status) {
+        userId = pref.getString("user_id", "");
+
+        // 현재 유저가 그룹의 owner인 경우
+        if (status == "\"owner\"") {
+            btnEnterGroup.setVisibility(View.GONE);
+            btnExitGroup.setVisibility(View.GONE);
+        } else {
+            // 현재 유저의 상태 판별
+            // 멤버로서 신청 상태인지
+            // 해당 그룹의 멤버인지
+            checkUserStatus(userId);
+        }
+        /*switch (status) {
             case "\"owner\"":
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.GONE);
-                btnMakeNotice.setVisibility(View.VISIBLE);
-                btnMakeSchedule.setVisibility(View.VISIBLE);
-                break;
             case "\"member\"":
                 btnEnterGroup.setVisibility(View.GONE);
                 btnExitGroup.setVisibility(View.VISIBLE);
-                btnMakeNotice.setVisibility(View.VISIBLE);
-                btnMakeSchedule.setVisibility(View.VISIBLE);
                 break;
             default:
                 btnEnterGroup.setVisibility(View.VISIBLE);
                 btnExitGroup.setVisibility(View.GONE);
-                btnMakeNotice.setVisibility(View.GONE);
-                btnMakeSchedule.setVisibility(View.GONE);
                 break;
-        }
+        }*/
+    }
+
+    private void checkUserStatus(final String userId) {
+        String userStatus;
+
+        // 비동기
+        new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loadingDialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                try {
+                    // http 리퀘스트
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/list_member/" + TabsActivity.groupId)
+                            .build();
+
+                    Response response = client.newCall(request).execute();
+
+                    return response.body().string();
+                } catch (IOException ie) {
+                    ie.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                try {
+                    Log.d("list_member", s);
+                    // json 파싱
+                    JSONArray   jsonArray       = new JSONArray(s);
+                    JSONObject  jsonObject      = jsonArray.getJSONObject(0);
+
+                    JSONArray NotEnter = jsonObject.getJSONArray("not_enter");
+                    Log.d("not_enter", NotEnter.toString());
+
+                    // 가입 신청 상태인지 확인
+                    for (int count = 0 ; count < NotEnter.length() ; count++) {
+                        JSONObject object = NotEnter.getJSONObject(count);
+
+                        if (userId == object.getString("userid")) {
+                            Log.d("맞게 드러옴", "ㅇ");
+                            btnEnterGroup.setVisibility(View.GONE);
+                            btnExitGroup.setVisibility(View.GONE);
+                        } else {
+                            Log.d("안되노", "ㄴ");
+                            btnEnterGroup.setVisibility(View.GONE);
+                            btnExitGroup.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
+            }
+        }.execute();
     }
 
     // 탭에 모델 추가

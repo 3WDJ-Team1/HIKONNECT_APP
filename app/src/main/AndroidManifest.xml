@@ -58,6 +58,11 @@
         <activity
             android:name=".activities.groups.ScheduleActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".activities.group.GroupScheduleActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.group.PopUpActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.groups.SchedulViewActivitiy"
             android:screenOrientation="portrait" />

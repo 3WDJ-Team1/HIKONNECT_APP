@@ -122,7 +122,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
         // 공지사항일 때
-        if(viewHolder instanceof ViewHolderNotice) {
+        if (viewHolder instanceof ViewHolderNotice) {
 
             // 공지사항 데이터가 없을 경우
             if (((GroupNotice) dataList.get(i)).getTitle() == "데이터가 없습니다.") {
@@ -139,8 +139,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
             // 스케줄일 때
             final GroupSchedule schedule = (GroupSchedule) dataList.get(i);
 
-            final Button    btnShowScheduleDetail       = ((ViewHolderSchedule) viewHolder).btnShowScheduleDetail;
-            final Button    btnJoin                     = ((ViewHolderSchedule) viewHolder).btnJoin;
+            final Button btnShowScheduleDetail = ((ViewHolderSchedule) viewHolder).btnShowScheduleDetail;
+            final Button btnJoin = ((ViewHolderSchedule) viewHolder).btnJoin;
 
             // 스케줄 데이터가 없을 경우
             if (schedule.getTitle() == "데이터가 없습니다.") {
@@ -167,6 +167,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     // 일자
                     intent.putExtra("startDate", schedule.getStartDate());
                     // 내용
+
                     intent.putExtra("content", schedule.getContent());
                     // 그룹의 손님/참가자/오너
                     intent.putExtra("status", status);
@@ -184,7 +185,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                 }
             });
 
-            // 참가신청 버튼 클릭리스너
+            // 현재 해당 멤버가 일정에 참가 신청 상태인지에 대해 판별
+            // 참가 신청 상태가 아니면 참가 취소 버튼을
+            // 참가 신청 상태이면 참가 신청 버튼을 표시
+
+            Intent intent = new Intent(schedule.getBaseContext(), ScheduleDetailActivity.class);
+
+            // 일정 참가신청 버튼 클릭리스너
             btnJoin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -199,6 +206,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                         protected String doInBackground(Void... params) {
                             userId = pref.getString("user_id", "");
                             schedule_no = String.valueOf(schedule.getNo());
+
+                            Log.d("그룹 uuid", TabsActivity.groupId);
 
                             try {
                                 OkHttpClient client = new OkHttpClient();
@@ -240,10 +249,11 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                                         "일정에 참가신청 되었습니다.",
                                         Toast.LENGTH_SHORT
                                 ).show();
+
+                                // 참가신청 버튼 삭제
+                                btnJoin.setVisibility(View.GONE);
                             }
                             loadingDialog.dismiss();
-
-                            btnJoin.setVisibility(View.GONE);
                         }
                     }.execute();
                 }
@@ -302,7 +312,7 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                             if (s == "false") {
                                 Toast.makeText(
                                         context,
-                                        "참가 신청이 거절되었습니다.",
+                                        "오류로 인해 참가 신청에 실패하였습니다.",
                                         Toast.LENGTH_SHORT
                                 ).show();
                             } else {
@@ -315,6 +325,9 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                                 final int position = viewHolder.getAdapterPosition();
                                 dataList.remove(position);
                                 notifyItemRemoved(position);
+
+                                // 멤버 리스트 갱신
+                                notifyDataSetChanged();
                             }
                             loadingDialog.dismiss();
                         }
@@ -323,6 +336,70 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
             });
 
             // TODO 그룹 참가 거절 리스너
+            btnRejectUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new AsyncTask<Void, Integer, String>() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            loadingDialog.show();
+                        }
+
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            try {
+                                OkHttpClient client = new OkHttpClient();
+
+                                RequestBody body = new FormBody.Builder()
+                                        .add("userid", memberId)
+                                        .add("uuid", TabsActivity.groupId)
+                                        .build();
+
+                                Request request = new Request.Builder()
+                                        .url(Environments.LARAVEL_HIKONNECT_IP + "/api/member/false")
+                                        .put(body)
+                                        .build();
+
+                                Response response = client.newCall(request).execute();
+                                return response.body().string();
+                            } catch (IOException ie) {
+                                ie.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            super.onPostExecute(s);
+
+                            Log.d("result", s);
+
+                            if (s == "false") {
+                                Toast.makeText(
+                                        context,
+                                        "오류로 인해 참가 신청 거절에 실패하였습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            } else {
+                                Toast.makeText(
+                                        context,
+                                        "참가 신청이 거절되었습니다.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                final int position = viewHolder.getAdapterPosition();
+                                dataList.remove(position);
+                                notifyItemRemoved(position);
+
+                                notifyDataSetChanged();
+                            }
+
+                            loadingDialog.dismiss();
+                        }
+                    }.execute();
+                }
+            });
 
             if (!status.equals("\"guest\"")) {
                 ((ViewHolderMember) viewHolder).cardWrapper.setOnClickListener(new View.OnClickListener() {
@@ -330,8 +407,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                     public void onClick(View v) {
                         if (((ViewHolderMember) viewHolder).detailWrapper.getVisibility() == View.GONE) {
                             ((ViewHolderMember) viewHolder).detailWrapper.setVisibility(View.VISIBLE);
-                            ArrayList<String>   detailList  = new ArrayList<>();
-                            ArrayList<Drawable> iconList    = new ArrayList<>();
+                            ArrayList<String> detailList = new ArrayList<>();
+                            ArrayList<Drawable> iconList = new ArrayList<>();
 
                             // dataList init
                             detailList.add(((GroupUserInfoBean) dataList.get(index)).getGrade());

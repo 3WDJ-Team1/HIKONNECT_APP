@@ -121,7 +121,6 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
         // FID 리스트 초기화
         try {
-
             // 받아온 String을 JSON 객체로 변환
             JSONArray jArray    = new JSONArray(intent.getStringExtra("scheduleRoute"));
             // fidList 초기화
@@ -130,6 +129,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
             // 값 초기화
             for (int i = 0 ; i < jArray.length() ; i++) {
                 fidList.add(jArray.getInt(i));
+                Log.d("상세보기 FID 값 확인", Integer.toString(jArray.getInt(i)));
             }
 
         } catch (JSONException je) {
@@ -216,6 +216,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                         tvPlan.setText(startDate + "\n\n" + content);
 
                         container.addView(view);
+
                         break;
                     // 스케줄에 참여한 인원 페이지
                     case 1:
@@ -422,6 +423,9 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
 
                             double lat = pathObj.getDouble("lat");
                             double lng = pathObj.getDouble("lng");
+
+                            Log.d("lat", Double.toString(lat));
+                            Log.d("lng", Double.toString(lng));
 
                             // 폴리라인 옵션에 지점 추가
                             LatLng latLng = new LatLng(lat, lng);

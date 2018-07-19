@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/makeNotice"
+        android:text="@string/makeSchedule"
         android:textSize="40dp"
         android:textColor="@color/grey_700"
         android:textAlignment="center"
@@ -30,7 +30,7 @@
             android:layout_marginLeft="10dp"/>
 
         <EditText
-            android:id="@+id/noticeTitle"
+            android:id="@+id/scheduleTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="제목을 입력하세요*"
@@ -58,11 +58,11 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/noticeContents"
+        android:id="@+id/scheduleContents"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:hint="내용을 입력하세요*"
-        android:background="@drawable/border"
+        android:background="@drawable/textview_theme"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -81,30 +81,80 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="첨부파일"
+                android:text="등산경로"
                 android:textSize="20dp"
                 android:textColor="@color/black"
                 android:layout_marginTop="13dp"
                 android:layout_marginLeft="10dp"/>
 
+            <AutoCompleteTextView
+                android:id="@+id/nowScheduleDestination"
+                android:layout_width="115dp"
+                android:layout_height="40dp"
+                android:hint="산이름*"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:layout_marginTop="13dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/textview_theme"
+                android:drawableLeft="@drawable/ic_search"
+                android:drawablePadding="5dp"
+                android:completionThreshold="1"
+                android:cursorVisible="true"/>
+
             <Button
-                android:id="@+id/fileFindBtn"
+                android:id="@+id/mapFindBtn"
                 android:layout_width="60dp"
                 android:layout_height="35dp"
-                android:text="파일찾기"
+                android:text="지도보기"
                 android:textSize="13dp"
                 android:textColor="@color/white"
                 android:background="@drawable/notice_making_file_upload_btn"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"/>
 
         </LinearLayout>
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="산행일자"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:layout_marginTop="13dp"
+            android:layout_marginLeft="10dp"/>
+
         <EditText
-            android:id="@+id/noticeImgFileName"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:hint="첨부파일명*"
+            android:id="@+id/nowScheduleDate"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:hint="산행일자*"
+            android:background="@drawable/border"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:cursorVisible="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="산행시간"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:layout_marginTop="13dp"
+            android:layout_marginLeft="10dp"/>
+
+        <EditText
+            android:id="@+id/nowScheduleTime"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:hint="산행시간*"
             android:background="@drawable/border"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"

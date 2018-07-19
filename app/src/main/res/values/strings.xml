@@ -25,6 +25,7 @@
     <string name="max">최대 모집 인원</string>
     <string name="makeGroup">그룹 생성</string>
     <string name="makeNotice">공지사항 작성</string>
+    <string name="makeSchedule">일정 작성</string>
     <string name="groups">모집 중인 그룹</string>
     <string name="nav_my_page">마이페이지</string>
     <string name="nav_my_groups">나의 그룹</string>
