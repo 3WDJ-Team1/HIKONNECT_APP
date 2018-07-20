@@ -260,6 +260,8 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                                     ((ViewHolderSchedule) viewHolder).btnCancel.setVisibility(View.VISIBLE);
                                 }
                             }
+
+                            loadingDialog.dismiss();
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
