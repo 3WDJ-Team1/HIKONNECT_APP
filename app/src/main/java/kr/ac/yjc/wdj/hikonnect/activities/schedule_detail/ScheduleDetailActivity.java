@@ -432,7 +432,7 @@ public class ScheduleDetailActivity extends FragmentActivity implements OnMapRea
                 // 값을 파싱하여 필요한 경로만 polyLineOptions 에 넣기
                 try {
 
-                    Log.d("TEST", s);
+     //               Log.d("TEST", s);
 
                     // JSON parsing
                     JSONArray routes = new JSONArray(s);
