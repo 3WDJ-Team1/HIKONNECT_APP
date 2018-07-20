@@ -22,8 +22,10 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.media.ExifInterface;
 import android.media.RingtoneManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.net.Uri;
 import android.os.Bundle;
@@ -457,14 +459,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                 .writeTimeout(30, TimeUnit.SECONDS);
 
         okHttpClient = builder.build();
-
-        // [4] 무전 서비스 클래스 초기화
-        isSendingNow = false;
-
-        // 무전 객체 초기화
-//        walkieTalkie = new WalkieTalkie(getSharedPreferences("loginData", MODE_PRIVATE));
-        // 무전 받아오기 시작
-//        walkieTalkie.receiveStart();
 
         initializeUI();
     }
@@ -1492,8 +1486,6 @@ public class MapsActivityTemp extends FragmentActivity implements
         fabShowMemberList           = findViewById(R.id.show_member_list_btn);
 
         // [1.5] 무전 레이아웃.
-        // drawerLayout                = findViewById(R.id.drawer);          // Hidden 레이아웃 활성/비활성 버튼.
-        // btnSendRadio                = findViewById(R.id.sendRecordData);  // 무전 보내기 버튼
         btnSendRadio                = findViewById(R.id.showRecordList);
         btnConnectToRTC             = findViewById(R.id.connectRTCServer);
 
@@ -1718,47 +1710,6 @@ public class MapsActivityTemp extends FragmentActivity implements
                 }
             }
         }); // btnChangeHikingState.setOnClickListener END
-        // [5] 무전 리스트
-        /*showRecordList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent recordIntent = new Intent(getBaseContext(), RecordListActivity.class);
-                startActivity(recordIntent);
-            }
-        }); // showRecordList.setOnClickListener END*/
-
-        // [4] drawerLayout 을 클릭하면 무전 버튼 가시화
-        /*drawerLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isRecBtnVisible) {
-                    btnSendRadio.setVisibility(View.GONE);
-                } else {
-                    btnSendRadio.setVisibility(View.VISIBLE);
-                }
-                isRecBtnVisible = !isRecBtnVisible;
-            }
-        }); // drawerLayout.setOnClickListener END*/
-        // 무전 버튼에 리스너 달기
-        /*btnSendRadio.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                isSendingNow = true;
-                walkieTalkie.sendStart();
-                Toast.makeText(getBaseContext(), "무전 시작합니다", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }); // btnSendRadio.setOnLongClickListener END
-        btnSendRadio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isSendingNow) {
-                    isSendingNow = false;
-                    walkieTalkie.sendEnd();
-                    Toast.makeText(getBaseContext(), "무전 종료합니다", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }); // btnSendRadio.setOnClickListener END*/
 
         // [5] WebRTC
         mWebView = (WebView) findViewById(R.id.radioWebView);
@@ -1789,9 +1740,8 @@ public class MapsActivityTemp extends FragmentActivity implements
             }
         });
 
-        Log.d("sibal!!", "https://www.hikonnectrtc.ga/" + scheduleNum +  "/test");
         // url 지정
-        mWebView.loadUrl("https://www.hikonnectrtc.ga/" + scheduleNum +  "/test");
+        mWebView.loadUrl("https://www.hikonnectrtc.ga/test/test");
 
         // 무전 서버 연결 버튼 클릭하면
         btnConnectToRTC.setOnClickListener(new View.OnClickListener() {
@@ -1800,12 +1750,16 @@ public class MapsActivityTemp extends FragmentActivity implements
                 // Room 참가
                 mWebView.loadUrl("javascript:startRadio(" + scheduleNum + ")");
                 // 마이크 mute
-                mWebView.loadUrl("javascript:muteAudio()");
+//                mWebView.loadUrl("javascript:muteAudio()");
                 btnConnectToRTC.setVisibility(View.GONE);
             }
         });
 
-        isSendingNow = false;
+        isSendingNow = true;
+
+        final AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+//        audioManager.setMode(AudioManager.MODE_IN_CALL);
+        audioManager.setMicrophoneMute(true);
 
         // 이미지 버튼 클릭하면
         btnSendRadio.setOnClickListener(new View.OnClickListener() {
@@ -1813,12 +1767,12 @@ public class MapsActivityTemp extends FragmentActivity implements
             public void onClick(View v) {
                 if (isSendingNow) {
                     // 보내고 있지 않았다면 음소거 해제
-                    mWebView.loadUrl("javascript:unmuteAudio()");
-                    Toast.makeText(getBaseContext(), "音声通話を始めます", Toast.LENGTH_SHORT).show();
+                    audioManager.setMicrophoneMute(true);
+                    Toast.makeText(getBaseContext(), "音声通話を終了します", Toast.LENGTH_SHORT).show();
                 } else {
                     // 보내고 있었으면 음소거
-                    mWebView.loadUrl("javascript:muteAudio()");
-                    Toast.makeText(getBaseContext(), "音声通話を終了します", Toast.LENGTH_SHORT).show();
+                    audioManager.setMicrophoneMute(false);
+                    Toast.makeText(getBaseContext(), "音声通話を始めます", Toast.LENGTH_SHORT).show();
                 }
                 isSendingNow = !isSendingNow;
             }

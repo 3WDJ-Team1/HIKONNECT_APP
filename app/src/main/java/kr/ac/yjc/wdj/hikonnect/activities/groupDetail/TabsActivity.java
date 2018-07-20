@@ -494,9 +494,9 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         });
 
         // 탭에 메뉴 추가 (사진, 색상, 타이틀)
-        addModels(R.drawable.ic_notifications_white_24px, colors[0], "공지사항", "Notice");
-        addModels(R.drawable.ic_event_white_24px, colors[1], "일정", "Plan");
-        addModels(R.drawable.ic_group_white_24px, colors[2], "그룹멤버", "Members");
+        addModels(R.drawable.ic_notifications_white_24px, "#22B573", "お知らせ", "Notice");
+        addModels(R.drawable.ic_event_white_24px, "#22B573", "日程", "Plan");
+        addModels(R.drawable.ic_group_white_24px, "#22B573", "メンバー", "Members");
 
         // 탭 모델 설정
         navigationTabBar.setModels(models);

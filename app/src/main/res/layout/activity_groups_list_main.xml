@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="グループリスト"
-        android:textSize="12sp"
+        android:textSize="10sp"
         android:textColor="@color/grey_700"
         android:layout_alignParentTop="true"
         android:background="@color/grey_50"
@@ -60,7 +60,7 @@
                 android:hint="検索"
                 android:inputType="text"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:paddingEnd="8dp"
                 android:background="@android:color/transparent"/>
 
@@ -87,7 +87,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:background="@color/grey_200"
-        android:textSize="14sp"/>
+        android:textSize="10sp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvGroupList"

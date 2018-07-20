@@ -21,7 +21,7 @@
             android:maxLength="20"
             android:text="スケジュール名"
             android:textColor="@color/grey_800"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:gravity="center_vertical"/>
 
@@ -33,7 +33,7 @@
             android:layout_toStartOf="@+id/nowScheduleLeader"
             android:text="リーダー : "
             android:textColor="@color/grey_600"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:gravity="center_vertical"/>
 
         <TextView
@@ -44,7 +44,7 @@
             android:maxLength="12"
             android:text="リーダー名"
             android:textColor="@color/grey_800"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:gravity="center_vertical"/>
 
     </RelativeLayout>
@@ -70,7 +70,7 @@
                 android:layout_marginEnd="2sp"
                 android:text="グループ："
                 android:textColor="@color/grey_600"
-                android:textSize="12sp" />
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/nowScheduleGroupName"
@@ -109,7 +109,7 @@
                 android:layout_toEndOf="@+id/nowScheduleDestination"
                 android:text="まで"
                 android:textColor="@color/grey_600"
-                android:textSize="12sp" />
+                android:textSize="10sp" />
 
         </RelativeLayout>
 
@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:text="2018年 5月 30日"
             android:textColor="@color/grey_800"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
     </LinearLayout>
 
@@ -152,11 +152,11 @@
         android:background="@drawable/main_search_group_selector"
         android:drawableEnd="@drawable/main_start_btn_img"
         android:gravity="center"
-        android:paddingEnd="64dp"
-        android:paddingStart="100dp"
+        android:paddingEnd="56dp"
+        android:paddingStart="80dp"
         android:clickable="false"
         android:text="スタート"
         android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
 </RelativeLayout>
