@@ -671,6 +671,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         break;
                     // 그룹 member 여부 판별
                     case "\"member\"":
+                        btnDeleteGroup.setVisibility(View.GONE);
                         userId = pref.getString("user_id", "");
                         checkUserStatus(userId);
                         break;
@@ -733,12 +734,10 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                                     // 그룹에 가입 신청 상태인 경우
                                     btnEnterGroup.setVisibility(View.GONE);
                                     btnExitGroup.setVisibility(View.GONE);
-                                    btnDeleteGroup.setVisibility(View.GONE);
                                 } else {
                                     // 그룹 member인 경우
                                     btnEnterGroup.setVisibility(View.GONE);
                                     btnExitGroup.setVisibility(View.VISIBLE);
-                                    btnDeleteGroup.setVisibility(View.GONE);
                                 }
                             }
                         } catch (JSONException je) {
