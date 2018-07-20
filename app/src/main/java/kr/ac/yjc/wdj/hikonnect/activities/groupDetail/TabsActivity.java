@@ -259,7 +259,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         super.onPostExecute(s);
                         Toast.makeText(
                                 getBaseContext(),
-                                "참가신청 되었습니다.",
+                                "参加申請なりました。",
                                 Toast.LENGTH_SHORT
                         ).show();
                         loadingDialog.dismiss();
@@ -311,13 +311,13 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         if (s == "false") {
                             Toast.makeText(
                                     getBaseContext(),
-                                    "오류로 인해 탈퇴하지 못했습니다.",
+                                    "エラーによって脱退していませんでした。",
                                     Toast.LENGTH_SHORT
                             ).show();
                         } else {
                             Toast.makeText(
                                     getBaseContext(),
-                                    "성공적으로 탈퇴되었습니다.",
+                                    "成功的に脱退しました。",
                                     Toast.LENGTH_SHORT
                             ).show();
 
@@ -379,7 +379,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         super.onPostExecute(s);
                         Toast.makeText(
                                 getBaseContext(),
-                                "성공적으로 삭제되었습니다.",
+                                "成功的に削除なりました。",
                                 Toast.LENGTH_SHORT
                         ).show();
                         loadingDialog.dismiss();

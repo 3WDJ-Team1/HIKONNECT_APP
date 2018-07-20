@@ -317,13 +317,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                                 if (s == "false") {
                                     Toast.makeText(
                                             context,
-                                            "오류로 인해 참가신청에 실패했습니다.",
+                                            "エラーによって参加申請に失敗しました。",
                                             Toast.LENGTH_SHORT
                                     ).show();
                                 } else {
                                     Toast.makeText(
                                             context,
-                                            "일정에 참가신청 되었습니다.",
+                                            "日程に参加申請なりました。",
                                             Toast.LENGTH_SHORT
                                     ).show();
 
@@ -386,13 +386,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                                  if (s == "false") {
                                      Toast.makeText(
                                              context,
-                                             "오류로 인해 참가신청 취소에 실패했습니다.",
+                                             "エラーによって参加申請キャンセルに失敗しました。",
                                              Toast.LENGTH_SHORT
                                      ).show();
                                  } else {
                                      Toast.makeText(
                                              context,
-                                             "정상적으로 참가신청이 취소되었습니다.",
+                                             "成功的に参加申請キャンセルなりました。",
                                              Toast.LENGTH_SHORT
                                      ).show();
 
@@ -460,13 +460,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                             if (s == "false") {
                                 Toast.makeText(
                                         context,
-                                        "오류로 인해 참가 신청에 실패하였습니다.",
+                                        "エラーによって参加申請受諾に失敗しました。",
                                         Toast.LENGTH_SHORT
                                 ).show();
                             } else {
                                 Toast.makeText(
                                         context,
-                                        "참가 신청이 수락되었습니다.",
+                                        "成功的に参加申請が受諾なりました。",
                                         Toast.LENGTH_SHORT
                                 ).show();
 
@@ -526,13 +526,13 @@ public class RecycleAdapterForGDetail extends RecyclerView.Adapter<RecyclerView.
                             if (s == "false") {
                                 Toast.makeText(
                                         context,
-                                        "오류로 인해 참가 신청 거절에 실패하였습니다.",
+                                        "エラーによって参加申請拒絶に失敗しました。",
                                         Toast.LENGTH_SHORT
                                 ).show();
                             } else {
                                 Toast.makeText(
                                         context,
-                                        "참가 신청이 거절되었습니다.",
+                                        "成功的に参加申請が拒絶されました。",
                                         Toast.LENGTH_SHORT
                                 ).show();
 
