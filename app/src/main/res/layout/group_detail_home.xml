@@ -10,32 +10,6 @@
     android:orientation="vertical"
     android:layout_marginTop="50dp">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_horizontal_ntb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <devlight.io.library.ntb.NavigationTabBar
-        android:id="@+id/ntb_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        app:ntb_bg_color="@color/black"
-        app:ntb_active_color="@color/white"
-        app:ntb_inactive_color="@color/lightGrey"
-        app:ntb_badge_size="12sp"
-        app:ntb_badge_bg_color="#ffff0000"
-        app:ntb_badge_gravity="top"
-        app:ntb_badge_position="right"
-        app:ntb_badge_title_color="#ffffffff"
-        app:ntb_badge_use_typeface="true"
-        app:ntb_badged="true"
-        app:ntb_titled="true"
-        app:ntb_title_mode="all"/>
-
     <Button
         android:id="@+id/btnEnterGroup"
         android:layout_width="60dp"
@@ -77,5 +51,32 @@
         android:text="@string/delete_group"
         android:textSize="11dp"
         android:textColor="@color/white"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_horizontal_ntb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <devlight.io.library.ntb.NavigationTabBar
+        android:id="@+id/ntb_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:ntb_bg_color="@color/black"
+        app:ntb_active_color="@color/white"
+        app:ntb_inactive_color="@color/lightGrey"
+        app:ntb_badge_size="12sp"
+        app:ntb_badge_bg_color="#ffff0000"
+        app:ntb_badge_gravity="top"
+        app:ntb_badge_position="right"
+        app:ntb_badge_title_color="#ffffffff"
+        app:ntb_badge_use_typeface="true"
+        app:ntb_badged="true"
+        app:ntb_titled="true"
+        app:ntb_title_mode="all"/>
+
 
 </FrameLayout>
