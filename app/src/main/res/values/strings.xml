@@ -15,6 +15,9 @@
     <string name="nav_sub_menu_item01">Sub Menu Item 1</string>
     <string name="nav_sub_menu_item02">Sub Menu Item 2</string>
     <string name="drawer_header_text">Drawer Header</string>
+    <string name="enter_group">グループ参加</string>
+    <string name="cancel_group">グループ脱退</string>
+    <string name="delete_group">グループ削除</string>
     <string name="sign_in">ログイン</string>
     <string name="sign_up">新規取得</string>
     <string name="log_out">ログアウト</string>

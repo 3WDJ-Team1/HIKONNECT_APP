@@ -105,6 +105,19 @@
                     <Button
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
+                        android:id="@+id/btnCancelSchedule"
+                        android:text="削除"
+                        android:textSize="14sp"
+                        android:layout_toStartOf="@+id/btnShowScheduleDetail"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/white"
+                        android:background="@drawable/btn_join_schedule"
+                        android:layout_marginEnd="4dp"
+                        />
+
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
                         android:id="@+id/btnShowScheduleDetail"
                         android:text="詳細"
                         android:textSize="14sp"
