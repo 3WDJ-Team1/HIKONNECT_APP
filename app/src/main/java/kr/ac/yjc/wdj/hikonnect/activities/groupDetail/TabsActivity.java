@@ -274,71 +274,60 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         btnExitGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                AlertDialog.Builder exitAd = new AlertDialog.Builder(TabsActivity.this);
-
-                exitAd.setTitle("그룹 탈퇴 확인");
-                exitAd.setMessage("그룹을 탈퇴하시겠습니까?");
-
-                // 확인 버튼 설정
-                exitAd.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                new AsyncTask<Void, Integer, String>() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Event
-                        new AsyncTask<Void, Integer, String>() {
-
-                            @Override
-                            protected String doInBackground(Void... params) {
-                                userId = pref.getString("user_id", "");
-
-                                try {
-                                    RequestBody body = new FormBody.Builder()
-                                            .add("userid", userId)
-                                            .add("uuid", groupId)
-                                            .build();
-
-                                    Request request = new Request.Builder()
-                                            .url(Environments.LARAVEL_HIKONNECT_IP + "/api/out_group")
-                                            .post(body)
-                                            .build();
-
-                                    Response response = client.newCall(request).execute();
-
-                                    return response.body().string();
-
-                                } catch (IOException ie) {
-
-                                    Log.e("IOExcept", "IOException at btnExitGroup.setOnClickListener!!\n" + ie);
-                                    return null;
-
-                                }
-                            }
-
-                            @Override
-                            protected void onPostExecute(String s) {
-                                super.onPostExecute(s);
-
-                                if (s == "false") {
-                                    Toast.makeText(
-                                            getBaseContext(),
-                                            "오류로 인해 탈퇴하지 못했습니다.",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-                                } else {
-                                    Toast.makeText(
-                                            getBaseContext(),
-                                            "성공적으로 탈퇴되었습니다.",
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-
-                                    status = "guest";
-                                    toggleBtnIfJoined();
-                                }
-                            }
-                        }.execute();
+                    protected void onPreExecute() {
+                        super.onPreExecute();
+                        loadingDialog.show();
                     }
-                });
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        userId = pref.getString("user_id", "");
+
+                        try {
+                            OkHttpClient client = new OkHttpClient();
+
+                            RequestBody body = new FormBody.Builder()
+                                    .add("userid", userId)
+                                    .add("uuid", groupId)
+                                    .build();
+
+                            Request request = new Request.Builder()
+                                    .url(Environments.LARAVEL_HIKONNECT_IP + "/api/out_group")
+                                    .post(body)
+                                    .build();
+
+                            Response response = client.newCall(request).execute();
+                            return response.body().string();
+                        } catch (IOException ie) {
+                            ie.printStackTrace();
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(String s) {
+                        super.onPostExecute(s);
+                        if (s == "false") {
+                            Toast.makeText(
+                                    getBaseContext(),
+                                    "오류로 인해 탈퇴하지 못했습니다.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        } else {
+                            Toast.makeText(
+                                    getBaseContext(),
+                                    "성공적으로 탈퇴되었습니다.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+
+                            status = "guest";
+                            toggleBtnIfJoined();
+                        }
+                        loadingDialog.dismiss();
+                    }
+                }.execute();
 
         /*// 공지사항 작성
         btnMakeNotice.setOnClickListener(new View.OnClickListener() {
@@ -676,7 +665,7 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         checkUserStatus(userId);
                         break;
                     // guest인 경우
-                    case "\"guest\"":
+                    default:
                         btnEnterGroup.setVisibility(View.VISIBLE);
                         btnExitGroup.setVisibility(View.GONE);
                         btnDeleteGroup.setVisibility(View.GONE);
