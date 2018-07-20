@@ -200,7 +200,6 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
         // 툴바 초기화
         initToolbar();
 
-
         // 페이지 불러오기
         initUI();
 
@@ -671,6 +670,8 @@ public class TabsActivity extends AppCompatActivity implements NavigationView.On
                         break;
                     // 그룹 member 여부 판별
                     case "\"member\"":
+                        btnEnterGroup.setVisibility(View.GONE);
+                        btnExitGroup.setVisibility(View.VISIBLE);
                         btnDeleteGroup.setVisibility(View.GONE);
                         userId = pref.getString("user_id", "");
                         checkUserStatus(userId);
